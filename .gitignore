@@ -1,0 +1,43 @@
+# --- Dados e artefatos pesados (NÃO versionar) ---
+# Ancorado na raiz para não capturar o pacote de código src/data/.
+/data/
+/checkpoints/
+*.pt
+*.pth
+*.mat
+*.hea
+*.npz
+*.npy
+
+# Atribuições SHAP (grandes) — mas mantém resultados agregados em results/
+results/attributions/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.python-version
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+
+# --- Ferramentas / IDE ---
+.vscode/
+.idea/
+.DS_Store
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# --- Credenciais Kaggle ---
+kaggle.json
+
+# --- Claude Code (local) ---
+.claude/

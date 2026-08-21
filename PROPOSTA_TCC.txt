@@ -1,0 +1,492 @@
+UNIVERSIDADE FEDERAL DE SÃO PAULO
+Departamento de Ciência e Tecnologia
+Bacharelado em Ciência da Computação
+
+ARTHUR SANTOS DE OLIVEIRA
+
+AVALIAÇÃO DAS EXPLICAÇÕES SHAP EM REDES NEURAIS PROFUNDAS PARA
+CLASSIFICAÇÃO DE ARRITMIAS CARDÍACAS EM ECG
+
+Proposta de Trabalho de Conclusão de Curso
+
+Prof. Dr. Luis Augusto Martins Pereira (Orientador)
+
+São José dos Campos, junho de 2026.
+
+================================================================================
+1. INTRODUÇÃO/MOTIVAÇÃO/RELEVÂNCIA DO TEMA
+================================================================================
+
+As doenças cardiovasculares constituem a principal causa de morte no mundo.
+Segundo o Global Burden of Disease Study 2023, o número de óbitos por causas
+cardiovasculares cresceu de 13,1 milhões em 1990 para 19,2 milhões em 2023,
+respondendo por aproximadamente um em cada três óbitos globais (GBD
+CARDIOVASCULAR DISEASE COLLABORATORS, 2025). Entre suas manifestações, as
+arritmias ocupam posição de particular relevância clínica: a fibrilação
+atrial, a mais prevalente, afeta aproximadamente 60 milhões de pessoas no
+mundo, sendo associada a risco aumentado de acidente vascular cerebral,
+insuficiência cardíaca e morte (WORLD HEART FEDERATION, 2023). A detecção
+precoce e precisa das arritmias é, portanto, condição essencial para reduzir
+sua morbimortalidade.
+
+O eletrocardiograma (ECG), instrumento de triagem cardiovascular mais
+utilizado na prática clínica por ser não invasivo, de baixo custo e
+amplamente disponível, tem sua interpretação automatizada avançada
+significativamente por redes neurais profundas, com modelos alcançando
+desempenho comparável ao de especialistas na classificação de arritmias
+(ZHANG et al., 2021). Contudo, esses modelos operam como caixas-pretas,
+produzindo predições sem justificativa interpretável, o que limita sua
+aceitação clínica e representa obstáculo à aprovação regulatória.
+
+Para contornar essa limitação, técnicas de Inteligência Artificial Explicável
+(XAI) têm sido aplicadas para tornar as predições mais transparentes. O SHAP
+(SHapley Additive exPlanations) (LUNDBERG; LEE, 2017), método mais utilizado
+nessa tarefa, correspondendo a 21,9% dos estudos identificados em revisão
+sistemática recente (MANIMARAN et al., 2025), tem potencial para indicar ao
+profissional quais regiões do traçado sustentaram a predição do modelo,
+apoiando a tomada de decisão clínica. Contudo, sua avaliação tem sido feita
+predominantemente de forma visual, sem garantia de que as explicações
+reflitam o comportamento interno do modelo, lacuna apontada pela mesma
+revisão como um dos principais desafios em aberto no campo.
+
+Agrava essa limitação o fato de que esses modelos apresentam desempenho
+desigual entre as condições diagnosticadas (ZHANG et al., 2021), e ainda não
+se sabe se a qualidade das explicações acompanha essa variação ou dela se
+dissocia. O presente trabalho propõe investigar empiricamente essa questão,
+avaliando se a qualidade das explicações SHAP varia entre as condições
+diagnósticas de forma acoplada ou independente do desempenho preditivo. Sua
+principal contribuição é fornecer evidência quantitativa sobre a
+confiabilidade do SHAP por classe diagnóstica, informação atualmente ausente
+na literatura e necessária para embasar o uso seguro desse método como
+ferramenta de apoio ao diagnóstico em sistemas de análise automatizada de
+ECG.
+
+================================================================================
+2. FUNDAMENTAÇÃO TEÓRICA
+================================================================================
+
+--------------------------------------------------------------------------------
+2.1 Eletrocardiograma e Arritmias Cardíacas
+--------------------------------------------------------------------------------
+
+O eletrocardiograma (ECG) é o registro gráfico da atividade elétrica do
+coração ao longo do tempo, obtido por eletrodos posicionados na superfície
+corporal (HOUGHTON; GRAY, 2014). O formato padrão de 12 derivações oferece
+perspectivas complementares da condução elétrica cardíaca, tornando o ECG o
+instrumento de triagem cardiovascular mais utilizado na prática clínica por
+ser não invasivo, de baixo custo e amplamente disponível.
+
+Arritmias são distúrbios na formação ou condução do impulso elétrico
+cardíaco que resultam em alterações no ritmo, frequência ou sequência de
+ativação das câmaras, manifestando-se no traçado por alterações na
+morfologia das ondas ou nos intervalos entre elas (HOUGHTON; GRAY, 2014). A
+diversidade e sutileza dessas manifestações tornam a classificação
+automatizada um problema de interesse crescente, no qual redes neurais
+convolucionais residuais (ResNet) têm demonstrado desempenho estado da arte,
+com resultados de nível especialista no CPSC2018 com uma ResNet34 1D (ZHANG
+et al., 2021), arquitetura adotada como base neste trabalho.
+
+--------------------------------------------------------------------------------
+2.2 Explainable AI (XAI)
+--------------------------------------------------------------------------------
+
+Modelos de aprendizado profundo alcançaram desempenho comparável ao de
+especialistas em diversas tarefas médicas, mas sua natureza de caixa-preta,
+produzindo predições sem justificativa interpretável, limita a confiança
+clínica e dificulta a aprovação regulatória (MANIMARAN et al., 2025). A
+Explainable AI (XAI) compreende um conjunto de técnicas destinadas a tornar
+as predições de modelos complexos compreensíveis para humanos, sem
+necessariamente simplificar o modelo subjacente.
+
+Os métodos de XAI podem ser classificados em duas dimensões. Quanto ao
+escopo, distinguem-se métodos locais, que explicam uma predição individual,
+e métodos globais, que descrevem o comportamento geral do modelo. Quanto à
+relação com o modelo, métodos post-hoc são aplicados após o treinamento sem
+modificar a arquitetura, enquanto métodos by-design incorporam
+interpretabilidade diretamente na estrutura da rede. Este trabalho utiliza
+métodos post-hoc de escopo local, aplicados a um modelo já treinado para
+classificação de arritmias.
+
+--------------------------------------------------------------------------------
+2.3 SHAP
+--------------------------------------------------------------------------------
+
+O SHAP (SHapley Additive exPlanations) é um método de atribuição de
+importância de features fundamentado na teoria dos jogos cooperativos
+(LUNDBERG; LEE, 2017). A ideia central é tratar o modelo preditivo como um
+jogo em que as features cooperam para produzir uma predição, sendo a
+contribuição de cada uma definida como seu valor de Shapley, a média
+ponderada de sua contribuição marginal sobre todas as possíveis ordens de
+entrada das demais features.
+
+Formalmente, o valor SHAP φ_i da feature i para uma predição f(x) é dado
+por:
+
+  φ_i(f, x) = Σ_{S ⊆ F\{i}} [ |S|!(|F|-|S|-1)! / |F|! ] * [ f_{S∪{i}}(x_{S∪{i}}) - f_S(x_S) ]
+
+Onde F é o conjunto de todas as features e S é um subconjunto que não inclui
+i. Em termos práticos, φ_i representa o quanto a feature i contribui, em
+média, para deslocar a predição do modelo a partir do valor base E[f(x)].
+
+O SHAP é o único método de atribuição aditiva que satisfaz simultaneamente
+três propriedades desejáveis: acurácia local (a soma das atribuições
+reproduz exatamente a predição do modelo), missingness (features ausentes
+recebem atribuição zero) e consistência (se a contribuição de uma feature
+aumenta no modelo, sua atribuição não pode diminuir) (LUNDBERG; LEE, 2017).
+Essas propriedades conferem ao SHAP fundamento teórico sólido e
+comportamento previsível, distinguindo-o de outros métodos de atribuição
+que violam ao menos uma delas.
+
+--------------------------------------------------------------------------------
+2.4 GradientSHAP
+--------------------------------------------------------------------------------
+
+O cálculo exato dos valores SHAP requer avaliar o modelo em todos os 2^|F|
+subconjuntos de features possíveis, operação computacionalmente inviável
+para sinais de ECG com 15.000 amostras por derivação e 12 derivações. O
+GradientSHAP é uma variante de aproximação derivada dos Integrated
+Gradients (SUNDARARAJAN et al., 2017), método que atribui importância a
+cada feature integrando os gradientes ao longo do caminho entre um
+baseline de referência x' e a entrada real x:
+
+  IntegratedGrads_i(x) = (x_i - x'_i) * ∫_{α=0}^{1} [ ∂F(x' + α*(x-x')) / ∂x_i ] dα
+
+O GradientSHAP estende esse método ao substituir o baseline único por
+múltiplos baselines amostrados aleatoriamente de uma distribuição de
+referência, com adição de ruído gaussiano à entrada para reduzir a
+variância da estimativa:
+
+  φ_i^GradientSHAP ≈ (x_i - x'_i) · E_ε[ ∂F(x + ε) / ∂x_i ]
+
+A escolha do GradientSHAP neste trabalho se justifica por três razões: sua
+eficiência computacional frente ao volume de features envolvido; sua
+fundamentação teórica nos Integrated Gradients, que garantem propriedades
+axiomáticas desejáveis para métodos de atribuição em redes neurais
+profundas (SUNDARARAJAN et al., 2017); e sua implementação nativa na
+biblioteca Captum (PyTorch), com integração direta à arquitetura de
+treinamento utilizada.
+
+--------------------------------------------------------------------------------
+2.5 Avaliação da Qualidade de Explicações
+--------------------------------------------------------------------------------
+
+Avaliar a qualidade de uma explicação é um problema em aberto em XAI, pois
+não existem anotações de ground truth sobre o que uma explicação correta
+deveria indicar (HEDSTRÖM et al., 2023). Na ausência de referência, a
+prática predominante tem sido a avaliação visual — verificar se as regiões
+destacadas coincidem com o que um especialista consideraria relevante —,
+abordagem subjetiva, não escalável e sujeita a vieses de confirmação.
+Revisões sistemáticas recentes apontam a falta de benchmarking quantitativo
+como um dos principais desafios em aberto no campo (MANIMARAN et al.,
+2025).
+
+O toolkit Quantus (HEDSTRÖM et al., 2023) organiza métricas de avaliação
+quantitativa de métodos de XAI em seis categorias, das quais este trabalho
+utiliza duas: Faithfulness e Robustness. Faithfulness avalia se as features
+identificadas como importantes pelo método de explicação realmente
+influenciam a predição do modelo — a lógica é que mascarar uma feature com
+alta atribuição SHAP deveria causar queda significativa na probabilidade
+predita. Robustness, por sua vez, avalia a estabilidade das explicações
+frente a perturbações controladas da entrada: pequenas variações no sinal
+que não alteram a predição não deveriam produzir explicações
+substancialmente diferentes.
+
+Ambas as categorias são calculadas individualmente para cada amostra do
+conjunto de teste e agregadas por classe diagnóstica, produzindo um valor
+médio por condição. Esses valores constituem a dimensão de qualidade das
+explicações que será comparada ao desempenho preditivo do modelo (F1-score
+por classe) para responder ao objetivo geral deste trabalho.
+
+================================================================================
+3. OBJETIVOS
+================================================================================
+
+Objetivo Geral
+
+Avaliar se a qualidade das explicações SHAP geradas por uma rede neural
+profunda para classificação de arritmias cardíacas em ECG acompanha o
+desempenho preditivo do modelo.
+
+Objetivos Específicos
+
+- Mensurar a fidelidade das explicações SHAP entre as diferentes condições
+  cardíacas classificadas.
+- Mensurar a robustez das explicações SHAP entre as diferentes condições
+  cardíacas classificadas.
+- Comparar as variações observadas nas métricas de qualidade das
+  explicações com o desempenho preditivo do modelo por classe
+  diagnosticada.
+
+================================================================================
+4. MÉTODO A SER USADO
+================================================================================
+
+Este estudo propõe avaliar se a qualidade das explicações SHAP geradas por
+uma rede neural profunda para classificação de arritmias cardíacas em ECG
+acompanha o desempenho preditivo do modelo. Para isso, a metodologia foi
+delineada para, primeiramente, treinar um modelo de classificação e
+documentar seu desempenho por classe, e em seguida gerar explicações SHAP
+sobre o conjunto de teste e avaliá-las quantitativamente. Os resultados de
+desempenho preditivo por classe servirão como referência comparativa para
+determinar se a qualidade das explicações acompanha o desempenho do
+modelo.
+
+--------------------------------------------------------------------------------
+4.1 Conjunto de Dados
+--------------------------------------------------------------------------------
+
+Será utilizado o conjunto de dados do China Physiological Signal Challenge
+2018 (CPSC2018), disponibilizado publicamente na plataforma PhysioNet (LIU
+et al., 2018). O CPSC2018 é composto por 6.877 registros de ECG de 12
+derivações coletados em 11 hospitais chineses, amostrados a 500 Hz com
+durações variando entre 6 e 60 segundos, anotados em nove classes
+diagnósticas: ritmo sinusal normal (SNR), fibrilação atrial (AF), bloqueio
+atrioventricular de primeiro grau (IAVB), bloqueio de ramo esquerdo (BRE),
+bloqueio de ramo direito (BRD), contração atrial prematura (CAP), contração
+ventricular prematura (CVP), depressão do segmento ST (STD) e elevação do
+segmento ST (STE).
+
+Tabela 1 — Distribuição de registros por classe diagnóstica no CPSC2018.
+
+  Sigla | Condição                     | Registros | % do total
+  ------|-------------------------------|-----------|-----------
+  SNR   | Ritmo sinusal normal          | 918       | 13,3%
+  AF    | Fibrilação atrial             | 1.098     | 16,0%
+  IAVB  | Bloqueio AV de 1º grau        | 704       | 10,2%
+  BRE   | Bloqueio de ramo esquerdo     | 207       | 3,0%
+  BRD   | Bloqueio de ramo direito      | 1.695     | 24,6%
+  CAP   | Contração atrial prematura    | 574       | 8,3%
+  CVP   | Contração ventricular prematura | 653     | 9,5%
+  STD   | Depressão do segmento ST      | 826       | 12,0%
+  STE   | Elevação do segmento ST       | 202       | 2,9%
+  Total |                               | 6.877     | 100%
+
+  Fonte: Liu et al. (2018). Adaptado pelo autor.
+
+A distribuição dos registros por classe é apresentada na Tabela 1. O
+dataset apresenta desequilíbrio amostral expressivo, BRD concentra
+aproximadamente 25% dos registros, enquanto STE e BRE reúnem menos de 4%
+cada, fator relevante tanto para o treinamento do modelo quanto para a
+interpretação das métricas de qualidade das explicações por classe. O
+CPSC2018 é adequado por permitir comparabilidade com Zhang et al. (2021),
+protocolo base deste trabalho, e por abranger condições com morfologias
+ECG suficientemente distintas para investigar variações na qualidade das
+explicações SHAP entre classes.
+
+4.1.1 Pré-processamento
+
+O pré-processamento seguirá o protocolo estabelecido por Zhang et al.
+(2021). Cada sinal será truncado ou preenchido com zeros até atingir
+comprimento fixo de 15.000 amostras, equivalente a 30 segundos. Os sinais
+serão normalizados por z-score por derivação, subtraindo a média e
+dividindo pelo desvio padrão de cada canal individualmente. Os 476
+registros multi-rótulo serão mantidos com representação nativa,
+compatível com a função de perda Binary Cross-Entropy utilizada no
+treinamento.
+
+4.1.2 Divisão dos Dados
+
+O conjunto de dados será dividido em partições de treino (70%), validação
+(20%) e teste (10%), com estratificação por classe para preservar a
+proporção de registros de cada condição diagnóstica nos três
+subconjuntos. A divisão será fixada por semente aleatória, garantindo
+reprodutibilidade. A partição de teste permanecerá isolada durante todo o
+processo de treinamento e validação, sendo utilizada exclusivamente na
+avaliação final do modelo e na geração das explicações SHAP.
+
+--------------------------------------------------------------------------------
+4.2 Modelo de Classificação
+--------------------------------------------------------------------------------
+
+Para a classificação das arritmias, será utilizada uma ResNet34 1D,
+seguindo a arquitetura proposta por Zhang et al. (2021) e originalmente
+introduzida por He et al. (2016). A rede é composta por 34 camadas
+organizadas em quatro blocos residuais empilhados, cada um contendo duas
+camadas de convolução 1D, duas camadas de normalização por lote (batch
+normalization), uma camada de dropout e uma conexão de atalho (skip
+connection). A camada de saída produzirá nove valores independentes, um
+por classe diagnóstica, por meio de funções de ativação sigmoide,
+compatíveis com a natureza multi-rótulo do problema.
+
+Os hiperparâmetros de treinamento seguirão os valores reportados por
+Zhang et al. (2021), utilizando o otimizador Adam e a função de perda
+Binary Cross-Entropy com pesos inversamente proporcionais à frequência de
+cada classe no conjunto de treino, para lidar com o desequilíbrio
+amostral. O treinamento será interrompido pelo critério de early
+stopping, monitorando o F1-score macro no conjunto de validação, e o
+modelo com melhor desempenho será preservado para as etapas subsequentes.
+
+--------------------------------------------------------------------------------
+4.3 Geração das Explicações SHAP
+--------------------------------------------------------------------------------
+
+As explicações serão geradas com o método GradientSHAP, implementado na
+biblioteca Captum (PyTorch), cuja escolha é justificada na seção 2.4. O
+método será aplicado sobre cada amostra corretamente classificada do
+conjunto de teste, a restrição às predições corretas é intencional, pois o
+objetivo é investigar a qualidade das explicações quando o modelo opera
+adequadamente, não em situações de falha.
+
+Para cada amostra, o GradientSHAP produzirá um mapa de atribuição de
+dimensão 15.000 × 12, com um valor por ponto temporal por derivação. As
+explicações serão geradas em relação à classe predita pelo modelo,
+utilizando como distribuição de referência um conjunto de amostras de
+baseline amostradas aleatoriamente do conjunto de treino.
+
+--------------------------------------------------------------------------------
+4.4 Avaliação da Qualidade das Explicações
+--------------------------------------------------------------------------------
+
+Para avaliar quantitativamente a qualidade das explicações SHAP, será
+utilizado o toolkit Quantus (HEDSTRÖM et al., 2023). Das seis categorias
+disponíveis, serão empregadas duas: Faithfulness e Robustness. As demais
+foram excluídas por razões metodológicas: Localisation requer anotações de
+ground truth indisponíveis no CPSC2018; Complexity pressupõe que
+explicações mais concisas são superiores, premissa inadequada para
+condições como a fibrilação atrial; Randomisation atua como teste de
+sanidade sem responder ao objetivo central; e Axiomatic avalia
+propriedades que o SHAP satisfaz por construção, tornando sua verificação
+empírica redundante.
+
+Da categoria Faithfulness serão calculadas seis métricas: Faithfulness
+Correlation, Faithfulness Estimate, Selectivity, SensitivityN, Infidelity e
+Sufficiency. Da categoria Robustness serão calculadas sete métricas: Local
+Lipschitz Estimate, Max-Sensitivity, Avg-Sensitivity, Continuity,
+Consistency, Relative Input Stability (RIS) e Relative Output Stability
+(ROS). Todas serão calculadas individualmente para cada amostra e
+agregadas por classe diagnóstica, produzindo um valor médio por condição a
+ser comparado ao desempenho preditivo do modelo.
+
+--------------------------------------------------------------------------------
+4.5 Estratégia de Análise
+--------------------------------------------------------------------------------
+
+Os resultados serão analisados em duas etapas. Na primeira, as métricas de
+fidelidade e robustez serão agregadas por classe diagnóstica e os valores
+obtidos serão ordenados e comparados entre as nove condições, permitindo
+identificar quais classes produzem explicações de maior e menor qualidade.
+Na segunda, esses valores serão confrontados com o F1-score de cada
+classe, buscando identificar se classes com melhor desempenho preditivo
+tendem a apresentar também explicações de maior fidelidade e robustez, ou
+se as duas dimensões se dissociam.
+
+A análise será conduzida de forma descritiva, reportando os valores médios
+por classe e calculando a correlação entre as métricas de qualidade das
+explicações e o F1-score. Os resultados serão discutidos à luz das
+características morfológicas de cada condição diagnóstica e do
+desequilíbrio amostral do dataset, fatores que podem influenciar tanto o
+desempenho preditivo quanto a qualidade das explicações.
+
+================================================================================
+5. RESULTADOS PRELIMINARES
+================================================================================
+
+O único resultado obtido até o momento é a exploração e caracterização do
+conjunto de dados CPSC2018. Essa etapa confirmou a viabilidade do uso do
+dataset para os objetivos propostos e evidenciou o desequilíbrio amostral
+entre as nove classes diagnósticas, com BRD concentrando aproximadamente
+25% dos registros e STE e BRE representando menos de 4% cada.
+
+Esse achado é diretamente relevante para o desenvolvimento do TCC a ser
+feito no próximo semestre. O desequilíbrio amostral tende a afetar o
+desempenho preditivo do modelo por classe, impactando o objetivo de
+comparação entre métricas de qualidade e F1-score. Adicionalmente, classes
+sub-representadas podem induzir o modelo a aprender estratégias de
+classificação menos robustas, o que pode se refletir tanto na fidelidade
+quanto na robustez das explicações SHAP, dimensões centrais dos dois
+primeiros objetivos específicos.
+
+================================================================================
+6. DISCUSSÕES
+================================================================================
+
+A exploração do CPSC2018 confirmou a viabilidade do trabalho e forneceu a
+base necessária para o planejamento das etapas seguintes. No próximo
+semestre, serão executadas quatro etapas sequenciais, cada uma vinculada
+diretamente aos objetivos do trabalho.
+
+O treinamento da ResNet34 1D estabelecerá o desempenho preditivo por
+classe, dimensão que será confrontada com a qualidade das explicações ao
+final do trabalho. A geração das explicações com GradientSHAP produzirá os
+mapas de atribuição sobre os quais as métricas serão calculadas. O cálculo
+das métricas de fidelidade e robustez com o toolkit Quantus responderá aos
+dois primeiros objetivos específicos. Por fim, a análise comparativa entre
+essas métricas e o F1-score por classe responderá ao objetivo geral do
+trabalho.
+
+O desequilíbrio amostral identificado na exploração será um ponto de
+atenção transversal a todas essas etapas, especialmente na interpretação
+dos resultados das classes com menor representação no dataset.
+
+================================================================================
+7. CRONOGRAMA
+================================================================================
+
+Etapas de desenvolvimento do trabalho e seus respectivos prazos:
+
+- Etapa 1 — Revisão de literatura: leitura e fichamento dos artigos
+  fundamentais da área, consolidando o embasamento teórico necessário para
+  as etapas subsequentes.
+- Etapa 2 — Preparação dos dados: download do CPSC2018, pré-processamento
+  dos sinais de ECG e divisão em partições de treino, validação e teste,
+  com documentação da pipeline de dados.
+- Etapa 3 — Treinamento do modelo: definição dos hiperparâmetros e do
+  protocolo de treinamento da ResNet34 1D, execução do treinamento e
+  documentação do desempenho preditivo por classe diagnóstica.
+- Etapa 4 — Geração das explicações: definição do protocolo GradientSHAP e
+  execução da geração das explicações sobre o conjunto de teste.
+- Etapa 5 — Avaliação das explicações: cálculo das métricas de fidelidade
+  e robustez com o toolkit Quantus para cada classe diagnóstica.
+- Etapa 6 — Análise dos resultados: análise comparativa entre as métricas
+  de qualidade das explicações e o desempenho preditivo por classe,
+  discussão das implicações clínicas dos achados e redação do TCC.
+- Etapa 7 — Revisão e entrega: revisão final do texto, formatação conforme
+  as normas exigidas, submissão e preparação da apresentação para a banca.
+
+Tabela 2 — Cronograma de atividades (meses de 2026: Mai a Out).
+Etapa 1: Mai–Jun | Etapa 2: Jun | Etapa 3: Jun–Jul | Etapa 4: Jul |
+Etapa 5: Jul–Ago | Etapa 6: Ago–Set | Etapa 7: Set–Out
+(Fonte: Elaborado pelo autor. Faixas aproximadas — ver PDF original para o
+gráfico exato de Gantt.)
+
+================================================================================
+8. REFERÊNCIAS BIBLIOGRÁFICAS
+================================================================================
+
+GBD CARDIOVASCULAR DISEASE COLLABORATORS. Global, regional, and national
+burden of cardiovascular diseases and risk factors in 204 countries and
+territories, 1990–2023. Journal of the American College of Cardiology,
+2025. DOI: 10.1016/j.jacc.2025.08.015.
+
+HE, K. et al. Deep Residual Learning for Image Recognition. In: IEEE
+CONFERENCE ON COMPUTER VISION AND PATTERN RECOGNITION, 2016, Las Vegas.
+Proceedings... IEEE, 2016.
+
+HEDSTRÖM, A. et al. Quantus: An Explainable AI Toolkit for Responsible
+Evaluation of Neural Network Explanations and Beyond. Journal of Machine
+Learning Research, v. 24, n. 34, p. 1–11, 2023.
+
+HOUGHTON, A. R.; GRAY, D. Making Sense of the ECG: A Hands-On Guide. 4.
+ed. Londres: Taylor & Francis, 2014.
+
+LIU, F. et al. An open access database for evaluating the algorithms of
+electrocardiogram rhythm and morphology abnormality detection. Journal of
+Medical Imaging and Health Informatics, v. 8, n. 7, p. 1368–1373, 2018.
+
+LUNDBERG, S. M.; LEE, S.-I. A Unified Approach to Interpreting Model
+Predictions. Advances in Neural Information Processing Systems, v. 30, p.
+4765–4774, 2017.
+
+MANIMARAN, G. et al. Explainable deep learning based techniques for
+ECG-based heart disease classification: a systematic literature review
+and future direction. Computers in Biology and Medicine, v. 199, 111324,
+2025.
+
+SUNDARARAJAN, M.; TALY, A.; YAN, Q. Axiomatic Attribution for Deep
+Networks. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 34., 2017,
+Sydney. Proceedings... PMLR 70, 2017. p. 3319–3328.
+
+WORLD HEART FEDERATION. World Heart Report 2023. Geneva: WHF, 2023.
+
+ZHANG, D. et al. Interpretable deep learning for automatic diagnosis of
+12-lead electrocardiogram. iScience, v. 24, n. 4, 102373, 2021.

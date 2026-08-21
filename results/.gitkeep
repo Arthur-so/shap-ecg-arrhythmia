@@ -1,0 +1,2 @@
+# Diretório de resultados agregados (métricas, F1 por classe, csvs de saída).
+# Mantido no versionamento; artefatos pesados (atribuições .npz) são ignorados.
