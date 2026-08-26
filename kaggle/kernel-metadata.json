@@ -1,5 +1,5 @@
 {
-  "id": "SEU_USUARIO_KAGGLE/shap-ecg-arrhythmia-runner",
+  "id": "arthurso/shap-ecg-arrhythmia-runner",
   "title": "shap-ecg-arrhythmia-runner",
   "code_file": "../notebooks/kaggle_runner.ipynb",
   "language": "python",
@@ -8,7 +8,7 @@
   "enable_gpu": "true",
   "enable_tpu": "false",
   "enable_internet": "true",
-  "dataset_sources": [],
+  "dataset_sources": ["physionet/china-physiological-signal-challenge-in-2018"],
   "competition_sources": [],
   "kernel_sources": [],
   "model_sources": []

@@ -29,6 +29,7 @@ from src.config import (
     NUM_LEADS,
     SEED,
     SIGNAL_LENGTH,
+    SNOMED_TO_INDEX,
     TEST_FRAC,
     TRAIN_FRAC,
     VAL_FRAC,
@@ -63,6 +64,35 @@ def load_reference(reference_csv: Path) -> dict[str, np.ndarray]:
                     if code in CPSC_CODE_TO_INDEX:
                         y[CPSC_CODE_TO_INDEX[code]] = 1.0
             labels[rec] = y
+    return labels
+
+
+def labels_from_header(hea_path: Path) -> np.ndarray:
+    """Extrai o vetor binário (9,) do campo ``#Dx:`` de um cabeçalho .hea.
+
+    Usado quando o dataset segue o formato PhysioNet-CinC 2020 (sem
+    REFERENCE.csv), no qual os diagnósticos ficam no header como códigos
+    SNOMED CT separados por vírgula. Códigos fora das 9 classes CPSC são
+    ignorados (o CPSC2018 contém apenas essas 9).
+    """
+    y = np.zeros(NUM_CLASSES, dtype=np.float32)
+    with open(hea_path) as f:
+        for line in f:
+            if line.startswith("#Dx:"):
+                codes = line.split(":", 1)[1].strip()
+                for code in codes.split(","):
+                    code = code.strip()
+                    if code in SNOMED_TO_INDEX:
+                        y[SNOMED_TO_INDEX[code]] = 1.0
+                break
+    return y
+
+
+def load_labels_from_headers(records: list[tuple[str, Path]]) -> dict[str, np.ndarray]:
+    """Constrói {record_id: vetor (9,)} lendo o ``#Dx:`` de cada .hea."""
+    labels: dict[str, np.ndarray] = {}
+    for rec, path in records:
+        labels[rec] = labels_from_header(path.with_suffix(".hea"))
     return labels
 
 
@@ -185,15 +215,42 @@ def _discover_records(raw_dir: Path, labels: dict[str, np.ndarray]) -> list[tupl
     return sorted(records, key=lambda t: t[0])
 
 
+def _discover_all_headers(raw_dir: Path) -> list[tuple[str, Path]]:
+    """Lista todos os registros WFDB (.hea) encontrados sob ``raw_dir``.
+
+    Usado no formato PhysioNet-CinC 2020, em que não há REFERENCE.csv e cada
+    .hea carrega seu próprio rótulo.
+    """
+    records = [(p.stem, p.with_suffix("")) for p in raw_dir.rglob("*.hea")]
+    return sorted(records, key=lambda t: t[0])
+
+
+def resolve_labels(raw_dir: Path) -> tuple[dict[str, np.ndarray], list[tuple[str, Path]]]:
+    """Resolve rótulos e lista de registros conforme o formato do dataset.
+
+    Detecta automaticamente:
+      - Formato original CPSC2018: existe um REFERENCE.csv (códigos 1..9).
+      - Formato PhysioNet-CinC 2020: sem REFERENCE.csv; rótulos SNOMED no .hea.
+    """
+    ref = list(raw_dir.rglob("REFERENCE.csv"))
+    if ref:
+        labels = load_reference(ref[0])
+        print(f"[info] formato REFERENCE.csv: {len(labels)} rótulos ({ref[0]})")
+        records = _discover_records(raw_dir, labels)
+    else:
+        records = _discover_all_headers(raw_dir)
+        labels = load_labels_from_headers(records)
+        n_lab = sum(int(v.sum() > 0) for v in labels.values())
+        print(f"[info] formato PhysioNet-CinC (rótulos SNOMED no .hea): "
+              f"{len(records)} registros, {n_lab} com ao menos 1 rótulo mapeado")
+    return labels, records
+
+
 def build_dataset(raw_dir: Path, out_dir: Path, limit: int | None = None) -> None:
     """Executa o pipeline completo e salva os splits em ``out_dir``."""
     from tqdm import tqdm
 
-    reference_csv = next(raw_dir.rglob("REFERENCE.csv"))
-    labels = load_reference(reference_csv)
-    print(f"[info] {len(labels)} rótulos lidos de {reference_csv}")
-
-    records = _discover_records(raw_dir, labels)
+    labels, records = resolve_labels(raw_dir)
     if limit is not None:
         records = records[:limit]
     print(f"[info] {len(records)} registros a processar")

@@ -74,6 +74,19 @@ python -m src.evaluate --data-dir data/processed \
 
 Todos os scripts expõem `--help` com a lista completa de argumentos.
 
+## Fonte dos dados e rótulos
+
+O `preprocess.py` detecta automaticamente dois formatos do CPSC2018:
+
+- **Original** (`REFERENCE.csv` com códigos inteiros 1–9).
+- **PhysioNet-CinC 2020** (usado pelo dataset do Kaggle
+  `physionet/china-physiological-signal-challenge-in-2018`): sem
+  `REFERENCE.csv`; os rótulos ficam no campo `#Dx:` de cada `.hea` como códigos
+  **SNOMED CT**, mapeados para as 9 classes em `src/config.py` (`SNOMED_TO_INDEX`).
+
+No Kaggle o dataset é anexado via `dataset_sources` (ver `kaggle/kernel-metadata.json`)
+e montado em `/kaggle/input/...`, sem download manual.
+
 ## Reprodutibilidade
 
 - Semente fixa (`SEED = 42` em `src/config.py`) para split, baselines e treino.

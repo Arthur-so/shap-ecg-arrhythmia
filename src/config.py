@@ -33,6 +33,37 @@ CLASS_NAMES = {
 # Mapeia o código inteiro do REFERENCE.csv (1..9) -> índice da classe (0..8)
 CPSC_CODE_TO_INDEX = {i + 1: i for i in range(NUM_CLASSES)}
 
+# Mapeia códigos SNOMED CT -> índice da classe (0..8). Necessário porque a
+# distribuição do CPSC2018 no Kaggle/PhysioNet (formato PhysioNet-CinC 2020)
+# não traz o REFERENCE.csv original; os rótulos ficam no campo "#Dx:" de cada
+# cabeçalho .hea como códigos SNOMED (possivelmente múltiplos, separados por
+# vírgula). Inclui os códigos equivalentes usados no desafio CinC 2020 (ex.:
+# RBBB completo, batimentos ventriculares/supraventriculares prematuros) para
+# não perder rótulos.
+SNOMED_TO_INDEX = {
+    # SNR — ritmo sinusal normal
+    "426783006": 0,
+    # AF — fibrilação atrial
+    "164889003": 1,
+    # IAVB — bloqueio AV de 1º grau
+    "270492004": 2,
+    # BRE — bloqueio de ramo esquerdo (LBBB)
+    "164909002": 3,
+    # BRD — bloqueio de ramo direito (RBBB e RBBB completo)
+    "59118001": 4,
+    "713427006": 4,
+    # CAP — contração atrial prematura (PAC e batimentos supraventriculares prematuros)
+    "284470004": 5,
+    "63593006": 5,
+    # CVP — contração ventricular prematura (PVC e batimentos ventriculares prematuros)
+    "427172004": 6,
+    "17338001": 6,
+    # STD — depressão do segmento ST
+    "429622005": 7,
+    # STE — elevação do segmento ST
+    "164931005": 8,
+}
+
 # --- Reprodutibilidade ---
 SEED = 42
 
