@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status do Projeto — TCC SHAP em ECG · 2026-08-26</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --panel:#ffffff; --ink:#1c2333; --muted:#5c6b82;
+    --line:#e2e8f0; --accent:#3b6fd4; --accent2:#7c4dff;
+    --pre:#0ea5a5; --proc:#3b6fd4; --anal:#7c4dff;
+    --ok:#16a34a; --okbg:#e7f6ec; --partial:#c98a00; --partialbg:#fdf3dd;
+    --pend:#64748b; --pendbg:#eef1f5; --shadow:0 1px 3px rgba(20,30,60,.08),0 6px 20px rgba(20,30,60,.06);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f141b; --panel:#161d27; --ink:#e7edf6; --muted:#9aa8bd;
+      --line:#26303d; --accent:#6ea0ff; --accent2:#b39dff;
+      --pre:#3fd0d0; --proc:#6ea0ff; --anal:#b39dff;
+      --ok:#4ade80; --okbg:#123021; --partial:#f5c451; --partialbg:#33290f;
+      --pend:#9aa8bd; --pendbg:#1e2530; --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;padding:32px 18px 64px}
+  .wrap{max-width:1080px;margin:0 auto}
+  header.top{background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff;border-radius:16px;padding:26px 28px;box-shadow:var(--shadow)}
+  header.top h1{margin:0 0 6px;font-size:1.5rem;letter-spacing:.2px}
+  header.top p{margin:2px 0;opacity:.95;font-size:.92rem}
+  .badge-date{display:inline-block;background:rgba(255,255,255,.18);
+    border:1px solid rgba(255,255,255,.35);padding:3px 12px;border-radius:999px;
+    font-size:.8rem;font-weight:600;margin-top:10px}
+  section{margin-top:34px}
+  h2{font-size:1.15rem;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;
+    background:var(--accent);color:#fff;font-size:.85rem;font-weight:700}
+  .sub{color:var(--muted);font-size:.9rem;margin:0 0 16px}
+
+  /* ---- Fluxo conceitual (3 fases) ---- */
+  .flow{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap}
+  .phase{flex:1 1 260px;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:0;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  .phase .cap{padding:12px 16px;color:#fff;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px}
+  .phase.pre .cap{background:var(--pre)} .phase.proc .cap{background:var(--proc)} .phase.anal .cap{background:var(--anal)}
+  .phase ol{margin:0;padding:14px 16px 16px 34px;font-size:.9rem}
+  .phase ol li{margin:0 0 9px}
+  .phase ol li b{font-weight:600}
+  .phase ol li small{color:var(--muted);display:block;font-size:.82rem}
+  .arrow{align-self:center;color:var(--muted);font-size:1.6rem;font-weight:700;flex:0 0 auto}
+  @media(max-width:820px){.arrow{transform:rotate(90deg);align-self:center}}
+
+  /* ---- Tabela de status ---- */
+  .tablecard{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);overflow-x:auto}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:.9rem}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:var(--pendbg);color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.5px}
+  tbody tr:last-child td{border-bottom:none}
+  td.etapa{font-weight:600;white-space:nowrap}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.76rem;font-weight:700;white-space:nowrap}
+  .pill.ok{background:var(--okbg);color:var(--ok)}
+  .pill.partial{background:var(--partialbg);color:var(--partial)}
+  .pill.pend{background:var(--pendbg);color:var(--pend)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:12px 2px 0;font-size:.82rem;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:50%}
+  .dot.ok{background:var(--ok)} .dot.partial{background:var(--partial)} .dot.pend{background:var(--pend)}
+
+  /* ---- Pipeline de execução ---- */
+  .pipe{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;counter-reset:step}
+  .node{flex:1 1 150px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px;box-shadow:var(--shadow);position:relative;min-width:150px}
+  .node .k{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+  .node .t{font-weight:600;font-size:.92rem;margin:4px 0 4px}
+  .node .d{font-size:.82rem;color:var(--muted)}
+  .node .ico{font-size:1.1rem}
+  .pipe .sep{align-self:center;color:var(--muted);font-size:1.4rem;flex:0 0 auto}
+  @media(max-width:820px){.pipe .sep{transform:rotate(90deg)}}
+  .loopnote{margin-top:12px;font-size:.83rem;color:var(--muted);background:var(--pendbg);
+    border:1px dashed var(--line);border-radius:10px;padding:10px 14px}
+
+  /* ---- Próximos passos ---- */
+  .steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .steps li{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:10px;padding:12px 16px;box-shadow:var(--shadow);font-size:.9rem}
+  .steps li b{font-weight:700}
+  .steps li.block{border-left-color:var(--partial)}
+  .steps li small{color:var(--muted);display:block;margin-top:2px}
+  .k-tag{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--pendbg);
+    padding:1px 6px;border-radius:6px;font-size:.82em}
+  footer{margin-top:40px;color:var(--muted);font-size:.8rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Status do Projeto — Avaliação das Explicações SHAP em ECG</h1>
+    <p>TCC · ResNet34 1D · CPSC2018 · GradientSHAP · Quantus</p>
+    <p>Arthur Santos de Oliveira · Orientador: Prof. Dr. Luis Augusto Martins Pereira · UNIFESP</p>
+    <span class="badge-date">Atualizado em 26/08/2026</span>
+  </header>
+
+  <!-- 1. FLUXO CONCEITUAL -->
+  <section>
+    <h2><span class="n">1</span> Fluxo conceitual do trabalho</h2>
+    <p class="sub">Da matéria-prima (sinais de ECG) até a resposta científica, em três grandes fases.</p>
+    <div class="flow">
+
+      <div class="phase pre">
+        <div class="cap">🫀 Pré-processamento</div>
+        <ol>
+          <li><b>Importar a base CPSC2018</b><small>6.877 ECGs · 12 derivações · 500 Hz</small></li>
+          <li><b>Ler os rótulos</b><small>9 classes diagnósticas, multi-rótulo</small></li>
+          <li><b>Padronizar o comprimento</b><small>truncar/preencher até 15.000 amostras (30 s)</small></li>
+          <li><b>Normalizar (z-score)</b><small>média/desvio por derivação</small></li>
+          <li><b>Dividir os dados</b><small>estratificado 70% / 20% / 10%</small></li>
+        </ol>
+      </div>
+
+      <div class="arrow">▶</div>
+
+      <div class="phase proc">
+        <div class="cap">🧠 Processamento</div>
+        <ol>
+          <li><b>Treinar a ResNet34 1D</b><small>Adam · BCE ponderada · early stopping (F1-macro)</small></li>
+          <li><b>Medir desempenho por classe</b><small>F1-score de cada condição</small></li>
+          <li><b>Gerar explicações SHAP</b><small>GradientSHAP nos acertos do teste, por classe</small></li>
+          <li><b>Mapas de atribuição</b><small>15.000 × 12 por amostra</small></li>
+        </ol>
+      </div>
+
+      <div class="arrow">▶</div>
+
+      <div class="phase anal">
+        <div class="cap">📊 Análise</div>
+        <ol>
+          <li><b>Medir qualidade das explicações</b><small>Quantus: Faithfulness (6) + Robustness (7)</small></li>
+          <li><b>Agregar por classe</b><small>valor médio de cada métrica por condição</small></li>
+          <li><b>Comparar com o F1</b><small>correlação qualidade × desempenho por classe</small></li>
+          <li><b>Interpretar</b><small>a qualidade acompanha ou se dissocia do desempenho?</small></li>
+        </ol>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 2. STATUS DA IMPLEMENTAÇÃO -->
+  <section>
+    <h2><span class="n">2</span> Status atual da implementação</h2>
+    <p class="sub">O que já existe do fluxo acima e como está sendo feito.</p>
+    <div class="tablecard">
+      <table>
+        <thead>
+          <tr><th>Etapa</th><th>Status</th><th>Como está sendo feito</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="etapa">Importar base + rótulos</td>
+            <td><span class="pill ok">Feito</span></td>
+            <td>A base é lida dos registros WFDB (12 derivações). Os rótulos são detectados automaticamente em dois formatos: <code>REFERENCE.csv</code> (códigos 1–9) ou, no dataset do Kaggle, os códigos <b>SNOMED</b> gravados no campo <code>#Dx:</code> de cada cabeçalho <code>.hea</code> — mapeados para as 9 classes. Validado com um cabeçalho real.</td>
+          </tr>
+          <tr>
+            <td class="etapa">Padronização + z-score</td>
+            <td><span class="pill ok">Feito</span></td>
+            <td>Cada sinal é truncado/preenchido com zeros até 15.000 amostras e normalizado por z-score por derivação. Transformações testadas (padding vira zero; média≈0 e desvio≈1 por canal).</td>
+          </tr>
+          <tr>
+            <td class="etapa">Divisão dos dados</td>
+            <td><span class="pill ok">Feito</span></td>
+            <td>Split estratificado multi-rótulo 70/20/10 com semente fixa. Testado: bate exatamente as frações e preserva a proporção das classes raras (BRE, STE) nas três partições.</td>
+          </tr>
+          <tr>
+            <td class="etapa">Modelo ResNet34 1D</td>
+            <td><span class="pill ok">Feito</span></td>
+            <td>Arquitetura de 34 camadas ([3,4,6,3] blocos residuais), saída de 9 logits. Validado forward e backward no formato real (12 × 15.000), ~7,2 M de parâmetros.</td>
+          </tr>
+          <tr>
+            <td class="etapa">Treino do modelo</td>
+            <td><span class="pill partial">Implementado — não treinado</span></td>
+            <td>Loop com Adam, BCE ponderada pela frequência das classes e early stopping por F1-macro; salva checkpoint e F1 por classe. Rodou ponta a ponta com <b>dados sintéticos</b>. Falta o treino real (exige GPU do Kaggle, hoje bloqueada por verificação de conta).</td>
+          </tr>
+          <tr>
+            <td class="etapa">Explicações GradientSHAP</td>
+            <td><span class="pill partial">Implementado — não executado nos dados</span></td>
+            <td>Via Captum, aplicado só aos acertos do teste, por classe predita, com baselines do treino. Validado end-to-end gerando mapas 12 × 15.000. Falta rodar sobre o modelo treinado real.</td>
+          </tr>
+          <tr>
+            <td class="etapa">Métricas Quantus</td>
+            <td><span class="pill partial">Implementado — não executado</span></td>
+            <td>As 13 métricas (6 Faithfulness + 7 Robustness) estão configuradas e agregam por classe, com fallback caso alguma falhe. Falta executar sobre as atribuições reais.</td>
+          </tr>
+          <tr>
+            <td class="etapa">Análise de correlação</td>
+            <td><span class="pill pend">Pendente</span></td>
+            <td>O cruzamento métricas × F1 por classe já é gerado em CSV pelo código; a análise/discussão em si depende dos resultados reais das etapas anteriores.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <span><i class="dot ok"></i> Feito = implementado e validado</span>
+      <span><i class="dot partial"></i> Implementado, mas ainda não executado em dados reais</span>
+      <span><i class="dot pend"></i> Pendente</span>
+    </div>
+  </section>
+
+  <!-- 3. PIPELINE DE EXECUÇÃO -->
+  <section>
+    <h2><span class="n">3</span> Pipeline de execução (como roda de verdade)</h2>
+    <p class="sub">Onde cada peça vive e como uma execução acontece de ponta a ponta.</p>
+    <div class="pipe">
+      <div class="node">
+        <div class="k"><span class="ico">💻</span> Local (PC)</div>
+        <div class="t">Edição do código</div>
+        <div class="d">Lógica em <code>src/</code> e o notebook runner são editados aqui.</div>
+      </div>
+      <div class="sep">▶</div>
+      <div class="node">
+        <div class="k"><span class="ico">🐙</span> GitHub</div>
+        <div class="t">Versionamento</div>
+        <div class="d"><code>git push</code> envia o código. Só código e resultados agregados (sem dados/pesos).</div>
+      </div>
+      <div class="sep">▶</div>
+      <div class="node">
+        <div class="k"><span class="ico">🚀</span> Script <code>run.sh</code></div>
+        <div class="t">Dispara + acompanha</div>
+        <div class="d">Publica o notebook no Kaggle e fica exibindo status e log ao vivo.</div>
+      </div>
+      <div class="sep">▶</div>
+      <div class="node">
+        <div class="k"><span class="ico">📓</span> Notebook (Kaggle)</div>
+        <div class="t">Runner na GPU</div>
+        <div class="d">Faz <code>git pull</code> do código + usa o dataset montado, e executa preprocess → treino → SHAP → Quantus.</div>
+      </div>
+      <div class="sep">▶</div>
+      <div class="node">
+        <div class="k"><span class="ico">📦</span> Saída</div>
+        <div class="t">Resultados</div>
+        <div class="d">F1 por classe, métricas Quantus e tabelas em <code>results/</code>; logs voltam ao terminal.</div>
+      </div>
+    </div>
+    <div class="loopnote">
+      🔁 <b>Nada é ao vivo/automático:</b> mudanças em <code>src/</code> só valem quando o notebook roda de novo
+      (ele começa com <code>git pull</code>). O dataset CPSC2018 é anexado ao notebook e montado em
+      <code>/kaggle/input/…</code>, sem download manual.
+    </div>
+  </section>
+
+  <!-- 4. PRÓXIMOS PASSOS -->
+  <section>
+    <h2><span class="n">4</span> Próximos passos</h2>
+    <p class="sub">Em ordem de prioridade.</p>
+    <ol class="steps">
+      <li class="block"><b>Desbloquear a conta do Kaggle</b> — verificar o telefone para liberar <b>Internet</b> e <b>GPU</b>.
+        <small>Bloqueio atual: a 1ª execução rodou sem internet (o <code>git clone</code> falhou) e sem GPU, por ser conta nova não verificada.</small></li>
+      <li><b>Teste de fumaça</b> — rodar o pipeline completo com poucas épocas / subconjunto para validar ponta a ponta em dados reais.
+        <small>Confirma que preprocess, treino, SHAP e Quantus funcionam antes de gastar a cota inteira de GPU.</small></li>
+      <li><b>Treino completo</b> — ResNet34 1D com o protocolo definido e coleta do F1 por classe.
+        <small>Atenção ao limite de sessão do Kaggle (~9–12 h); provável quebrar em etapas (treino / SHAP / avaliação).</small></li>
+      <li><b>Explicações + métricas</b> — gerar GradientSHAP no teste e calcular as 13 métricas Quantus por classe.</li>
+      <li><b>Análise final</b> — correlacionar qualidade das explicações × F1 por classe e discutir os achados (seção 4.5 da proposta).</li>
+      <li><b>Segurança</b> — revogar o token do Kaggle exposto e gerar um novo.
+        <small>Atualizar depois em <span class="k-tag">~/.kaggle/access_token</span>.</small></li>
+    </ol>
+  </section>
+
+  <footer>
+    Documento de status gerado em 26/08/2026 · projeto <b>shap-ecg-arrhythmia</b>
+  </footer>
+
+</div>
+</body>
+</html>
