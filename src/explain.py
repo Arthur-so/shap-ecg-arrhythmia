@@ -30,6 +30,7 @@ import torch
 
 from src.config import CLASSES, SEED
 from src.data.dataset import ECGDataset
+from src.device import get_device
 from src.model.resnet34_1d import build_model
 
 
@@ -53,8 +54,7 @@ def sample_baselines(train_ds: ECGDataset, n: int, device: torch.device,
 def generate_explanations(args: argparse.Namespace) -> None:
     from captum.attr import GradientShap
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"[info] dispositivo: {device}")
+    device = get_device()
 
     data_dir = Path(args.data_dir)
     train_ds = ECGDataset(data_dir / "train.npz")

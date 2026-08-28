@@ -30,6 +30,7 @@ from torch.utils.data import DataLoader
 
 from src.config import CLASSES, SEED
 from src.data.dataset import ECGDataset, compute_pos_weight
+from src.device import get_device
 from src.metrics import f1_report, macro_f1
 from src.model.resnet34_1d import build_model
 
@@ -72,8 +73,7 @@ def train_one_epoch(model, loader, criterion, optimizer, device) -> float:
 
 def train(args: argparse.Namespace) -> None:
     set_seed(args.seed)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"[info] dispositivo: {device}")
+    device = get_device()
 
     data_dir = Path(args.data_dir)
     train_ds = ECGDataset(data_dir / "train.npz")

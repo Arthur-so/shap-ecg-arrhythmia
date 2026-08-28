@@ -38,6 +38,7 @@ import torch
 
 from src.config import CLASSES, SEED
 from src.data.dataset import ECGDataset
+from src.device import get_device
 from src.model.resnet34_1d import build_model
 
 
@@ -146,8 +147,7 @@ def _run_metric(metric, model, x, y, a, device, explain_func=None) -> float:
 # Avaliação por classe
 # --------------------------------------------------------------------------- #
 def evaluate(args: argparse.Namespace) -> None:
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"[info] dispositivo: {device}")
+    device = get_device()
 
     data_dir = Path(args.data_dir)
     train_ds = ECGDataset(data_dir / "train.npz")
