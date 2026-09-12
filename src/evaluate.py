@@ -125,9 +125,15 @@ def build_metrics(explain_func):
             patch_size=200, disable_warnings=True),
         "SensitivityN": quantus.SensitivityN(
             features_in_step=500, n_max_percentage=0.8, disable_warnings=True),
+        # Patches "só no tempo": com o sinal como imagem (N, 1, 12, L), a altura é
+        # 12 (derivações) e a largura é o tempo. patch_size=12 divide exatamente a
+        # altura (1 bloco = todas as 12 derivações) e a largura (15000/12=1250),
+        # sem padding. Cada patch cobre as 12 derivações de uma vez × 12 instantes
+        # (~24 ms), deslizando apenas no tempo — não agrupa derivações como
+        # vizinhas espaciais.
         "Infidelity": quantus.Infidelity(
             perturb_baseline="uniform", n_perturb_samples=5,
-            disable_warnings=True),
+            perturb_patch_sizes=[12], disable_warnings=True),
         "Sufficiency": quantus.Sufficiency(disable_warnings=True),
     }
     robustness = {
@@ -177,7 +183,10 @@ def run_all_metrics(flex_model, x_batch, y_batch, a_batch,
     A Infidelity é a única que exige o sinal em formato de imagem 2D
     (N, 1, 12, L); as demais usam o formato 1D nativo (N, 12, L).
     """
-    x4 = x_batch[:, None, :, :]   # (N, 1, 12, L) para a Infidelity
+    # Infidelity em formato de imagem (N, 1, 12, L): altura = 12 derivações,
+    # largura = tempo. Combinado com patch_size >= 12 (ver build_metrics), cada
+    # patch cobre as 12 derivações de uma vez e desliza só no tempo.
+    x4 = x_batch[:, None, :, :]   # (N, 1, 12, L)
     a4 = a_batch[:, None, :, :]
     scores: dict[str, float] = {}
     for name, metric in faithfulness.items():
