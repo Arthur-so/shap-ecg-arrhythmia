@@ -45,6 +45,26 @@ from src.model.resnet34_1d import build_model
 # --------------------------------------------------------------------------- #
 # Modelo e função de explicação (para métricas de robustez)
 # --------------------------------------------------------------------------- #
+class _FlexModel(torch.nn.Module):
+    """Envolve o modelo 1D aceitando também entradas pseudo-2D.
+
+    Algumas métricas do Quantus foram escritas para imagens e inserem uma
+    dimensão unitária no sinal: a Infidelity espera (N, 1, 12, L) e a
+    Continuity expande internamente para (N, 12, 1, L). Este wrapper achata
+    qualquer entrada 4D de volta para (N, derivações, tempo) antes de chamar
+    o modelo ResNet34 1D real, sem afetar as entradas 3D normais.
+    """
+
+    def __init__(self, model: torch.nn.Module) -> None:
+        super().__init__()
+        self.model = model
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 4:
+            x = x.reshape(x.shape[0], -1, x.shape[-1])
+        return self.model(x)
+
+
 def load_model(checkpoint: Path, device: torch.device) -> torch.nn.Module:
     model = build_model().to(device)
     ckpt = torch.load(checkpoint, map_location=device)
@@ -68,8 +88,13 @@ def make_explain_func(torch_model, baselines: torch.Tensor, device,
         x = torch.as_tensor(inputs, dtype=torch.float32, device=device)
         x.requires_grad_(True)
         tgt = torch.as_tensor(targets, dtype=torch.long, device=device)
+        # adapta os baselines ao shape da entrada (métricas como Continuity
+        # inserem uma dimensão unitária); o nº de elementos é o mesmo.
+        b = baselines
+        if tuple(b.shape[1:]) != tuple(x.shape[1:]):
+            b = b.reshape(b.shape[0], *x.shape[1:])
         attr = gradient_shap.attribute(
-            x, baselines=baselines, target=tgt,
+            x, baselines=b, target=tgt,
             n_samples=n_samples, stdevs=stdevs,
         )
         return attr.detach().cpu().numpy().astype(np.float32)
@@ -92,12 +117,14 @@ def build_metrics(explain_func):
         "FaithfulnessCorrelation": quantus.FaithfulnessCorrelation(
             nr_runs=10, subset_size=224, return_aggregate=False,
             disable_warnings=True),
+        # features_in_step precisa dividir o nº de pontos temporais (15000);
+        # 500 -> 30 passos. 224 (usado antes) não divide 15000.
         "FaithfulnessEstimate": quantus.FaithfulnessEstimate(
-            features_in_step=224, disable_warnings=True),
+            features_in_step=500, disable_warnings=True),
         "Selectivity": quantus.Selectivity(
-            patch_size=224, disable_warnings=True),
+            patch_size=200, disable_warnings=True),
         "SensitivityN": quantus.SensitivityN(
-            features_in_step=224, n_max_percentage=0.8, disable_warnings=True),
+            features_in_step=500, n_max_percentage=0.8, disable_warnings=True),
         "Infidelity": quantus.Infidelity(
             perturb_baseline="uniform", n_perturb_samples=5,
             disable_warnings=True),
@@ -143,6 +170,29 @@ def _run_metric(metric, model, x, y, a, device, explain_func=None) -> float:
         return float("nan")
 
 
+def run_all_metrics(flex_model, x_batch, y_batch, a_batch,
+                    faithfulness, robustness, explain_func, device) -> dict[str, float]:
+    """Roda todas as métricas sobre um lote e devolve {nome: score médio}.
+
+    A Infidelity é a única que exige o sinal em formato de imagem 2D
+    (N, 1, 12, L); as demais usam o formato 1D nativo (N, 12, L).
+    """
+    x4 = x_batch[:, None, :, :]   # (N, 1, 12, L) para a Infidelity
+    a4 = a_batch[:, None, :, :]
+    scores: dict[str, float] = {}
+    for name, metric in faithfulness.items():
+        if name == "Infidelity":
+            scores[name] = _run_metric(metric, flex_model, x4, y_batch, a4, device)
+        else:
+            scores[name] = _run_metric(metric, flex_model, x_batch, y_batch, a_batch, device)
+        print(f"    {name:>26}: {scores[name]:.4f}")
+    for name, metric in robustness.items():
+        scores[name] = _run_metric(metric, flex_model, x_batch, y_batch, a_batch,
+                                   device, explain_func=explain_func)
+        print(f"    {name:>26}: {scores[name]:.4f}")
+    return scores
+
+
 # --------------------------------------------------------------------------- #
 # Avaliação por classe
 # --------------------------------------------------------------------------- #
@@ -153,6 +203,7 @@ def evaluate(args: argparse.Namespace) -> None:
     train_ds = ECGDataset(data_dir / "train.npz")
     test_ds = ECGDataset(data_dir / "test.npz")
     model = load_model(Path(args.checkpoint), device)
+    flex_model = _FlexModel(model).to(device).eval()
 
     # baselines (mesma lógica de explain.py) para a explain_func da robustez
     rng = np.random.default_rng(args.seed)
@@ -160,7 +211,7 @@ def evaluate(args: argparse.Namespace) -> None:
                       replace=False)
     baselines = torch.from_numpy(
         np.stack([train_ds.X[i] for i in bidx]).astype(np.float32)).to(device)
-    explain_func = make_explain_func(model, baselines, device,
+    explain_func = make_explain_func(flex_model, baselines, device,
                                      n_samples=args.n_samples, stdevs=args.stdevs)
 
     faithfulness, robustness = build_metrics(explain_func)
@@ -187,16 +238,9 @@ def evaluate(args: argparse.Namespace) -> None:
         y_batch = np.full(len(x_batch), c, dtype=np.int64)  # classe-alvo
         print(f"\n[classe {cls}] {len(x_batch)} amostras")
 
-        scores: dict[str, float] = {}
-        for name, metric in faithfulness.items():
-            scores[name] = _run_metric(metric, model, x_batch, y_batch,
-                                       a_batch, device)
-            print(f"    {name:>26}: {scores[name]:.4f}")
-        for name, metric in robustness.items():
-            scores[name] = _run_metric(metric, model, x_batch, y_batch,
-                                       a_batch, device, explain_func=explain_func)
-            print(f"    {name:>26}: {scores[name]:.4f}")
-        per_class_results[cls] = scores
+        per_class_results[cls] = run_all_metrics(
+            flex_model, x_batch, y_batch, a_batch,
+            faithfulness, robustness, explain_func, device)
 
     _save_metrics_csv(per_class_results, all_metric_names,
                       Path(args.results_dir) / "quantus_metrics.csv")
