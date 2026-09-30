@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Explicações vs F1</title>
+<meta name="description" content="Avaliação Quantus das explicações GradientSHAP do classificador de arritmias (CPSC2018) e correlação com o F1 por classe.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#f4f6f5; --surface:#ffffff; --surface-2:#eef2f0;
+    --ink:#17211e; --muted:#586b65; --faint:#87989c; --line:#dce3e0;
+    --accent:#0b6b5b; --accent-soft:#e0efeb; --accent-ink:#084e42;
+    --ok:#2f8f5b; --ok-soft:#e3f2e9;
+    --warn:#a76500; --warn-soft:#f6ecd8;
+    --crit:#bb3324; --crit-soft:#f6e2df;
+    --pend:#6a5acd; --pend-soft:#e9e6f7;
+    --serif:"IBM Plex Serif",Georgia,serif;
+    --sans:"IBM Plex Sans",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0d1413; --surface:#151f1c; --surface-2:#1b2723;
+    --ink:#e7efec; --muted:#9db0aa; --faint:#6d817b; --line:#27332f;
+    --accent:#3fcaa9; --accent-soft:#12332b; --accent-ink:#8fe6d3;
+    --ok:#4cc27f; --ok-soft:#123024;
+    --warn:#e0a44a; --warn-soft:#33280f;
+    --crit:#e97a6c; --crit-soft:#3a1f1b;
+    --pend:#9d92e6; --pend-soft:#241f3d;
+  }}
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#0d1413; --surface:#151f1c; --surface-2:#1b2723;
+    --ink:#e7efec; --muted:#9db0aa; --faint:#6d817b; --line:#27332f;
+    --accent:#3fcaa9; --accent-soft:#12332b; --accent-ink:#8fe6d3;
+    --ok:#4cc27f; --ok-soft:#123024;
+    --warn:#e0a44a; --warn-soft:#33280f;
+    --crit:#e97a6c; --crit-soft:#3a1f1b;
+    --pend:#9d92e6; --pend-soft:#241f3d;
+  }
+  *{box-sizing:border-box}
+  html{color-scheme:light dark}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased}
+  img{max-width:100%}
+  .wrap{max-width:940px;margin:0 auto;padding-block:40px;padding-inline:20px}
+  h1,h2,h3{font-family:var(--serif);text-wrap:balance;line-height:1.15;margin:0}
+  h1{font-size:clamp(1.9rem,5vw,2.7rem);font-weight:700;letter-spacing:-.01em}
+  h2{font-size:1.4rem;font-weight:600;margin-bottom:.2em}
+  h3{font-size:1.02rem;font-weight:600}
+  p{margin:.5em 0}
+  a{color:var(--accent-ink)}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);font-weight:500;margin-bottom:.9em}
+  .lede{font-size:1.08rem;color:var(--muted);max-width:62ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .tag{font-family:var(--mono);font-size:.74rem;background:var(--surface);border:1px solid var(--line);
+    color:var(--muted);padding:5px 10px;border-radius:999px}
+  .tag b{color:var(--ink);font-weight:500}
+  section{margin-top:46px}
+  .sub{color:var(--muted);max-width:66ch}
+  /* pipeline */
+  .flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin-top:18px}
+  .step{flex:1 1 130px;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px}
+  .step .n{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.1em}
+  .step .t{font-weight:600;margin-top:2px}
+  .step .d{font-size:.82rem;color:var(--muted);margin-top:3px}
+  .step.done{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  /* tables */
+  .tablewrap{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:.9rem}
+  th,td{padding:9px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.num,th.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .cls{font-family:var(--mono);font-weight:500}
+  col.hl,.hl{background:var(--accent-soft)}
+  td.f1{font-family:var(--mono);font-weight:500;color:var(--accent-ink)}
+  caption,.cap{caption-side:bottom;color:var(--muted);font-size:.8rem;text-align:left;padding:10px 12px}
+  /* correlation cards */
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:18px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .chartbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 14px 6px}
+  .chartbox h3{margin-bottom:2px}
+  .chartbox .k{font-size:.8rem;color:var(--muted);margin-bottom:6px}
+  svg.scatter{width:100%;height:auto;display:block}
+  .scatter .grid{stroke:var(--line)}
+  .scatter .axis{stroke:var(--muted);stroke-width:1}
+  .scatter .tick{fill:var(--muted);font-family:var(--mono);font-size:10px}
+  .scatter .axlab{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.04em}
+  .scatter .trend{stroke:var(--accent);stroke-width:1.6;stroke-dasharray:5 4;opacity:.8}
+  .scatter .pt{fill:var(--accent)}
+  .scatter .pt.low{fill:var(--crit)}
+  .scatter .plab{fill:var(--ink);font-family:var(--mono);font-size:9.5px}
+  /* correlation ranking */
+  .corr{list-style:none;padding:0;margin:16px 0 0}
+  .corr li{display:grid;grid-template-columns:1fr auto auto;gap:10px 14px;align-items:center;
+    padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px}
+  .corr .name{font-weight:600}
+  .corr .rr{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.9rem}
+  .corr .rr small{color:var(--muted);font-weight:400}
+  .badge{font-family:var(--mono);font-size:.68rem;padding:3px 8px;border-radius:999px;justify-self:start}
+  .b-strong{background:var(--accent-soft);color:var(--accent-ink)}
+  .b-weak{background:var(--surface-2);color:var(--muted)}
+  .b-none{background:var(--surface-2);color:var(--muted)}
+  .b-neg{background:var(--crit-soft);color:var(--crit)}
+  /* status list */
+  .status{display:grid;gap:10px;margin-top:16px}
+  .row{display:grid;grid-template-columns:auto 1fr;gap:14px;background:var(--surface);
+    border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .chip{align-self:start;font-family:var(--mono);font-size:.68rem;font-weight:500;padding:4px 9px;
+    border-radius:999px;white-space:nowrap}
+  .c-ok{background:var(--ok-soft);color:var(--ok)}
+  .c-crit{background:var(--crit-soft);color:var(--crit)}
+  .c-pend{background:var(--pend-soft);color:var(--pend)}
+  .row .h{font-weight:600}
+  .row .m{font-size:.87rem;color:var(--muted);margin-top:2px}
+  .row .fix{font-size:.83rem;margin-top:6px}
+  .row .fix b{color:var(--accent-ink);font-weight:500}
+  /* callouts */
+  .note{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;
+    padding:12px 16px;margin-top:16px;font-size:.92rem}
+  .note.warn{border-color:var(--warn);background:var(--warn-soft)}
+  ul.clean{margin:.4em 0;padding-left:1.15em}
+  ul.clean li{margin:.35em 0}
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+  .kv .box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .kv .lab{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .kv .val{font-family:var(--mono);font-size:1.5rem;font-weight:500;margin-top:2px}
+  .kv .val small{font-size:.8rem;color:var(--muted)}
+  footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--line);color:var(--faint);
+    font-size:.8rem;font-family:var(--mono)}
+  .defs{font-size:.84rem;color:var(--muted);margin-top:14px;display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px 18px}
+  .defs b{color:var(--ink);font-weight:500;font-family:var(--mono);font-size:.8rem}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">TCC · Explicabilidade em ECG · 30 set 2026</div>
+    <h1>Explicações confiáveis acompanham o F1?</h1>
+    <p class="lede">Avaliação quantitativa (Quantus) das explicações GradientSHAP do classificador
+      de arritmias ResNet34‑1D, e sua correlação com o desempenho por classe no CPSC2018.
+      Resultados parciais — faithfulness concluída, robustez pendente.</p>
+    <div class="meta">
+      <span class="tag"><b>Modelo:</b> ResNet34‑1D</span>
+      <span class="tag"><b>Dados:</b> CPSC2018 · 6877 registros · 12 derivações</span>
+      <span class="tag"><b>F1 teste (macro):</b> 0,590</span>
+      <span class="tag"><b>Amostras/classe:</b> todas</span>
+      <span class="tag"><b>Run:</b> 354228934</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>O pipeline</h2>
+    <p class="sub">Cada etapa alimenta a seguinte. A pergunta do trabalho está na última caixa:
+      a qualidade da explicação de uma classe se relaciona com o quão bem o modelo prevê aquela classe?</p>
+    <div class="flow">
+      <div class="step done"><div class="n">01</div><div class="t">Pré‑proc.</div><div class="d">z‑score, 15000 pts, split 70/20/10</div></div>
+      <div class="step done"><div class="n">02</div><div class="t">ResNet34‑1D</div><div class="d">multirrótulo, 9 classes</div></div>
+      <div class="step done"><div class="n">03</div><div class="t">GradientSHAP</div><div class="d">atribuições (12×15000) por classe</div></div>
+      <div class="step done"><div class="n">04</div><div class="t">Quantus</div><div class="d">faithfulness ✓ · robustez ⏳</div></div>
+      <div class="step"><div class="n">05</div><div class="t">Correlação × F1</div><div class="d">análise por classe</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O modelo</h2>
+    <p class="sub">Treino com early stopping (melhor época 8). O F1 por classe é o eixo de comparação
+      da análise de explicabilidade.</p>
+    <div class="kv">
+      <div class="box"><div class="lab">F1 macro · validação</div><div class="val">0,598</div></div>
+      <div class="box"><div class="lab">F1 macro · teste</div><div class="val">0,590</div></div>
+      <div class="box"><div class="lab">Classes analisadas</div><div class="val">8 <small>/ 9</small></div></div>
+    </div>
+    <div class="note warn">
+      <b>CVP tem zero amostras no dataset — não é erro de classificação.</b> Nenhum registro
+      recebeu o rótulo CVP (train, val e test = 0). No pré‑processamento, <b>607 dos 6877
+      registros ficaram sem nenhum rótulo mapeado</b>, número próximo do total de PVC (= CVP)
+      esperado no CPSC2018 (~700). A causa provável é o <b>código SNOMED do PVC fora do
+      mapeamento</b> do <span style="font-family:var(--mono)">config.py</span>. Ou seja: a análise
+      cobre 8 das 9 classes por uma <b>falha de rotulagem</b>, não por escolha — dá para recuperar.
+    </div>
+    <div class="tablewrap" style="margin-top:16px">
+      <table>
+        <thead><tr><th>Positivos no teste</th>
+          <th class="num">SNR</th><th class="num">AF</th><th class="num">IAVB</th><th class="num">BRE</th>
+          <th class="num">BRD</th><th class="num">CAP</th><th class="num">CVP</th><th class="num">STD</th><th class="num">STE</th></tr></thead>
+        <tbody><tr><td class="cls">nº amostras</td>
+          <td class="num">92</td><td class="num">123</td><td class="num">74</td><td class="num">24</td>
+          <td class="num">185</td><td class="num">63</td><td class="num" style="color:var(--crit)">0</td>
+          <td class="num">86</td><td class="num">22</td></tr></tbody>
+      </table>
+      <div class="cap">Classes pequenas (BRE 24, STE 22) explicam parte da instabilidade das métricas; CVP zerada pela falha de rótulo.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Resultados Quantus por classe</h2>
+    <p class="sub">Métricas de <em>faithfulness</em> (o mapa de importância reflete o que o modelo
+      realmente usa?) mais a <em>Consistency</em> de robustez. Todas calculadas sobre o conjunto de
+      teste completo. As duas colunas destacadas são as que mais se relacionam com o F1.</p>
+    <div class="tablewrap">
+      <table>
+        <colgroup><col><col><col><col><col><col class="hl"><col class="hl"></colgroup>
+        <thead>
+          <tr>
+            <th>Classe</th><th class="num">F1</th>
+            <th class="num">FaithCorr</th><th class="num">FaithEst</th><th class="num">SensitivityN</th>
+            <th class="num">Sufficiency</th><th class="num">Consistency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="cls">SNR</td><td class="f1">0,676</td><td class="num">0,114</td><td class="num">0,395</td><td class="num">−0,108</td><td class="num hl">0,428</td><td class="num hl">0,681</td></tr>
+          <tr><td class="cls">AF</td><td class="f1">0,874</td><td class="num">0,023</td><td class="num">0,133</td><td class="num">−0,052</td><td class="num hl">0,670</td><td class="num hl">0,735</td></tr>
+          <tr><td class="cls">IAVB</td><td class="f1">0,853</td><td class="num">0,116</td><td class="num">0,344</td><td class="num">0,184</td><td class="num hl">0,730</td><td class="num hl">0,821</td></tr>
+          <tr><td class="cls">BRE</td><td class="f1">0,776</td><td class="num">−0,097</td><td class="num">0,416</td><td class="num">−0,484</td><td class="num hl">0,737</td><td class="num hl">0,795</td></tr>
+          <tr><td class="cls">BRD</td><td class="f1">0,901</td><td class="num">0,132</td><td class="num">0,479</td><td class="num">−0,108</td><td class="num hl">0,792</td><td class="num hl">0,934</td></tr>
+          <tr><td class="cls">CAP</td><td class="f1">0,286</td><td class="num">−0,068</td><td class="num">0,334</td><td class="num">−0,032</td><td class="num hl">0,118</td><td class="num hl">0,351</td></tr>
+          <tr><td class="cls">STD</td><td class="f1">0,613</td><td class="num">0,042</td><td class="num">0,337</td><td class="num">0,195</td><td class="num hl">0,845</td><td class="num hl">0,947</td></tr>
+          <tr><td class="cls">STE</td><td class="f1">0,330</td><td class="num">0,030</td><td class="num">0,513</td><td class="num">0,603</td><td class="num hl">0,092</td><td class="num hl">0,360</td></tr>
+        </tbody>
+      </table>
+      <div class="cap">Valores em <span style="font-family:var(--mono)">quality_vs_f1.csv</span> (run 354228934, todas as amostras por classe).</div>
+    </div>
+    <div class="defs">
+      <div><b>FaithCorr</b> correlação entre importância atribuída e queda de predição ao remover atributos.</div>
+      <div><b>FaithEst</b> estimativa de fidelidade removendo blocos de atributos em ordem.</div>
+      <div><b>SensitivityN</b> concordância entre soma das atribuições e efeito real de N atributos.</div>
+      <div><b>Sufficiency</b> entradas com atribuições parecidas produzem predições parecidas.</div>
+      <div><b>Consistency</b> estabilidade da explicação entre amostras da mesma classe.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Correlação com o F1 <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">n = 8 classes</span></h2>
+    <p class="sub">Cada classe é um ponto (F1 × métrica). Pearson mede relação linear; Spearman mede
+      relação por ordem (robusto a pontos extremos). Para n = 8, Pearson ≳ 0,71 e Spearman ≳ 0,74
+      seriam “significativos” a p&lt;0,05.</p>
+
+    <ul class="corr">
+      <li><span class="name">Sufficiency</span><span class="rr">Pearson <b>0,86</b> <small>· Spearman 0,52</small></span><span class="badge b-strong">positiva</span></li>
+      <li><span class="name">Consistency</span><span class="rr">Pearson <b>0,84</b> <small>· Spearman 0,57</small></span><span class="badge b-strong">positiva</span></li>
+      <li><span class="name">FaithfulnessCorrelation</span><span class="rr">Pearson 0,44 <small>· Spearman 0,45</small></span><span class="badge b-weak">fraca</span></li>
+      <li><span class="name">FaithfulnessEstimate</span><span class="rr">Pearson −0,28 <small>· Spearman 0,05</small></span><span class="badge b-none">sem relação</span></li>
+      <li><span class="name">SensitivityN</span><span class="rr">Pearson −0,48 <small>· Spearman −0,45</small></span><span class="badge b-neg">negativa</span></li>
+    </ul>
+
+    <div class="grid2">
+      <div class="chartbox">
+        <h3>F1 × Sufficiency</h3>
+        <div class="k">Pearson 0,86 · Spearman 0,52</div>
+        <svg class="scatter" viewBox="0 0 380 300" role="img" aria-label="Dispersão F1 versus Sufficiency" data-chart="suf"></svg>
+      </div>
+      <div class="chartbox">
+        <h3>F1 × Consistency</h3>
+        <div class="k">Pearson 0,84 · Spearman 0,57</div>
+        <svg class="scatter" viewBox="0 0 380 300" role="img" aria-label="Dispersão F1 versus Consistency" data-chart="con"></svg>
+      </div>
+    </div>
+    <p class="cap" style="padding-inline:2px">Pontos em vermelho: as duas classes de menor F1 (CAP, STE). A linha tracejada é a tendência linear.</p>
+  </section>
+
+  <section>
+    <h2>O que eu entendo dos resultados</h2>
+    <div class="note">
+      <b>Sufficiency e Consistency são o achado.</b> São as duas métricas que mais acompanham o F1
+      (Pearson ≈ 0,85, acima do limiar de significância para n = 8). Ou seja: há sinal de que
+      <b>classes bem previstas recebem explicações de melhor qualidade</b>.
+    </div>
+    <ul class="clean">
+      <li><b>Mas é sugestivo, não robusto.</b> O Spearman dessas duas cai para ≈ 0,5 (abaixo do limiar).
+        Essa diferença indica que a correlação linear alta é <b>puxada por poucos pontos</b>: as duas
+        classes de pior F1 (CAP e STE) também têm Sufficiency/Consistency muito baixas e ancoram o canto
+        inferior‑esquerdo. Tirando uma ou duas, a força despenca.</li>
+      <li><b>As outras três não sustentam a hipótese.</b> FaithfulnessCorrelation é fraca; FaithfulnessEstimate
+        não tem relação (Pearson e Spearman até discordam de sinal → ruído); SensitivityN dá negativa,
+        o que seria contraintuitivo — provavelmente ruído (teve valores instáveis e negativos).</li>
+      <li><b>Limite estrutural.</b> Como há no máximo 9 classes, a análise nunca passa de ~9 pontos.
+        É uma restrição do método, não do modelo — vale explicitar no texto.</li>
+      <li><b>Usar todas as amostras importou.</b> Comparado ao teste com 20 amostras/classe, vários
+        valores mudaram bastante (ex.: Sufficiency de AF 0,40 → 0,67; de BRD 0,65 → 0,79), enquanto os
+        extremos ficaram estáveis. Com poucas amostras algumas classes estavam ruidosas.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>O que falta corrigir</h2>
+    <p class="sub">Sete métricas ainda não entraram na tabela. O motivo é sempre memória — mas de
+      dois tipos diferentes, com correções distintas.</p>
+    <div class="status">
+      <div class="row">
+        <span class="chip c-crit">RAM · SIGKILL</span>
+        <div>
+          <div class="h">Selectivity</div>
+          <div class="m">Estoura a RAM e o processo é morto (não é exceção capturável). Roda com 1–5 amostras,
+            mas a partir de ~20 já mata. Escala com nº de amostras × eixo de tempo (15000).</div>
+          <div class="fix"><b>Correção:</b> aumentar o <span style="font-family:var(--mono)">patch_size</span>
+            (menos patches → menos memória) e/ou rodar com poucas amostras só para ela.</div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="chip c-crit">GPU · CUDA OOM</span>
+        <div>
+          <div class="h">LocalLipschitz · Max/AvgSensitivity · Continuity · RIS · ROS</div>
+          <div class="m">As 6 métricas de robustez re‑executam o GradientSHAP sob perturbação; uma única
+            chamada (lote 20 × n_samples 20 × 12×15000, com gradientes) pede ~14 GB e estoura a GPU T4.
+            São exceções capturadas → viraram NaN, por isso o run <b>concluiu</b>.</div>
+          <div class="fix"><b>Correção (já planejada):</b> processar em sub‑lotes, liberar a GPU entre
+            métricas e baixar o <span style="font-family:var(--mono)">n_samples</span> do SHAP na robustez.</div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="chip c-pend">adiada</span>
+        <div>
+          <div class="h">Infidelity</div>
+          <div class="m">É a métrica mais cara; foi deixada de fora de propósito para fechar o restante primeiro.</div>
+          <div class="fix"><b>Correção:</b> reativar depois, isoladamente, com teto de amostras.</div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="chip c-ok">concluída</span>
+        <div>
+          <div class="h">FaithCorr · FaithEst · SensitivityN · Sufficiency · Consistency</div>
+          <div class="m">Calculadas sobre todas as amostras, sem erro.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Infraestrutura já resolvida</h2>
+    <ul class="clean">
+      <li><b>Reuso do treino.</b> O modelo treinado e as explicações viraram um dataset; agora dá para
+        re‑rodar só o Quantus, sem retreinar nem recalcular o SHAP (economiza a parte cara de GPU).</li>
+      <li><b>Salvamento incremental e atômico.</b> Os CSVs são gravados a cada métrica; se uma métrica
+        derrubar o processo, os resultados anteriores ficam salvos — foi o que permitiu obter toda a
+        faithfulness mesmo com a robustez falhando.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Próximos passos</h2>
+    <ul class="clean">
+      <li>Corrigir o OOM de GPU para obter as 6 métricas de robustez (sub‑lotes + liberar memória).</li>
+      <li>Ajustar o Selectivity (patch maior) e reativar a Infidelity.</li>
+      <li><b>Recuperar a classe CVP:</b> identificar o código SNOMED do PVC não mapeado, adicioná‑lo
+        ao <span style="font-family:var(--mono)">config.py</span> e reprocessar — traz de volta a 9ª classe (e o 9º ponto).</li>
+      <li>Recalcular as correlações com o quadro completo de métricas × F1.</li>
+      <li>Discutir a limitação de n ≤ 9 pontos e como reportá‑la no TCC.</li>
+    </ul>
+  </section>
+
+  <footer>
+    CPSC2018 · ResNet34‑1D · GradientSHAP (Captum) · Quantus · run 354228934 · gerado em 30/09/2026
+  </footer>
+
+</div>
+
+<script>
+  const DATA = [
+    {k:"SNR", f1:0.6756, suf:0.4278, con:0.6808, low:false},
+    {k:"AF",  f1:0.8736, suf:0.6701, con:0.7352, low:false},
+    {k:"IAVB",f1:0.8533, suf:0.7298, con:0.8214, low:false},
+    {k:"BRE", f1:0.7755, suf:0.7368, con:0.7953, low:false},
+    {k:"BRD", f1:0.9008, suf:0.7916, con:0.9339, low:false},
+    {k:"CAP", f1:0.2857, suf:0.1183, con:0.3509, low:true},
+    {k:"STD", f1:0.6129, suf:0.8449, con:0.9474, low:false},
+    {k:"STE", f1:0.3301, suf:0.0922, con:0.3603, low:true},
+  ];
+  const SVGNS="http://www.w3.org/2000/svg";
+  function el(name,attrs,text){
+    const e=document.createElementNS(SVGNS,name);
+    for(const k in attrs) e.setAttribute(k,attrs[k]);
+    if(text!=null) e.textContent=text;
+    return e;
+  }
+  function draw(svg,key,yMin,yMax){
+    const W=380,H=300,mL=42,mR=14,mT=14,mB=42;
+    const xMin=0.25,xMax=0.95;
+    const px=v=>mL+(v-xMin)/(xMax-xMin)*(W-mL-mR);
+    const py=v=>H-mB-(v-yMin)/(yMax-yMin)*(H-mT-mB);
+    [0.3,0.5,0.7,0.9].forEach(t=>{
+      svg.appendChild(el("line",{x1:px(t),y1:mT,x2:px(t),y2:H-mB,class:"grid"}));
+      svg.appendChild(el("text",{x:px(t),y:H-mB+16,"text-anchor":"middle",class:"tick"},t.toFixed(1)));
+    });
+    for(let i=0;i<=3;i++){
+      const v=yMin+(yMax-yMin)*i/3;
+      svg.appendChild(el("line",{x1:mL,y1:py(v),x2:W-mR,y2:py(v),class:"grid"}));
+      svg.appendChild(el("text",{x:mL-6,y:py(v)+3,"text-anchor":"end",class:"tick"},v.toFixed(1)));
+    }
+    svg.appendChild(el("line",{x1:mL,y1:H-mB,x2:W-mR,y2:H-mB,class:"axis"}));
+    svg.appendChild(el("line",{x1:mL,y1:mT,x2:mL,y2:H-mB,class:"axis"}));
+    svg.appendChild(el("text",{x:(mL+W-mR)/2,y:H-6,"text-anchor":"middle",class:"axlab"},"F1 por classe"));
+    const xs=DATA.map(d=>d.f1), ys=DATA.map(d=>d[key]);
+    const n=xs.length, mx=xs.reduce((a,b)=>a+b)/n, my=ys.reduce((a,b)=>a+b)/n;
+    let sxy=0,sxx=0;
+    for(let i=0;i<n;i++){sxy+=(xs[i]-mx)*(ys[i]-my);sxx+=(xs[i]-mx)**2;}
+    const m=sxy/sxx, b=my-m*mx;
+    const clamp=v=>Math.max(yMin,Math.min(yMax,v));
+    svg.appendChild(el("line",{x1:px(xMin),y1:py(clamp(m*xMin+b)),x2:px(xMax),y2:py(clamp(m*xMax+b)),class:"trend"}));
+    DATA.forEach(d=>{
+      const x=px(d.f1), y=py(d[key]);
+      svg.appendChild(el("circle",{cx:x,cy:y,r:4.5,class:"pt"+(d.low?" low":"")}));
+      let lx=x+7, anchor="start";
+      if(x>W-mR-34){lx=x-7;anchor="end";}
+      svg.appendChild(el("text",{x:lx,y:y-6,"text-anchor":anchor,class:"plab"},d.k));
+    });
+  }
+  document.querySelectorAll("svg.scatter").forEach(svg=>{
+    if(svg.dataset.chart==="suf") draw(svg,"suf",0,0.9);
+    else draw(svg,"con",0.3,1.0);
+  });
+</script>
+</body>
+</html>
