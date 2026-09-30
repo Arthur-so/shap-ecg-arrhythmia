@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -177,28 +178,39 @@ def _run_metric(metric, model, x, y, a, device, explain_func=None) -> float:
 
 
 def run_all_metrics(flex_model, x_batch, y_batch, a_batch,
-                    faithfulness, robustness, explain_func, device) -> dict[str, float]:
+                    faithfulness, robustness, explain_func, device,
+                    scores: dict[str, float] | None = None,
+                    on_update=None) -> dict[str, float]:
     """Roda todas as métricas sobre um lote e devolve {nome: score médio}.
 
     A Infidelity é a única que exige o sinal em formato de imagem 2D
     (N, 1, 12, L); as demais usam o formato 1D nativo (N, 12, L).
+
+    ``scores`` pode ser um dict pré-existente que será preenchido no local
+    (permitindo que o chamador o observe antes do término); ``on_update`` é
+    chamado após cada métrica calculada, para persistir resultados parciais.
     """
+    if scores is None:
+        scores = {}
     # Infidelity em formato de imagem (N, 1, 12, L): altura = 12 derivações,
     # largura = tempo. Combinado com patch_size >= 12 (ver build_metrics), cada
     # patch cobre as 12 derivações de uma vez e desliza só no tempo.
     x4 = x_batch[:, None, :, :]   # (N, 1, 12, L)
     a4 = a_batch[:, None, :, :]
-    scores: dict[str, float] = {}
     for name, metric in faithfulness.items():
         if name == "Infidelity":
             scores[name] = _run_metric(metric, flex_model, x4, y_batch, a4, device)
         else:
             scores[name] = _run_metric(metric, flex_model, x_batch, y_batch, a_batch, device)
         print(f"    {name:>26}: {scores[name]:.4f}")
+        if on_update is not None:
+            on_update()
     for name, metric in robustness.items():
         scores[name] = _run_metric(metric, flex_model, x_batch, y_batch, a_batch,
                                    device, explain_func=explain_func)
         print(f"    {name:>26}: {scores[name]:.4f}")
+        if on_update is not None:
+            on_update()
     return scores
 
 
@@ -234,7 +246,20 @@ def evaluate(args: argparse.Namespace) -> None:
     all_metric_names = list(faithfulness) + list(robustness)
 
     attr_dir = Path(args.attr_dir)
+    results_dir = Path(args.results_dir)
     per_class_results: dict[str, dict[str, float]] = {}
+
+    def _save(verbose: bool = False) -> None:
+        """Grava os CSVs a partir do estado atual (parcial ou final).
+
+        Chamado após cada métrica, de modo que um encerramento abrupto do
+        processo (ex.: SIGKILL por falta de memória numa métrica pesada) não
+        descarte o que já foi calculado nas classes/métricas anteriores.
+        """
+        _save_metrics_csv(per_class_results, all_metric_names,
+                          results_dir / "quantus_metrics.csv", verbose=verbose)
+        _merge_with_f1(per_class_results, all_metric_names, results_dir,
+                       verbose=verbose)
 
     for c, cls in enumerate(CLASSES):
         attr_path = attr_dir / f"{cls}.npz"
@@ -254,30 +279,46 @@ def evaluate(args: argparse.Namespace) -> None:
         y_batch = np.full(len(x_batch), c, dtype=np.int64)  # classe-alvo
         print(f"\n[classe {cls}] {len(x_batch)} amostras")
 
-        per_class_results[cls] = run_all_metrics(
+        # dict preenchido incrementalmente e persistido a cada métrica
+        scores: dict[str, float] = {}
+        per_class_results[cls] = scores
+        run_all_metrics(
             flex_model, x_batch, y_batch, a_batch,
-            faithfulness, robustness, explain_func, device)
+            faithfulness, robustness, explain_func, device,
+            scores=scores, on_update=_save)
 
-    _save_metrics_csv(per_class_results, all_metric_names,
-                      Path(args.results_dir) / "quantus_metrics.csv")
-    _merge_with_f1(per_class_results, all_metric_names, Path(args.results_dir))
+    _save(verbose=True)
+    print("[ok] avaliação concluída")
 
 
-def _save_metrics_csv(results, metric_names, path: Path) -> None:
+def _atomic_write_csv(path: Path, header, rows) -> None:
+    """Escreve o CSV de forma atômica (arquivo tmp + ``os.replace``).
+
+    Assim nunca fica um CSV truncado caso o processo seja morto no meio de
+    uma gravação — o destino ou tem a versão anterior íntegra ou a nova.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", newline="") as f:
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with open(tmp, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["classe"] + metric_names)
-        for cls in CLASSES:
-            if cls not in results:
-                continue
-            row = [cls] + [f"{results[cls].get(m, float('nan')):.6f}"
-                           for m in metric_names]
-            writer.writerow(row)
-    print(f"\n[salvo] métricas Quantus -> {path}")
+        writer.writerow(header)
+        writer.writerows(rows)
+    os.replace(tmp, path)
 
 
-def _merge_with_f1(results, metric_names, results_dir: Path) -> None:
+def _save_metrics_csv(results, metric_names, path: Path,
+                      verbose: bool = True) -> None:
+    header = ["classe"] + metric_names
+    rows = [[cls] + [f"{results[cls].get(m, float('nan')):.6f}"
+                     for m in metric_names]
+            for cls in CLASSES if cls in results]
+    _atomic_write_csv(path, header, rows)
+    if verbose:
+        print(f"\n[salvo] métricas Quantus -> {path}")
+
+
+def _merge_with_f1(results, metric_names, results_dir: Path,
+                   verbose: bool = True) -> None:
     """Combina métricas de qualidade com o F1 por classe (seção 4.5)."""
     f1_path = results_dir / "f1_scores.json"
     f1_test: dict[str, float] = {}
@@ -285,21 +326,17 @@ def _merge_with_f1(results, metric_names, results_dir: Path) -> None:
         with open(f1_path) as f:
             data = json.load(f)
         f1_test = data.get("test_f1", data.get("val_f1", {}))
-    else:
+    elif verbose:
         print(f"[aviso] {f1_path} não encontrado; F1 ficará vazio no merge")
 
     out = results_dir / "quality_vs_f1.csv"
-    with open(out, "w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["classe", "f1"] + metric_names)
-        for cls in CLASSES:
-            if cls not in results:
-                continue
-            f1 = f1_test.get(cls, "")
-            row = [cls, f"{f1:}"] + [f"{results[cls].get(m, float('nan')):.6f}"
-                                     for m in metric_names]
-            writer.writerow(row)
-    print(f"[salvo] qualidade vs F1 -> {out}")
+    header = ["classe", "f1"] + metric_names
+    rows = [[cls, f"{f1_test.get(cls, ''):}"]
+            + [f"{results[cls].get(m, float('nan')):.6f}" for m in metric_names]
+            for cls in CLASSES if cls in results]
+    _atomic_write_csv(out, header, rows)
+    if verbose:
+        print(f"[salvo] qualidade vs F1 -> {out}")
 
 
 def build_argparser() -> argparse.ArgumentParser:
