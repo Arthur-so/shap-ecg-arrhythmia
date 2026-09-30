@@ -224,6 +224,13 @@ def evaluate(args: argparse.Namespace) -> None:
                                      n_samples=args.n_samples, stdevs=args.stdevs)
 
     faithfulness, robustness = build_metrics(explain_func)
+    excluded = {m.strip().lower() for m in args.exclude.split(",") if m.strip()}
+    if excluded:
+        for d in (faithfulness, robustness):
+            for name in list(d):
+                if name.lower() in excluded:
+                    del d[name]
+        print(f"[info] métricas excluídas: {sorted(excluded)}")
     all_metric_names = list(faithfulness) + list(robustness)
 
     attr_dir = Path(args.attr_dir)
@@ -307,6 +314,8 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--n-samples", type=int, default=20)
     p.add_argument("--stdevs", type=float, default=0.09)
     p.add_argument("--seed", type=int, default=SEED)
+    p.add_argument("--exclude", type=str, default="",
+                   help="métricas a pular, separadas por vírgula (ex.: Infidelity)")
     return p
 
 
