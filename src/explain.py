@@ -54,6 +54,11 @@ def sample_baselines(train_ds: ECGDataset, n: int, device: torch.device,
 def generate_explanations(args: argparse.Namespace) -> None:
     from captum.attr import GradientShap
 
+    out_dir = Path(args.out_dir)
+    if getattr(args, "skip_if_exists", False) and out_dir.exists() and any(out_dir.glob("*.npz")):
+        print(f"[skip] atribuições já existem em {out_dir} — pulando GradientSHAP")
+        return
+
     device = get_device()
 
     data_dir = Path(args.data_dir)
@@ -133,6 +138,8 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--threshold", type=float, default=0.5)
     p.add_argument("--log-every", type=int, default=50)
     p.add_argument("--seed", type=int, default=SEED)
+    p.add_argument("--skip-if-exists", action="store_true",
+                   help="pula o SHAP se já houver .npz de atribuições em --out-dir")
     return p
 
 

@@ -72,6 +72,10 @@ def train_one_epoch(model, loader, criterion, optimizer, device) -> float:
 
 
 def train(args: argparse.Namespace) -> None:
+    ckpt_path = Path(args.out_dir) / "resnet34_1d_best.pt"
+    if getattr(args, "skip_if_exists", False) and ckpt_path.exists():
+        print(f"[skip] checkpoint já existe: {ckpt_path} — pulando treino")
+        return
     set_seed(args.seed)
     device = get_device()
 
@@ -189,6 +193,8 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--threshold", type=float, default=0.5)
     p.add_argument("--num-workers", type=int, default=2)
     p.add_argument("--seed", type=int, default=SEED)
+    p.add_argument("--skip-if-exists", action="store_true",
+                   help="pula o treino se o checkpoint já existir em --out-dir")
     return p
 
 

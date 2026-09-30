@@ -246,9 +246,15 @@ def resolve_labels(raw_dir: Path) -> tuple[dict[str, np.ndarray], list[tuple[str
     return labels, records
 
 
-def build_dataset(raw_dir: Path, out_dir: Path, limit: int | None = None) -> None:
+def build_dataset(raw_dir: Path, out_dir: Path, limit: int | None = None,
+                  skip_if_exists: bool = False) -> None:
     """Executa o pipeline completo e salva os splits em ``out_dir``."""
     from tqdm import tqdm
+
+    if skip_if_exists and all((out_dir / f"{n}.npz").exists()
+                              for n in ("train", "val", "test")):
+        print(f"[skip] train/val/test.npz já existem em {out_dir} — pulando pré-processamento")
+        return
 
     labels, records = resolve_labels(raw_dir)
     if limit is not None:
@@ -301,8 +307,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out-dir", type=Path, default=Path("data/processed"))
     parser.add_argument("--limit", type=int, default=None,
                         help="processa apenas os N primeiros registros (debug)")
+    parser.add_argument("--skip-if-exists", action="store_true",
+                        help="pula se train/val/test.npz já existirem em --out-dir")
     args = parser.parse_args(argv)
-    build_dataset(args.raw_dir, args.out_dir, limit=args.limit)
+    build_dataset(args.raw_dir, args.out_dir, limit=args.limit,
+                  skip_if_exists=args.skip_if_exists)
     return 0
 
 
