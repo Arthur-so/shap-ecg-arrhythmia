@@ -9,8 +9,9 @@ Protocolo (Zhang et al., 2021):
      de 9 posições, compatível com BCE).
 
 Saída: ``train.npz``, ``val.npz`` e ``test.npz`` no diretório processado,
-cada um com arrays ``X`` (N, 12, 15000) float32, ``Y`` (N, 9) float32 e
-``record_ids`` (N,) str.
+cada um com arrays ``X`` (N, 12, 15000) float32, ``Y`` (N, 9) float32,
+``record_ids`` (N,) str e ``lengths`` (N,) int (nº de amostras reais antes do
+padding, usado para excluir o preenchimento em análises por região).
 
 Uso:
     python -m src.data.preprocess --raw-dir data/raw --out-dir data/processed
@@ -263,12 +264,14 @@ def build_dataset(raw_dir: Path, out_dir: Path, limit: int | None = None,
 
     X = np.zeros((len(records), NUM_LEADS, SIGNAL_LENGTH), dtype=np.float32)
     Y = np.zeros((len(records), NUM_CLASSES), dtype=np.float32)
+    lengths = np.zeros(len(records), dtype=np.int64)
     record_ids: list[str] = []
 
     for i, (rec, path) in enumerate(tqdm(records, desc="preprocess")):
         sig = read_signal(path)
         X[i] = preprocess_signal(sig)
         Y[i] = labels[rec]
+        lengths[i] = min(sig.shape[1], SIGNAL_LENGTH)
         record_ids.append(rec)
 
     record_ids_arr = np.asarray(record_ids)
@@ -281,6 +284,7 @@ def build_dataset(raw_dir: Path, out_dir: Path, limit: int | None = None,
             X=X[idx],
             Y=Y[idx],
             record_ids=record_ids_arr[idx],
+            lengths=lengths[idx],
         )
         print(f"[salvo] {name}: {len(idx)} registros -> {out_dir / f'{name}.npz'}")
 

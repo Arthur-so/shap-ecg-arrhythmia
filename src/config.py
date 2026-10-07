@@ -55,9 +55,12 @@ SNOMED_TO_INDEX = {
     # CAP — contração atrial prematura (PAC e batimentos supraventriculares prematuros)
     "284470004": 5,
     "63593006": 5,
-    # CVP — contração ventricular prematura (PVC e batimentos ventriculares prematuros)
+    # CVP — contração ventricular prematura (PVC e batimentos ventriculares prematuros).
+    # No CPSC2018 em formato CinC 2020, os registros de PVC vêm rotulados como
+    # "ventricular ectopics" (164884008); sem este código a classe CVP fica vazia.
     "427172004": 6,
     "17338001": 6,
+    "164884008": 6,
     # STD — depressão do segmento ST
     "429622005": 7,
     # STE — elevação do segmento ST

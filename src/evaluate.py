@@ -5,8 +5,12 @@ Calcula, por amostra e depois agregado por classe diagnóstica, as métricas de:
   Faithfulness: Faithfulness Correlation, Faithfulness Estimate, Selectivity,
                 SensitivityN, Infidelity, Sufficiency.
   Robustness:   Local Lipschitz Estimate, Max-Sensitivity, Avg-Sensitivity,
-                Continuity, Consistency, Relative Input Stability (RIS),
+                Continuity, Relative Input Stability (RIS),
                 Relative Output Stability (ROS).
+
+A Consistency (Dasgupta et al., 2022) é calculada em ``consistency.py``: a
+discretização padrão da ``quantus.Consistency`` (sinal dos 5 primeiros valores
+do mapa, após valor absoluto) dava a mesma explicação a todos os mapas.
 
 As métricas de robustez requerem gerar novas explicações sob perturbação;
 para isso é fornecida uma ``explain_func`` que reproduz o GradientSHAP usado
@@ -145,7 +149,6 @@ def build_metrics(explain_func):
         "AvgSensitivity": quantus.AvgSensitivity(
             nr_samples=10, disable_warnings=True),
         "Continuity": quantus.Continuity(disable_warnings=True),
-        "Consistency": quantus.Consistency(disable_warnings=True),
         "RelativeInputStability": quantus.RelativeInputStability(
             nr_samples=10, disable_warnings=True),
         "RelativeOutputStability": quantus.RelativeOutputStability(
