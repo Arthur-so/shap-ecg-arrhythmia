@@ -44,7 +44,7 @@ import torch
 from src.config import CLASSES, SEED
 from src.data.dataset import ECGDataset
 from src.device import get_device
-from src.model.resnet34_1d import build_model
+from src.model.resnet34_1d import load_checkpoint_model
 
 
 # --------------------------------------------------------------------------- #
@@ -71,11 +71,7 @@ class _FlexModel(torch.nn.Module):
 
 
 def load_model(checkpoint: Path, device: torch.device) -> torch.nn.Module:
-    model = build_model().to(device)
-    ckpt = torch.load(checkpoint, map_location=device)
-    model.load_state_dict(ckpt["model_state"])
-    model.eval()
-    return model
+    return load_checkpoint_model(checkpoint, device)[0]
 
 
 def make_explain_func(torch_model, baselines: torch.Tensor, device,

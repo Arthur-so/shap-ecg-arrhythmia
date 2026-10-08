@@ -6,6 +6,8 @@ referência (baseline) amostras extraídas aleatoriamente do conjunto de treino.
 
 Para cada amostra e cada classe positiva corretamente predita (pred=1 e
 rótulo verdadeiro=1) é gerado um mapa de atribuição de dimensão (12, 15000).
+A predição usa os limiares por classe otimizados na validação e salvos no
+checkpoint pelo ``train.py`` (checkpoints antigos: 0,5).
 Os mapas são salvos organizados por classe em ``<out-dir>/<CLASSE>.npz``,
 cada arquivo contendo:
     - ``attributions``: (M, 12, 15000) float32
@@ -17,7 +19,7 @@ Uso:
         --data-dir data/processed \
         --checkpoint checkpoints/resnet34_1d_best.pt \
         --out-dir results/attributions \
-        --n-baselines 32 --threshold 0.5
+        --n-baselines 32
 """
 from __future__ import annotations
 
@@ -31,15 +33,21 @@ import torch
 from src.config import CLASSES, SEED
 from src.data.dataset import ECGDataset
 from src.device import get_device
-from src.model.resnet34_1d import build_model
+from src.model.resnet34_1d import load_checkpoint_model
 
 
 def load_model(checkpoint: Path, device: torch.device) -> torch.nn.Module:
-    model = build_model().to(device)
+    return load_checkpoint_model(checkpoint, device)[0]
+
+
+def resolve_thresholds(checkpoint: Path, device: torch.device,
+                       fallback: float | None) -> np.ndarray:
+    """Limiares por classe: os otimizados na validação (salvos pelo train.py)
+    ou, se ``fallback`` for dado / o checkpoint não os tiver, um limiar único."""
     ckpt = torch.load(checkpoint, map_location=device)
-    model.load_state_dict(ckpt["model_state"])
-    model.eval()
-    return model
+    if fallback is None and "thresholds" in ckpt:
+        return np.asarray(ckpt["thresholds"], dtype=np.float64)
+    return np.full(len(CLASSES), 0.5 if fallback is None else fallback)
 
 
 def sample_baselines(train_ds: ECGDataset, n: int, device: torch.device,
@@ -67,6 +75,9 @@ def generate_explanations(args: argparse.Namespace) -> None:
     print(f"[info] teste: {len(test_ds)} amostras")
 
     model = load_model(Path(args.checkpoint), device)
+    thresholds = resolve_thresholds(Path(args.checkpoint), device, args.threshold)
+    print("[info] limiares por classe: "
+          + " ".join(f"{c}={t:.2f}" for c, t in zip(CLASSES, thresholds)))
     baselines = sample_baselines(train_ds, args.n_baselines, device, args.seed)
     print(f"[info] {baselines.shape[0]} baselines amostrados do treino")
 
@@ -84,7 +95,7 @@ def generate_explanations(args: argparse.Namespace) -> None:
         y_true = np.asarray(test_ds.Y[i])
         with torch.no_grad():
             probs = torch.sigmoid(model(x)).cpu().numpy()[0]
-        pred = (probs >= args.threshold).astype(int)
+        pred = (probs >= thresholds).astype(int)
 
         # classes positivas corretamente preditas nesta amostra
         correct_classes = np.where((pred == 1) & (y_true == 1))[0]
@@ -135,7 +146,9 @@ def build_argparser() -> argparse.ArgumentParser:
                    help="nº de amostras de ruído do GradientSHAP")
     p.add_argument("--stdevs", type=float, default=0.09,
                    help="desvio do ruído gaussiano do GradientSHAP")
-    p.add_argument("--threshold", type=float, default=0.5)
+    p.add_argument("--threshold", type=float, default=None,
+                   help="limiar único para todas as classes; por padrão usa os "
+                        "limiares por classe salvos no checkpoint (ou 0.5)")
     p.add_argument("--log-every", type=int, default=50)
     p.add_argument("--seed", type=int, default=SEED)
     p.add_argument("--skip-if-exists", action="store_true",

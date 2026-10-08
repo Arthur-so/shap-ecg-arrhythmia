@@ -1,19 +1,24 @@
 """Treino da ResNet34 1D no CPSC2018 (seção 4.2 da proposta).
 
-- Otimizador Adam.
+Hiperparâmetros e protocolo de Zhang et al. (2021) / código de referência
+(github.com/onlyzdd/ecg-diagnosis):
+- Otimizador Adam, taxa de aprendizado 1e-4, batch 32, até 40 épocas.
+- Aumento de dados no treino (escala e deslocamento da linha de base).
+- Limiar de decisão por classe, escolhido para maximizar o F1 na validação;
+  os mesmos limiares são aplicados ao teste e salvos no checkpoint.
 - Perda BCEWithLogitsLoss com ``pos_weight`` inversamente proporcional à
-  frequência de cada classe no treino.
-- Early stopping monitorando o F1-macro na validação; o melhor modelo é
-  preservado.
-- Ao final, salva o F1-score por classe (no conjunto de validação e, se
-  disponível, no de teste) em ``results/``.
+  frequência de cada classe no treino (seção 4.2 da proposta).
+- Early stopping monitorando o F1-macro na validação (com os limiares
+  otimizados); o melhor modelo é preservado.
+- Ao final, salva o F1-score por classe (validação e teste), com os limiares
+  otimizados e, para referência, com limiar fixo 0,5, em ``results/``.
 
 Uso:
     python -m src.train \
         --data-dir data/processed \
         --out-dir checkpoints \
         --results-dir results \
-        --epochs 50 --lr 1e-3 --batch-size 32
+        --epochs 40 --lr 1e-4 --batch-size 32
 """
 from __future__ import annotations
 
@@ -31,7 +36,7 @@ from torch.utils.data import DataLoader
 from src.config import CLASSES, SEED
 from src.data.dataset import ECGDataset, compute_pos_weight
 from src.device import get_device
-from src.metrics import f1_report, macro_f1
+from src.metrics import f1_report, macro_f1, optimal_thresholds
 from src.model.resnet34_1d import build_model
 
 
@@ -80,9 +85,10 @@ def train(args: argparse.Namespace) -> None:
     device = get_device()
 
     data_dir = Path(args.data_dir)
-    train_ds = ECGDataset(data_dir / "train.npz")
+    train_ds = ECGDataset(data_dir / "train.npz", augment=not args.no_augment)
     val_ds = ECGDataset(data_dir / "val.npz")
-    print(f"[info] treino: {len(train_ds)} | val: {len(val_ds)}")
+    print(f"[info] treino: {len(train_ds)} | val: {len(val_ds)} | "
+          f"lr={args.lr} | aumento de dados={'não' if args.no_augment else 'sim'}")
 
     train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True,
                               num_workers=args.num_workers, pin_memory=True)
@@ -109,19 +115,22 @@ def train(args: argparse.Namespace) -> None:
         t0 = time.time()
         train_loss = train_one_epoch(model, train_loader, criterion, optimizer, device)
         y_true, probs = evaluate_probs(model, val_loader, device)
-        val_macro = macro_f1(y_true, (probs >= 0.5).astype(int))
+        thresholds = _thresholds(args, y_true, probs)
+        val_macro = macro_f1(y_true, (probs >= thresholds).astype(int))
+        val_macro_05 = macro_f1(y_true, (probs >= 0.5).astype(int))
         dt = time.time() - t0
         print(f"[epoch {epoch:03d}] loss={train_loss:.4f} "
-              f"val_macroF1={val_macro:.4f} ({dt:.1f}s)")
+              f"val_macroF1={val_macro:.4f} (limiar 0,5: {val_macro_05:.4f}) ({dt:.1f}s)")
         history.append({"epoch": epoch, "train_loss": train_loss,
-                        "val_macro_f1": val_macro})
+                        "val_macro_f1": val_macro, "val_macro_f1_05": val_macro_05})
 
         if val_macro > best_f1:
             best_f1 = val_macro
             epochs_no_improve = 0
             torch.save({"model_state": model.state_dict(),
                         "epoch": epoch, "val_macro_f1": val_macro,
-                        "classes": CLASSES}, ckpt_path)
+                        "classes": CLASSES, "arch": model.arch,
+                        "thresholds": thresholds.tolist()}, ckpt_path)
             print(f"          [*] melhor modelo salvo (F1={best_f1:.4f})")
         else:
             epochs_no_improve += 1
@@ -132,14 +141,17 @@ def train(args: argparse.Namespace) -> None:
     # --- relatório final por classe (carrega melhor checkpoint) ---
     ckpt = torch.load(ckpt_path, map_location=device)
     model.load_state_dict(ckpt["model_state"])
+    thresholds = np.asarray(ckpt["thresholds"])
+    print("\n[limiares por classe (validação)] "
+          + " ".join(f"{c}={th:.2f}" for c, th in zip(CLASSES, thresholds)))
     y_true, probs = evaluate_probs(model, val_loader, device)
-    val_report = f1_report(y_true, probs, threshold=args.threshold)
-    print("\n[F1 por classe — validação]")
-    for cls in CLASSES:
-        print(f"  {cls:>5}: {val_report[cls]:.4f}")
-    print(f"  macro: {val_report['macro']:.4f}")
+    val_report = f1_report(y_true, probs, threshold=thresholds)
+    _print_report("validação", val_report, f1_report(y_true, probs, threshold=0.5))
 
-    results = {"val_f1": val_report, "history": history,
+    results = {"val_f1": val_report,
+               "val_f1_limiar_05": f1_report(y_true, probs, threshold=0.5),
+               "thresholds": dict(zip(CLASSES, map(float, thresholds))),
+               "history": history,
                "best_epoch": ckpt["epoch"], "best_val_macro_f1": best_f1}
 
     # avalia no teste se existir (para a comparação com Quantus)
@@ -149,12 +161,11 @@ def train(args: argparse.Namespace) -> None:
         test_loader = DataLoader(test_ds, batch_size=args.batch_size, shuffle=False,
                                  num_workers=args.num_workers)
         y_true_t, probs_t = evaluate_probs(model, test_loader, device)
-        test_report = f1_report(y_true_t, probs_t, threshold=args.threshold)
+        test_report = f1_report(y_true_t, probs_t, threshold=thresholds)
+        test_05 = f1_report(y_true_t, probs_t, threshold=0.5)
         results["test_f1"] = test_report
-        print("\n[F1 por classe — teste]")
-        for cls in CLASSES:
-            print(f"  {cls:>5}: {test_report[cls]:.4f}")
-        print(f"  macro: {test_report['macro']:.4f}")
+        results["test_f1_limiar_05"] = test_05
+        _print_report("teste", test_report, test_05)
 
     out_json = results_dir / "f1_scores.json"
     with open(out_json, "w") as f:
@@ -163,6 +174,20 @@ def train(args: argparse.Namespace) -> None:
 
     # CSV enxuto por classe (usado por evaluate.py)
     _save_f1_csv(results, results_dir / "f1_per_class.csv")
+
+
+def _thresholds(args: argparse.Namespace, y_true: np.ndarray,
+                probs: np.ndarray) -> np.ndarray:
+    """Limiares por classe: otimizados na validação, ou fixos se pedido."""
+    if args.fixed_threshold is not None:
+        return np.full(y_true.shape[1], args.fixed_threshold)
+    return optimal_thresholds(y_true, probs)
+
+
+def _print_report(name: str, report: dict, report_05: dict) -> None:
+    print(f"\n[F1 por classe — {name}]   (limiares por classe | limiar 0,5)")
+    for cls in CLASSES + ["macro"]:
+        print(f"  {cls:>5}: {report[cls]:.4f} | {report_05[cls]:.4f}")
 
 
 def _save_f1_csv(results: dict, path: Path) -> None:
@@ -183,14 +208,17 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--data-dir", type=str, default="data/processed")
     p.add_argument("--out-dir", type=str, default="checkpoints")
     p.add_argument("--results-dir", type=str, default="results")
-    p.add_argument("--epochs", type=int, default=50)
-    p.add_argument("--lr", type=float, default=1e-3)
+    p.add_argument("--epochs", type=int, default=40)
+    p.add_argument("--lr", type=float, default=1e-4)
     p.add_argument("--weight-decay", type=float, default=0.0)
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--dropout", type=float, default=0.2)
     p.add_argument("--patience", type=int, default=10,
                    help="épocas sem melhora no F1-macro antes de parar")
-    p.add_argument("--threshold", type=float, default=0.5)
+    p.add_argument("--fixed-threshold", type=float, default=None,
+                   help="usa um limiar fixo (ex.: 0.5) em vez de otimizar por classe")
+    p.add_argument("--no-augment", action="store_true",
+                   help="desliga o aumento de dados no treino")
     p.add_argument("--num-workers", type=int, default=2)
     p.add_argument("--seed", type=int, default=SEED)
     p.add_argument("--skip-if-exists", action="store_true",
