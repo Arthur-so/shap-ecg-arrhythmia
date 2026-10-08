@@ -7,7 +7,8 @@ Hiperparâmetros e protocolo de Zhang et al. (2021) / código de referência
 - Limiar de decisão por classe, escolhido para maximizar o F1 na validação;
   os mesmos limiares são aplicados ao teste e salvos no checkpoint.
 - Perda BCEWithLogitsLoss com ``pos_weight`` inversamente proporcional à
-  frequência de cada classe no treino (seção 4.2 da proposta).
+  frequência de cada classe no treino (seção 4.2 da proposta); com
+  ``--no-pos-weight`` usa BCE simples, como no código de referência.
 - Early stopping monitorando o F1-macro na validação (com os limiares
   otimizados); o melhor modelo é preservado.
 - Ao final, salva o F1-score por classe (validação e teste), com os limiares
@@ -88,7 +89,8 @@ def train(args: argparse.Namespace) -> None:
     train_ds = ECGDataset(data_dir / "train.npz", augment=not args.no_augment)
     val_ds = ECGDataset(data_dir / "val.npz")
     print(f"[info] treino: {len(train_ds)} | val: {len(val_ds)} | "
-          f"lr={args.lr} | aumento de dados={'não' if args.no_augment else 'sim'}")
+          f"lr={args.lr} | aumento de dados={'não' if args.no_augment else 'sim'} | "
+          f"BCE {'simples' if args.no_pos_weight else 'ponderada (pos_weight)'}")
 
     train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True,
                               num_workers=args.num_workers, pin_memory=True)
@@ -96,7 +98,7 @@ def train(args: argparse.Namespace) -> None:
                             num_workers=args.num_workers, pin_memory=True)
 
     model = build_model(dropout=args.dropout).to(device)
-    pos_weight = compute_pos_weight(train_ds).to(device)
+    pos_weight = None if args.no_pos_weight else compute_pos_weight(train_ds).to(device)
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.weight_decay)
@@ -148,7 +150,12 @@ def train(args: argparse.Namespace) -> None:
     val_report = f1_report(y_true, probs, threshold=thresholds)
     _print_report("validação", val_report, f1_report(y_true, probs, threshold=0.5))
 
-    results = {"val_f1": val_report,
+    results = {"config": {"epochs": args.epochs, "lr": args.lr,
+                          "batch_size": args.batch_size, "patience": args.patience,
+                          "dropout": args.dropout, "augment": not args.no_augment,
+                          "pos_weight": not args.no_pos_weight,
+                          "fixed_threshold": args.fixed_threshold, "arch": model.arch},
+               "val_f1": val_report,
                "val_f1_limiar_05": f1_report(y_true, probs, threshold=0.5),
                "thresholds": dict(zip(CLASSES, map(float, thresholds))),
                "history": history,
@@ -217,6 +224,8 @@ def build_argparser() -> argparse.ArgumentParser:
                    help="épocas sem melhora no F1-macro antes de parar")
     p.add_argument("--fixed-threshold", type=float, default=None,
                    help="usa um limiar fixo (ex.: 0.5) em vez de otimizar por classe")
+    p.add_argument("--no-pos-weight", action="store_true",
+                   help="BCE sem pesos por classe (código de referência de Zhang et al.)")
     p.add_argument("--no-augment", action="store_true",
                    help="desliga o aumento de dados no treino")
     p.add_argument("--num-workers", type=int, default=2)
