@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resultados Modelo B</title>
+<meta name="description" content="Classificador alinhado a Zhang et al. (F1 0,819), ablação da perda e Consistency das explicações SHAP do modelo escolhido, com análise de sensibilidade.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#fbfaf7; --surface:#ffffff; --ink:#1d1d1b; --muted:#5f5e58; --line:#e3e0d8;
+  --accent:#2f5d8a; --accent-soft:#e8eff6; --warn:#9a5b13; --warn-soft:#fbf0e1; --ok:#2e6b45; --ok-soft:#e6f2ea;
+  --up:#2e6b45; --down:#a23a32;
+  --serif:"Source Serif 4",Georgia,serif; --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161614; --surface:#1f1f1c; --ink:#ebe9e3; --muted:#a8a69e; --line:#34332f;
+    --accent:#8fb6dd; --accent-soft:#22303d; --warn:#e2a965; --warn-soft:#352a1c; --ok:#86c49c; --ok-soft:#1d2f24;
+    --up:#86c49c; --down:#e88a82;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161614; --surface:#1f1f1c; --ink:#ebe9e3; --muted:#a8a69e; --line:#34332f;
+  --accent:#8fb6dd; --accent-soft:#22303d; --warn:#e2a965; --warn-soft:#352a1c; --ok:#86c49c; --ok-soft:#1d2f24;
+  --up:#86c49c; --down:#e88a82;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6}
+.wrap{max-width:900px;margin:0 auto;padding:40px 16px 80px}
+.kicker{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--serif);font-weight:600;font-size:2rem;line-height:1.2;margin:.3em 0 .4em}
+h2{font-family:var(--serif);font-weight:600;font-size:1.4rem;margin:2.2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+h3{font-size:1.02rem;font-weight:600;margin:1.4em 0 .4em;color:var(--accent)}
+p,li{max-width:74ch}
+.mono,code{font-family:var(--mono);font-size:.86em}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:20px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi .v{font-family:var(--mono);font-size:1.6rem;font-weight:500}
+.kpi .l{font-size:.82rem;color:var(--muted)}
+.tbl{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem;background:var(--surface)}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.up{color:var(--up)} .down{color:var(--down)}
+.callout{border-left:4px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0}
+.callout.ok{border-color:var(--ok);background:var(--ok-soft)}
+.callout b:first-child{display:block;margin-bottom:.2em}
+footer{margin-top:3em;font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:1em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="kicker">TCC · status · 09/10/2026</div>
+<h1>Classificador no nível do artigo e Consistency das explicações do modelo escolhido</h1>
+<p>Desde o relatório de 07/10, o treino foi alinhado ao protocolo de Zhang et al. (2021). Uma ablação definiu a função de perda, e as explicações GradientSHAP do modelo escolhido (<b>modelo B</b>) foram geradas e avaliadas com a Consistency por regiões do batimento.</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="v">0,819</div><div class="l">F1‑macro no teste, modelo B (artigo: 0,813)</div></div>
+  <div class="kpi"><div class="v">622</div><div class="l">mapas SHAP (583 ECGs do teste)</div></div>
+  <div class="kpi"><div class="v">0,33</div><div class="l">Consistency ajustada global (k = 1 e k = 2)</div></div>
+  <div class="kpi"><div class="v">0,70</div><div class="l">Pearson F1 × Consistency ajustada (k = 2; k = 1: 0,55)</div></div>
+</div>
+
+<h2>1. Evolução do classificador</h2>
+<div class="tbl"><table>
+<thead><tr><th>Versão</th><th>O que mudou</th><th class="num">F1 teste</th></tr></thead>
+<tbody>
+<tr><td>Run 1</td><td>8 classes efetivas (CVP sem rótulo), lr 1e‑3, kernel 3, limiar 0,5</td><td class="num">0,590</td></tr>
+<tr><td>Run 2</td><td>CVP corrigida (SNOMED 164884008)</td><td class="num">0,641</td></tr>
+<tr><td>Run 3</td><td>Alinhado ao artigo: lr 1e‑4, kernel 7, pooling média+máximo, aumento de dados, limiar por classe (40 épocas)</td><td class="num">0,803</td></tr>
+<tr><td>A</td><td>Run 3 com 60 épocas, BCE ponderada</td><td class="num">0,816</td></tr>
+<tr><td><b>B (escolhido)</b></td><td>Run 3 com 60 épocas, <b>BCE simples</b></td><td class="num"><b>0,819</b></td></tr>
+<tr><td>Zhang et al. (2021)</td><td>Média de 10 folds</td><td class="num">0,813</td></tr>
+</tbody></table></div>
+<p style="font-size:.88rem;color:var(--muted)">O maior ganho (0,641 → 0,771 com limiar 0,5) veio do treino (taxa, kernel, pooling, aumento de dados); os limiares por classe somaram ~0,03.</p>
+
+<h2>2. Ablação da perda: BCE ponderada × simples</h2>
+<div class="tbl"><table>
+<thead><tr><th>Perda</th><th class="num">Melhor época</th><th class="num">Teste (limiares)</th><th class="num">Teste (0,5)</th></tr></thead>
+<tbody>
+<tr><td>A — ponderada (pos_weight)</td><td class="num">50</td><td class="num">0,816</td><td class="num">0,785</td></tr>
+<tr><td>B — simples</td><td class="num">36</td><td class="num"><b>0,819</b></td><td class="num">0,806</td></tr>
+</tbody></table></div>
+<div class="callout ok">
+  <b>Decisão: BCE simples</b>
+  Com limiares por classe, as duas perdas são equivalentes (diferença de 0,003, abaixo da variação entre execuções iguais, ≈ 0,01). Sem ganho que justifique o desvio, adotou-se a BCE simples do código de referência, que também gera probabilidades mais bem calibradas e converge mais rápido. <b>A proposta (seção 4.2) cita BCE ponderada: avisar o orientador.</b>
+</div>
+
+<h2>3. Consistency das explicações do modelo B</h2>
+<div class="tbl"><table>
+<thead><tr><th>Classe</th><th class="num">Mapas</th><th class="num">F1</th><th class="num">Ajustada k = 2</th><th class="num">Ajustada k = 1</th><th>Explicação mais comum (k = 2)</th></tr></thead>
+<tbody>
+<tr><td>BRD</td><td class="num">172</td><td class="num">0,93</td><td class="num"><b>0,53</b></td><td class="num">0,64</td><td>V1·QRS + V2·QRS</td></tr>
+<tr><td>STD</td><td class="num">65</td><td class="num">0,78</td><td class="num"><b>0,47</b></td><td class="num">0,51</td><td>II·ST‑T + aVR·ST‑T</td></tr>
+<tr><td>IAVB</td><td class="num">61</td><td class="num">0,88</td><td class="num"><b>0,40</b></td><td class="num">0,26</td><td>II·pré‑QRS + aVR·pré‑QRS</td></tr>
+<tr><td>AF</td><td class="num">108</td><td class="num">0,93</td><td class="num"><b>0,33</b></td><td class="num">0,30</td><td>V4·QRS + V5·QRS</td></tr>
+<tr><td>BRE</td><td class="num">20</td><td class="num">0,87</td><td class="num"><b>0,23</b></td><td class="num">0,09</td><td>V1·QRS + V2·QRS</td></tr>
+<tr><td>CVP</td><td class="num">59</td><td class="num">0,84</td><td class="num"><b>0,20</b></td><td class="num">0,27</td><td>aVR·QRS + V5/aVF·QRS</td></tr>
+<tr><td>SNR</td><td class="num">78</td><td class="num">0,80</td><td class="num"><b>0,12</b></td><td class="num">0,08</td><td>aVR·pré‑QRS + V1·QRS</td></tr>
+<tr><td>CAP</td><td class="num">45</td><td class="num">0,75</td><td class="num"><b>0,08</b></td><td class="num">0,06</td><td>dispersa</td></tr>
+<tr><td>STE</td><td class="num">14</td><td class="num">0,60</td><td class="num"><b>0,01</b></td><td class="num">0,02</td><td>pré‑QRS (esperado: ST‑T)</td></tr>
+</tbody></table></div>
+<p style="font-size:.88rem;color:var(--muted)">Ajustada = (observada − acaso) / (1 − acaso); 0 = acaso, 1 = perfeito. Configuração base: QRS 180 ms, ST‑T até 45% do RR.</p>
+
+<h3>Leitura (hipóteses a validar)</h3>
+<ul>
+  <li><b>Coerentes com a clínica:</b> BRD → QRS em V1/V2; STD → ST‑T (com aVR, espelho do infra difuso); IAVB → pré‑QRS (PR longo); BRE e CVP → QRS (QRS largo). Em relação ao run 2, BRE passou de pré‑QRS para QRS.</li>
+  <li><b>Pouco consistentes:</b> STE (aponta para o pré‑QRS, não para o ST‑T), CAP e SNR. STE e CAP também são as classes de menor F1.</li>
+</ul>
+
+<h2>4. Relação com o F1</h2>
+<div class="tbl"><table>
+<thead><tr><th>Modelo</th><th class="num">F1‑macro</th><th class="num">Pearson F1 × ajustada</th><th class="num">Spearman</th><th>Faixa de Pearson na sensibilidade</th></tr></thead>
+<tbody>
+<tr><td>Run 2 (k = 2)</td><td class="num">0,641</td><td class="num">0,25</td><td class="num">0,28</td><td>0,07–0,33</td></tr>
+<tr><td><b>Modelo B (k = 2)</b></td><td class="num">0,819</td><td class="num"><b>0,70</b></td><td class="num"><b>0,68</b></td><td>0,68–0,88</td></tr>
+<tr><td>Modelo B (k = 1)</td><td class="num">0,819</td><td class="num">0,55</td><td class="num">0,67</td><td>0,53–0,67</td></tr>
+</tbody></table></div>
+<div class="callout">
+  <b>Achado sugestivo, com cautela</b>
+  No modelo B, classes mais bem classificadas tendem a ter explicações mais consistentes, e a relação se mantém em todas as 27 combinações de parâmetros. Mas são só 9 pontos (limiar de Pearson a p &lt; 0,05 ≈ 0,67), e o efeito é puxado pelas pontas (STE e CAP baixos em tudo, BRD alto em tudo). STE tem só 14 mapas.
+</div>
+
+<h2>5. Sensibilidade e escolha de k</h2>
+<div class="tbl"><table>
+<thead><tr><th>k</th><th class="num">Explicações distintas</th><th class="num">Mapas sem par</th><th class="num">Ajustada global</th><th>Ordem das classes vs base</th></tr></thead>
+<tbody>
+<tr><td>1</td><td class="num">43–46</td><td class="num">1–2%</td><td class="num">0,29–0,35</td><td>Spearman 0,90–0,98</td></tr>
+<tr><td>2</td><td class="num">192–206</td><td class="num">17–20%</td><td class="num">0,30–0,37</td><td>Spearman 0,77–1,00</td></tr>
+<tr><td>3</td><td class="num">376–393</td><td class="num"><b>46–50%</b></td><td class="num">0,22–0,26</td><td>Spearman 0,38–0,78</td></tr>
+</tbody></table></div>
+<p>As explicações do modelo B são mais variadas que as do run 2 (196 contra 86 distintas com k = 2). Com k = 3, metade dos mapas fica sem par e a métrica deixa de ser verificável (Dasgupta et al., 2022, Claim 2). <b>k = 2</b> mantém a comparabilidade com o run 2, mas deixa ~18% dos mapas sem par. <b>k = 1</b> é o mais verificável (~2%). As conclusões gerais (ordem das classes e correlação positiva) são as mesmas com k = 1 e k = 2.</p>
+
+<h2>6. Próximos passos</h2>
+<ul>
+  <li>Decidir com o orientador o k principal (1 ou 2) e reportar o outro como sensibilidade.</li>
+  <li>Validar a leitura clínica das regiões, principalmente STE, CAP e SNR.</li>
+  <li>Rodar as demais métricas do Quantus sobre o modelo B (pendências de memória: robustez na GPU, Selectivity na RAM).</li>
+  <li>Opcional: repetir o treino com outras sementes ou folds para estimar a variação do F1 e da Consistency.</li>
+</ul>
+
+<footer>
+  Fontes: <span class="mono">results/run3/</span>, <span class="mono">results/ablacao_bce/</span>, <span class="mono">results/modeloB_shap/</span>. Código: commits <span class="mono">56f2375</span> (treino alinhado), <span class="mono">d6c6e0c</span> (BCE simples padrão). Kaggle: notebooks <span class="mono">kaggle-ablation</span> e <span class="mono">shap-ecg-arrhythmia-runner</span> (versão 16).
+</footer>
+</div>
+</body>
+</html>
