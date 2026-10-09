@@ -14,6 +14,11 @@
 #   --epochs N   --lr X   --batch-size N   --patience N
 #   --dropout X  --limit N (0=todos; >0=subconjunto)   --max-per-class N
 #
+# Acelerador: a CLI do Kaggle só usa GPU se o tipo for informado no push
+# (enable_gpu no kernel-metadata.json não basta). Padrão: GPU T4.
+#   --accelerator ACC   (NvidiaTeslaT4 | NvidiaTeslaP100 | Tpu1VmV38)
+#   ou ACCELERATOR=NvidiaTeslaP100 ./run.sh
+#
 # Intervalo de polling (s): INTERVAL=10 ./run.sh watch
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -24,6 +29,7 @@ KAGGLE="./.venv/bin/kaggle"
 PY="./.venv/bin/python"
 STATEDIR="/tmp/kaggle-run-${SLUG}"
 INTERVAL="${INTERVAL:-15}"
+ACCELERATOR="${ACCELERATOR:-NvidiaTeslaT4}"
 
 if [ ! -x "$KAGGLE" ]; then
   echo "ERRO: CLI do Kaggle não encontrada em $KAGGLE (venv 3.12)." >&2
@@ -96,8 +102,8 @@ m = json.load(open("kaggle/kernel-metadata.json"))
 m["code_file"] = "kaggle_runner.ipynb"   # notebook está na mesma pasta temp
 json.dump(m, open(sys.argv[1], "w"), indent=2)
 PY
-  echo "== publicando e executando o notebook =="
-  k kernels push -p "$tmp"
+  echo "== publicando e executando o notebook (acelerador: $ACCELERATOR) =="
+  k kernels push -p "$tmp" --accelerator "$ACCELERATOR"
   rm -rf "$tmp"
 }
 
@@ -111,8 +117,9 @@ do_run() {
       --dropout)       export RUNSH_DROPOUT="$2"; shift 2;;
       --limit)         export RUNSH_LIMIT="$2"; shift 2;;
       --max-per-class) export RUNSH_MAX_PER_CLASS="$2"; shift 2;;
+      --accelerator)   ACCELERATOR="$2"; shift 2;;
       *) echo "flag desconhecida: $1" >&2
-         echo "flags: --epochs --lr --batch-size --patience --dropout --limit --max-per-class" >&2
+         echo "flags: --epochs --lr --batch-size --patience --dropout --limit --max-per-class --accelerator" >&2
          exit 1;;
     esac
   done
