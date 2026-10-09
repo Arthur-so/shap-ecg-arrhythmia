@@ -12,6 +12,7 @@
 \usepackage{titlesec}
 \usepackage{tabularx}
 \usepackage{enumitem}
+\usepackage{float}
 
 \hypersetup{
     colorlinks=true,
@@ -72,18 +73,18 @@ O artigo define a fidelidade de uma explicação ao modelo por meio de duas prop
 
 \textbf{Implementação própria} (\texttt{src/consistency.py}), seguindo a definição e o estimador do artigo:
 \begin{enumerate}
-    \item \textbf{Regiões do batimento:} os picos R são detectados na derivação II (NeuroKit2), e cada batimento é dividido em três regiões: \textbf{QRS} (de 80~ms antes a 100~ms depois do R), \textbf{ST-T} (do fim do QRS até 45\% do intervalo RR) e \textbf{pré-QRS} (o restante, que contém a onda P e o intervalo PR). O trecho de preenchimento (\textit{padding}) é excluído. A localização exata de P, QRS e T foi testada e descartada, porque falhou justamente nas classes de interesse (``onda P'' detectada na fibrilação atrial e QRS largo não detectado nos bloqueios de ramo).
+    \item \textbf{Regiões do batimento:} o ECG tem 12 derivações, registradas ao mesmo tempo, e o mapa SHAP tem um valor para cada derivação e cada instante. Os picos R (o pico do complexo QRS de cada batimento) são localizados em uma das derivações, a derivação II, com a biblioteca NeuroKit2. Como as 12 derivações são simultâneas, os mesmos instantes valem para todas elas. Cada batimento (o trecho entre dois picos R consecutivos) é então dividido em três regiões (Figura~\ref{fig:regioes}): \textbf{QRS} (de 80~ms antes a 100~ms depois do R), \textbf{ST-T} (do fim do QRS até 45\% do intervalo RR) e \textbf{pré-QRS} (o restante, que contém a onda P e o intervalo PR). O trecho de preenchimento (\textit{padding}) é excluído. A localização exata de P, QRS e T foi testada e descartada, porque falhou justamente nas classes de interesse (``onda P'' detectada na fibrilação atrial e QRS largo não detectado nos bloqueios de ramo).
     \item \textbf{Resumo do mapa:} a atribuição SHAP é somada por derivação $\times$ região, o que dá 36 valores por mapa.
-    \item \textbf{Discretização:} a explicação é o conjunto das $k$ regiões de maior importância absoluta, com o seu sinal (por exemplo, ``V1·QRS (+) e V2·QRS (+)''), análogo ao \textit{Sign-of-top-5} do artigo. Foi usado $k = 2$.
-    \item \textbf{Estimador:} para cada mapa, a fração dos \emph{outros} mapas com a mesma explicação que explicam a mesma classe (mapa sem par vale 0), calculada sobre todos os mapas de todas as classes juntos.
+    \item \textbf{Discretização:} dos 36 valores, mantêm-se apenas as $k$ regiões de maior importância em valor absoluto, junto com o sinal de cada uma (+ quando a região contribui a favor da classe explicada, $-$ quando contribui contra). O parâmetro $k$ é, portanto, \textbf{quantas regiões compõem a explicação}. Com $k = 2$, a explicação de um ECG é o par das duas regiões mais importantes, por exemplo ``V1·QRS (+) e V2·QRS (+)''; dois ECGs têm a mesma explicação quando coincidem essas duas regiões e seus sinais. É o análogo ao \textit{Sign-of-top-5} do artigo, que usa os 5 atributos mais importantes. A escolha de $k$ é um compromisso: $k$ pequeno gera explicações pobres, que se repetem entre classes diferentes; $k$ grande gera explicações tão específicas que muitos mapas ficam sem nenhum outro igual e não podem ser avaliados (o estimador do artigo lhes atribui 0). Foi usado $k = 2$ e, para comparação, $k = 1$ e $k = 3$ (seção~\ref{sec:resultados}).
+    \item \textbf{Estimador:} todos os mapas, de todas as classes, são agrupados pela explicação discretizada. Para cada mapa, calcula-se a fração dos \emph{outros} mapas do seu grupo que explicam a mesma classe que ele. Por exemplo, se um mapa de BRD tem a explicação ``V1·QRS (+) e V2·QRS (+)'' e outros 10 mapas têm essa mesma explicação, dos quais 8 são de BRD, o valor desse mapa é 8/10 = 0,8. Um mapa é \textbf{sem par} quando nenhum outro mapa tem a mesma explicação que ele, ou seja, quando está sozinho no seu grupo. Nesse caso não há com o que comparar, e o estimador do artigo lhe atribui 0 (a fidelidade não pode ser verificada). A \textit{Consistency} de uma classe é a média dos valores dos seus mapas.
 \end{enumerate}
 
-Como referência, é reportado também o \textbf{valor esperado ao acaso}: a \textit{Consistency} que se obteria se as explicações não tivessem relação com a classe. Ela não é zero porque classes grandes coincidem mais por acaso. O módulo foi verificado: reproduz a análise exploratória e a fórmula do acaso confere com 3000 embaralhamentos. A Figura~\ref{fig:regioes} ilustra as regiões.
+\textbf{Verificação.} O módulo reproduz exatamente os resultados da análise exploratória feita antes da implementação, e a fórmula do valor esperado ao acaso (seção~\ref{sec:resultados}) confere com 3000 sorteios aleatórios.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.92\textwidth]{figs/batimento.png}
-\caption{Regiões ancoradas no pico R (marcadores) em um ECG normal, derivação II: QRS (vermelho), ST-T (verde) e pré-QRS (azul).}
+\caption{Trecho de cerca de 1,5~s da derivação II de um ECG normal (SNR), com três picos R marcados (triângulos) e as regiões de cada batimento: QRS (vermelho), ST-T (verde) e pré-QRS (azul). A derivação II é usada apenas para localizar os picos R; as mesmas regiões são aplicadas às 12 derivações.}
 \label{fig:regioes}
 \end{figure}
 
@@ -116,8 +117,11 @@ Zhang et al. (2021) & Média de 10 \textit{folds} & 0,813 \\
 \end{table}
 
 \section{Resultados da Consistency (modelo B)}
+\label{sec:resultados}
 
 Foram geradas explicações GradientSHAP para as 622 predições corretas do teste. A \textit{Consistency} global foi \textbf{0,42}, contra 0,13 esperado ao acaso. A Tabela~\ref{tab:cons} mostra os valores por classe, e a Figura~\ref{fig:disp}, a comparação com o F1.
+
+\textbf{Valor esperado ao acaso.} É a \textit{Consistency} que se obteria se as explicações não tivessem nenhuma relação com a classe, como se as classes fossem sorteadas entre os mapas. Ele serve só como referência para saber se um valor é alto ou baixo; nada é descontado. Não é zero porque, mesmo com explicações sorteadas, dois mapas com a mesma explicação às vezes seriam da mesma classe por coincidência, e isso acontece mais nas classes grandes. Por exemplo, 172 dos 622 mapas (28\%) são de BRD, e o acaso dessa classe é 0,23; já o STE tem 14 mapas, e o acaso dele é 0,02. Assim, o BRD, com 0,64, está bem acima do acaso, enquanto o STE, com 0,03, está praticamente nele.
 
 \begin{table}[h]
 \centering
@@ -141,9 +145,9 @@ STE  &  14 & 0,596 & 0,03 & 0,02 & pré-QRS (esperado: ST-T) \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.78\textwidth]{figs/f1_vs_consistency.png}
+\includegraphics[width=0.68\textwidth]{figs/f1_vs_consistency.png}
 \caption{F1 $\times$ \textit{Consistency} por classe (modelo B). Os círculos vazios indicam o valor esperado ao acaso, e a haste, o quanto cada classe fica acima dele.}
 \label{fig:disp}
 \end{figure}
