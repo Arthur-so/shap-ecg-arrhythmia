@@ -1,0 +1,320 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Faithfulness Correlation}} \\[0.35em]
+    {\large BHATT, U.; WELLER, A.; MOURA, J. M. F. \textit{Evaluating and Aggregating Feature-based Model Explanations}. IJCAI, 2020, p.~3016--3022} \\[0.3em]
+    \textbf{Métrica no Quantus:} \texttt{quantus.FaithfulnessCorrelation} \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 09/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do artigo (1 a 7; no anais, p.~3016 a 3022). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica a métrica sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento, em ordem de páginas; a \textbf{Parte III} compara o artigo com a implementação do Quantus e com a configuração usada no TCC, e avalia a aderência ao caso do ECG.
+
+\partbar{Parte I · Entendendo a métrica}
+
+\section{O problema que a métrica resolve}
+Um método como o SHAP atribui a cada atributo da entrada uma \textbf{importância} para a decisão do modelo. A pergunta da Faithfulness Correlation é: \textbf{essas importâncias correspondem ao efeito real dos atributos sobre o modelo?} Se a explicação diz que um conjunto de atributos é muito importante, retirar esses atributos deveria mudar muito a saída do modelo. Se diz que são pouco importantes, retirá-los deveria mudar pouco.
+
+\section{A ideia em uma frase e um exemplo}
+\begin{infobox}[note]{Definição em uma frase}
+Sorteiam-se vários subconjuntos de atributos. Para cada um, calcula-se (i) a \textbf{soma das importâncias} que a explicação dá a esses atributos e (ii) a \textbf{queda na saída do modelo} quando eles são substituídos por um valor de referência (\textit{baseline}). A Faithfulness Correlation é a \textbf{correlação de Pearson} entre essas duas listas de números.
+\end{infobox}
+
+\textbf{Exemplo com 4 atributos.} Um modelo recebe 4 atributos. Retirando pares de atributos (substituindo-os pela baseline), observam-se as quedas na saída abaixo. Duas explicações diferentes são avaliadas:
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXrrr}
+\toprule
+\textbf{Subconjunto retirado} & \textbf{Queda real na saída} & \textbf{Soma (explicação A)} & \textbf{Soma (explicação B)} \\
+\midrule
+\{1, 2\} & 0,70 & 0,8 & 0,2 \\
+\{1, 3\} & 0,55 & 0,6 & 0,4 \\
+\{2, 4\} & 0,30 & 0,4 & 0,6 \\
+\{3, 4\} & 0,15 & 0,2 & 0,8 \\
+\midrule
+\multicolumn{2}{l}{\textbf{Correlação entre soma e queda}} & \textbf{0,995} & \textbf{$-$0,995} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+A explicação A dá importância (0,5; 0,3; 0,1; 0,1) aos atributos, e os subconjuntos que ela considera importantes são justamente os que mais derrubam a saída: correlação perto de 1, explicação \textbf{fiel}. A explicação B dá (0,1; 0,1; 0,3; 0,5), ou seja, o contrário: correlação perto de $-1$, explicação \textbf{infiel}. Uma explicação sem relação com o modelo daria correlação perto de 0.
+
+\section{Passo a passo}
+Para um exemplo $x$, com a explicação $\varphi$ e o tamanho de subconjunto $|S|$ fixados:
+\begin{enumerate}
+\item Sortear um subconjunto $S$ de $|S|$ atributos.
+\item Somar as importâncias desses atributos: $\sum_{i \in S} \varphi_i$.
+\item Substituir esses atributos pela baseline e medir a queda: $f(x) - f(x_{[x_S = \bar{x}_S]})$.
+\item Repetir os passos 1 a 3 várias vezes (cada repetição é um par “soma, queda”).
+\item Calcular a correlação de Pearson entre as somas e as quedas. Esse é o valor do exemplo $x$.
+\end{enumerate}
+O valor de um conjunto de exemplos (no TCC, de uma classe) é a média dos valores dos exemplos. Vai de $-1$ a 1, e maior é melhor.
+
+\section{Traduzindo para o ECG}
+No TCC, cada \textbf{atributo} é um ponto do ECG: uma derivação em um instante. São 12 × 15\,000 = 180\,000 atributos, e o mapa SHAP dá uma importância para cada um. A saída do modelo é o \textit{logit} da classe explicada. Três escolhas, que o artigo deixa em aberto ou trata para dados tabulares, passam a pesar muito:
+\begin{itemize}
+\item \textbf{O que é um atributo.} No artigo, os atributos são variáveis tabulares com significado próprio (idade, pressão etc.). No ECG, pontos vizinhos são quase iguais (500 amostras por segundo), e um ponto isolado não tem significado clínico.
+\item \textbf{Quantos atributos retirar} ($|S|$). Retirar 2 de 17 variáveis é retirar uma parte relevante da entrada; retirar 224 pontos espalhados entre 180\,000 é retirar 0,12\% do sinal.
+\item \textbf{Com o que substituir} (a baseline). Num ECG, “retirar” um ponto significa trocá-lo por algum valor, e esse valor pode criar artefatos, como picos que não existem no sinal.
+\end{itemize}
+A Parte III mostra como o Quantus e a configuração do TCC fazem essas escolhas.
+
+\paragraph{Glossário rápido}
+\begin{description}
+\item[Atributo (feature)] Cada valor de entrada que recebe uma importância. No ECG: um ponto (derivação, instante).
+\item[Baseline (valor de referência)] Valor usado para “retirar” um atributo, substituindo o original.
+\item[Subconjunto ($S$)] Grupo de atributos retirados de uma vez; $|S|$ é o seu tamanho.
+\item[Queda] Diferença entre a saída do modelo com a entrada original e com a entrada modificada.
+\item[Logit] Saída do modelo antes da função sigmoide; é o valor usado pelo artigo e pelo Quantus.
+\end{description}
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+O artigo propõe três critérios de avaliação e métodos para combinar explicações. Só uma parte interessa a esta métrica:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{llll}
+\toprule
+\textbf{Páginas} & \textbf{Seção} & \textbf{Prioridade} & \textbf{Por quê} \\
+\midrule
+p. 1 & Resumo, §1 & \readtag{ler} & Os três critérios propostos \\
+p. 2 & §2, §3.2 & \readtag{ler} & Notação e definição da fidelidade (Def. 3) \\
+p. 2 & §3.1 & \readtag{consulta} & Max/Avg Sensitivity (métricas de robustez a revisar depois) \\
+p. 2 & §3.3 & \readtag{pular} & Complexidade, não usada no TCC \\
+p. 3--5 & §4--§6 & \readtag{pular} & Agregação de explicações \\
+p. 5 & §7, §7.1 & \readtag{ler} & Configuração e procedimento dos experimentos de fidelidade \\
+p. 6 & Tabela 2 & \readtag{ler} & Tamanhos de subconjunto e resultados \\
+p. 5--6 & §7.2 & \readtag{consulta} & Sensibilidade (para as métricas de robustez) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Citações comentadas}
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“A feature-based model explanation denotes how much each input feature contributes to a model’s output for a given data point. [...] This paper proposes quantitative evaluation criteria for feature-based explanations: low sensitivity, high faithfulness, and low complexity.”\end{origquote}
+\begin{tradquote}“Uma explicação de modelo baseada em atributos indica quanto cada atributo de entrada contribui para a saída do modelo em um dado ponto. [...] Este artigo propõe critérios quantitativos de avaliação para explicações baseadas em atributos: baixa sensibilidade, alta fidelidade e baixa complexidade.”\end{tradquote}
+\explab{Explicação}
+O artigo define três critérios. A Faithfulness Correlation do Quantus corresponde à \textbf{alta fidelidade}. A \textbf{baixa sensibilidade} dá origem às métricas Max-Sensitivity e Avg-Sensitivity, que também estão no pipeline do TCC e serão revisadas depois. A complexidade não é usada.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §2 Preliminares}
+\begin{origquote}“An explanation function g from a family of explanation functions, G, takes in a predictor f and a point of interest x and returns importance scores g(f, x) = φ\textsubscript{x} ∈ R\textsuperscript{d} for all features, where g(f, x)\textsubscript{i} = φ\textsubscript{x,i} [...] is the importance of (or attribution for) feature x\textsubscript{i} of x.”\end{origquote}
+\begin{tradquote}“Uma função de explicação g, de uma família de funções de explicação G, recebe um preditor f e um ponto de interesse x e retorna escores de importância g(f, x) = φ\textsubscript{x} ∈ R\textsuperscript{d} para todos os atributos, em que g(f, x)\textsubscript{i} = φ\textsubscript{x,i} [...] é a importância (ou atribuição) do atributo x\textsubscript{i} de x.”\end{tradquote}
+\explab{Explicação}
+No TCC, $f$ é a ResNet34‑1D, $g$ é o GradientSHAP e $\varphi_x$ é o mapa SHAP com $d = 180\,000$ valores (12 derivações × 15\,000 instantes). Nada no artigo impede que um “atributo” seja um grupo de pontos, mas a métrica é definida sobre os atributos que a explicação pontua.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §3.2 Alta fidelidade}
+\begin{origquote}“The feature importance scores from g should correspond to the important features of x for f; as such, when we set particular features x\textsubscript{s} to a baseline value \ensuremath{\bar{x}}\textsubscript{s}, the change in predictor’s output should be proportional to the sum of attribution scores of features in x\textsubscript{s}. We measure this as the correlation between the sum of the attributions of x\textsubscript{s} and the difference in output when setting those features to a reference baseline.”\end{origquote}
+\begin{tradquote}“Os escores de importância de g devem corresponder aos atributos de x importantes para f; assim, quando fixamos determinados atributos x\textsubscript{s} em um valor de referência \ensuremath{\bar{x}}\textsubscript{s}, a mudança na saída do preditor deve ser proporcional à soma dos escores de atribuição dos atributos em x\textsubscript{s}. Medimos isso como a correlação entre a soma das atribuições de x\textsubscript{s} e a diferença na saída ao fixar esses atributos em uma baseline de referência.”\end{tradquote}
+\explab{Explicação}
+É a ideia central (Parte I, seção 2): \textbf{soma das importâncias} de um subconjunto contra a \textbf{queda da saída} quando ele é retirado. O artigo atribui essa noção de fidelidade a Yeh et al. (2019), que é o artigo da métrica Infidelity.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Observação sobre baselines}
+\begin{origquote}“Remark (Reference Baselines). Recent work has discussed how to pick a proper reference baseline \ensuremath{\bar{x}}. [Sundararajan et al., 2017] suggests using a baseline where f(\ensuremath{\bar{x}}) ≈ 0, while others have proposed taking the baseline to be the mean of the training data.”\end{origquote}
+\begin{tradquote}“Observação (baselines de referência). Trabalhos recentes discutiram como escolher uma baseline de referência \ensuremath{\bar{x}} adequada. [Sundararajan et al., 2017] sugere usar uma baseline em que f(\ensuremath{\bar{x}}) ≈ 0, enquanto outros propõem tomar como baseline a média dos dados de treino.”\end{tradquote}
+\explab{Explicação}
+A baseline representa a “ausência” do atributo, e o artigo cita duas opções: uma entrada neutra para o modelo, ou a média do treino. Nenhuma das duas é o valor mínimo do próprio sinal, que é o padrão do Quantus (seção 8).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Definição 3 e estimação}
+\begin{origquote}“Definition 3 (Faithfulness). Given a predictor f, an explanation function g, a point x, and a subset size |S|, we define the faithfulness of g to f at x as: µ\textsubscript{F}(f, g; x) = corr\textsubscript{S} ( Σ\textsubscript{i∈S} g(f, x)\textsubscript{i} , f(x) − f(x\textsubscript{[x\textsubscript{s}=\ensuremath{\bar{x}}\textsubscript{s}]}) ). For our experiments, we fix |S| then randomly sample subsets x\textsubscript{s} of the fixed size from x to estimate correlation. Since we do not see all subsets in our calculation of faithfulness, we may not get an accurate estimate of the criterion.”\end{origquote}
+\begin{tradquote}“Definição 3 (Fidelidade). Dados um preditor f, uma função de explicação g, um ponto x e um tamanho de subconjunto |S|, definimos a fidelidade de g a f em x como: µ\textsubscript{F}(f, g; x) = corr\textsubscript{S} ( Σ\textsubscript{i∈S} g(f, x)\textsubscript{i} , f(x) − f(x\textsubscript{[x\textsubscript{s}=\ensuremath{\bar{x}}\textsubscript{s}]}) ). Nos experimentos, fixamos |S| e sorteamos subconjuntos x\textsubscript{s} desse tamanho para estimar a correlação. Como não vemos todos os subconjuntos no cálculo da fidelidade, podemos não obter uma estimativa precisa do critério.”\end{tradquote}
+\explab{Explicação}
+A correlação é calculada \textbf{para cada exemplo $x$}, sobre os subconjuntos sorteados. Há duas fontes de imprecisão admitidas pelos próprios autores: o valor depende do tamanho $|S|$ escolhido, e é estimado com uma amostra de subconjuntos, e não com todos. Quanto menos subconjuntos sorteados, mais instável a correlação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Para que serve a fidelidade}
+\begin{origquote}“Though hard to codify and even harder to aggregate, faithfulness is desirable, as it demonstrates that an explanation captures which features the predictor uses to generate an output for a given input.”\end{origquote}
+\begin{tradquote}“Embora seja difícil de codificar e ainda mais difícil de agregar, a fidelidade é desejável, pois demonstra que uma explicação captura quais atributos o preditor usa para gerar uma saída para uma dada entrada.”\end{tradquote}
+\explab{Explicação}
+É uma medida \textbf{local} (por exemplo) e \textbf{relativa ao modelo}: não diz se a explicação está clinicamente certa, e sim se ela acompanha o que o modelo realmente usa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §7 Configuração}
+\begin{origquote}“For all tabular datasets, we train a multilayer perceptron (MLP) [...] we use MIMIC [...]. We extract seventeen real-valued features deemed critical [...] for sepsis prediction. [...] For experiments with a baseline \ensuremath{\bar{x}}, zero baseline implies that we set features to 0 and average baseline uses the average feature value in D.”\end{origquote}
+\begin{tradquote}“Para todos os conjuntos tabulares, treinamos um perceptron multicamadas (MLP) [...] usamos o MIMIC [...]. Extraímos dezessete atributos reais considerados críticos [...] para a predição de sepse. [...] Nos experimentos com uma baseline \ensuremath{\bar{x}}, a baseline zero significa fixar os atributos em 0, e a baseline média usa o valor médio do atributo em D.”\end{tradquote}
+\explab{Explicação}
+Os experimentos de fidelidade são \textbf{todos tabulares}, com poucos atributos (o MIMIC tem 17), e usam as baselines \textbf{zero} e \textbf{média}. Não há experimento com séries temporais nem com entradas de alta dimensão.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §7.1 Procedimento}
+\begin{origquote}“When evaluating, we take the average of multiple runs where, in each run, we see at least 50 datapoints; for each datapoint, we randomly select |S| features and replace them with baseline values. We then calculate the Pearson’s correlation coefficient between the predicted logits of each modified test point and the average explanation attribution for only the subset of features. We notice that, as subset size increases, faithfulness increases until the subset is large enough to contain all informative features.”\end{origquote}
+\begin{tradquote}“Na avaliação, tiramos a média de várias execuções em que, em cada uma, vemos pelo menos 50 pontos; para cada ponto, selecionamos aleatoriamente |S| atributos e os substituímos por valores de baseline. Calculamos então o coeficiente de correlação de Pearson entre os logits preditos de cada ponto de teste modificado e a atribuição média da explicação apenas para o subconjunto de atributos. Notamos que, à medida que o tamanho do subconjunto aumenta, a fidelidade aumenta até que o subconjunto seja grande o bastante para conter todos os atributos informativos.”\end{tradquote}
+\explab{Explicação}
+Três pontos para o TCC: (i) usa-se o \textbf{logit}; (ii) correlacionar a \textit{média} das atribuições com o \textit{logit modificado} dá o mesmo valor absoluto que a Definição 3 (soma × queda), porque para um $x$ fixo a média é a soma dividida por $|S|$ e a queda é $f(x)$ menos o logit modificado; (iii) \textbf{o resultado depende de $|S|$}: subconjuntos pequenos demais não contêm atributos informativos e dão fidelidade baixa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} Tabela 2}
+\begin{origquote}“Table 2: Faithfulness µ\textsubscript{F} averaged over a test set: (Zero Baseline, Training Average Baseline). Exact quantities can be obtained by dividing table entries by 10\textsuperscript{2}.” (Subconjuntos: Adult 2, Iris 2, MIMIC 10 e 20; SHAP: (62, 60), (67, 68), (31, 36), (37, 47).)\end{origquote}
+\begin{tradquote}“Tabela 2: Fidelidade µ\textsubscript{F} média sobre um conjunto de teste: (baseline zero, baseline média do treino). As quantidades exatas são obtidas dividindo os valores da tabela por 10\textsuperscript{2}.”\end{tradquote}
+\explab{Explicação}
+Com o SHAP, os valores ficam entre 0,31 e 0,68. Os subconjuntos têm de 2 a 20 atributos, em dados tabulares com poucos atributos (o MIMIC usa 17 atributos selecionados). Esses números servem de referência de ordem de grandeza, e não de comparação direta com o ECG.
+\end{citacard}
+
+\partbar{Parte III · Aplicação ao TCC}
+
+\section{Do artigo ao código do Quantus}
+Arquivo: \texttt{quantus/metrics/faithfulness/faithfulness\_correlation.py} (Quantus 0.6.0).
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Etapa} & \textbf{Artigo} & \textbf{Quantus} \\
+\midrule
+Subconjunto & $|S|$ fixo, sorteado & \texttt{subset\_size} índices sorteados sem reposição entre todos os valores do mapa achatado \\
+Soma das importâncias & $\sum_{i \in S} \varphi_i$ & Soma do mapa nos índices sorteados (com sinal; \texttt{abs=False}) \\
+Retirada & Atributos fixados na baseline & Valores substituídos por \texttt{perturb\_baseline} (padrão \texttt{"black"}) \\
+Saída & Logit & Saída do modelo para a classe \texttt{y} (logit; \texttt{softmax=False}) \\
+Queda & $f(x) - f(x_{[x_S=\bar{x}_S]})$ & \texttt{y\_pred - y\_pred\_perturb} \\
+Repetições & Várias, sem número fixo & \texttt{nr\_runs} (padrão 100) \\
+Correlação & Pearson por exemplo & Pearson por exemplo (\texttt{correlation\_pearson}) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+A fórmula está implementada de acordo com o artigo. As diferenças estão nos \textbf{valores padrão}: a baseline \texttt{"black"} é o \textbf{valor mínimo do próprio exemplo} (\texttt{arr.min()} sobre todas as derivações e instantes), e não zero ou a média do treino; e \texttt{subset\_size=224} vem do contexto de imagens.
+
+\section{Configuração usada no TCC}
+No \texttt{src/evaluate.py}, a métrica foi chamada com \texttt{nr\_runs=10}, \texttt{subset\_size=224} e os demais valores padrão, por classe e só sobre as predições corretas. O valor da classe é a média dos exemplos; valores indefinidos (NaN) são descartados.
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{XXXl}
+\toprule
+\textbf{Aspecto} & \textbf{Artigo} & \textbf{TCC (Quantus)} & \textbf{Aderente?} \\
+\midrule
+Fórmula (soma × queda, Pearson por exemplo) & Def. 3 & Igual & Sim \\
+Saída usada & Logit & Logit da classe explicada & Sim \\
+Unidade de atributo & Variável tabular com significado & Ponto isolado (derivação, instante) & \textbf{Não adaptada} \\
+Tamanho do subconjunto & 2 a 20 atributos, em entradas com poucos atributos & 224 de 180\,000 pontos (0,12\%) & \textbf{Não} \\
+Baseline & Zero ou média do treino & Mínimo do próprio ECG (pico negativo) & \textbf{Não} \\
+Nº de subconjuntos por exemplo & Vários & 10 & Fraco \\
+Trecho de preenchimento & Não se aplica & Incluído no sorteio & \textbf{Não} \\
+Exemplos avaliados & Conjunto de teste & Só predições corretas, por classe & Recorte do TCC \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{infobox}[warn]{Por que cada “Não” importa}
+\begin{enumerate}
+\item \textbf{Subconjunto pequeno demais.} Retirar 224 pontos espalhados em 12 derivações de 30 s dá cerca de 19 pontos por derivação, ou seja, um ponto a cada ~1,6 s. O próprio artigo observa que subconjuntos pequenos não contêm os atributos informativos (p.~5). A hipótese é que as quedas fiquem perto de zero e dominadas por ruído, e a correlação também.
+\item \textbf{Ponto isolado como atributo.} Pontos vizinhos do ECG são quase iguais, e uma rede convolucional “enxerga através” de um ponto trocado. Retirar um ponto não equivale a retirar uma informação.
+\item \textbf{Baseline “black”.} Em sinal com z-score, o mínimo do ECG é um valor extremo, tipicamente o fundo de uma onda S. Trocar pontos por ele cria \textbf{picos artificiais}, que o modelo pode reagir como se fossem eventos cardíacos. A queda medida passa a refletir o artefato, e não a ausência do atributo.
+\item \textbf{Preenchimento.} Cerca de metade dos 15\,000 instantes de um registro típico é preenchimento (o registro médio tem ~15 s). Muitos pontos sorteados caem ali, onde não há ECG.
+\item \textbf{Poucas repetições.} Uma correlação de Pearson com 10 pares é muito instável.
+\end{enumerate}
+\end{infobox}
+
+\section{Resultados antigos (pipeline anterior)}
+A métrica foi calculada no pipeline anterior (modelo de 30/09, ainda sem a classe CVP), com a configuração da seção 8:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrrrrrrr}
+\toprule
+\textbf{Classe} & SNR & AF & IAVB & BRE & BRD & CAP & STD & STE \\
+\midrule
+\textbf{Faithfulness Correlation} & 0,114 & 0,023 & 0,116 & $-$0,097 & 0,132 & $-$0,068 & 0,042 & 0,030 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Todos os valores ficaram perto de zero (entre $-$0,10 e 0,13), abaixo dos 0,31 a 0,68 obtidos com SHAP no artigo. Pela análise da seção 8, isso é mais provavelmente efeito da configuração do que evidência de que as explicações sejam infiéis. A métrica ainda não foi calculada para o modelo atual (modelo B).
+
+\section{Propostas de adaptação (a discutir)}
+\begin{enumerate}
+\item \textbf{Retirar regiões, e não pontos.} Tratar como “atributo” um trecho com significado, por exemplo as 36 regiões do batimento já usadas na Consistency (derivação × pré-QRS/QRS/ST‑T), ou janelas de tempo por derivação. A importância de uma região é a soma do mapa SHAP nela, e retirá-la é trocar todo o trecho pela baseline. O $|S|$ passa a ser um número de regiões, com uma fração relevante da entrada, como no artigo.
+\item \textbf{Baseline neutra.} Usar zero, que em z-score é a média de cada derivação, ou a média do treino, as duas opções citadas pelo artigo (p.~2 e p.~5).
+\item \textbf{Excluir o preenchimento} do sorteio.
+\item \textbf{Mais repetições} por exemplo (por exemplo, 50 a 100, como o padrão do Quantus).
+\item \textbf{Registrar quantos valores são NaN}, porque hoje eles são descartados sem aviso.
+\end{enumerate}
+A proposta 1 é uma decisão metodológica, pois muda a unidade de atributo. O artigo define a métrica sobre os atributos pontuados pela explicação e não restringe o que é um atributo (seção 6, citação da p.~2), mas a escolha precisa ser justificada no texto.
+
+\textbf{Verificações sugeridas antes de decidir} (não executadas): (i) medir as quedas $f(x) - f(x')$ com a configuração atual, para confirmar se ficam perto de zero; (ii) comparar com as quedas ao retirar regiões inteiras; (iii) contar os NaN por classe.
+
+\section{Como redigir no TCC}
+\begin{infobox}[ok]{Sugestão}
+“A métrica Faithfulness Correlation (BHATT; WELLER; MOURA, 2020) mede a correlação de Pearson entre a soma das atribuições de subconjuntos aleatórios de atributos e a queda na saída do modelo quando esses atributos são substituídos por um valor de referência. Os experimentos originais usam dados tabulares com poucos atributos, subconjuntos que cobrem parte relevante da entrada e valores de referência zero ou média do treino. A configuração padrão da biblioteca Quantus, aplicada ao ECG, sorteia 224 pontos isolados entre 180\,000 e os substitui pelo valor mínimo do sinal, o que [descrever a adaptação adotada e justificá-la].”
+\end{infobox}
+
+\end{document}
