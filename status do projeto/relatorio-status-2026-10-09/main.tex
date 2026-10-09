@@ -79,14 +79,18 @@ O artigo define a fidelidade de uma explicação ao modelo por meio de duas prop
     \item \textbf{Estimador:} todos os mapas, de todas as classes, são agrupados pela explicação discretizada. Para cada mapa, calcula-se a fração dos \emph{outros} mapas do seu grupo que explicam a mesma classe que ele. Por exemplo, se um mapa de BRD tem a explicação ``V1·QRS (+) e V2·QRS (+)'' e outros 10 mapas têm essa mesma explicação, dos quais 8 são de BRD, o valor desse mapa é 8/10 = 0,8. Um mapa é \textbf{sem par} quando nenhum outro mapa tem a mesma explicação que ele, ou seja, quando está sozinho no seu grupo. Nesse caso não há com o que comparar, e o estimador do artigo lhe atribui 0 (a fidelidade não pode ser verificada). A \textit{Consistency} de uma classe é a média dos valores dos seus mapas.
 \end{enumerate}
 
-\textbf{Verificação.} O módulo reproduz exatamente os resultados da análise exploratória feita antes da implementação, e a fórmula do valor esperado ao acaso (seção~\ref{sec:resultados}) confere com 3000 sorteios aleatórios.
-
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.92\textwidth]{figs/batimento.png}
 \caption{Trecho de cerca de 1,5~s da derivação II de um ECG normal (SNR), com três picos R marcados (triângulos) e as regiões de cada batimento: QRS (vermelho), ST-T (verde) e pré-QRS (azul). A derivação II é usada apenas para localizar os picos R; as mesmas regiões são aplicadas às 12 derivações.}
 \label{fig:regioes}
 \end{figure}
+
+\textbf{Conferência do código.} Para garantir que a implementação calcula o que deveria, foram feitas duas checagens: (i) antes de escrever o módulo definitivo, a métrica foi calculada com um script provisório; os dois, rodados sobre os mesmos mapas, deram resultados idênticos; (ii) o valor esperado ao acaso, apresentado na seção~\ref{sec:resultados}, é obtido por uma fórmula; para conferi-la, as classes foram embaralhadas entre os mapas 3000 vezes, a \textit{Consistency} foi recalculada em cada embaralhamento, e a média coincidiu com a fórmula.
+
+
+
+
 
 \section{Correções e melhoria do classificador}
 
