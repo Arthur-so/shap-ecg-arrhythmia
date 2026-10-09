@@ -18,13 +18,18 @@
 
 **Resumo (configuração base: QRS 180 ms, ST-T até 45% do RR):**
 
-| k | Explicações distintas | Sem par | Consistency ajustada | F1 × ajustada (Pearson / Spearman) |
+| k | Explicações distintas | Sem par | Consistency global | Esperado ao acaso |
 |---|---|---|---|---|
-| 1 | 44 | 1,9% | 0,334 | 0,55 / 0,67 |
-| 2 | 196 | 17,5% | 0,329 | 0,70 / 0,68 |
-| 3 | 376 | 46,1% | 0,243 | 0,69 / 0,73 |
+| 1 | 44 | 1,9% | 0,436 | 0,15 |
+| 2 | 196 | 17,5% | 0,416 | 0,13 |
+| 3 | 376 | 46,1% | 0,307 | — |
 
 Com k = 3 quase metade dos mapas fica sem par (não verificável); k = 2 já deixa 17,5%.
-Em todas as 27 combinações a correlação com o F1 é positiva (Pearson 0,53–0,88).
+Comparação com o F1 feita de forma descritiva (posições por classe), sem coeficientes
+de correlação: as 9 classes não são observações independentes nem uma amostra de uma
+população de classes. Com k = 2, BRD fica em 1º e CAP e STE nas duas últimas posições
+em todas as 9 combinações de regiões. O JSON de sensibilidade traz, por configuração,
+a Consistency por classe (`per_classe`), o valor esperado ao acaso (`acaso_por_classe`)
+e, só como registro, a versão ajustada e coeficientes de correlação.
 A sensibilidade foi calculada localmente com `src/consistency.py` sobre os mapas da
 versão 16 e o `data/processed/test.npz` local (record_ids conferidos: 0 divergências).

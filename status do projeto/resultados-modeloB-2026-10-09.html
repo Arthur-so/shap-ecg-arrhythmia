@@ -61,8 +61,7 @@ footer{margin-top:3em;font-size:.82rem;color:var(--muted);border-top:1px solid v
 <div class="kpis">
   <div class="kpi"><div class="v">0,819</div><div class="l">F1‑macro no teste, modelo B (artigo: 0,813)</div></div>
   <div class="kpi"><div class="v">622</div><div class="l">mapas SHAP (583 ECGs do teste)</div></div>
-  <div class="kpi"><div class="v">0,33</div><div class="l">Consistency ajustada global (k = 1 e k = 2)</div></div>
-  <div class="kpi"><div class="v">0,70</div><div class="l">Pearson F1 × Consistency ajustada (k = 2; k = 1: 0,55)</div></div>
+  <div class="kpi"><div class="v">0,42</div><div class="l">Consistency global, k = 2 (esperado ao acaso: 0,13)</div></div>
 </div>
 
 <h2>1. Evolução do classificador</h2>
@@ -91,51 +90,111 @@ footer{margin-top:3em;font-size:.82rem;color:var(--muted);border-top:1px solid v
 </div>
 
 <h2>3. Consistency das explicações do modelo B</h2>
+<p>A Consistency é a métrica de Dasgupta et al. (2022), sem ajustes: para cada mapa, a fração dos <b>outros</b> mapas com a mesma explicação discretizada que explicam a <b>mesma classe</b>; o valor da classe é a média sobre os seus mapas. Vai de 0 a 1, e maior é melhor.</p>
 <div class="tbl"><table>
-<thead><tr><th>Classe</th><th class="num">Mapas</th><th class="num">F1</th><th class="num">Ajustada k = 2</th><th class="num">Ajustada k = 1</th><th>Explicação mais comum (k = 2)</th></tr></thead>
+<thead><tr><th>Classe</th><th class="num">Mapas</th><th class="num">F1</th><th class="num">Consistency k = 2</th><th class="num">acaso k = 2</th><th class="num">Consistency k = 1</th><th class="num">acaso k = 1</th><th>Explicação mais comum (k = 2)</th></tr></thead>
 <tbody>
-<tr><td>BRD</td><td class="num">172</td><td class="num">0,93</td><td class="num"><b>0,53</b></td><td class="num">0,64</td><td>V1·QRS + V2·QRS</td></tr>
-<tr><td>STD</td><td class="num">65</td><td class="num">0,78</td><td class="num"><b>0,47</b></td><td class="num">0,51</td><td>II·ST‑T + aVR·ST‑T</td></tr>
-<tr><td>IAVB</td><td class="num">61</td><td class="num">0,88</td><td class="num"><b>0,40</b></td><td class="num">0,26</td><td>II·pré‑QRS + aVR·pré‑QRS</td></tr>
-<tr><td>AF</td><td class="num">108</td><td class="num">0,93</td><td class="num"><b>0,33</b></td><td class="num">0,30</td><td>V4·QRS + V5·QRS</td></tr>
-<tr><td>BRE</td><td class="num">20</td><td class="num">0,87</td><td class="num"><b>0,23</b></td><td class="num">0,09</td><td>V1·QRS + V2·QRS</td></tr>
-<tr><td>CVP</td><td class="num">59</td><td class="num">0,84</td><td class="num"><b>0,20</b></td><td class="num">0,27</td><td>aVR·QRS + V5/aVF·QRS</td></tr>
-<tr><td>SNR</td><td class="num">78</td><td class="num">0,80</td><td class="num"><b>0,12</b></td><td class="num">0,08</td><td>aVR·pré‑QRS + V1·QRS</td></tr>
-<tr><td>CAP</td><td class="num">45</td><td class="num">0,75</td><td class="num"><b>0,08</b></td><td class="num">0,06</td><td>dispersa</td></tr>
-<tr><td>STE</td><td class="num">14</td><td class="num">0,60</td><td class="num"><b>0,01</b></td><td class="num">0,02</td><td>pré‑QRS (esperado: ST‑T)</td></tr>
+<tr><td>BRD</td><td class="num">172</td><td class="num">0,93</td><td class="num"><b>0,64</b></td><td class="num">0,23</td><td class="num">0,74</td><td class="num">0,27</td><td>V1·QRS + V2·QRS</td></tr>
+<tr><td>STD</td><td class="num">65</td><td class="num">0,78</td><td class="num"><b>0,51</b></td><td class="num">0,09</td><td class="num">0,56</td><td class="num">0,10</td><td>II·ST‑T + aVR·ST‑T</td></tr>
+<tr><td>IAVB</td><td class="num">61</td><td class="num">0,88</td><td class="num"><b>0,45</b></td><td class="num">0,08</td><td class="num">0,33</td><td class="num">0,10</td><td>II·pré‑QRS + aVR·pré‑QRS</td></tr>
+<tr><td>AF</td><td class="num">108</td><td class="num">0,93</td><td class="num"><b>0,42</b></td><td class="num">0,14</td><td class="num">0,42</td><td class="num">0,17</td><td>V4·QRS + V5·QRS</td></tr>
+<tr><td>CVP</td><td class="num">59</td><td class="num">0,84</td><td class="num"><b>0,26</b></td><td class="num">0,08</td><td class="num">0,33</td><td class="num">0,09</td><td>aVR·QRS + V5/aVF·QRS</td></tr>
+<tr><td>BRE</td><td class="num">20</td><td class="num">0,87</td><td class="num"><b>0,25</b></td><td class="num">0,03</td><td class="num">0,12</td><td class="num">0,03</td><td>V1·QRS + V2·QRS</td></tr>
+<tr><td>SNR</td><td class="num">78</td><td class="num">0,80</td><td class="num"><b>0,21</b></td><td class="num">0,10</td><td class="num">0,19</td><td class="num">0,12</td><td>aVR·pré‑QRS + V1·QRS</td></tr>
+<tr><td>CAP</td><td class="num">45</td><td class="num">0,75</td><td class="num"><b>0,14</b></td><td class="num">0,06</td><td class="num">0,13</td><td class="num">0,07</td><td>dispersa</td></tr>
+<tr><td>STE</td><td class="num">14</td><td class="num">0,60</td><td class="num"><b>0,03</b></td><td class="num">0,02</td><td class="num">0,04</td><td class="num">0,02</td><td>pré‑QRS (esperado: ST‑T)</td></tr>
+<tr><td><b>Global</b></td><td class="num">622</td><td class="num">0,82</td><td class="num"><b>0,42</b></td><td class="num">0,13</td><td class="num">0,44</td><td class="num">0,15</td><td></td></tr>
 </tbody></table></div>
-<p style="font-size:.88rem;color:var(--muted)">Ajustada = (observada − acaso) / (1 − acaso); 0 = acaso, 1 = perfeito. Configuração base: QRS 180 ms, ST‑T até 45% do RR.</p>
+<p style="font-size:.88rem;color:var(--muted)">Configuração base: QRS 180 ms, ST‑T até 45% do RR.</p>
+
+<div class="callout ok">
+  <b>O que é a coluna “acaso”</b>
+  <p style="margin:.3em 0">É o valor que a Consistency teria <b>se as explicações não tivessem nenhuma relação com a classe</b>. Ela não é descontada de nada: serve só como <b>linha de base</b>, para saber se um número é alto ou baixo.</p>
+  <p style="margin:.3em 0"><b>Por que ela não é zero:</b> mesmo que o SHAP destacasse regiões ao acaso, dois mapas com a mesma explicação às vezes seriam da mesma classe por pura coincidência. Isso acontece mais nas classes grandes.</p>
+  <p style="margin:.3em 0"><b>Exemplo:</b> 172 dos 622 mapas (28%) são de BRD. Se as explicações fossem sorteadas, um mapa de BRD encontraria, entre os que têm a mesma explicação, cerca de 28% de BRD, só porque há muito BRD. Descontando os mapas que ficam sem par (que valem 0), isso dá o <b>0,23</b> da tabela. Já o STE tem só 14 mapas (2%), e o acaso dele é <b>0,02</b>.</p>
+  <p style="margin:.3em 0"><b>Como ler:</b> BRD tem 0,64 contra 0,23 do acaso, quase 3 vezes mais, então a explicação diz muito sobre a classe. STE tem 0,03 contra 0,02: praticamente o acaso, então as explicações de STE não se parecem entre si.</p>
+  <p style="margin:.3em 0;font-size:.88rem">Na prática, acaso da classe ≈ (fração dos outros mapas que são da classe) × (fração de mapas que têm algum par). Equivale a embaralhar os rótulos de classe entre os mapas, mantendo as explicações, e calcular a média; a fórmula foi conferida contra 3000 embaralhamentos.</p>
+</div>
 
 <h3>Leitura (hipóteses a validar)</h3>
 <ul>
-  <li><b>Coerentes com a clínica:</b> BRD → QRS em V1/V2; STD → ST‑T (com aVR, espelho do infra difuso); IAVB → pré‑QRS (PR longo); BRE e CVP → QRS (QRS largo). Em relação ao run 2, BRE passou de pré‑QRS para QRS.</li>
-  <li><b>Pouco consistentes:</b> STE (aponta para o pré‑QRS, não para o ST‑T), CAP e SNR. STE e CAP também são as classes de menor F1.</li>
+  <li><b>Coerentes com a clínica e bem acima do acaso:</b> BRD → QRS em V1/V2; STD → ST‑T (com aVR, espelho do infra difuso); IAVB → pré‑QRS (PR longo); BRE e CVP → QRS (QRS largo). Em relação ao run 2, BRE passou de pré‑QRS para QRS.</li>
+  <li><b>Próximas do acaso:</b> STE (aponta para o pré‑QRS, e não para o ST‑T), CAP e SNR. STE e CAP também são as classes de menor F1.</li>
 </ul>
 
-<h2>4. Relação com o F1</h2>
-<div class="tbl"><table>
-<thead><tr><th>Modelo</th><th class="num">F1‑macro</th><th class="num">Pearson F1 × ajustada</th><th class="num">Spearman</th><th>Faixa de Pearson na sensibilidade</th></tr></thead>
-<tbody>
-<tr><td>Run 2 (k = 2)</td><td class="num">0,641</td><td class="num">0,25</td><td class="num">0,28</td><td>0,07–0,33</td></tr>
-<tr><td><b>Modelo B (k = 2)</b></td><td class="num">0,819</td><td class="num"><b>0,70</b></td><td class="num"><b>0,68</b></td><td>0,68–0,88</td></tr>
-<tr><td>Modelo B (k = 1)</td><td class="num">0,819</td><td class="num">0,55</td><td class="num">0,67</td><td>0,53–0,67</td></tr>
-</tbody></table></div>
+<h2>4. Desempenho × Consistency: comparação descritiva</h2>
 <div class="callout">
-  <b>Achado sugestivo, com cautela</b>
-  No modelo B, classes mais bem classificadas tendem a ter explicações mais consistentes, e a relação se mantém em todas as 27 combinações de parâmetros. Mas são só 9 pontos (limiar de Pearson a p &lt; 0,05 ≈ 0,67), e o efeito é puxado pelas pontas (STE e CAP baixos em tudo, BRD alto em tudo). STE tem só 14 mapas.
+  <b>Por que sem coeficientes de correlação</b>
+  As nove classes não são observações independentes: há registros multi-rótulo, o F1 de todas vem do mesmo modelo e do mesmo conjunto de teste, e a Consistency é calculada sobre todos os mapas juntos. Elas também não são uma amostra de uma população maior de classes: são todas as classes do problema. Isso inviabiliza a interpretação inferencial de coeficientes de correlação (Pearson ou Spearman). Seguindo a estratégia descritiva da proposta (seção 4.5), as duas medidas são <b>ordenadas e comparadas</b> classe a classe.
 </div>
+
+<figure style="margin:16px 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px">
+  <div style="font-weight:600;font-size:.95rem;margin-bottom:4px">F1 × Consistency por classe — modelo B</div>
+  <div style="font-size:.82rem;color:var(--muted);margin-bottom:6px"><span style="color:var(--accent)">●</span> Consistency (k = 2) &nbsp;&nbsp; <span style="color:var(--muted)">○</span> valor esperado ao acaso; a haste mostra o quanto cada classe fica acima do acaso. Passe o mouse sobre os pontos para ver os valores.</div>
+  <svg viewBox="0 0 640 380" role="img" aria-label="Dispersão F1 por classe versus Consistency por classe, modelo B" style="width:100%;height:auto;display:block"><line x1="56" x2="616" y1="332.0" y2="332.0" class="grid"/><text x="48" y="336.0" class="tick" text-anchor="end">0</text><line x1="56" x2="616" y1="241.7" y2="241.7" class="grid"/><text x="48" y="245.7" class="tick" text-anchor="end">0,2</text><line x1="56" x2="616" y1="151.4" y2="151.4" class="grid"/><text x="48" y="155.4" class="tick" text-anchor="end">0,4</text><line x1="56" x2="616" y1="61.1" y2="61.1" class="grid"/><text x="48" y="65.1" class="tick" text-anchor="end">0,6</text><line x1="126.0" x2="126.0" y1="16" y2="332" class="grid"/><text x="126.0" y="350" class="tick" text-anchor="middle">0,6</text><line x1="266.0" x2="266.0" y1="16" y2="332" class="grid"/><text x="266.0" y="350" class="tick" text-anchor="middle">0,7</text><line x1="406.0" x2="406.0" y1="16" y2="332" class="grid"/><text x="406.0" y="350" class="tick" text-anchor="middle">0,8</text><line x1="546.0" x2="546.0" y1="16" y2="332" class="grid"/><text x="546.0" y="350" class="tick" text-anchor="middle">0,9</text><line x1="56" x2="616" y1="332" y2="332" class="axis"/><text x="336" y="372" class="axlab" text-anchor="middle">F1 no teste (limiares por classe)</text><text x="14" y="174" class="axlab" text-anchor="middle" transform="rotate(-90 14 174)">Consistency (k = 2)</text><g class="pt"><title>SNR: F1 0,796 · Consistency 0,21 · acaso 0,1</title><line x1="400.4" x2="400.4" y1="286.0" y2="239.0" class="stem"/><circle cx="400.4" cy="286.0" r="3.5" class="chance"/><circle cx="400.4" cy="239.0" r="12" class="hit"/><circle cx="400.4" cy="239.0" r="5" class="dot"/><text x="408.4" y="243.0" class="lab" text-anchor="start">SNR</text></g><g class="pt"><title>AF: F1 0,931 · Consistency 0,42 · acaso 0,14</title><line x1="589.4" x2="589.4" y1="267.9" y2="140.6" class="stem"/><circle cx="589.4" cy="267.9" r="3.5" class="chance"/><circle cx="589.4" cy="140.6" r="12" class="hit"/><circle cx="589.4" cy="140.6" r="5" class="dot"/><text x="597.4" y="144.6" class="lab" text-anchor="start">AF</text></g><g class="pt"><title>IAVB: F1 0,884 · Consistency 0,45 · acaso 0,08</title><line x1="523.6" x2="523.6" y1="295.9" y2="131.1" class="stem"/><circle cx="523.6" cy="295.9" r="3.5" class="chance"/><circle cx="523.6" cy="131.1" r="12" class="hit"/><circle cx="523.6" cy="131.1" r="5" class="dot"/><text x="513.6" y="125.1" class="lab" text-anchor="end">IAVB</text></g><g class="pt"><title>BRE: F1 0,87 · Consistency 0,25 · acaso 0,03</title><line x1="504.0" x2="504.0" y1="320.7" y2="218.2" class="stem"/><circle cx="504.0" cy="320.7" r="3.5" class="chance"/><circle cx="504.0" cy="218.2" r="12" class="hit"/><circle cx="504.0" cy="218.2" r="5" class="dot"/><text x="494.0" y="236.2" class="lab" text-anchor="end">BRE</text></g><g class="pt"><title>BRD: F1 0,927 · Consistency 0,64 · acaso 0,23</title><line x1="583.8" x2="583.8" y1="229.5" y2="44.9" class="stem"/><circle cx="583.8" cy="229.5" r="3.5" class="chance"/><circle cx="583.8" cy="44.9" r="12" class="hit"/><circle cx="583.8" cy="44.9" r="5" class="dot"/><text x="573.8" y="48.9" class="lab" text-anchor="end">BRD</text></g><g class="pt"><title>CAP: F1 0,75 · Consistency 0,14 · acaso 0,06</title><line x1="336.0" x2="336.0" y1="305.8" y2="270.2" class="stem"/><circle cx="336.0" cy="305.8" r="3.5" class="chance"/><circle cx="336.0" cy="270.2" r="12" class="hit"/><circle cx="336.0" cy="270.2" r="5" class="dot"/><text x="344.0" y="274.2" class="lab" text-anchor="start">CAP</text></g><g class="pt"><title>CVP: F1 0,837 · Consistency 0,26 · acaso 0,08</title><line x1="457.8" x2="457.8" y1="297.2" y2="216.0" class="stem"/><circle cx="457.8" cy="297.2" r="3.5" class="chance"/><circle cx="457.8" cy="216.0" r="12" class="hit"/><circle cx="457.8" cy="216.0" r="5" class="dot"/><text x="447.8" y="210.0" class="lab" text-anchor="end">CVP</text></g><g class="pt"><title>STD: F1 0,778 · Consistency 0,52 · acaso 0,09</title><line x1="375.2" x2="375.2" y1="293.6" y2="99.5" class="stem"/><circle cx="375.2" cy="293.6" r="3.5" class="chance"/><circle cx="375.2" cy="99.5" r="12" class="hit"/><circle cx="375.2" cy="99.5" r="5" class="dot"/><text x="383.2" y="103.5" class="lab" text-anchor="start">STD</text></g><g class="pt"><title>STE: F1 0,596 · Consistency 0,03 · acaso 0,02</title><line x1="120.4" x2="120.4" y1="324.3" y2="319.4" class="stem"/><circle cx="120.4" cy="324.3" r="3.5" class="chance"/><circle cx="120.4" cy="319.4" r="12" class="hit"/><circle cx="120.4" cy="319.4" r="5" class="dot"/><text x="128.4" y="313.4" class="lab" text-anchor="start">STE</text></g></svg>
+</figure>
+<style>
+svg .grid{stroke:var(--line);stroke-width:1}
+svg .axis{stroke:var(--muted);stroke-width:1}
+svg .tick{fill:var(--muted);font:12px var(--mono)}
+svg .axlab{fill:var(--muted);font:12px var(--sans)}
+svg .lab{fill:var(--ink);font:600 12px var(--sans)}
+svg .dot{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+svg .chance{fill:var(--surface);stroke:var(--muted);stroke-width:1.5}
+svg .stem{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 2}
+svg .hit{fill:transparent}
+svg .pt:hover .dot{r:7}
+</style>
+
+<div class="tbl"><table>
+<thead><tr><th>Classe</th><th class="num">F1</th><th class="num">Posição no F1</th><th class="num">Consistency (k = 2)</th><th class="num">Posição na Consistency</th><th>Leitura</th></tr></thead>
+<tbody>
+<tr><td>BRD</td><td class="num">0,927</td><td class="num">2º</td><td class="num">0,64</td><td class="num">1º</td><td rowspan="3">Concordância no topo: alto desempenho e explicações consistentes</td></tr>
+<tr><td>IAVB</td><td class="num">0,884</td><td class="num">3º</td><td class="num">0,45</td><td class="num">3º</td></tr>
+<tr><td>AF</td><td class="num">0,931</td><td class="num">1º</td><td class="num">0,42</td><td class="num">4º</td></tr>
+<tr><td>CVP</td><td class="num">0,837</td><td class="num">5º</td><td class="num">0,26</td><td class="num">5º</td><td rowspan="2">Posições intermediárias e próximas nas duas medidas</td></tr>
+<tr><td>SNR</td><td class="num">0,796</td><td class="num">6º</td><td class="num">0,21</td><td class="num">7º</td></tr>
+<tr><td>STD</td><td class="num">0,778</td><td class="num">7º</td><td class="num">0,51</td><td class="num">2º</td><td><b>Discordância:</b> desempenho intermediário, mas explicações muito consistentes (ST‑T)</td></tr>
+<tr><td>BRE</td><td class="num">0,870</td><td class="num">4º</td><td class="num">0,25</td><td class="num">6º</td><td><b>Discordância:</b> bom desempenho, explicações pouco consistentes (só 20 mapas)</td></tr>
+<tr><td>CAP</td><td class="num">0,750</td><td class="num">8º</td><td class="num">0,14</td><td class="num">8º</td><td rowspan="2">Concordância na base: as classes mais difíceis também têm as explicações menos consistentes</td></tr>
+<tr><td>STE</td><td class="num">0,596</td><td class="num">9º</td><td class="num">0,03</td><td class="num">9º</td></tr>
+</tbody></table></div>
+<p><b>Síntese descritiva:</b> as duas ordenações coincidem nas pontas. As classes de melhor desempenho (BRD, IAVB, AF) estão entre as quatro mais consistentes, e as duas de pior desempenho (CAP e STE) ocupam as duas últimas posições nas duas medidas. No meio da tabela há duas discordâncias claras: <b>STD</b> (7º no F1, 2º na Consistency) e <b>BRE</b> (4º no F1, 6º na Consistency). Desempenho e consistência das explicações tendem a andar juntos, mas não de forma estrita.</p>
+<p style="font-size:.88rem;color:var(--muted)">As classes pequenas têm valores menos estáveis (STE: 14 mapas; BRE: 20), e as classes grandes têm valor esperado ao acaso maior (BRD: 0,23). Isso deve ser considerado ao comparar posições vizinhas.</p>
 
 <h2>5. Sensibilidade e escolha de k</h2>
 <div class="tbl"><table>
-<thead><tr><th>k</th><th class="num">Explicações distintas</th><th class="num">Mapas sem par</th><th class="num">Ajustada global</th><th>Ordem das classes vs base</th></tr></thead>
+<thead><tr><th>k</th><th class="num">Explicações distintas</th><th class="num">Mapas sem par</th><th class="num">Consistency global</th></tr></thead>
 <tbody>
-<tr><td>1</td><td class="num">43–46</td><td class="num">1–2%</td><td class="num">0,29–0,35</td><td>Spearman 0,90–0,98</td></tr>
-<tr><td>2</td><td class="num">192–206</td><td class="num">17–20%</td><td class="num">0,30–0,37</td><td>Spearman 0,77–1,00</td></tr>
-<tr><td>3</td><td class="num">376–393</td><td class="num"><b>46–50%</b></td><td class="num">0,22–0,26</td><td>Spearman 0,38–0,78</td></tr>
+<tr><td>1</td><td class="num">43–46</td><td class="num">1–2%</td><td class="num">0,40–0,45</td></tr>
+<tr><td>2</td><td class="num">192–206</td><td class="num">17–20%</td><td class="num">0,39–0,45</td></tr>
+<tr><td>3</td><td class="num">376–393</td><td class="num"><b>46–50%</b></td><td class="num">0,29–0,32</td></tr>
 </tbody></table></div>
-<p>As explicações do modelo B são mais variadas que as do run 2 (196 contra 86 distintas com k = 2). Com k = 3, metade dos mapas fica sem par e a métrica deixa de ser verificável (Dasgupta et al., 2022, Claim 2). <b>k = 2</b> mantém a comparabilidade com o run 2, mas deixa ~18% dos mapas sem par. <b>k = 1</b> é o mais verificável (~2%). As conclusões gerais (ordem das classes e correlação positiva) são as mesmas com k = 1 e k = 2.</p>
+<p>Faixas sobre 9 combinações de regiões (janela do QRS de 140, 180 ou 220 ms × fim do ST‑T em 40, 45 ou 50% do RR). <b>Estabilidade das posições (k = 2):</b> BRD fica em 1º e SNR em 7º nas 9 combinações, e CAP e STE ocupam sempre as duas últimas posições. AF varia entre 2º e 4º, STD entre 2º e 6º e BRE entre 3º e 6º. Com k = 1, BRD fica sempre em 1º, BRD, STD e AF sempre nas três primeiras posições, e STE sempre em último.</p>
+<p>As explicações do modelo B são mais variadas que as do run 2 (196 contra 86 distintas com k = 2). Com k = 3, metade dos mapas fica sem par e a métrica deixa de ser verificável (Dasgupta et al., 2022, Claim 2). <b>k = 2</b> mantém a comparabilidade com o run 2, mas deixa ~18% dos mapas sem par. <b>k = 1</b> é o mais verificável (~2%).</p>
 
-<h2>6. Próximos passos</h2>
+<h2>6. O que se conclui até agora (F1 × Consistency)</h2>
+<p style="color:var(--muted)">Escopo: um modelo (B), uma divisão dos dados (70/20/10, semente fixa), explicações GradientSHAP apenas das predições corretas e uma única métrica de qualidade das explicações (Consistency). Análise descritiva. As conclusões são parciais e devem ser revisitadas com as demais métricas.</p>
+<ol>
+  <li><b>O classificador reproduz o estado da arte de referência.</b> F1‑macro de 0,819 no teste, contra 0,813 de Zhang et al. (2021). As classes mais difíceis são as mesmas do artigo: STE (0,60; artigo 0,54) e CAP (0,75; artigo 0,74).</li>
+  <li><b>As explicações carregam informação sobre a classe, de forma moderada.</b> A Consistency global é 0,42, contra 0,13 esperado ao acaso. Em 42% dos casos, mapas com as mesmas regiões destacadas explicam a mesma classe, cerca de 3 vezes o esperado ao acaso, mas longe de 1.</li>
+  <li><b>A consistência varia muito entre classes.</b> É alta onde o diagnóstico depende de um marcador morfológico localizado: BRD (0,64; acaso 0,23), STD (0,51; acaso 0,09) e IAVB (0,45; acaso 0,08). Fica perto do acaso em STE (0,03; acaso 0,02), CAP (0,14; acaso 0,06) e SNR (0,21; acaso 0,10).</li>
+  <li><b>Nas classes consistentes, as regiões destacadas coincidem com os critérios clínicos.</b> É o caso de QRS em V1 no BRD, de ST‑T no STD, do intervalo pré‑QRS no IAVB e do QRS no BRE e na CVP. Isso indica plausibilidade, ainda sem validação por especialista.</li>
+  <li><b>Desempenho e consistência coincidem nas pontas, com exceções no meio.</b> As classes de melhor F1 (BRD, IAVB, AF) estão entre as mais consistentes, e as duas de pior F1 (CAP e STE) são as menos consistentes, em todas as configurações de regiões testadas. STD (explicações consistentes com F1 intermediário) e BRE (F1 bom com explicações pouco consistentes) mostram que as duas dimensões não se confundem.</li>
+  <li><b>O padrão depende do modelo.</b> No classificador anterior (run 2, F1 0,641), as posições coincidiam menos: BRE era 3º no F1 e último na Consistency, e AF era 2º no F1 e 6º na Consistency. Como os modelos diferem em várias escolhas, não dá para atribuir a mudança a uma causa específica.</li>
+  <li><b>Lição metodológica: a discretização determina o resultado da Consistency.</b> A implementação padrão do Quantus dava a mesma explicação a todos os mapas, e a métrica passava a refletir só a homogeneidade das predições dentro de cada classe, acompanhando o F1 por razões mecânicas. A métrica só é interpretável com uma discretização que preserve informação e mantenha as explicações verificáveis (poucos mapas sem par).</li>
+</ol>
+<div class="callout">
+  <b>O que ainda não se pode concluir</b>
+  <ul style="margin:.3em 0 0">
+    <li>Que existe uma relação estatística entre desempenho e consistência das explicações: a análise é descritiva, com 9 classes não independentes.</li>
+    <li>Que as explicações estão clinicamente <i>corretas</i>: Consistency mede coerência interna, e não concordância com o cardiologista.</li>
+    <li>Como as explicações se comportam nos <i>erros</i> do modelo: só as predições corretas foram explicadas.</li>
+    <li>Se o padrão se repete nas outras dimensões de qualidade (Sufficiency revisada, robustez, demais métricas do Quantus).</li>
+  </ul>
+</div>
+
+<h2>7. Próximos passos</h2>
 <ul>
   <li>Decidir com o orientador o k principal (1 ou 2) e reportar o outro como sensibilidade.</li>
   <li>Validar a leitura clínica das regiões, principalmente STE, CAP e SNR.</li>
