@@ -2,13 +2,15 @@
 
 Hiperparâmetros e protocolo de Zhang et al. (2021) / código de referência
 (github.com/onlyzdd/ecg-diagnosis):
-- Otimizador Adam, taxa de aprendizado 1e-4, batch 32, até 40 épocas.
+- Otimizador Adam, taxa de aprendizado 1e-4, batch 32, até 60 épocas.
 - Aumento de dados no treino (escala e deslocamento da linha de base).
 - Limiar de decisão por classe, escolhido para maximizar o F1 na validação;
   os mesmos limiares são aplicados ao teste e salvos no checkpoint.
-- Perda BCEWithLogitsLoss com ``pos_weight`` inversamente proporcional à
-  frequência de cada classe no treino (seção 4.2 da proposta); com
-  ``--no-pos-weight`` usa BCE simples, como no código de referência.
+- Perda BCEWithLogitsLoss simples, como no código de referência. A ablação
+  com ``pos_weight`` inversamente proporcional à frequência de cada classe
+  (``--pos-weight``) deu F1-macro equivalente no teste (0,816 × 0,819, ver
+  ``results/ablacao_bce/``); o desbalanceamento é tratado pelos limiares por
+  classe.
 - Early stopping monitorando o F1-macro na validação (com os limiares
   otimizados); o melhor modelo é preservado.
 - Ao final, salva o F1-score por classe (validação e teste), com os limiares
@@ -19,7 +21,7 @@ Uso:
         --data-dir data/processed \
         --out-dir checkpoints \
         --results-dir results \
-        --epochs 40 --lr 1e-4 --batch-size 32
+        --epochs 60 --lr 1e-4 --batch-size 32
 """
 from __future__ import annotations
 
@@ -90,7 +92,7 @@ def train(args: argparse.Namespace) -> None:
     val_ds = ECGDataset(data_dir / "val.npz")
     print(f"[info] treino: {len(train_ds)} | val: {len(val_ds)} | "
           f"lr={args.lr} | aumento de dados={'não' if args.no_augment else 'sim'} | "
-          f"BCE {'simples' if args.no_pos_weight else 'ponderada (pos_weight)'}")
+          f"BCE {'ponderada (pos_weight)' if args.pos_weight else 'simples'}")
 
     train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True,
                               num_workers=args.num_workers, pin_memory=True)
@@ -98,7 +100,7 @@ def train(args: argparse.Namespace) -> None:
                             num_workers=args.num_workers, pin_memory=True)
 
     model = build_model(dropout=args.dropout).to(device)
-    pos_weight = None if args.no_pos_weight else compute_pos_weight(train_ds).to(device)
+    pos_weight = compute_pos_weight(train_ds).to(device) if args.pos_weight else None
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.weight_decay)
@@ -153,7 +155,7 @@ def train(args: argparse.Namespace) -> None:
     results = {"config": {"epochs": args.epochs, "lr": args.lr,
                           "batch_size": args.batch_size, "patience": args.patience,
                           "dropout": args.dropout, "augment": not args.no_augment,
-                          "pos_weight": not args.no_pos_weight,
+                          "pos_weight": args.pos_weight,
                           "fixed_threshold": args.fixed_threshold, "arch": model.arch},
                "val_f1": val_report,
                "val_f1_limiar_05": f1_report(y_true, probs, threshold=0.5),
@@ -215,7 +217,7 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--data-dir", type=str, default="data/processed")
     p.add_argument("--out-dir", type=str, default="checkpoints")
     p.add_argument("--results-dir", type=str, default="results")
-    p.add_argument("--epochs", type=int, default=40)
+    p.add_argument("--epochs", type=int, default=60)
     p.add_argument("--lr", type=float, default=1e-4)
     p.add_argument("--weight-decay", type=float, default=0.0)
     p.add_argument("--batch-size", type=int, default=32)
@@ -224,8 +226,9 @@ def build_argparser() -> argparse.ArgumentParser:
                    help="épocas sem melhora no F1-macro antes de parar")
     p.add_argument("--fixed-threshold", type=float, default=None,
                    help="usa um limiar fixo (ex.: 0.5) em vez de otimizar por classe")
-    p.add_argument("--no-pos-weight", action="store_true",
-                   help="BCE sem pesos por classe (código de referência de Zhang et al.)")
+    p.add_argument("--pos-weight", action="store_true",
+                   help="BCE ponderada pelo inverso da frequência de cada classe "
+                        "(padrão: BCE simples, como no código de Zhang et al.)")
     p.add_argument("--no-augment", action="store_true",
                    help="desliga o aumento de dados no treino")
     p.add_argument("--num-workers", type=int, default=2)
