@@ -83,7 +83,7 @@
     {\large BHATT, U.; WELLER, A.; MOURA, J. M. F. \textit{Evaluating and Aggregating Feature-based Model Explanations}. IJCAI, 2020, p.~3016--3022} \\[0.3em]
     \textbf{Métrica no Quantus:} \texttt{quantus.FaithfulnessCorrelation} \\[0.2em]
     \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
-    \textbf{Atualizado em:} 09/10/2026 \\[0.2em]
+    \textbf{Atualizado em:} 14/10/2026 \\[0.2em]
     \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
 \end{center}
 \vspace{-0.5em}
@@ -102,24 +102,37 @@ Um método como o SHAP atribui a cada atributo da entrada uma \textbf{importânc
 Sorteiam-se vários subconjuntos de atributos. Para cada um, calcula-se (i) a \textbf{soma das importâncias} que a explicação dá a esses atributos e (ii) a \textbf{queda na saída do modelo} quando eles são substituídos por um valor de referência (\textit{baseline}). A Faithfulness Correlation é a \textbf{correlação de Pearson} entre essas duas listas de números.
 \end{infobox}
 
-\textbf{Exemplo com 4 atributos.} Um modelo recebe 4 atributos. Retirando pares de atributos (substituindo-os pela baseline), observam-se as quedas na saída abaixo. Duas explicações diferentes são avaliadas:
+\textbf{Exemplo com 4 atributos.} Um modelo recebe 4 atributos (1, 2, 3 e 4). Duas explicações diferentes dizem o quanto cada atributo importa para a decisão:
 
 \begin{center}\small
-\begin{tabularx}{\linewidth}{lXrrr}
+\begin{tabular}{lcccc}
 \toprule
-\textbf{Subconjunto retirado} & \textbf{Queda real na saída} & \textbf{Soma (explicação A)} & \textbf{Soma (explicação B)} \\
+& \textbf{Atributo 1} & \textbf{Atributo 2} & \textbf{Atributo 3} & \textbf{Atributo 4} \\
 \midrule
-\{1, 2\} & 0,70 & 0,8 & 0,2 \\
-\{1, 3\} & 0,55 & 0,6 & 0,4 \\
-\{2, 4\} & 0,30 & 0,4 & 0,6 \\
-\{3, 4\} & 0,15 & 0,2 & 0,8 \\
+Importância segundo a \textbf{explicação A} & 0,5 & 0,3 & 0,1 & 0,1 \\
+Importância segundo a \textbf{explicação B} & 0,1 & 0,1 & 0,3 & 0,5 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A explicação A diz que os atributos 1 e 2 são os mais importantes; a B diz o contrário, que são o 3 e o 4. Para saber qual delas é fiel ao modelo, retiram-se pares de atributos (substituindo-os pela baseline) e mede-se a queda real na saída do modelo. Para cada par, soma-se também a importância que cada explicação deu aos dois atributos retirados:
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXll}
+\toprule
+\textbf{Par retirado} & \textbf{Queda real na saída (medida no modelo)} & \textbf{Soma segundo A} & \textbf{Soma segundo B} \\
 \midrule
-\multicolumn{2}{l}{\textbf{Correlação entre soma e queda}} & \textbf{0,995} & \textbf{$-$0,995} \\
+\{1, 2\} & 0,70 & 0,5 + 0,3 = 0,8 & 0,1 + 0,1 = 0,2 \\
+\{1, 3\} & 0,55 & 0,5 + 0,1 = 0,6 & 0,1 + 0,3 = 0,4 \\
+\{2, 4\} & 0,30 & 0,3 + 0,1 = 0,4 & 0,1 + 0,5 = 0,6 \\
+\{3, 4\} & 0,15 & 0,1 + 0,1 = 0,2 & 0,3 + 0,5 = 0,8 \\
+\midrule
+\multicolumn{2}{l}{\textbf{Correlação entre a soma e a queda real}} & \textbf{0,995} & \textbf{$-$0,995} \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-A explicação A dá importância (0,5; 0,3; 0,1; 0,1) aos atributos, e os subconjuntos que ela considera importantes são justamente os que mais derrubam a saída: correlação perto de 1, explicação \textbf{fiel}. A explicação B dá (0,1; 0,1; 0,3; 0,5), ou seja, o contrário: correlação perto de $-1$, explicação \textbf{infiel}. Uma explicação sem relação com o modelo daria correlação perto de 0.
+\textbf{Como ler.} Com a explicação A, os pares que ela considera mais importantes (soma maior) são exatamente os que mais derrubam a saída do modelo: as duas colunas sobem e descem juntas, e a correlação é 0,995, perto de 1. A explicação A é \textbf{fiel}. Com a explicação B acontece o contrário: o par que ela considera mais importante, \{3, 4\}, é o que menos muda a saída. A correlação é $-$0,995, e a explicação B é \textbf{infiel}. Uma explicação sem nenhuma relação com o modelo daria correlação perto de 0.
 
 \section{Passo a passo}
 Para um exemplo $x$, com a explicação $\varphi$ e o tamanho de subconjunto $|S|$ fixados:
@@ -233,7 +246,7 @@ Três pontos para o TCC: (i) usa-se o \textbf{logit}; (ii) correlacionar a \text
 \begin{origquote}“Table 2: Faithfulness µ\textsubscript{F} averaged over a test set: (Zero Baseline, Training Average Baseline). Exact quantities can be obtained by dividing table entries by 10\textsuperscript{2}.” (Subconjuntos: Adult 2, Iris 2, MIMIC 10 e 20; SHAP: (62, 60), (67, 68), (31, 36), (37, 47).)\end{origquote}
 \begin{tradquote}“Tabela 2: Fidelidade µ\textsubscript{F} média sobre um conjunto de teste: (baseline zero, baseline média do treino). As quantidades exatas são obtidas dividindo os valores da tabela por 10\textsuperscript{2}.”\end{tradquote}
 \explab{Explicação}
-Com o SHAP, os valores ficam entre 0,31 e 0,68. Os subconjuntos têm de 2 a 20 atributos, em dados tabulares com poucos atributos (o MIMIC usa 17 atributos selecionados). Esses números servem de referência de ordem de grandeza, e não de comparação direta com o ECG.
+A tabela traz a Faithfulness Correlation de vários métodos de explicação (SHAP, Shapley Sampling, gradiente, Integrated Gradients, DeepLift e outros). Quando o método avaliado é o \textbf{SHAP} (estimado por mínimos quadrados ponderados, isto é, o KernelSHAP), a Faithfulness Correlation fica entre \textbf{0,31 e 0,68}. Estes são os números usados como referência no restante do fichamento. Os subconjuntos têm de 2 a 20 atributos, em dados tabulares com poucos atributos (o MIMIC usa 17 atributos selecionados). Esses números servem de referência de ordem de grandeza, e não de comparação direta com o ECG.
 \end{citacard}
 
 \partbar{Parte III · Aplicação ao TCC}
@@ -257,13 +270,13 @@ Correlação & Pearson por exemplo & Pearson por exemplo (\texttt{correlation\_p
 \end{center}
 A fórmula está implementada de acordo com o artigo. As diferenças estão nos \textbf{valores padrão}: a baseline \texttt{"black"} é o \textbf{valor mínimo do próprio exemplo} (\texttt{arr.min()} sobre todas as derivações e instantes), e não zero ou a média do treino; e \texttt{subset\_size=224} vem do contexto de imagens.
 
-\section{Configuração usada no TCC}
-No \texttt{src/evaluate.py}, a métrica foi chamada com \texttt{nr\_runs=10}, \texttt{subset\_size=224} e os demais valores padrão, por classe e só sobre as predições corretas. O valor da classe é a média dos exemplos; valores indefinidos (NaN) são descartados.
+\section{Versão antiga: configuração usada no TCC até 14/10}
+Até 14/10, a métrica era calculada pelo Quantus, no \texttt{src/evaluate.py}, com \texttt{nr\_runs=10}, \texttt{subset\_size=224} e os demais valores padrão, por classe e só sobre as predições corretas. O valor da classe era a média dos exemplos, e valores indefinidos (NaN) eram descartados sem aviso.
 
 \begin{center}\small
 \begin{tabularx}{\linewidth}{XXXl}
 \toprule
-\textbf{Aspecto} & \textbf{Artigo} & \textbf{TCC (Quantus)} & \textbf{Aderente?} \\
+\textbf{Aspecto} & \textbf{Artigo} & \textbf{Versão antiga (Quantus)} & \textbf{Aderente?} \\
 \midrule
 Fórmula (soma × queda, Pearson por exemplo) & Def. 3 & Igual & Sim \\
 Saída usada & Logit & Logit da classe explicada & Sim \\
@@ -279,15 +292,16 @@ Exemplos avaliados & Conjunto de teste & Só predições corretas, por classe & 
 
 \begin{infobox}[warn]{Por que cada “Não” importa}
 \begin{enumerate}
-\item \textbf{Subconjunto pequeno demais.} Retirar 224 pontos espalhados em 12 derivações de 30 s dá cerca de 19 pontos por derivação, ou seja, um ponto a cada ~1,6 s. O próprio artigo observa que subconjuntos pequenos não contêm os atributos informativos (p.~5). A hipótese é que as quedas fiquem perto de zero e dominadas por ruído, e a correlação também.
-\item \textbf{Ponto isolado como atributo.} Pontos vizinhos do ECG são quase iguais, e uma rede convolucional “enxerga através” de um ponto trocado. Retirar um ponto não equivale a retirar uma informação.
-\item \textbf{Baseline “black”.} Em sinal com z-score, o mínimo do ECG é um valor extremo, tipicamente o fundo de uma onda S. Trocar pontos por ele cria \textbf{picos artificiais}, que o modelo pode reagir como se fossem eventos cardíacos. A queda medida passa a refletir o artefato, e não a ausência do atributo.
-\item \textbf{Preenchimento.} Cerca de metade dos 15\,000 instantes de um registro típico é preenchimento (o registro médio tem ~15 s). Muitos pontos sorteados caem ali, onde não há ECG.
+\item \textbf{Baseline “black”.} Em sinal com z-score, o mínimo do ECG é um valor extremo, tipicamente o fundo de uma onda S. Trocar pontos por ele cria \textbf{picos artificiais}, aos quais o modelo pode reagir como se fossem eventos cardíacos. A queda medida passa a refletir o artefato, e não a ausência do atributo.
+\item \textbf{Ponto isolado como atributo.} Pontos vizinhos do ECG são quase iguais, e um ponto isolado não carrega uma informação clínica. Retirar um ponto não equivale a retirar uma informação.
+\item \textbf{Subconjunto pequeno e espalhado.} Os 224 pontos dão cerca de 19 por derivação, um a cada ~1,6 s. A soma das atribuições desses pontos dispersos não representa nenhuma região do sinal.
+\item \textbf{Preenchimento.} Cerca de metade dos 15\,000 instantes de um registro típico é preenchimento (o registro médio tem ~15 s). No diagnóstico, 45\% dos pontos sorteados caíram ali, onde não há ECG.
 \item \textbf{Poucas repetições.} Uma correlação de Pearson com 10 pares é muito instável.
 \end{enumerate}
+\textit{Correção:} na primeira versão deste fichamento, a hipótese era que as quedas ficariam perto de zero. O diagnóstico (seção 10) mostrou o contrário: as quedas são grandes, mas não têm relação com as atribuições, o que aponta para os artefatos do item 1.
 \end{infobox}
 
-\section{Resultados antigos (pipeline anterior)}
+\section{Resultados da versão antiga}
 A métrica foi calculada no pipeline anterior (modelo de 30/09, ainda sem a classe CVP), com a configuração da seção 8:
 \begin{center}\small
 \begin{tabularx}{\linewidth}{Xrrrrrrrr}
@@ -298,23 +312,140 @@ A métrica foi calculada no pipeline anterior (modelo de 30/09, ainda sem a clas
 \bottomrule
 \end{tabularx}
 \end{center}
-Todos os valores ficaram perto de zero (entre $-$0,10 e 0,13), abaixo dos 0,31 a 0,68 obtidos com SHAP no artigo. Pela análise da seção 8, isso é mais provavelmente efeito da configuração do que evidência de que as explicações sejam infiéis. A métrica ainda não foi calculada para o modelo atual (modelo B).
+Todos os valores ficaram perto de zero (entre $-$0,10 e 0,13). Como referência, no próprio artigo de Bhatt et al. (2020), a Faithfulness Correlation das explicações SHAP fica entre 0,31 e 0,68 (Tabela 2, citação da p.~6). A comparação serve só como ordem de grandeza: lá, o SHAP é o KernelSHAP aplicado a dados tabulares; aqui, o GradientSHAP aplicado a ECG.
 
-\section{Propostas de adaptação (a discutir)}
+\section{Diagnóstico: por que a versão antiga não funcionava}
+Para confirmar o problema com dados, as duas formas de “retirar atributos” foram testadas nos mesmos ECGs, com o modelo atual (modelo B). Antes dos números, os termos usados:
+
+\begin{itemize}
+\item \textbf{Região.} Um trecho do ECG com significado clínico. Cada batimento é dividido em três partes (pré-QRS, QRS e ST-T), e cada parte é considerada separadamente em cada uma das 12 derivações. Assim, \textbf{cada ECG tem 36 regiões} (12 derivações × 3 partes), por exemplo “QRS da derivação V1”. A região inclui essa parte em todos os batimentos do registro.
+\item \textbf{Subconjunto.} Um grupo de atributos retirados \textit{ao mesmo tempo}. Na versão antiga, um subconjunto são 224 pontos sorteados; na versão atual, são algumas regiões sorteadas. Neste teste, \textbf{cada subconjunto tem 9 das 36 regiões} (cerca de um quarto do ECG).
+\item \textbf{Repetição.} Para calcular uma correlação, é preciso repetir a retirada várias vezes, cada vez com um subconjunto diferente: cada repetição gera um par (soma das atribuições, queda da saída). Neste teste, foram \textbf{10 subconjuntos por ECG}, ou seja, 10 pares, e a correlação de cada ECG é calculada sobre esses 10 pares.
+\end{itemize}
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Número} & \textbf{O que é} \\
+\midrule
+9 classes × 4 ECGs = 36 ECGs & ECGs testados: 4 sorteados de cada uma das 9 classes (o 36 aqui é coincidência com o número de regiões) \\
+36 regiões & Partes em que \textit{cada} ECG é dividido (12 derivações × pré-QRS, QRS, ST-T) \\
+9 regiões & Tamanho de cada subconjunto na versão atual: 9 das 36 regiões são retiradas de uma vez \\
+224 pontos & Tamanho de cada subconjunto na versão antiga \\
+10 subconjuntos & Quantas retiradas diferentes foram feitas em cada ECG (10 pares para a correlação) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Resultado:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{XXX}
+\toprule
+& \textbf{Versão antiga}: 224 pontos → mínimo do ECG & \textbf{Versão atual}: 9 de 36 regiões → zero \\
+\midrule
+Queda média do logit (logit original: $\approx$ 7,6 em módulo) & 2,56 & 2,14 \\
+\textbf{Faithfulness Correlation média} & \textbf{$-$0,02} & \textbf{0,57} \\
+Valores indefinidos (NaN) & 0 & 0 \\
+Pontos sorteados no preenchimento & 45\% & — (fora do sorteio) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Na versão antiga, \textbf{o modelo reage muito à perturbação, mas a reação não tem relação com o que a explicação aponta} (correlação $\approx$ 0): a queda mede a resposta aos picos artificiais. Retirando regiões inteiras com uma baseline neutra, a correlação sobe para 0,57, na faixa que o artigo obtém para explicações SHAP (0,31 a 0,68, Tabela 2). Isso mostra que o resultado antigo vinha da configuração, e não das explicações.
+
+\section{Versão atual: implementação própria}
+A métrica foi reimplementada em \texttt{src/faithfulness\_correlation.py} (commit \texttt{baf7d4f}), seguindo a Definição 3 do artigo, e a versão do Quantus foi retirada do pipeline.
+
+\subsection{Como funciona}
 \begin{enumerate}
-\item \textbf{Retirar regiões, e não pontos.} Tratar como “atributo” um trecho com significado, por exemplo as 36 regiões do batimento já usadas na Consistency (derivação × pré-QRS/QRS/ST‑T), ou janelas de tempo por derivação. A importância de uma região é a soma do mapa SHAP nela, e retirá-la é trocar todo o trecho pela baseline. O $|S|$ passa a ser um número de regiões, com uma fração relevante da entrada, como no artigo.
-\item \textbf{Baseline neutra.} Usar zero, que em z-score é a média de cada derivação, ou a média do treino, as duas opções citadas pelo artigo (p.~2 e p.~5).
-\item \textbf{Excluir o preenchimento} do sorteio.
-\item \textbf{Mais repetições} por exemplo (por exemplo, 50 a 100, como o padrão do Quantus).
-\item \textbf{Registrar quantos valores são NaN}, porque hoje eles são descartados sem aviso.
+\item \textbf{Atributos = regiões do batimento.} Os mesmos 36 atributos da Consistency: 12 derivações × 3 regiões (pré-QRS, QRS e ST-T), definidas a partir dos picos R. A importância de uma região é a soma do mapa SHAP em todos os seus pontos.
+\item \textbf{Sorteio.} Para cada ECG, sorteiam-se 50 subconjuntos de $|S|$ regiões. Batimentos incompletos e o preenchimento ficam fora.
+\item \textbf{Retirada.} Cada região sorteada é substituída pela baseline em todos os batimentos, e mede-se a queda do logit da classe explicada.
+\item \textbf{Correlação.} Pearson entre as 50 somas e as 50 quedas, para cada ECG; depois, média por classe. Valores indefinidos são contados e reportados.
+\item \textbf{Configurações.} Duas baselines (zero e média do treino), com os mesmos subconjuntos nas duas, e três tamanhos: $|S|$ = 4, 9 e 18 regiões (cerca de 10\%, 25\% e 50\% da entrada).
 \end{enumerate}
-A proposta 1 é uma decisão metodológica, pois muda a unidade de atributo. O artigo define a métrica sobre os atributos pontuados pela explicação e não restringe o que é um atributo (seção 6, citação da p.~2), mas a escolha precisa ser justificada no texto.
 
-\textbf{Verificações sugeridas antes de decidir} (não executadas): (i) medir as quedas $f(x) - f(x')$ com a configuração atual, para confirmar se ficam perto de zero; (ii) comparar com as quedas ao retirar regiões inteiras; (iii) contar os NaN por classe.
+\subsection{Artigo × versão antiga × versão atual}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Aspecto} & \textbf{Artigo (Bhatt et al., 2020)} & \textbf{Versão antiga (Quantus)} & \textbf{Versão atual} \\
+\midrule
+Fórmula & Pearson, por exemplo, entre soma das atribuições e queda da saída & Igual & Igual \\
+Saída & Logit & Logit da classe explicada & Logit da classe explicada \\
+Atributo & Variável tabular & Ponto isolado (180\,000) & \textbf{Região do batimento (36)} \\
+Importância do atributo & $\varphi_i$ & Valor do mapa no ponto & Soma do mapa na região \\
+Tamanho do subconjunto & Fixo; 2 a 20 atributos; o artigo varia o tamanho & 224 pontos (0,12\%) & \textbf{4, 9 e 18 regiões} (10 a 50\%) \\
+Baseline & \textbf{Zero e média do treino}, as duas reportadas & Mínimo do ECG & \textbf{Zero e média do treino} \\
+Subconjuntos por exemplo & Vários (não fixado) & 10 & \textbf{50} \\
+Preenchimento & Não se aplica & No sorteio & \textbf{Fora} \\
+Valores indefinidos & — & Descartados sem aviso & \textbf{Contados} \\
+Exemplos & Teste ($\geq$ 50 pontos) & Predições corretas, por classe & Predições corretas (622 mapas), por classe \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Única adaptação em relação ao artigo: o que é um \textbf{atributo}. Todo o resto segue o protocolo original, inclusive o uso das duas baselines e de mais de um tamanho de subconjunto, como na Tabela 2.
+
+\subsection{Conferência do código}
+Num caso sintético com um modelo linear, em que a atribuição exata de cada região é exatamente o efeito de retirá-la, a métrica deu \textbf{1,0}. Com a atribuição invertida, deu \textbf{$-$1,0}; com uma atribuição aleatória, $-$0,12 (perto de zero). Um teste completo com 18 mapas reais também rodou sem valores indefinidos. Nesse teste, as baselines zero e média do treino deram praticamente o mesmo resultado: como os batimentos não estão alinhados entre pacientes, a média de cada ponto (derivação, instante) nos ECGs de treino fica perto de zero.
+
+\section{Resultados da versão atual}
+A métrica foi calculada no Kaggle (GPU) para os 622 mapas do modelo B (versão 17 do notebook, com o modelo e os mapas do dataset \texttt{arthurso/shap-ecg-modelob}), com 50 subconjuntos por mapa. \textbf{Nenhum valor ficou indefinido.} As duas baselines deram resultados praticamente iguais (diferença máxima de 0,003), por isso a tabela mostra só a baseline zero.
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lrrrrX}
+\toprule
+\textbf{Classe} & \textbf{Mapas} & \textbf{F1} & \textbf{$|S|$ = 4} & \textbf{$|S|$ = 9} & \textbf{$|S|$ = 18} \\
+\midrule
+BRD  & 172 & 0,927 & 0,77 & \textbf{0,74} & 0,69 \\
+BRE  &  20 & 0,870 & 0,69 & \textbf{0,65} & 0,51 \\
+IAVB &  61 & 0,884 & 0,58 & \textbf{0,64} & 0,62 \\
+CVP  &  59 & 0,837 & 0,64 & \textbf{0,61} & 0,54 \\
+STE  &  14 & 0,596 & 0,57 & \textbf{0,60} & 0,53 \\
+AF   & 108 & 0,931 & 0,54 & \textbf{0,54} & 0,55 \\
+STD  &  65 & 0,778 & 0,50 & \textbf{0,52} & 0,43 \\
+CAP  &  45 & 0,750 & 0,54 & \textbf{0,52} & 0,44 \\
+SNR  &  78 & 0,796 & 0,49 & \textbf{0,46} & 0,39 \\
+\midrule
+\textbf{Global} & 622 & 0,819 & 0,61 & \textbf{0,61} & 0,55 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\textit{Valores de Faithfulness Correlation (média por classe), baseline zero; $|S|$ é o número de regiões, de 36, retiradas de uma vez em cada subconjunto. F1 no teste, com limiares por classe. Classes ordenadas pela coluna $|S|$ = 9.}
+
+\subsection{Leitura}
+\begin{enumerate}
+\item \textbf{As explicações são fiéis ao modelo, de forma moderada.} Todas as classes têm correlação positiva, entre 0,39 e 0,77, e a média global é 0,61. Quando o SHAP dá mais importância a um grupo de regiões, retirar esse grupo derruba mais a saída do modelo. Como ordem de grandeza, o valor fica na faixa que o artigo obtém para explicações SHAP em dados tabulares (0,31 a 0,68).
+\item \textbf{Diferenças entre classes.} BRD tem as explicações mais fiéis em todos os tamanhos de subconjunto, e SNR as menos fiéis, também em todos. As demais classes trocam de posição conforme $|S|$.
+\item \textbf{Efeito do tamanho do subconjunto.} A fidelidade global é igual com 4 e 9 regiões (0,61) e cai com 18 (0,55). O artigo observa que a fidelidade sobe com $|S|$ até o subconjunto conter os atributos informativos; aqui, retirar metade do ECG de uma vez já não aumenta a correlação.
+\end{enumerate}
+
+\subsection{Comparação descritiva com o F1 ($|S|$ = 9)}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lrrX}
+\toprule
+\textbf{Classe} & \textbf{Posição no F1} & \textbf{Posição na Faithfulness Correlation} & \textbf{Leitura} \\
+\midrule
+BRD  & 2º & 1º & Concordância no topo \\
+IAVB & 3º & 3º & Concordância no topo \\
+BRE  & 4º & 2º & Concordância no topo \\
+CVP  & 5º & 4º & Posições próximas \\
+STD  & 7º & 7º & Concordância na base \\
+CAP  & 8º & 8º & Concordância na base \\
+AF   & 1º & 6º & \textbf{Discordância}: melhor F1, fidelidade intermediária \\
+SNR  & 6º & 9º & \textbf{Discordância}: fidelidade mais baixa entre todas \\
+STE  & 9º & 5º & \textbf{Discordância}: pior F1, fidelidade intermediária (só 14 mapas) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+As duas ordenações coincidem em seis das nove classes (topo: BRD, IAVB, BRE; base: STD, CAP; CVP no meio) e divergem em três (AF, SNR e STE). Desempenho e fidelidade tendem a andar juntos, mas não de forma estrita. A comparação é descritiva, pelos mesmos motivos explicados no fichamento da Consistency: as nove classes não são observações independentes.
 
 \section{Como redigir no TCC}
 \begin{infobox}[ok]{Sugestão}
-“A métrica Faithfulness Correlation (BHATT; WELLER; MOURA, 2020) mede a correlação de Pearson entre a soma das atribuições de subconjuntos aleatórios de atributos e a queda na saída do modelo quando esses atributos são substituídos por um valor de referência. Os experimentos originais usam dados tabulares com poucos atributos, subconjuntos que cobrem parte relevante da entrada e valores de referência zero ou média do treino. A configuração padrão da biblioteca Quantus, aplicada ao ECG, sorteia 224 pontos isolados entre 180\,000 e os substitui pelo valor mínimo do sinal, o que [descrever a adaptação adotada e justificá-la].”
+“A métrica Faithfulness Correlation (BHATT; WELLER; MOURA, 2020) mede a correlação de Pearson entre a soma das atribuições de subconjuntos aleatórios de atributos e a queda na saída do modelo (\textit{logit}) quando esses atributos são substituídos por um valor de referência. Os experimentos originais usam dados tabulares com poucos atributos. A configuração padrão da biblioteca Quantus, aplicada ao ECG, sorteia 224 pontos isolados entre 180\,000 e os substitui pelo valor mínimo do sinal; em um diagnóstico com 36 exemplos, essa configuração produziu quedas grandes na saída, mas sem relação com as atribuições (correlação média de $-$0,02), indicando que a perturbação mede artefatos. A métrica foi então implementada pelo autor seguindo o protocolo do artigo, com uma única adaptação: os atributos passaram a ser as 36 regiões do batimento (12 derivações × pré-QRS, QRS e ST-T), cuja importância é a soma das atribuições na região. Foram usados 50 subconjuntos por exemplo, subconjuntos de 4, 9 e 18 regiões e as duas baselines do artigo (zero e média do treino).”
+\end{infobox}
+
+\begin{infobox}[ok]{Sugestão: resultados}
+“A Faithfulness Correlation foi positiva em todas as classes, com média global de 0,61 (subconjuntos de 9 regiões), variando de 0,46 (SNR) a 0,74 (BRD). As duas baselines produziram valores praticamente idênticos. Comparando as ordenações, as classes de maior e menor desempenho preditivo coincidem, em sua maioria, com as de maior e menor fidelidade (BRD, IAVB e BRE no topo; STD e CAP na base), com exceções em AF, SNR e STE.”
 \end{infobox}
 
 \end{document}
