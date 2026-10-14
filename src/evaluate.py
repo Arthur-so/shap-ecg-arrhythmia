@@ -2,8 +2,8 @@
 
 Calcula, por amostra e depois agregado por classe diagnóstica, as métricas de:
 
-  Faithfulness: Faithfulness Correlation, Faithfulness Estimate, Selectivity,
-                SensitivityN, Infidelity, Sufficiency.
+  Faithfulness: Faithfulness Estimate, Selectivity, SensitivityN, Infidelity,
+                Sufficiency.
   Robustness:   Local Lipschitz Estimate, Max-Sensitivity, Avg-Sensitivity,
                 Continuity, Relative Input Stability (RIS),
                 Relative Output Stability (ROS).
@@ -11,6 +11,10 @@ Calcula, por amostra e depois agregado por classe diagnóstica, as métricas de:
 A Consistency (Dasgupta et al., 2022) é calculada em ``consistency.py``: a
 discretização padrão da ``quantus.Consistency`` (sinal dos 5 primeiros valores
 do mapa, após valor absoluto) dava a mesma explicação a todos os mapas.
+A Faithfulness Correlation (Bhatt et al., 2020) é calculada em
+``faithfulness_correlation.py``: a configuração padrão da
+``quantus.FaithfulnessCorrelation`` (224 pontos isolados substituídos pelo
+mínimo do sinal) gerava artefatos e correlação nula.
 
 As métricas de robustez requerem gerar novas explicações sob perturbação;
 para isso é fornecida uma ``explain_func`` que reproduz o GradientSHAP usado
@@ -115,9 +119,6 @@ def build_metrics(explain_func):
     import quantus
 
     faithfulness = {
-        "FaithfulnessCorrelation": quantus.FaithfulnessCorrelation(
-            nr_runs=10, subset_size=224, return_aggregate=False,
-            disable_warnings=True),
         # features_in_step precisa dividir o nº de pontos temporais (15000);
         # 500 -> 30 passos. 224 (usado antes) não divide 15000.
         "FaithfulnessEstimate": quantus.FaithfulnessEstimate(
