@@ -268,7 +268,7 @@ Exemplos avaliados & Vários pontos do teste & Só predições corretas, por cla
 \end{tabularx}
 \end{center}
 
-\section{Resultados antigos (pipeline anterior)}
+\section{Resultados da versão antiga}
 A métrica foi calculada no pipeline anterior (modelo de 30/09, ainda sem a classe CVP), com a configuração da seção 8:
 \begin{center}\small
 \begin{tabularx}{\linewidth}{Xrrrrrrrr}
@@ -279,22 +279,96 @@ A métrica foi calculada no pipeline anterior (modelo de 30/09, ainda sem a clas
 \bottomrule
 \end{tabularx}
 \end{center}
-Ao contrário da Faithfulness Correlation antiga, que ficou perto de zero, estes valores são \textbf{positivos e moderados} (0,13 a 0,51). Isso não garante que a configuração esteja correta: há uma explicação alternativa, descrita abaixo, que precisa ser testada.
+Ao contrário da Faithfulness Correlation antiga, que ficou perto de zero, estes valores são \textbf{positivos e moderados} (0,13 a 0,51). O diagnóstico da seção 10 mostra que, mesmo assim, eles não medem a fidelidade das explicações.
 
-\begin{infobox}[warn]{Hipótese a verificar: a correlação pode vir do tamanho da perturbação}
-O GradientSHAP tende a dar atribuições grandes (em módulo) a pontos de \textbf{amplitude grande}, como os picos do QRS. Como o Quantus retira primeiro os pontos de maior atribuição e os troca pelo \textbf{mínimo} do ECG, os primeiros grupos são também os que sofrem a \textbf{maior mudança de valor} (de um pico alto para o fundo do sinal). Se o modelo reage mais a mudanças maiores, a queda acompanha a atribuição \textit{por causa do tamanho da perturbação}, e não necessariamente porque a explicação é fiel. Além disso, valem os problemas já vistos na Faithfulness Correlation: pontos isolados sem significado, a baseline que cria picos artificiais e o preenchimento.
+\section{Diagnóstico}
+As duas formas de retirar atributos foram comparadas com o modelo atual (modelo B) em \textbf{18 ECGs}, 2 sorteados de cada uma das 9 classes:
+\begin{itemize}
+\item \textbf{(A) Versão antiga:} os 180\,000 pontos do mapa são ordenados da maior para a menor atribuição e divididos em grupos de 500; cada grupo é trocado, separadamente, pelo mínimo do ECG. São 360 retiradas por ECG.
+\item \textbf{(B) Regiões:} cada uma das 36 regiões do batimento (12 derivações × pré-QRS, QRS e ST-T) é trocada, separadamente, por zero. São 36 retiradas por ECG.
+\end{itemize}
+Em cada retirada foram registradas: a soma das atribuições do que foi retirado, a queda do \textit{logit} e da probabilidade da classe e o tamanho da mudança imposta ao sinal (soma das diferenças entre o valor original e o valor colocado no lugar). Ao todo, 7\,128 retiradas.
+
+\subsection{Teste do sinal da atribuição}
+Se a explicação é fiel, retirar algo que o SHAP diz que \textbf{empurra contra} a classe (atribuição negativa) deve \textbf{aumentar} a saída do modelo, ou seja, dar uma queda negativa.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrr}
+\toprule
+& \textbf{Queda média (atribuição positiva)} & \textbf{Queda média (atribuição negativa)} \\
+\midrule
+(A) Versão antiga & +3,30 & \textbf{+3,06} \\
+(B) Regiões & +0,29 & \textbf{$-$0,37} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Na versão antiga, \textbf{qualquer} grupo trocado pelo mínimo derruba o \textit{logit} em cerca de 3 (o \textit{logit} original fica em torno de 7), seja qual for o sinal da atribuição. A queda mede o dano causado ao sinal, e não a retirada de informação. Com as regiões, o comportamento é o esperado: retirar o que ajuda a classe baixa a saída, e retirar o que atrapalha a aumenta.
+
+\subsection{Onde caem os grupos da versão antiga}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrr}
+\toprule
+\textbf{Grupos (em ordem de atribuição)} & \textbf{Atribuição média} & \textbf{Queda média} & \textbf{No preenchimento} \\
+\midrule
+0 a 10 (mais positivos) & +3,49 & 5,3 & 4\% \\
+10 a 50 & +0,78 & 4,6 & 15\% \\
+50 a 310 (perto de zero) & +0,01 & 2,7 & 64\% \\
+310 a 350 & $-$0,65 & 4,0 & 18\% \\
+350 a 360 (mais negativos) & $-$2,94 & 3,7 & 3\% \\
+\bottomrule
+\end{tabularx}
+\end{center}
+A queda tem forma de “U”: é grande nas duas pontas e menor no meio, onde a maior parte dos pontos está no preenchimento. Os valores positivos da versão antiga vêm dessa mistura (dano ao sinal fora do preenchimento, pouco dano dentro dele), e não da fidelidade.
+
+\subsection{A métrica nas duas versões}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrr}
+\toprule
+& \textbf{(A) Versão antiga} & \textbf{(B) Regiões} \\
+\midrule
+Faithfulness Estimate com \textit{logit} & 0,21 & \textbf{0,60} \\
+Faithfulness Estimate com probabilidade & 0,23 & 0,53 \\
+Faithfulness Estimate descontando o tamanho da mudança & 0,17 & 0,64 \\
+Retiradas que mudam a probabilidade menos de 0,01 & 52\% & 82\% \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Com as regiões, descontar o tamanho da mudança imposta não reduz a correlação (0,60 $\rightarrow$ 0,64): o valor reflete a atribuição, e não o tamanho da perturbação. Prévia por classe (regiões, \textit{logit}, só 2 ECGs por classe): BRE 0,82; BRD 0,75; AF 0,73; CAP 0,65; SNR 0,57; STE 0,57; IAVB 0,49; STD 0,45; CVP 0,38.
+
+\begin{infobox}[warn]{Correção da hipótese da primeira versão deste fichamento}
+A primeira versão supunha que a correlação da versão antiga viria do \textbf{tamanho da perturbação} (pontos de maior atribuição sofreriam mudanças maiores). O diagnóstico mostrou que isso não acontece: o tamanho da mudança não acompanha a atribuição (correlação média de 0,07, calculada ECG a ECG). O problema real é o \textbf{dano} ao sinal: trocar 500 pontos pelo mínimo derruba a saída em qualquer grupo, inclusive nos de atribuição negativa.
 \end{infobox}
 
-\section{Proposta de adaptação (a discutir)}
-Seguindo o artigo e o mesmo critério usado na Faithfulness Correlation:
+\subsection{Probabilidade ou \textit{logit}}
+O artigo usa a probabilidade da classe; o Quantus usa o \textit{logit}. O modelo é muito confiante: a mediana do \textit{logit} original é 7,07, o que corresponde a uma probabilidade de 99,9\%. Nessa faixa, a probabilidade satura: 82\% das retiradas de regiões mudam a probabilidade menos de 0,01, e a correlação passa a depender de poucas retiradas. O \textit{logit} não satura e distingue melhor os efeitos.
+
+\section{Versão atual: decisões}
+A métrica será implementada seguindo o §5.3 do artigo, com as seguintes escolhas:
 \begin{enumerate}
 \item \textbf{Atributos = 36 regiões do batimento}, como recomenda o próprio artigo para entradas de alta dimensão (citação da p.~4). A importância de uma região é a soma do mapa SHAP nela.
-\item \textbf{Retirar cada região isoladamente} (36 retiradas por exemplo), como descrito no §5.3, substituindo-a pela baseline em todos os batimentos.
-\item \textbf{Baselines zero e média do treino}, os “valores médios” citados pelo artigo, como na Faithfulness Correlation.
-\item \textbf{Saída:} o artigo usa a \textbf{probabilidade}; o Quantus e a Faithfulness Correlation usam o \textbf{logit}. Como o modelo é muito confiante (probabilidades perto de 100\%), a probabilidade tende a saturar e mudar pouco. Proposta: calcular com as duas e decidir com base no diagnóstico.
+\item \textbf{Cada região é retirada isoladamente} (36 retiradas por exemplo), substituída pela baseline em todos os batimentos.
+\item \textbf{Baselines zero e média do treino}, os “valores médios” citados pelo artigo.
+\item \textbf{Saída principal: \textit{logit}}, pela saturação da probabilidade descrita acima. A probabilidade é reportada como verificação, por ser a saída usada no artigo.
 \item \textbf{Preenchimento fora} e valores indefinidos contados.
+\item \textbf{Mesmo código da Faithfulness Correlation.} Com regiões, a Faithfulness Estimate equivale à Faithfulness Correlation com grupos de uma região, retirando todas as regiões em vez de sorteá-las. A implementação reaproveita o mesmo código, o que garante que as duas métricas usem as mesmas regiões e baselines.
 \end{enumerate}
 
-\textbf{Verificações sugeridas antes de implementar} (não executadas): (i) com a configuração antiga, medir se a queda acompanha a \textbf{mudança de valor} imposta (o que confirmaria a hipótese do quadro acima); (ii) comparar com a retirada de regiões com baseline zero; (iii) comparar probabilidade e logit.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Aspecto} & \textbf{Artigo} & \textbf{Versão antiga (Quantus)} & \textbf{Versão atual} \\
+\midrule
+O que se retira & Cada atributo ou conceito, isoladamente & Grupos de 500 pontos em ordem de atribuição & \textbf{Cada região, isoladamente} \\
+Atributo & Variável tabular ou conceito & Ponto isolado (180\,000) & \textbf{Região do batimento (36)} \\
+Retiradas por exemplo & Uma por atributo & 360 & \textbf{36} \\
+Baseline & Preto ou valores médios & Mínimo do ECG & \textbf{Zero e média do treino} \\
+Saída & Probabilidade & \textit{Logit} & \textbf{\textit{Logit}} (probabilidade como verificação) \\
+Correlação & Por exemplo & Pearson por exemplo & Pearson por exemplo \\
+Preenchimento & Não se aplica & Pode ser retirado & \textbf{Fora} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Resultados da versão atual}
+\textit{Pendente.} A versão adaptada será calculada no Kaggle para os 622 mapas do modelo B, como foi feito com a Faithfulness Correlation.
 
 \end{document}
