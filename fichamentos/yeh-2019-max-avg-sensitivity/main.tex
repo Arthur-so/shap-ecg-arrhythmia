@@ -1,0 +1,329 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{‖}{\ensuremath{\|}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{∫}{\ensuremath{\int}}
+\newunicodechar{∞}{\ensuremath{\infty}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Max-Sensitivity e Avg-Sensitivity}} \\[0.35em]
+    {\large YEH, C.-K.; HSIEH, C.-Y.; SUGGALA, A. S.; INOUYE, D. I.; RAVIKUMAR, P. \textit{On the (In)fidelity and Sensitivity of Explanations}. NeurIPS, 2019 (arXiv:1901.09392v4)} \\[0.3em]
+    {\normalsize Complementar: BHATT, U.; WELLER, A.; MOURA, J. M. F. \textit{Evaluating and Aggregating Feature-based Model Explanations}. IJCAI, 2020} \\[0.3em]
+    \textbf{Métricas no Quantus:} \texttt{quantus.MaxSensitivity} e \texttt{quantus.AvgSensitivity} \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 20/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[Yeh p. N]} indica a página do PDF de Yeh et al. (25 páginas, incluindo o apêndice) e \texttt{[Bhatt p. N]}, a página do PDF de Bhatt et al. (1 a 7). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica as duas métricas sem pressupor a leitura dos artigos; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} compara os artigos com a implementação do Quantus e com a configuração usada no TCC.
+
+\begin{infobox}[note]{Quem define o quê}
+\begin{itemize}
+\item \textbf{Max-Sensitivity:} proposta por \textbf{Yeh et al. (2019)}, Definição 3.1. É a referência principal do Quantus para as duas métricas.
+\item \textbf{Avg-Sensitivity:} Yeh et al. definem só o máximo. A versão com a \textbf{média} aparece como métrica em \textbf{Bhatt et al. (2020)}, Definição 2, que também retoma a Max (Definição 1). O Quantus cita os dois artigos.
+\item \textbf{Correção:} o fichamento da Faithfulness Correlation diz que o critério de baixa sensibilidade de Bhatt et al. “dá origem” às duas métricas. A formulação mais precisa é: a Max foi proposta por Yeh et al. (2019); Bhatt et al. (2020) a retomam e acrescentam a Avg.
+\end{itemize}
+\end{infobox}
+
+\partbar{Parte I · Entendendo as métricas}
+
+\section{O problema que as métricas resolvem}
+As métricas de fidelidade (Faithfulness Correlation e Estimate) perguntam se a explicação descreve o que o modelo faz. A sensibilidade faz outra pergunta: \textbf{se o ECG mudar um pouquinho, a explicação muda muito?} Se duas entradas quase idênticas, com a mesma predição, recebem explicações muito diferentes, é difícil confiar em qualquer uma delas. Uma explicação \textbf{estável} muda pouco quando a entrada muda pouco. No Quantus, essas métricas ficam na categoria \textbf{robustez}.
+
+\section{A ideia em uma frase e um exemplo}
+\begin{infobox}[note]{Definição em uma frase}
+Geram-se várias versões levemente perturbadas da entrada; para cada uma, calcula-se a explicação de novo e mede-se a \textbf{distância} entre a explicação nova e a original. A \textbf{Max-Sensitivity} é a maior dessas distâncias; a \textbf{Avg-Sensitivity}, a média. Quanto \textbf{menor}, mais estável a explicação.
+\end{infobox}
+
+\textbf{Exemplo com 4 atributos.} A explicação original dá importâncias (0,5; 0,3; 0,1; 0,1). Três versões perturbadas da entrada geram três explicações novas:
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+& \textbf{At. 1} & \textbf{At. 2} & \textbf{At. 3} & \textbf{At. 4} & \textbf{Distância à original} \\
+\midrule
+Explicação original & 0,50 & 0,30 & 0,10 & 0,10 & --- \\
+Perturbação 1 & 0,45 & 0,35 & 0,10 & 0,10 & 0,07 \\
+Perturbação 2 & 0,50 & 0,30 & 0,15 & 0,05 & 0,07 \\
+Perturbação 3 & 0,10 & 0,30 & 0,10 & 0,50 & 0,57 \\
+\bottomrule
+\end{tabular}
+\end{center}
+A distância é a euclidiana: a raiz da soma dos quadrados das diferenças, atributo a atributo. Nas perturbações 1 e 2, a explicação quase não muda; na 3, ela troca o atributo mais importante. A \textbf{Max-Sensitivity} é 0,57 (o pior caso) e a \textbf{Avg-Sensitivity} é $(0{,}07 + 0{,}07 + 0{,}57)/3 = 0{,}24$. A Max é dominada por um único caso ruim; a Avg diz quanto a explicação varia “tipicamente”.
+
+\section{Passo a passo}
+\begin{enumerate}
+\item \textbf{Definir a vizinhança} da entrada $x$: o conjunto de entradas consideradas “quase iguais” a $x$. Ela tem um \textbf{raio} $r$.
+\item \textbf{Escolher pontos na vizinhança.} Em Yeh et al., sorteiam-se perturbações: cada atributo pode mudar no máximo $r$, para mais ou para menos (vizinhança em norma $\ell_\infty$). Em Bhatt et al., usam-se \textbf{exemplos reais do treino} que estejam dentro do raio e tenham a \textbf{mesma predição} que $x$.
+\item \textbf{Explicar cada ponto} com o mesmo método usado em $x$.
+\item \textbf{Medir a distância} entre cada explicação nova e a original.
+\item \textbf{Resumir:} máximo (Max-Sensitivity) ou média (Avg-Sensitivity).
+\end{enumerate}
+
+\section{Dois cuidados de leitura}
+\begin{itemize}
+\item \textbf{Estabilidade não é qualidade por si só.} Uma explicação que devolve sempre o mesmo mapa, qualquer que seja o ECG, tem sensibilidade zero e não explica nada. Os próprios autores dizem isso (Parte II). A sensibilidade só faz sentido lida ao lado da fidelidade.
+\item \textbf{Parte da variação pode vir do modelo.} Se o próprio modelo muda muito com a perturbação, é esperado que a explicação também mude. A sensibilidade alta, nesse caso, reflete o modelo, e não um defeito da explicação.
+\end{itemize}
+
+\section{Traduzindo para o ECG}
+No TCC, $x$ é um ECG de 12 derivações × 15\,000 instantes (escala z-score por derivação), e a explicação é o mapa GradientSHAP com 180\,000 valores. Perturbar o ECG significa somar um ruído pequeno a cada ponto; “explicar de novo” significa rodar o GradientSHAP outra vez no ECG com ruído. A distância é calculada entre os dois mapas.
+
+\partbar{Parte II · Fichamento dos artigos}
+
+\section{Mapa de leitura}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{llll}
+\toprule
+\textbf{Páginas} & \textbf{Seção} & \textbf{Prioridade} & \textbf{Por quê} \\
+\midrule
+Yeh p. 1--2 & Resumo, §1 & \readtag{ler} & Motivação da sensibilidade e da explicação constante \\
+Yeh p. 2--5 & §2 & \readtag{consulta} & Infidelity (métrica a revisar depois) \\
+Yeh p. 5 & §3 & \readtag{ler} & Definição 3.1 (Max-Sensitivity) e objeções \\
+Yeh p. 6 & §4 & \readtag{consulta} & Suavização reduz a sensibilidade \\
+Yeh p. 6--7 & §5, Tabela 1 & \readtag{ler} & Experimentos e valores de referência \\
+Yeh p. 16 & Apêndice B.1 & \readtag{ler} & Raio, norma, nº de amostras, normalização \\
+Bhatt p. 2 & §3.1 & \readtag{ler} & Definições 1 e 2 (Max e Average Sensitivity) \\
+Bhatt p. 5--6 & §7, §7.2 & \readtag{ler} & Distâncias, vizinhança com exemplos do treino \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Citações comentadas: Yeh et al. (2019)}
+
+\begin{citacard}{\pagechip{Yeh p. 2} §1 Introdução}
+\begin{origquote}“[...] the sensitivity of an explanation, which measures the degree to which the explanation is affected by insignificant perturbations from the test point. It is natural to wish for our explanation to have low sensitivity, since that would entail differing explanations with minor variations in the input (or prediction values), which might lead us to distrust the explanations.”\end{origquote}
+\begin{tradquote}“[...] a sensibilidade de uma explicação, que mede o quanto a explicação é afetada por perturbações insignificantes do ponto de teste. É natural desejar que a explicação tenha baixa sensibilidade, pois o contrário implicaria explicações diferentes para variações mínimas na entrada (ou nos valores da predição), o que poderia nos levar a desconfiar das explicações.”\end{tradquote}
+\explab{Explicação}
+A palavra-chave é \textbf{insignificantes}: a perturbação deve ser pequena o bastante para que a entrada continue, na prática, a mesma. No ECG, isso exige escolher um ruído que não altere o conteúdo clínico do sinal.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Yeh p. 2} §1 Introdução}
+\begin{origquote}“[...] the optimal explanation that minimizes sensitivity (for all its related variants) is simply a trivial constant explanation, which is naturally not a desired explanation. So a more interesting question would be: how do we modify a given explanation so that it has lower sensitivity, but not too much. To quantify the latter, we could in turn use fidelity.”\end{origquote}
+\begin{tradquote}“[...] a explicação ótima que minimiza a sensibilidade (em todas as suas variantes) é simplesmente uma explicação constante trivial, que naturalmente não é desejada. Assim, uma pergunta mais interessante seria: como modificar uma explicação para que tenha menor sensibilidade, mas não demais. Para quantificar esse ‘não demais’, podemos usar a fidelidade.”\end{tradquote}
+\explab{Explicação}
+Os autores dizem com todas as letras que a sensibilidade sozinha não basta: ela deve ser lida junto com a fidelidade. No TCC, isso significa interpretar a sensibilidade de cada classe ao lado da Faithfulness Correlation e da Faithfulness Estimate.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Yeh p. 5} §3 Definição 3.1}
+\begin{origquote}“[...] we consider a closely related measure, we term max-sensitivity, that measures the maximum change in the explanation with a small perturbation of the input x. Definition 3.1. Given a black-box function f, explanation functional Φ, and a given input neighborhood radius r, we define the max-sensitivity for explanation as: SENS\textsubscript{MAX}(Φ, f, x, r) = max\textsubscript{‖y−x‖≤r} ‖Φ(f, y) − Φ(f, x)‖.”\end{origquote}
+\begin{tradquote}“[...] consideramos uma medida próxima, que chamamos de max-sensitivity, que mede a maior mudança na explicação diante de uma pequena perturbação da entrada x. Definição 3.1. Dados uma função caixa-preta f, um funcional de explicação Φ e um raio de vizinhança r, definimos a max-sensitivity da explicação como: [fórmula acima].”\end{tradquote}
+\explab{Explicação}
+$\Phi(f, y)$ é a explicação da entrada perturbada $y$, e $\Phi(f, x)$ a da original. A métrica é a maior distância entre as duas, entre todas as entradas $y$ a no máximo $r$ de $x$. A definição não divide pela norma da explicação original: a métrica é uma diferença \textbf{absoluta}.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Yeh p. 5} §3 Estimativa por Monte Carlo}
+\begin{origquote}“The main attraction of the max-sensitivity measure is that it can be robustly estimated via Monte-Carlo sampling, as in our experiments.”\end{origquote}
+\begin{tradquote}“A principal vantagem da max-sensitivity é que ela pode ser estimada de forma robusta por amostragem de Monte Carlo, como nos nossos experimentos.”\end{tradquote}
+\explab{Explicação}
+O máximo verdadeiro exigiria testar todas as entradas da vizinhança. Na prática, sorteiam-se algumas perturbações e toma-se o maior valor observado. Com poucas amostras, o valor estimado tende a ficar abaixo do máximo verdadeiro.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Yeh p. 5} §3 Duas objeções}
+\begin{origquote}“[...] sensitivity provides only a partial measure of what is desired from an explanation. [...] The second objection is that natural explanations might have a certain amount of sensitivity by their very nature, either because the model is sensitive, or because the explanations themselves are constructed by measuring the sensitivities of the predictor function, so that their sensitivities in turn is likely to be more than that of the function.”\end{origquote}
+\begin{tradquote}“[...] a sensibilidade é apenas uma medida parcial do que se deseja de uma explicação. [...] A segunda objeção é que explicações naturais podem ter certa sensibilidade por sua própria natureza, seja porque o modelo é sensível, seja porque as próprias explicações são construídas medindo a sensibilidade da função preditora, de modo que a sensibilidade delas tende a ser maior que a da função.”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP é construído a partir de gradientes, ou seja, da sensibilidade do modelo. Por isso, é esperado que ele tenha alguma sensibilidade; o valor isolado não diz se ela é “alta demais”. Comparar classes, ou comparar com um valor de referência, é mais informativo que o número absoluto.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Yeh p. 6} §4 Suavização}
+\begin{origquote}“Given any kernel k(x, z) [...] we can define a smoothed explanation as Φ\textsubscript{k}(f, x) := ∫ Φ(f, z) k(x, z) dz. When k(x, z) is set to the Gaussian kernel, Φ\textsubscript{k}(f, x) becomes Smooth-Grad. We now show that the smoothed explanation is less sensitive than the original sensitivity averaged around x.”\end{origquote}
+\begin{tradquote}“Dado qualquer núcleo k(x, z) [...] podemos definir uma explicação suavizada como [fórmula]. Quando k(x, z) é o núcleo gaussiano, a explicação suavizada é o Smooth-Grad. Mostramos agora que a explicação suavizada é menos sensível que a sensibilidade original média ao redor de x.”\end{tradquote}
+\explab{Explicação}
+Fazer a média de explicações calculadas em vários pontos vizinhos reduz a sensibilidade. O GradientSHAP faz exatamente isso: soma um ruído gaussiano à entrada e faz a média sobre várias amostras (\texttt{n\_samples}) e baselines. Logo, o número de amostras usado no GradientSHAP afeta diretamente a sensibilidade medida (Parte III).
+\end{citacard}
+
+\begin{citacard}{\pagechip{Yeh p. 7} Tabela 1}
+\begin{origquote}SENS\textsubscript{MAX} das explicações globais: MNIST — Grad 0,56; IG 0,47; SHAP 0,35; Square 0,24. Cifar-10 — Grad 1,15; IG 1,08; SHAP 0,93. Imagenet — Grad 1,16; IG 0,93.\end{origquote}
+\begin{tradquote}(Valores da tabela; não há texto a traduzir.)\end{tradquote}
+\explab{Explicação}
+Como as explicações são normalizadas para ter norma 1 antes do cálculo (apêndice), a distância entre duas delas vai de 0 (iguais) a 2 (opostas). Os valores servem como ordem de grandeza: 0,35 para o KernelSHAP no MNIST, e cerca de 1 em imagens coloridas. Note que o SHAP do artigo é o KernelSHAP, e não o GradientSHAP.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Yeh p. 16} Apêndice B.1 Configuração}
+\begin{origquote}“To compute the sensitivity scores defined in Definitions 3.1, we randomly sample 50 points with Monte-Carlo sampling. Following the adversarial literature, we set the norm for ‖y − x‖ [...] to be L∞ norm and the value of the maximum perturbation r is set to 0.1 for all datasets. To allow fair comparisons among different explanation methods, we normalize the explanation to have unit norm before calculating the sensitivity [...].”\end{origquote}
+\begin{tradquote}“Para calcular a sensibilidade da Definição 3.1, sorteamos 50 pontos por Monte Carlo. Seguindo a literatura de ataques adversariais, usamos a norma L∞ para ‖y − x‖ [...] e o valor da perturbação máxima r é 0,1 para todos os conjuntos de dados. Para permitir comparações justas entre métodos de explicação, normalizamos a explicação para ter norma unitária antes de calcular a sensibilidade [...].”\end{tradquote}
+\explab{Explicação}
+Três escolhas concretas: \textbf{(i)} 50 perturbações por exemplo; \textbf{(ii)} norma L∞ com $r = 0{,}1$, isto é, cada pixel pode mudar no máximo 0,1 (o apêndice não informa a escala das imagens; se for de 0 a 1, como é usual, isso é 10\% da faixa); \textbf{(iii)} as duas explicações são normalizadas para norma 1 antes de medir a distância. A normalização faz a métrica olhar o \textbf{formato} do mapa, e não a sua escala.
+\end{citacard}
+
+\section{Citações comentadas: Bhatt et al. (2020)}
+
+\begin{citacard}{\pagechip{Bhatt p. 2} §3.1 Desideratum: Low Sensitivity}
+\begin{origquote}“We want to ensure that, if inputs are near each other and their model outputs are similar, then their explanations should be close to each other. [...] Let N\textsubscript{r} = \{z ∈ D\textsubscript{x} | ρ(x, z) ≤ r, f(x) = f(z)\} be a neighborhood of datapoints within a radius r of x.”\end{origquote}
+\begin{tradquote}“Queremos garantir que, se as entradas estão próximas e as saídas do modelo são parecidas, então as explicações também estejam próximas. [...] Seja N\textsubscript{r} = [...] uma vizinhança de pontos de dados a um raio r de x.”\end{tradquote}
+\explab{Explicação}
+Duas diferenças em relação a Yeh et al.: a vizinhança é formada por \textbf{pontos de dados} ($D_x$, exemplos reais), e não por perturbações sorteadas; e exige-se a \textbf{mesma predição}, $f(x) = f(z)$. A segunda condição evita cobrar estabilidade da explicação quando a decisão do próprio modelo mudou.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Bhatt p. 2} Definições 1 e 2}
+\begin{origquote}“Definition 1 (Max Sensitivity). [...] μ\textsubscript{M}(f, g, r; x) = max\textsubscript{z∈N\textsubscript{r}} D(g(f, x), g(f, z)). Definition 2 (Average Sensitivity). Given [...] a distribution P\textsubscript{x}(·) over the inputs centered at point x, we define the average sensitivity of g at x as: μ\textsubscript{A}(f, g, r; x) = ∫\textsubscript{z∈N\textsubscript{r}} D(g(f, x), g(f, z)) P\textsubscript{x}(z) dz.”\end{origquote}
+\begin{tradquote}“Definição 1 (Max Sensitivity). [fórmula]. Definição 2 (Average Sensitivity). Dada [...] uma distribuição P\textsubscript{x}(·) sobre as entradas, centrada em x, definimos a sensibilidade média de g em x como: [fórmula].”\end{tradquote}
+\explab{Explicação}
+A Average Sensitivity é a média ponderada da distância sobre a vizinhança. Estimada por amostragem, ela é a média das distâncias, e a Max é o máximo das mesmas distâncias. É por isso que o Quantus implementa as duas com o mesmo código, mudando só a última linha.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Bhatt p. 5} §7 Configuração}
+\begin{origquote}“Before doing aggregation, we unit norm all explanations. [...] We set D = ℓ2 and ρ = ℓ∞.”\end{origquote}
+\begin{tradquote}“Antes da agregação, normalizamos todas as explicações para norma 1. [...] Usamos D = ℓ2 e ρ = ℓ∞.”\end{tradquote}
+\explab{Explicação}
+Mesmas escolhas de Yeh et al.: distância euclidiana ($\ell_2$) entre explicações normalizadas e vizinhança em $\ell_\infty$.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Bhatt p. 5--6} §7.2 Max and Avg Sensitivity}
+\begin{origquote}“To evaluate the sensitivity criterion, we sample a set of test points from D and an additional larger set of training points. We then find the training points that fall within a radius r neighborhood of each test point and find the distance between each nearby training point explanation and the test point explanation to get a mean and max. [...] Sensitivity is highly dependent on the dimensionality d and on the radius r.”\end{origquote}
+\begin{tradquote}“Para avaliar o critério de sensibilidade, sorteamos um conjunto de pontos de teste e um conjunto maior de pontos de treino. Encontramos os pontos de treino que estão a um raio r de cada ponto de teste e calculamos a distância entre a explicação de cada ponto de treino próximo e a do ponto de teste, obtendo a média e o máximo. [...] A sensibilidade depende muito da dimensionalidade d e do raio r.”\end{tradquote}
+\explab{Explicação}
+Em dados tabulares com poucos atributos, há exemplos reais próximos o bastante. Com 180\,000 valores por ECG, dificilmente existe outro exame do treino a uma distância pequena em norma $\ell_\infty$ (ponto a ponto), então a vizinhança de Bhatt et al. tenderia a ficar vazia. Por isso a versão por perturbações sorteadas, de Yeh et al., é a aplicável ao ECG.
+\end{citacard}
+
+\partbar{Parte III · Aplicação ao TCC}
+
+\section{Dos artigos ao código do Quantus}
+Arquivos: \texttt{quantus/metrics/robustness/max\_sensitivity.py} e \texttt{avg\_sensitivity.py} (Quantus 0.6.0). O código das duas é idêntico, exceto na última linha (\texttt{np.nanmax} ou média). Descartar as perturbações que mudam a predição é possível pela opção \texttt{return\_nan\_when\_prediction\_changes}, desligada por padrão.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Etapa} & \textbf{Yeh et al.} & \textbf{Bhatt et al.} & \textbf{Quantus (padrão)} \\
+\midrule
+Vizinhança & Perturbações sorteadas em $\ell_\infty$ & Exemplos do treino, mesma predição & Ruído uniforme em cada ponto, de $-$0,2 a +0,2 \\
+Raio & $r = 0{,}1$ & Por conjunto de dados & \texttt{lower\_bound} = 0,2 \\
+Mesma predição & Não exigida & Exigida & Não exigida (opção desligada por padrão) \\
+Amostras & 50 & Pontos disponíveis & \texttt{nr\_samples} = 200 \\
+Distância & $\ell_2$, explicações com norma 1 & $\ell_2$, explicações com norma 1 & $\|a' - a\| / \|a\|$, sem normalizar $a'$ \\
+Resumo & Máximo & Máximo ou média & Máximo ou média \\
+\bottomrule
+\end{tabularx}
+\end{center}
+A amostragem do Quantus corresponde à de Yeh et al.: somar ruído uniforme independente a cada ponto é sortear um ponto dentro de uma vizinhança $\ell_\infty$. As diferenças estão no raio (0,2 contra 0,1) e na distância. Yeh et al. normalizam as \textbf{duas} explicações antes de comparar, o que mede só a mudança de formato. O Quantus divide a diferença pelo tamanho da explicação \textbf{original}, de modo que uma mudança só de escala também conta como sensibilidade.
+
+\section{Configuração usada no TCC}
+Em \texttt{src/evaluate.py}, as duas métricas eram chamadas com \texttt{nr\_samples=10} e os demais valores padrão. A explicação de cada ECG perturbado era refeita por uma \texttt{explain\_func} com o GradientSHAP.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXl}
+\toprule
+\textbf{Aspecto} & \textbf{Artigo (Yeh)} & \textbf{TCC (Quantus)} & \textbf{Aderente?} \\
+\midrule
+Perturbação & $\ell_\infty$, $r = 0{,}1$ (imagens) & Ruído de $\pm$0,2 em todos os pontos (ECG em z-score) & \textbf{Parcial} \\
+Amostras & 50 & 10 & \textbf{Parcial} \\
+Distância & $\ell_2$ entre explicações com norma 1 & Diferença relativa à original & \textbf{Diferente} \\
+Mesma explicação nos dois lados & Mesmo método, mesma configuração & Original com 50 amostras do GradientSHAP; refeita com 20 & \textbf{Não} \\
+Preenchimento & Não se aplica & Recebe ruído & \textbf{Não} \\
+Resultado & --- & Nunca obtido: estourava a memória da GPU & --- \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Problemas a verificar}
+\begin{infobox}[warn]{Problemas identificados na leitura (ainda não medidos)}
+\begin{enumerate}
+\item \textbf{Configurações diferentes dos dois lados.} Os mapas originais foram gerados com 50 amostras do GradientSHAP (\texttt{src/explain.py}); os mapas dos ECGs perturbados, com 20 (\texttt{src/evaluate.py}). Mesmo sem perturbação nenhuma, os dois mapas difeririam, porque a média com menos amostras é mais ruidosa.
+\item \textbf{O GradientSHAP é aleatório.} A cada chamada, ele sorteia baselines e ruído. Dois mapas do mesmo ECG, sem perturbação, já saem diferentes. A métrica mistura a sensibilidade à perturbação com essa variação própria do método. É preciso medir esse “piso”: a sensibilidade com perturbação zero.
+\item \textbf{O ruído atinge o preenchimento.} Em média, metade dos 15\,000 instantes é preenchimento, que vale praticamente zero; 92\% dos ECGs do teste têm preenchimento. O ruído transforma esse trecho em sinal, o que não é uma “perturbação insignificante” do exame.
+\item \textbf{Tamanho do ruído.} Um ruído de $\pm$0,2 em escala z-score é cerca de 40\% da amplitude mediana do sinal (0,47) e, nos trechos isoelétricos, pode ser maior que o próprio sinal. É preciso verificar se ele mantém a predição do modelo.
+\item \textbf{Comparação ponto a ponto.} As demais métricas do TCC comparam as explicações nas 36 regiões do batimento. A comparação ponto a ponto, com 180\,000 valores, é dominada por pequenas oscilações locais do mapa.
+\item \textbf{Custo.} Cada perturbação exige um mapa GradientSHAP novo; foi aqui que a memória da GPU estourou.
+\end{enumerate}
+\end{infobox}
+
+\section{Proposta de adaptação (a discutir)}
+\begin{enumerate}
+\item \textbf{Seguir Yeh et al.} na vizinhança (perturbações sorteadas), porque a de Bhatt et al., com exemplos reais, não é viável com 180\,000 valores por ECG.
+\item \textbf{Ruído só no trecho real}, sem tocar no preenchimento.
+\item \textbf{Escolher o raio com base no ECG}, e não no padrão do Quantus, verificando que a predição se mantém. Como Bhatt et al., descartar as perturbações que mudam a predição.
+\item \textbf{Mesma configuração do GradientSHAP} dos dois lados (50 amostras, as mesmas baselines) e \textbf{medir o piso}: a sensibilidade sem perturbação, que mostra quanto do valor vem da aleatoriedade do método.
+\item \textbf{Distância como em Yeh et al.}: $\ell_2$ entre explicações com norma 1, calculada nas \textbf{36 regiões} (coerente com as demais métricas) e, para referência, ponto a ponto.
+\item \textbf{Max e Avg das mesmas amostras}, como no Quantus e em Bhatt et al.
+\end{enumerate}
+
+\begin{infobox}[note]{Verificações sugeridas antes de implementar (não executadas)}
+Num diagnóstico com poucos ECGs por classe, na CPU: (a) piso da sensibilidade, explicando o mesmo ECG duas vezes sem perturbação; (b) efeito da diferença entre 50 e 20 amostras; (c) para alguns raios, a fração de perturbações que mudam a predição e a sensibilidade resultante; (d) comparação entre a distância ponto a ponto e a distância por regiões; (e) tempo e memória por mapa, para dimensionar a execução no Kaggle.
+\end{infobox}
+
+\section{Resultados}
+\textit{Pendente.} Dependem do diagnóstico e da versão adaptada.
+
+\end{document}
