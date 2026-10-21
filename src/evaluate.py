@@ -3,9 +3,8 @@
 Calcula, por amostra e depois agregado por classe diagnóstica, as métricas de:
 
   Faithfulness: Selectivity, SensitivityN, Infidelity, Sufficiency.
-  Robustness:   Local Lipschitz Estimate, Max-Sensitivity, Avg-Sensitivity,
-                Continuity, Relative Input Stability (RIS),
-                Relative Output Stability (ROS).
+  Robustness:   Local Lipschitz Estimate, Continuity,
+                Relative Input Stability (RIS), Relative Output Stability (ROS).
 
 A Consistency (Dasgupta et al., 2022) é calculada em ``consistency.py``: a
 discretização padrão da ``quantus.Consistency`` (sinal dos 5 primeiros valores
@@ -18,6 +17,11 @@ A Faithfulness Estimate (Alvarez-Melis & Jaakkola, 2018) é calculada em
 ``faithfulness_estimate.py``: a configuração usada da
 ``quantus.FaithfulnessEstimate`` (grupos de 500 pontos substituídos pelo
 mínimo do sinal) media o dano causado ao sinal, e não a fidelidade.
+A Max-Sensitivity (Yeh et al., 2019) e a Avg-Sensitivity (Bhatt et al., 2020)
+são calculadas em ``sensitivity.py``: a configuração usada da
+``quantus.MaxSensitivity``/``AvgSensitivity`` comparava o mapa salvo com mapas
+refeitos com outra configuração do GradientSHAP, somava ruído ao preenchimento
+e não descartava perturbações que mudam a predição.
 
 As métricas de robustez requerem gerar novas explicações sob perturbação;
 para isso é fornecida uma ``explain_func`` que reproduz o GradientSHAP usado
@@ -139,10 +143,6 @@ def build_metrics(explain_func):
     }
     robustness = {
         "LocalLipschitzEstimate": quantus.LocalLipschitzEstimate(
-            nr_samples=10, disable_warnings=True),
-        "MaxSensitivity": quantus.MaxSensitivity(
-            nr_samples=10, disable_warnings=True),
-        "AvgSensitivity": quantus.AvgSensitivity(
             nr_samples=10, disable_warnings=True),
         "Continuity": quantus.Continuity(disable_warnings=True),
         "RelativeInputStability": quantus.RelativeInputStability(
