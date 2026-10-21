@@ -1,0 +1,300 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Faithfulness Estimate}} \\[0.35em]
+    {\large ALVAREZ-MELIS, D.; JAAKKOLA, T. S. \textit{Towards Robust Interpretability with Self-Explaining Neural Networks}. NeurIPS, 2018, p.~7786--7795} \\[0.3em]
+    \textbf{Métrica no Quantus:} \texttt{quantus.FaithfulnessEstimate} \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 20/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do artigo (16 páginas, incluindo o material suplementar). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica a métrica sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento, em ordem de páginas; a \textbf{Parte III} compara o artigo com a implementação do Quantus e com a configuração usada no TCC.
+
+\partbar{Parte I · Entendendo a métrica}
+
+\section{O problema que a métrica resolve}
+A pergunta é a mesma da Faithfulness Correlation: \textbf{as importâncias que a explicação atribui correspondem ao efeito real dos atributos sobre o modelo?} Muda a forma de testar. Em vez de retirar grupos de atributos sorteados, a Faithfulness Estimate retira \textbf{cada atributo isoladamente}, um de cada vez, e verifica se os atributos considerados mais importantes são os que mais mudam a saída do modelo.
+
+\section{A ideia em uma frase e um exemplo}
+\begin{infobox}[note]{Definição em uma frase}
+Para cada atributo, mede-se a \textbf{queda na saída do modelo} quando só ele é retirado (substituído por um valor de referência). A Faithfulness Estimate é a \textbf{correlação de Pearson} entre a importância que a explicação dá a cada atributo e essa queda.
+\end{infobox}
+
+\textbf{Exemplo com 4 atributos.} Duas explicações dizem o quanto cada atributo importa:
+
+\begin{center}\small
+\begin{tabular}{lcccc}
+\toprule
+& \textbf{Atributo 1} & \textbf{Atributo 2} & \textbf{Atributo 3} & \textbf{Atributo 4} \\
+\midrule
+Importância segundo a \textbf{explicação A} & 0,5 & 0,3 & 0,1 & 0,1 \\
+Importância segundo a \textbf{explicação B} & 0,1 & 0,1 & 0,3 & 0,5 \\
+\midrule
+\textbf{Queda real} ao retirar só esse atributo & 0,40 & 0,25 & 0,08 & 0,06 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A queda real é medida no modelo: retira-se o atributo 1 (os outros três ficam como estão) e mede-se quanto a saída caiu; depois o atributo 2, e assim por diante. Com a explicação A, os atributos que ela considera mais importantes são os que mais derrubam a saída: a correlação entre a linha da explicação A e a linha da queda real é \textbf{0,998}, e a explicação é \textbf{fiel}. Com a explicação B, que inverte a ordem, a correlação é \textbf{$-$0,856}, e a explicação é \textbf{infiel}.
+
+\section{Passo a passo}
+Para um exemplo $x$, com a explicação $\varphi$:
+\begin{enumerate}
+\item Para cada atributo $i$: substituir só o atributo $i$ pela baseline e medir a queda da saída, $f(x) - f(x_{[x_i = \bar{x}_i]})$.
+\item Calcular a correlação de Pearson entre as importâncias $\varphi_i$ e as quedas. Esse é o valor do exemplo $x$.
+\end{enumerate}
+O valor de um conjunto de exemplos (no TCC, de uma classe) é a média dos valores dos exemplos. Vai de $-1$ a 1, e maior é melhor.
+
+\subsection{Diferença em relação à Faithfulness Correlation}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+& \textbf{Faithfulness Correlation} & \textbf{Faithfulness Estimate} \\
+\midrule
+O que se retira de cada vez & Um grupo de atributos sorteado & Um único atributo \\
+Quantas retiradas por exemplo & Um número escolhido de sorteios & Uma por atributo (todos) \\
+Importância comparada & Soma das importâncias do grupo & Importância do atributo \\
+Pergunta & Grupos mais importantes derrubam mais a saída? & Atributos mais importantes derrubam mais a saída? \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Traduzindo para o ECG}
+No ECG, retirar \textbf{um ponto} (uma derivação em um instante) de cada vez não faz sentido: são 180\,000 pontos, pontos vizinhos são quase iguais, e retirar um só praticamente não muda o sinal. O próprio artigo diz que, para entradas de alta dimensão, atributos brutos (como pixels) levam a explicações ruidosas, e propõe trabalhar com \textbf{atributos de nível mais alto} (Parte II, citação da p.~4). No TCC, esse papel pode ser cumprido pelas \textbf{36 regiões do batimento} (12 derivações × pré-QRS, QRS e ST-T), já usadas na Consistency e na Faithfulness Correlation.
+
+\paragraph{Glossário rápido}
+\begin{description}
+\item[Atributo (feature)] Cada unidade que recebe uma importância e pode ser retirada.
+\item[Conceito (basis concept)] No artigo, um atributo de nível mais alto que um pixel, como um traço ou uma textura.
+\item[Baseline (valor de referência)] Valor usado para “retirar” um atributo, substituindo o original.
+\item[Queda] Diferença entre a saída do modelo com a entrada original e com o atributo retirado.
+\end{description}
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+O artigo propõe um modelo autoexplicativo (SENN). Só uma parte é sobre a métrica:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{llll}
+\toprule
+\textbf{Páginas} & \textbf{Seção} & \textbf{Prioridade} & \textbf{Por quê} \\
+\midrule
+p. 1 & Resumo, §1 & \readtag{ler} & Os três requisitos: explicitude, fidelidade e estabilidade \\
+p. 2 & §2.2 & \readtag{ler} & Atributos brutos × conceitos de nível mais alto \\
+p. 2--4 & §2.3--§3 & \readtag{pular} & Arquitetura do SENN \\
+p. 4 & §4 & \readtag{ler} & Por que atributos brutos são ruins em alta dimensão \\
+p. 5 & §5, §5.1 & \readtag{ler} & Critérios de avaliação e métodos comparados (inclui SHAP) \\
+p. 6 & §5.3, Fig. 3 & \readtag{ler} & \textbf{A métrica} \\
+p. 7 & §5.4 & \readtag{consulta} & Estabilidade (base da Local Lipschitz Estimate, a revisar depois) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Citações comentadas}
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“We propose three desiderata for explanations in general – explicitness, faithfulness, and stability – and show that existing methods do not satisfy them.”\end{origquote}
+\begin{tradquote}“Propomos três requisitos para explicações em geral — explicitude, fidelidade e estabilidade — e mostramos que os métodos existentes não os satisfazem.”\end{tradquote}
+\explab{Explicação}
+A Faithfulness Estimate do Quantus vem do requisito de \textbf{fidelidade}. O requisito de \textbf{estabilidade} dá origem à Local Lipschitz Estimate, que também está no pipeline do TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §2.2 Além dos atributos brutos}
+\begin{origquote}“Typical interpretable models tend to consider each variable (one feature or one pixel) as the fundamental unit which explanations consist of. However, pixels are rarely the basic units used in human image understanding; instead, we would rely on strokes and other higher order features. We refer to these more general features as interpretable basis concepts and use them in place of raw inputs.”\end{origquote}
+\begin{tradquote}“Modelos interpretáveis típicos tendem a considerar cada variável (um atributo ou um pixel) como a unidade fundamental de que as explicações são feitas. No entanto, pixels raramente são as unidades básicas usadas na compreensão humana de imagens; em vez disso, nos apoiaríamos em traços e outros atributos de ordem superior. Chamamos esses atributos mais gerais de conceitos básicos interpretáveis e os usamos no lugar das entradas brutas.”\end{tradquote}
+\explab{Explicação}
+Os autores defendem explicar em termos de \textbf{unidades com significado}, e não de pixels. No ECG, o equivalente natural de um “traço” são as ondas e segmentos do batimento (P, QRS, ST-T) em cada derivação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §4 Conceitos básicos interpretáveis}
+\begin{origquote}“Raw input features are the natural basis for interpretability when the input is low-dimensional and individual features are meaningful. For high-dimensional inputs, raw features (such as individual pixels in images) often lead to noisy explanations that are sensitive to imperceptible artifacts in the data [...]. To avoid some of these shortcomings, we can instead operate on higher level features. [...] For example, in medical image processing higher-level visual aspects [...] are among the first aspects that doctors look for when diagnosing, so they are natural “units” of explanation.”\end{origquote}
+\begin{tradquote}“Os atributos brutos da entrada são a base natural para a interpretabilidade quando a entrada tem baixa dimensão e os atributos individuais têm significado. Para entradas de alta dimensão, atributos brutos (como pixels individuais em imagens) frequentemente levam a explicações ruidosas, sensíveis a artefatos imperceptíveis nos dados [...]. Para evitar algumas dessas deficiências, podemos trabalhar com atributos de nível mais alto. [...] Por exemplo, no processamento de imagens médicas, aspectos visuais de nível mais alto [...] estão entre os primeiros que os médicos procuram ao diagnosticar, e por isso são ‘unidades’ naturais de explicação.”\end{tradquote}
+\explab{Explicação: trecho-chave para o TCC}
+Este é o principal argumento do próprio artigo para \textbf{não usar pontos isolados do ECG} como atributos. O ECG tem 180\,000 valores por exame (alta dimensão), e um ponto isolado não tem significado. As regiões do batimento são, como no exemplo médico do artigo, as unidades que o cardiologista examina.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §5 Critérios de avaliação}
+\begin{origquote}“(ii) Faithfulness: Are relevance scores indicative of “true” importance? [...] proposing qualitative assessment of (i) and quantitative metrics for evaluating (ii) and (iii).”\end{origquote}
+\begin{tradquote}“(ii) Fidelidade: os escores de relevância indicam a importância ‘verdadeira’? [...] propondo uma avaliação qualitativa de (i) e métricas quantitativas para avaliar (ii) e (iii).”\end{tradquote}
+\explab{Explicação}
+A fidelidade é um dos dois critérios para os quais os autores propõem uma \textbf{medida quantitativa}. A outra é a estabilidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §5.1 Dados e métodos}
+\begin{origquote}“We carry out quantitative evaluation on three classification settings: (i) MNIST digit recognition, (ii) benchmark UCI datasets and (iii) Propublica’s COMPAS Recidivism Risk Score datasets. [...] We compare our approach against [...] LIME, kernel Shapley values (SHAP) and perturbation-based occlusion sensitivity [...].”\end{origquote}
+\begin{tradquote}“Realizamos a avaliação quantitativa em três cenários de classificação: (i) reconhecimento de dígitos do MNIST, (ii) conjuntos de referência da UCI e (iii) os dados de risco de reincidência COMPAS, da Propublica. [...] Comparamos nossa abordagem com [...] LIME, valores de Shapley via kernel (SHAP) e sensibilidade por oclusão [...].”\end{tradquote}
+\explab{Explicação}
+Os experimentos de fidelidade (Figura 3) usam dados \textbf{tabulares da UCI} (ionosphere, heart, diabetes, abalone), com poucas dezenas de atributos ou menos, e o SHAP avaliado é o \textbf{KernelSHAP}. No MNIST, a métrica é aplicada a poucos \textbf{conceitos aprendidos}, e não a pixels.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §5.3 Fidelidade: a métrica}
+\begin{origquote}“Since this is rarely available, a common approach to measuring the faithfulness of relevance scores with respect to the model they are explaining relies on a proxy notion of importance: observing the effect of removing features on the model’s prediction. For example, for a probabilistic classification model, we can obscure or remove features, measure the drop in probability of the predicted class, and compare against the interpreter’s own prediction of relevance [17, 3]. Here, we further compute the correlations of these probability drops and the relevance scores on various points, and show the aggregate statistics in Figure 3 (left) for LIME, SHAP and SENN [...] on various UCI datasets.”\end{origquote}
+\begin{tradquote}“Como [a importância verdadeira] raramente está disponível, uma abordagem comum para medir a fidelidade dos escores de relevância em relação ao modelo explicado recorre a uma noção indireta de importância: observar o efeito de remover atributos sobre a predição do modelo. Por exemplo, para um modelo de classificação probabilístico, podemos ocultar ou remover atributos, medir a queda na probabilidade da classe predita e comparar com a predição de relevância do próprio explicador [17, 3]. Aqui, calculamos ainda as correlações entre essas quedas de probabilidade e os escores de relevância em vários pontos, e mostramos as estatísticas agregadas na Figura 3 (esquerda) para LIME, SHAP e SENN [...] em vários conjuntos da UCI.”\end{tradquote}
+\explab{Explicação}
+É a definição da métrica, descrita em texto (sem fórmula). Três pontos: (i) a saída usada é a \textbf{probabilidade da classe predita}; (ii) cada atributo é removido e sua queda é comparada com a sua relevância, e a \textbf{correlação} é calculada \textbf{por exemplo}; (iii) o resultado é agregado sobre vários exemplos. O procedimento de remoção vem de trabalhos anteriores ([17] Samek et al., 2017; [3] Arras et al., 2017).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §5.3 Remoção de atributos em redes convolucionais}
+\begin{origquote}“[...] while feature removal is not always meaningful for other predictions models (i.e., one must replace pixels with black or averaged values to simulate removal in a CNN), the definition of our model allows for targeted removal of features, rendering an evaluation based on it more reliable.”\end{origquote}
+\begin{tradquote}“[...] embora a remoção de atributos nem sempre tenha significado para outros modelos de predição (isto é, é preciso substituir pixels por preto ou por valores médios para simular a remoção em uma CNN), a definição do nosso modelo permite a remoção direcionada de atributos, tornando uma avaliação baseada nela mais confiável.”\end{tradquote}
+\explab{Explicação}
+Os autores admitem que, em redes convolucionais como a do TCC, “remover” um atributo só pode ser \textbf{simulado}, trocando-o por preto ou por valores médios, e que isso torna a avaliação menos confiável. É a origem da baseline “black” do Quantus. Num ECG em z-score, o equivalente de “valores médios” é o zero (média de cada derivação).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} Figura 3}
+\begin{origquote}“Figure 3: Left: Aggregated correlation between feature relevance scores and true importance, as described in Section 5.3. Right: Faithfulness evaluation SENN on MNIST with learnt concepts.”\end{origquote}
+\begin{tradquote}“Figura 3: Esquerda: correlação agregada entre os escores de relevância dos atributos e a importância verdadeira, conforme descrito na Seção 5.3. Direita: avaliação de fidelidade do SENN no MNIST com conceitos aprendidos.”\end{tradquote}
+\explab{Explicação}
+A figura mostra a distribuição da métrica (eixo “Faithfulness Estimate”, de $-$0,5 a 1,0) para LIME, SHAP e SENN em quatro conjuntos da UCI. O artigo não traz os valores em tabela, só o gráfico, então serve como referência visual: a métrica varia bastante entre exemplos e métodos.
+\end{citacard}
+
+\partbar{Parte III · Aplicação ao TCC}
+
+\section{Do artigo ao código do Quantus}
+Arquivo: \texttt{quantus/metrics/faithfulness/faithfulness\_estimate.py} (Quantus 0.6.0).
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Etapa} & \textbf{Artigo} & \textbf{Quantus} \\
+\midrule
+Atributo retirado & Cada atributo (ou conceito) isoladamente & Grupos de \texttt{features\_in\_step} valores do mapa, em ordem decrescente de atribuição (padrão: 1) \\
+Ordem & Não importa (todos são retirados) & Do mais ao menos importante; cada grupo é retirado separadamente \\
+Retirada & Preto ou valores médios, em CNNs & \texttt{perturb\_baseline} (padrão \texttt{"black"} = mínimo do próprio exemplo) \\
+Saída & Probabilidade da classe predita & Logit da classe \texttt{y} (\texttt{softmax=False}) \\
+Importância comparada & Relevância do atributo & Soma das atribuições do grupo \\
+Correlação & Por exemplo & Pearson por exemplo (a documentação diz Spearman, mas o código usa Pearson) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Com \texttt{features\_in\_step=1}, o Quantus faz o que o artigo descreve: retira cada atributo isoladamente. Com valores maiores, retira grupos de pontos com atribuições parecidas (vizinhos na ordenação, e não no tempo).
+
+\section{Configuração usada no TCC}
+No \texttt{src/evaluate.py}, a métrica foi chamada com \texttt{features\_in\_step=500} e os demais valores padrão, por classe e só sobre as predições corretas. O comentário no código diz que isso dá “30 passos”, mas o mapa achatado tem 180\,000 valores, o que dá \textbf{360 grupos} (360 retiradas por exemplo).
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{XXXl}
+\toprule
+\textbf{Aspecto} & \textbf{Artigo} & \textbf{TCC (Quantus)} & \textbf{Aderente?} \\
+\midrule
+Retirar e correlacionar por exemplo & §5.3 & Igual & Sim \\
+Unidade de atributo & Atributo tabular ou conceito com significado & 500 pontos isolados, escolhidos pela ordem de atribuição & \textbf{Não} \\
+Baseline & Preto ou valores médios (admitindo que é uma simulação) & Mínimo do próprio ECG & \textbf{Parcial} \\
+Saída & Probabilidade da classe predita & Logit & \textbf{Diferente} \\
+Trecho de preenchimento & Não se aplica & Pode ser retirado & \textbf{Não} \\
+Exemplos avaliados & Vários pontos do teste & Só predições corretas, por classe & Recorte do TCC \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Resultados antigos (pipeline anterior)}
+A métrica foi calculada no pipeline anterior (modelo de 30/09, ainda sem a classe CVP), com a configuração da seção 8:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrrrrrrr}
+\toprule
+\textbf{Classe} & SNR & AF & IAVB & BRE & BRD & CAP & STD & STE \\
+\midrule
+\textbf{Faithfulness Estimate} & 0,395 & 0,133 & 0,344 & 0,416 & 0,479 & 0,334 & 0,337 & 0,513 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Ao contrário da Faithfulness Correlation antiga, que ficou perto de zero, estes valores são \textbf{positivos e moderados} (0,13 a 0,51). Isso não garante que a configuração esteja correta: há uma explicação alternativa, descrita abaixo, que precisa ser testada.
+
+\begin{infobox}[warn]{Hipótese a verificar: a correlação pode vir do tamanho da perturbação}
+O GradientSHAP tende a dar atribuições grandes (em módulo) a pontos de \textbf{amplitude grande}, como os picos do QRS. Como o Quantus retira primeiro os pontos de maior atribuição e os troca pelo \textbf{mínimo} do ECG, os primeiros grupos são também os que sofrem a \textbf{maior mudança de valor} (de um pico alto para o fundo do sinal). Se o modelo reage mais a mudanças maiores, a queda acompanha a atribuição \textit{por causa do tamanho da perturbação}, e não necessariamente porque a explicação é fiel. Além disso, valem os problemas já vistos na Faithfulness Correlation: pontos isolados sem significado, a baseline que cria picos artificiais e o preenchimento.
+\end{infobox}
+
+\section{Proposta de adaptação (a discutir)}
+Seguindo o artigo e o mesmo critério usado na Faithfulness Correlation:
+\begin{enumerate}
+\item \textbf{Atributos = 36 regiões do batimento}, como recomenda o próprio artigo para entradas de alta dimensão (citação da p.~4). A importância de uma região é a soma do mapa SHAP nela.
+\item \textbf{Retirar cada região isoladamente} (36 retiradas por exemplo), como descrito no §5.3, substituindo-a pela baseline em todos os batimentos.
+\item \textbf{Baselines zero e média do treino}, os “valores médios” citados pelo artigo, como na Faithfulness Correlation.
+\item \textbf{Saída:} o artigo usa a \textbf{probabilidade}; o Quantus e a Faithfulness Correlation usam o \textbf{logit}. Como o modelo é muito confiante (probabilidades perto de 100\%), a probabilidade tende a saturar e mudar pouco. Proposta: calcular com as duas e decidir com base no diagnóstico.
+\item \textbf{Preenchimento fora} e valores indefinidos contados.
+\end{enumerate}
+
+\textbf{Verificações sugeridas antes de implementar} (não executadas): (i) com a configuração antiga, medir se a queda acompanha a \textbf{mudança de valor} imposta (o que confirmaria a hipótese do quadro acima); (ii) comparar com a retirada de regiões com baseline zero; (iii) comparar probabilidade e logit.
+
+\end{document}
