@@ -295,7 +295,23 @@ Em dados tabulares com poucos atributos, há exemplos reais próximos o bastante
 Código: \texttt{src/sensitivity.py} (commit \texttt{ecc19ce}). Para cada um dos 622 mapas do modelo B (ECG × classe explicada, predições corretas do teste):
 \begin{enumerate}
 \item \textbf{Explicação de referência.} O mapa GradientSHAP do ECG é refeito com a mesma configuração usada para gerar os mapas do TCC (as mesmas 32 baselines do treino, 50 amostras, desvio do ruído 0,09) e com uma \textbf{semente aleatória fixa} para aquele mapa.
-\item \textbf{Perturbações.} São geradas 10 versões do ECG, somando a cada ponto do \textbf{trecho real} um ruído uniforme entre $-0{,}1$ e $+0{,}1$ (em escala z-score). Isso é sortear um ponto numa vizinhança $\ell_\infty$ de raio $r = 0{,}1$, como em Yeh et al. O preenchimento não é tocado.
+\item \textbf{Perturbações.} Uma perturbação é uma versão do ECG com um ruído pequeno somado. O ruído é sorteado \textbf{ponto a ponto}: cada ponto de cada derivação do \textbf{trecho real} recebe seu próprio valor, sorteado de forma uniforme entre $-0{,}1$ e $+0{,}1$ (em escala z-score; qualquer valor nesse intervalo tem a mesma chance, então muitos pontos mudam bem menos que 0,1). Não é um deslocamento do sinal inteiro: pontos vizinhos podem subir ou descer. Com quatro pontos, por exemplo:
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+& \textbf{Ponto 1} & \textbf{Ponto 2} & \textbf{Ponto 3} & \textbf{Ponto 4} \\
+\midrule
+Original & 0,80 & $-$0,20 & 1,50 & 0,30 \\
+\addlinespace
+Ruído do sorteio 1 & $+$0,07 & $-$0,03 & $-$0,09 & $+$0,01 \\
+Perturbação 1 & 0,87 & $-$0,23 & 1,41 & 0,31 \\
+\addlinespace
+Ruído do sorteio 2 & $+$0,02 & $+$0,08 & $-$0,04 & $-$0,06 \\
+Perturbação 2 & 0,82 & $-$0,12 & 1,46 & 0,24 \\
+\bottomrule
+\end{tabular}
+\end{center}
+No ECG real, são 12 derivações com milhares de pontos cada, todos com sorteios próprios. As \textbf{10 perturbações} são 10 sorteios independentes desse ruído: 10 versões levemente diferentes do mesmo ECG, todas a no máximo 0,1 do original em qualquer ponto. Isso é sortear 10 pontos numa vizinhança $\ell_\infty$ de raio $r = 0{,}1$, como em Yeh et al. O preenchimento não é tocado.
 \item \textbf{Mesma predição.} Se a perturbação tira a classe explicada da predição (probabilidade abaixo do limiar da classe), ela é descartada, como em Bhatt et al.
 \item \textbf{Explicação do ECG perturbado} com a \textbf{mesma semente} da referência: os sorteios internos do GradientSHAP (baselines e ruído) são os mesmos, e a diferença entre os dois mapas reflete só a perturbação da entrada.
 \item \textbf{Distância} $\ell_2$ entre as duas explicações normalizadas para norma 1 (Yeh et al., Bhatt et al.). É calculada nas \textbf{36 regiões do batimento} (principal, como nas demais métricas) e ponto a ponto (referência). Vai de 0 (iguais) a 2 (opostas).
@@ -317,7 +333,7 @@ Raio & $r = 0{,}1$ (Yeh, p.~16) & $r = 0{,}1$ em z-score & Sim, adaptado \\
 \addlinespace
 Mesma predição & Exigida por Bhatt (p.~2); não por Yeh & Perturbações que mudam a predição são descartadas & Sim (Bhatt) \\
 \addlinespace
-Amostras & 50 (Yeh, p.~16) & 10 & \textbf{Parcial} (custo) \\
+Perturbações por mapa & 50 (Yeh, p.~16) & 10 & \textbf{Parcial} (custo) \\
 \addlinespace
 Distância & $\ell_2$ entre explicações com norma 1 (Yeh, p.~16; Bhatt, p.~5) & Igual, por regiões e por pontos & Sim, adaptado \\
 \addlinespace
@@ -330,7 +346,15 @@ Explicação refeita & Mesmo método de explicação & Mesmo método, configura�
 
 \textbf{Semente fixa.} O GradientSHAP é um estimador aleatório: ele sorteia baselines e ruído. Como mostra o diagnóstico a seguir, essa aleatoriedade sozinha muda o mapa muito mais que a perturbação. Usar os mesmos sorteios nos dois lados (uma técnica padrão de redução de variância) isola o efeito da perturbação, que é o que a definição pede. A variação entre sementes não é escondida: ela é reportada como \textbf{piso}.
 
-\textbf{Amostras.} Cada perturbação exige um mapa GradientSHAP novo. Com 10 perturbações, são 12 mapas por exemplo (referência, piso e perturbações), cerca de 7\,500 no total. Com 50, como em Yeh et al., seriam cerca de 32\,000. Com menos amostras, a Max tende a ficar um pouco abaixo do máximo verdadeiro; a Avg é menos afetada.
+\textbf{Número de perturbações.} A conta parte da unidade avaliada, o \textbf{mapa}: um par (ECG, classe explicada). São 622 mapas, os mesmos das demais métricas. Para cada mapa, o GradientSHAP é rodado de novo várias vezes:
+\begin{itemize}
+\item 1 vez no ECG original, com a semente $s$: a \textbf{referência};
+\item 1 vez no ECG original, com a semente $s+1$: o \textbf{piso};
+\item 1 vez em cada ECG perturbado, com a semente $s$: com 10 perturbações, 10 execuções.
+\end{itemize}
+São, portanto, $1 + 1 + 10 = 12$ execuções por mapa e $12 \times 622 = 7\,464$ no total, cerca de 7\,500. (Cada execução usa internamente 50 amostras do GradientSHAP; esse 50 é outro parâmetro e não entra na conta. Uma perturbação descartada não chega a ser explicada; na rodada houve só 1.)
+
+Com 50 perturbações por mapa, como em Yeh et al., seriam $1 + 1 + 50 = 52$ execuções por mapa e $52 \times 622 = 32\,344$ no total, cerca de 32\,000: mais de quatro vezes o custo da rodada com 10, que levou 83 min na GPU T4. Por isso foram usadas 10. O preço é que, com menos perturbações, a Max tende a ficar um pouco abaixo do máximo verdadeiro (sorteando menos pontos da vizinhança, é menos provável encontrar o pior caso); a Avg, por ser uma média, é menos afetada.
 
 \section{Diagnóstico}
 Com 18 ECGs (2 por classe), na CPU, foram comparados pares de mapas em várias condições:
