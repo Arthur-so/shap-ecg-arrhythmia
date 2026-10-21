@@ -119,28 +119,57 @@ As métricas de fidelidade (Faithfulness Correlation e Estimate) perguntam se a 
 Geram-se várias versões levemente perturbadas da entrada; para cada uma, calcula-se a explicação de novo e mede-se a \textbf{distância} entre a explicação nova e a original. A \textbf{Max-Sensitivity} é a maior dessas distâncias; a \textbf{Avg-Sensitivity}, a média. Quanto \textbf{menor}, mais estável a explicação.
 \end{infobox}
 
-\textbf{Exemplo com 4 atributos.} A explicação original dá importâncias (0,5; 0,3; 0,1; 0,1). Três versões perturbadas da entrada geram três explicações novas:
+\textbf{Exemplo com 4 atributos.} Um modelo recebe uma entrada com 4 atributos e, para ela, a explicação original dá as importâncias (0,5; 0,3; 0,1; 0,1). A entrada é então levemente alterada de três formas diferentes (as \textbf{perturbações} 1, 2 e 3, detalhadas na seção 3), e cada versão alterada é explicada de novo. A tabela mostra só as \textbf{explicações}, isto é, as importâncias de cada atributo:
 \begin{center}\small
 \begin{tabular}{lccccc}
 \toprule
 & \textbf{At. 1} & \textbf{At. 2} & \textbf{At. 3} & \textbf{At. 4} & \textbf{Distância à original} \\
 \midrule
 Explicação original & 0,50 & 0,30 & 0,10 & 0,10 & --- \\
-Perturbação 1 & 0,45 & 0,35 & 0,10 & 0,10 & 0,07 \\
-Perturbação 2 & 0,50 & 0,30 & 0,15 & 0,05 & 0,07 \\
-Perturbação 3 & 0,10 & 0,30 & 0,10 & 0,50 & 0,57 \\
+Após a perturbação 1 & 0,45 & 0,35 & 0,10 & 0,10 & 0,07 \\
+Após a perturbação 2 & 0,50 & 0,30 & 0,15 & 0,05 & 0,07 \\
+Após a perturbação 3 & 0,10 & 0,30 & 0,10 & 0,50 & 0,57 \\
 \bottomrule
 \end{tabular}
 \end{center}
 A distância é a euclidiana: a raiz da soma dos quadrados das diferenças, atributo a atributo. Nas perturbações 1 e 2, a explicação quase não muda; na 3, ela troca o atributo mais importante. A \textbf{Max-Sensitivity} é 0,57 (o pior caso) e a \textbf{Avg-Sensitivity} é $(0{,}07 + 0{,}07 + 0{,}57)/3 = 0{,}24$. A Max é dominada por um único caso ruim; a Avg diz quanto a explicação varia “tipicamente”.
 
-\section{Passo a passo}
+\section{Passo a passo: o que é perturbar a entrada}
+A tabela da seção 2 mostra só as explicações. Falta dizer o que é “alterar levemente a entrada” e quão pequena essa alteração precisa ser. Para isso, é preciso separar duas coisas:
+\begin{itemize}
+\item a \textbf{entrada}: os valores dos atributos que o modelo recebe (no ECG, o valor do sinal em cada derivação e instante);
+\item a \textbf{explicação}: a importância que o método dá a cada atributo (a tabela da seção 2).
+\end{itemize}
+A perturbação mexe na \textbf{entrada}; a sensibilidade observa o que acontece com a \textbf{explicação}.
+
+\subsection{Perturbação e raio}
+No exemplo, a entrada original tem os valores (0,80; $-$0,20; 1,50; 0,30). \textbf{Perturbar} é somar a cada atributo um valor pequeno, para mais ou para menos. Para dizer o que é “pequeno”, fixa-se um limite, o \textbf{raio} $r$: nenhum atributo pode mudar mais que $r$. Com $r = 0{,}1$:
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Entrada} & \textbf{At. 1} & \textbf{At. 2} & \textbf{At. 3} & \textbf{At. 4} & \textbf{Maior mudança} \\
+\midrule
+Original & 0,80 & $-$0,20 & 1,50 & 0,30 & --- \\
+Perturbação 1 & 0,86 & $-$0,27 & 1,46 & 0,39 & 0,09 \\
+Perturbação 2 & 0,75 & $-$0,11 & 1,53 & 0,28 & 0,09 \\
+Perturbação 3 & 0,77 & $-$0,15 & 1,58 & 0,24 & 0,08 \\
+\midrule
+Não permitida & 0,81 & $-$0,22 & 1,75 & 0,30 & 0,25 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Nas perturbações 1 a 3, cada atributo mudou no máximo 0,09, dentro do raio. A última linha não é permitida: o atributo 3 mudou 0,25, mais que $r = 0{,}1$. Repare que a perturbação 3 é tão pequena quanto as outras na entrada, mas, na seção 2, foi ela que fez a explicação trocar o atributo mais importante. É exatamente esse tipo de caso que a métrica procura.
+
+\subsection{Vizinhança}
+A \textbf{vizinhança de raio $r$} é o conjunto de \textbf{todas} as entradas permitidas: todas aquelas em que nenhum atributo difere do original mais que $r$. As perturbações 1 a 3 estão na vizinhança; a última linha está fora. Quanto maior o raio, maior a vizinhança e maiores as alterações permitidas. O nome técnico dessa forma de medir a alteração, pela maior mudança entre os atributos (a última coluna da tabela), é \textbf{norma $\ell_\infty$}; por isso os artigos falam em “vizinhança $\ell_\infty$ de raio $r$”.
+
+\subsection{Os passos}
 \begin{enumerate}
-\item \textbf{Definir a vizinhança} da entrada $x$: o conjunto de entradas consideradas “quase iguais” a $x$. Ela tem um \textbf{raio} $r$.
-\item \textbf{Escolher pontos na vizinhança.} Em Yeh et al., sorteiam-se perturbações: cada atributo pode mudar no máximo $r$, para mais ou para menos (vizinhança em norma $\ell_\infty$). Em Bhatt et al., usam-se \textbf{exemplos reais do treino} que estejam dentro do raio e tenham a \textbf{mesma predição} que $x$.
-\item \textbf{Explicar cada ponto} com o mesmo método usado em $x$.
-\item \textbf{Medir a distância} entre cada explicação nova e a original.
-\item \textbf{Resumir:} máximo (Max-Sensitivity) ou média (Avg-Sensitivity).
+\item \textbf{Escolher o raio $r$}: o quanto cada atributo da entrada pode mudar. Isso define a vizinhança.
+\item \textbf{Gerar entradas dentro da vizinhança.} Em Yeh et al., para cada atributo sorteia-se um valor entre $-r$ e $+r$ e soma-se ao valor original, como nas perturbações 1 a 3. Em Bhatt et al., em vez de sortear, usam-se \textbf{exemplos reais do treino} que estejam dentro da vizinhança e tenham a \textbf{mesma predição} da entrada original.
+\item \textbf{Explicar cada entrada gerada} com o mesmo método usado na original.
+\item \textbf{Medir a distância} entre cada explicação nova e a original (a última coluna da tabela da seção 2).
+\item \textbf{Resumir:} a maior distância é a Max-Sensitivity; a média, a Avg-Sensitivity.
 \end{enumerate}
 
 \section{Dois cuidados de leitura}
@@ -150,7 +179,7 @@ A distância é a euclidiana: a raiz da soma dos quadrados das diferenças, atri
 \end{itemize}
 
 \section{Traduzindo para o ECG}
-No TCC, $x$ é um ECG de 12 derivações × 15\,000 instantes (escala z-score por derivação), e a explicação é o mapa GradientSHAP com 180\,000 valores. Perturbar o ECG significa somar um ruído pequeno a cada ponto; “explicar de novo” significa rodar o GradientSHAP outra vez no ECG com ruído. A distância é calculada entre os dois mapas.
+No TCC, $x$ é um ECG de 12 derivações × 15\,000 instantes (escala z-score por derivação), e a explicação é o mapa GradientSHAP com 180\,000 valores. Cada ponto do sinal (uma derivação em um instante) é um atributo da entrada. Perturbar o ECG é somar a cada ponto um valor sorteado entre $-r$ e $+r$, como na seção 3, o que gera um ECG dentro da vizinhança de raio $r$; “explicar de novo” é rodar o GradientSHAP outra vez nesse ECG perturbado. A distância é calculada entre o mapa novo e o original.
 
 \partbar{Parte II · Fichamento dos artigos}
 
