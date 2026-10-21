@@ -51,15 +51,20 @@ from src.consistency import REF_LEAD, REGIONS, _real_length, detect_r_peaks, reg
 # --------------------------------------------------------------------------- #
 # Atributos (regiões) e núcleo da métrica
 # --------------------------------------------------------------------------- #
-def region_index(x: np.ndarray, length: int) -> list[tuple[int, np.ndarray]]:
-    """Lista de atributos (derivação, índices de tempo) com ao menos um ponto."""
+def region_index(x: np.ndarray, length: int,
+                 with_labels: bool = False) -> list[tuple]:
+    """Lista de atributos (derivação, índices de tempo) com ao menos um ponto.
+
+    Com ``with_labels=True`` cada item vem como (derivação, índices, região),
+    sendo região o índice em ``REGIONS``.
+    """
     mask = region_mask(detect_r_peaks(x[REF_LEAD, :length]), length, x.shape[1])
     regions = []
     for lead in range(x.shape[0]):
         for r in range(len(REGIONS)):
             t = np.flatnonzero(mask == r)
             if t.size:
-                regions.append((lead, t))
+                regions.append((lead, t, r) if with_labels else (lead, t))
     return regions
 
 
@@ -79,21 +84,39 @@ def faithfulness_correlation(x: np.ndarray, attr: np.ndarray,
     ``predict`` recebe um lote (N, 12, T) e devolve o logit da classe
     explicada (N,). Retorna NaN se as somas ou as quedas forem constantes.
     """
-    sums = np.array([sum(attr[regions[k][0], regions[k][1]].sum() for k in s)
-                     for s in subsets])
+    sums = subset_sums(attr, regions, subsets)
     f_x = float(predict(x[None])[0])
-    drops = []
+    drops = f_x - perturbed_outputs(x, regions, subsets, baseline, predict, batch_size)
+    return pearson(sums, drops)
+
+
+def subset_sums(attr: np.ndarray, regions: list[tuple],
+                subsets: list[np.ndarray]) -> np.ndarray:
+    """Soma das atribuições das regiões de cada subconjunto."""
+    return np.array([sum(attr[regions[k][0], regions[k][1]].sum() for k in s)
+                     for s in subsets])
+
+
+def perturbed_outputs(x: np.ndarray, regions: list[tuple], subsets: list[np.ndarray],
+                      baseline: np.ndarray, predict: Callable[[np.ndarray], np.ndarray],
+                      batch_size: int = 64) -> np.ndarray:
+    """Saída do modelo com as regiões de cada subconjunto trocadas pela baseline."""
+    out = []
     for i in range(0, len(subsets), batch_size):
         batch = np.repeat(x[None], len(subsets[i:i + batch_size]), axis=0)
         for b, s in enumerate(subsets[i:i + batch_size]):
             for k in s:
-                lead, t = regions[k]
+                lead, t = regions[k][0], regions[k][1]
                 batch[b, lead, t] = baseline[lead, t]
-        drops.append(f_x - predict(batch))
-    drops = np.concatenate(drops)
-    if np.std(sums) == 0 or np.std(drops) == 0:
+        out.append(predict(batch))
+    return np.concatenate(out)
+
+
+def pearson(a: np.ndarray, b: np.ndarray) -> float:
+    """Correlação de Pearson; NaN se um dos vetores for constante."""
+    if np.std(a) == 0 or np.std(b) == 0:
         return float("nan")
-    return float(np.corrcoef(sums, drops)[0, 1])
+    return float(np.corrcoef(a, b)[0, 1])
 
 
 # --------------------------------------------------------------------------- #
