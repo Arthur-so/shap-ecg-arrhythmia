@@ -99,7 +99,7 @@
 \hrule
 \vspace{0.8em}
 
-\textbf{Como ler.} \texttt{[Yeh p. N]} indica a página do PDF de Yeh et al. (25 páginas, incluindo o apêndice) e \texttt{[Bhatt p. N]}, a página do PDF de Bhatt et al. (1 a 7). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica as duas métricas sem pressupor a leitura dos artigos; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} compara os artigos com a implementação do Quantus e com a configuração usada no TCC.
+\textbf{Como ler.} \texttt{[Yeh p. N]} indica a página do PDF de Yeh et al. (25 páginas, incluindo o apêndice) e \texttt{[Bhatt p. N]}, a página do PDF de Bhatt et al. (1 a 7). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica as duas métricas sem pressupor a leitura dos artigos; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} descreve a versão implementada no TCC, sua aderência aos artigos, o diagnóstico e os resultados; a versão antiga, do Quantus, aparece resumida no final.
 
 \begin{infobox}[note]{Quem define o quê}
 \begin{itemize}
@@ -262,68 +262,134 @@ Em dados tabulares com poucos atributos, há exemplos reais próximos o bastante
 
 \partbar{Parte III · Aplicação ao TCC}
 
-\section{Dos artigos ao código do Quantus}
-Arquivos: \texttt{quantus/metrics/robustness/max\_sensitivity.py} e \texttt{avg\_sensitivity.py} (Quantus 0.6.0). O código das duas é idêntico, exceto na última linha (\texttt{np.nanmax} ou média). Descartar as perturbações que mudam a predição é possível pela opção \texttt{return\_nan\_when\_prediction\_changes}, desligada por padrão.
-\begin{center}\small
-\begin{tabularx}{\linewidth}{lXXX}
-\toprule
-\textbf{Etapa} & \textbf{Yeh et al.} & \textbf{Bhatt et al.} & \textbf{Quantus (padrão)} \\
-\midrule
-Vizinhança & Perturbações sorteadas em $\ell_\infty$ & Exemplos do treino, mesma predição & Ruído uniforme em cada ponto, de $-$0,2 a +0,2 \\
-Raio & $r = 0{,}1$ & Por conjunto de dados & \texttt{lower\_bound} = 0,2 \\
-Mesma predição & Não exigida & Exigida & Não exigida (opção desligada por padrão) \\
-Amostras & 50 & Pontos disponíveis & \texttt{nr\_samples} = 200 \\
-Distância & $\ell_2$, explicações com norma 1 & $\ell_2$, explicações com norma 1 & $\|a' - a\| / \|a\|$, sem normalizar $a'$ \\
-Resumo & Máximo & Máximo ou média & Máximo ou média \\
-\bottomrule
-\end{tabularx}
-\end{center}
-A amostragem do Quantus corresponde à de Yeh et al.: somar ruído uniforme independente a cada ponto é sortear um ponto dentro de uma vizinhança $\ell_\infty$. As diferenças estão no raio (0,2 contra 0,1) e na distância. Yeh et al. normalizam as \textbf{duas} explicações antes de comparar, o que mede só a mudança de formato. O Quantus divide a diferença pelo tamanho da explicação \textbf{original}, de modo que uma mudança só de escala também conta como sensibilidade.
+\section{Versão implementada no TCC}
+Código: \texttt{src/sensitivity.py} (commit \texttt{ecc19ce}). Para cada um dos 622 mapas do modelo B (ECG × classe explicada, predições corretas do teste):
+\begin{enumerate}
+\item \textbf{Explicação de referência.} O mapa GradientSHAP do ECG é refeito com a mesma configuração usada para gerar os mapas do TCC (as mesmas 32 baselines do treino, 50 amostras, desvio do ruído 0,09) e com uma \textbf{semente aleatória fixa} para aquele mapa.
+\item \textbf{Perturbações.} São geradas 10 versões do ECG, somando a cada ponto do \textbf{trecho real} um ruído uniforme entre $-0{,}1$ e $+0{,}1$ (em escala z-score). Isso é sortear um ponto numa vizinhança $\ell_\infty$ de raio $r = 0{,}1$, como em Yeh et al. O preenchimento não é tocado.
+\item \textbf{Mesma predição.} Se a perturbação tira a classe explicada da predição (probabilidade abaixo do limiar da classe), ela é descartada, como em Bhatt et al.
+\item \textbf{Explicação do ECG perturbado} com a \textbf{mesma semente} da referência: os sorteios internos do GradientSHAP (baselines e ruído) são os mesmos, e a diferença entre os dois mapas reflete só a perturbação da entrada.
+\item \textbf{Distância} $\ell_2$ entre as duas explicações normalizadas para norma 1 (Yeh et al., Bhatt et al.). É calculada nas \textbf{36 regiões do batimento} (principal, como nas demais métricas) e ponto a ponto (referência). Vai de 0 (iguais) a 2 (opostas).
+\item \textbf{Max-Sensitivity} = maior distância entre as perturbações válidas; \textbf{Avg-Sensitivity} = média. Por classe, reporta-se a média sobre os mapas.
+\item \textbf{Piso:} distância entre a referência e outra explicação do mesmo ECG, \textbf{sem perturbação} e com outra semente. Mede quanto o próprio GradientSHAP varia de uma execução para outra.
+\end{enumerate}
 
-\section{Configuração usada no TCC}
-Em \texttt{src/evaluate.py}, as duas métricas eram chamadas com \texttt{nr\_samples=10} e os demais valores padrão. A explicação de cada ECG perturbado era refeita por uma \texttt{explain\_func} com o GradientSHAP.
+\section{Aderência aos artigos}
 \begin{center}\small
 \begin{tabularx}{\linewidth}{lXXl}
 \toprule
-\textbf{Aspecto} & \textbf{Artigo (Yeh)} & \textbf{TCC (Quantus)} & \textbf{Aderente?} \\
+\textbf{Aspecto} & \textbf{Artigos} & \textbf{Versão do TCC} & \textbf{Aderente?} \\
 \midrule
-Perturbação & $\ell_\infty$, $r = 0{,}1$ (imagens) & Ruído de $\pm$0,2 em todos os pontos (ECG em z-score) & \textbf{Parcial} \\
-Amostras & 50 & 10 & \textbf{Parcial} \\
-Distância & $\ell_2$ entre explicações com norma 1 & Diferença relativa à original & \textbf{Diferente} \\
-Mesma explicação nos dois lados & Mesmo método, mesma configuração & Original com 50 amostras do GradientSHAP; refeita com 20 & \textbf{Não} \\
-Preenchimento & Não se aplica & Recebe ruído & \textbf{Não} \\
-Resultado & --- & Nunca obtido: estourava a memória da GPU & --- \\
+Medida & Maior (Yeh, Def.~3.1) ou média (Bhatt, Def.~2) mudança da explicação na vizinhança & Max e Avg das mesmas perturbações & Sim \\
+\addlinespace
+Vizinhança & Perturbações sorteadas em $\ell_\infty$ (Yeh, p.~16) & Ruído uniforme por ponto, só no trecho real & Sim \\
+\addlinespace
+Raio & $r = 0{,}1$ (Yeh, p.~16) & $r = 0{,}1$ em z-score & Sim, adaptado \\
+\addlinespace
+Mesma predição & Exigida por Bhatt (p.~2); não por Yeh & Perturbações que mudam a predição são descartadas & Sim (Bhatt) \\
+\addlinespace
+Amostras & 50 (Yeh, p.~16) & 10 & \textbf{Parcial} (custo) \\
+\addlinespace
+Distância & $\ell_2$ entre explicações com norma 1 (Yeh, p.~16; Bhatt, p.~5) & Igual, por regiões e por pontos & Sim, adaptado \\
+\addlinespace
+Explicação refeita & Mesmo método de explicação & Mesmo método, configuração e semente & Sim (semente: escolha do TCC) \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-\section{Problemas a verificar}
-\begin{infobox}[warn]{Problemas identificados na leitura (ainda não medidos)}
-\begin{enumerate}
-\item \textbf{Configurações diferentes dos dois lados.} Os mapas originais foram gerados com 50 amostras do GradientSHAP (\texttt{src/explain.py}); os mapas dos ECGs perturbados, com 20 (\texttt{src/evaluate.py}). Mesmo sem perturbação nenhuma, os dois mapas difeririam, porque a média com menos amostras é mais ruidosa.
-\item \textbf{O GradientSHAP é aleatório.} A cada chamada, ele sorteia baselines e ruído. Dois mapas do mesmo ECG, sem perturbação, já saem diferentes. A métrica mistura a sensibilidade à perturbação com essa variação própria do método. É preciso medir esse “piso”: a sensibilidade com perturbação zero.
-\item \textbf{O ruído atinge o preenchimento.} Em média, metade dos 15\,000 instantes é preenchimento, que vale praticamente zero; 92\% dos ECGs do teste têm preenchimento. O ruído transforma esse trecho em sinal, o que não é uma “perturbação insignificante” do exame.
-\item \textbf{Tamanho do ruído.} Um ruído de $\pm$0,2 em escala z-score é cerca de 40\% da amplitude mediana do sinal (0,47) e, nos trechos isoelétricos, pode ser maior que o próprio sinal. É preciso verificar se ele mantém a predição do modelo.
-\item \textbf{Comparação ponto a ponto.} As demais métricas do TCC comparam as explicações nas 36 regiões do batimento. A comparação ponto a ponto, com 180\,000 valores, é dominada por pequenas oscilações locais do mapa.
-\item \textbf{Custo.} Cada perturbação exige um mapa GradientSHAP novo; foi aqui que a memória da GPU estourou.
-\end{enumerate}
+\textbf{Raio.} Yeh et al. usam $r = 0{,}1$ em imagens; no ECG em escala z-score, o mesmo valor é pequeno: cerca de 20\% da amplitude mediana do sinal, e da mesma ordem do deslocamento de linha de base usado no aumento de dados do treino ($\pm$0,1). No diagnóstico, nenhuma perturbação com raio até 0,2 mudou a predição, e o \textit{logit} variou em média 0,13 com $r = 0{,}1$.
+
+\textbf{Semente fixa.} O GradientSHAP é um estimador aleatório: ele sorteia baselines e ruído. Como mostra o diagnóstico a seguir, essa aleatoriedade sozinha muda o mapa muito mais que a perturbação. Usar os mesmos sorteios nos dois lados (uma técnica padrão de redução de variância) isola o efeito da perturbação, que é o que a definição pede. A variação entre sementes não é escondida: ela é reportada como \textbf{piso}.
+
+\textbf{Amostras.} Cada perturbação exige um mapa GradientSHAP novo. Com 10 perturbações, são 12 mapas por exemplo (referência, piso e perturbações), cerca de 7\,500 no total. Com 50, como em Yeh et al., seriam cerca de 32\,000. Com menos amostras, a Max tende a ficar um pouco abaixo do máximo verdadeiro; a Avg é menos afetada.
+
+\section{Diagnóstico}
+Com 18 ECGs (2 por classe), na CPU, foram comparados pares de mapas em várias condições:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrr}
+\toprule
+\textbf{Comparação} & \textbf{Regiões} & \textbf{Pontos} & \textbf{Mesmo par top-2} \\
+\midrule
+Mesmo ECG, outra semente (piso) & 0,37 & 0,89 & 67\% \\
+Mapa salvo × refeito (outra semente) & 0,34 & 0,87 & 56\% \\
+20 × 50 amostras do GradientSHAP & 0,47 & 1,03 & 50\% \\
+\addlinespace
+Ruído $r = 0{,}02$, mesma semente & 0,03 & 0,14 & 92\% \\
+Ruído $r = 0{,}05$, mesma semente & 0,04 & 0,23 & 92\% \\
+Ruído $r = 0{,}1$, mesma semente & \textbf{0,06} & \textbf{0,33} & 97\% \\
+Ruído $r = 0{,}2$, mesma semente & 0,10 & 0,49 & 92\% \\
+\addlinespace
+Configuração antiga do Quantus & 0,43 & 1,02 & 56\% \\
+\bottomrule
+\end{tabularx}
+\end{center}
+“Mesmo par top-2” é a fração de casos em que as 2 regiões mais importantes (com sinal) são as mesmas nos dois mapas, que é a explicação usada pela Consistency.
+
+\begin{itemize}
+\item \textbf{A explicação é estável diante da perturbação.} Com a mesma semente, um ruído de raio 0,1 muda o mapa por regiões em 0,06 (numa escala até 2) e mantém o par das 2 regiões principais em 97\% dos casos. A sensibilidade cresce de forma suave com o raio.
+\item \textbf{A aleatoriedade do GradientSHAP é muito maior que o efeito da perturbação.} Duas execuções no mesmo ECG, sem perturbação nenhuma, diferem em 0,37 por regiões e 0,89 ponto a ponto: cerca de 6 vezes o efeito do ruído de raio 0,1. Em todos os 18 ECGs, o piso foi maior que a maior distância causada pela perturbação, mesmo com $r = 0{,}2$.
+\item \textbf{A configuração antiga do Quantus media essa aleatoriedade.} Ela comparava o mapa salvo com um mapa refeito com 20 amostras e outra semente. O valor (0,43 por regiões; 1,28 na distância relativa do Quantus) é praticamente o da linha “20 × 50 amostras”, sem perturbação. Ou seja, a métrica antiga não media a robustez da explicação, e sim o ruído do estimador.
+\end{itemize}
+
+\begin{infobox}[warn]{Implicação para as demais métricas}
+Os mapas usados em todas as métricas foram gerados com 50 amostras do GradientSHAP, e o diagnóstico mostra que eles têm um ruído de Monte Carlo considerável: duas execuções no mesmo ECG escolhem o mesmo par de regiões principais em só 67\% dos casos. Isso afeta sobretudo a \textbf{Consistency}, que compara exatamente esse par entre ECGs: parte da falta de consistência medida pode vir do ruído do estimador, e não do modelo. As métricas de fidelidade usam os mesmos mapas; o efeito do ruído sobre elas ainda não foi medido. Gerar os mapas com mais amostras reduziria o ruído, ao custo de mais tempo de GPU; é um ponto a avaliar.
 \end{infobox}
 
-\section{Proposta de adaptação (a discutir)}
+\section{Como a sensibilidade se relaciona com as outras métricas}
+\subsection{Três perguntas diferentes}
+As métricas já calculadas no TCC formam duas dimensões: a \textbf{fidelidade} (Faithfulness Correlation e Estimate, que medem a mesma coisa de duas formas e concordam entre si) e a \textbf{consistência} (Consistency). A sensibilidade não é uma terceira medida de nenhuma delas: é uma \textbf{terceira dimensão}, a \textbf{robustez}.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXl}
+\toprule
+\textbf{Dimensão} & \textbf{Pergunta} & \textbf{O que se compara} & \textbf{Melhor} \\
+\midrule
+Fidelidade (FaithCorr, FE) & A explicação descreve o que o modelo faz? & A explicação com a \textbf{saída do modelo}, ao retirar regiões do ECG & Maior \\
+\addlinespace
+Consistência (Consistency) & ECGs diferentes da mesma classe recebem a mesma explicação? & Explicações de \textbf{ECGs diferentes} & Maior \\
+\addlinespace
+Robustez (Max/Avg-Sensitivity) & A explicação de um ECG se mantém se o ECG mudar um pouquinho? & Explicações de \textbf{versões quase idênticas do mesmo ECG} & \textbf{Menor} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\begin{itemize}
+\item \textbf{Não é a direção da fidelidade.} A fidelidade olha a saída do modelo; a sensibilidade não olha a saída, só compara explicações entre si. Uma explicação pode ser muito estável e nada fiel: o caso extremo é a explicação constante, que dá sempre o mesmo mapa e tem sensibilidade zero (Yeh, p.~2). E pode ser fiel e frágil, se descrever bem o modelo em cada ECG mas mudar muito com um ruído pequeno.
+\item \textbf{Não é a direção da Consistency, embora as duas falem de “estabilidade”.} A Consistency compara ECGs diferentes, que podem ter diferenças grandes entre si; a sensibilidade compara um ECG consigo mesmo, com diferenças mínimas. Uma classe pode ter explicações robustas em cada ECG e, ainda assim, pouco consistentes entre ECGs (cada ECG tem a sua razão, estável).
+\item \textbf{Direção oposta na leitura.} Nas outras métricas, maior é melhor; aqui, \textbf{menor} é melhor. Ao comparar classes, a melhor posição na sensibilidade é a de menor valor.
+\end{itemize}
+
+\subsection{Como ler as três dimensões juntas}
+Os próprios autores dizem que a sensibilidade só faz sentido ao lado da fidelidade (Yeh, p.~2 e 5). Combinando as duas:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+& \textbf{Pouco sensível (robusta)} & \textbf{Muito sensível (frágil)} \\
+\midrule
+\textbf{Fiel} & Caso desejado: descreve o modelo e não muda por detalhes irrelevantes. & Descreve o modelo, mas um ruído pequeno muda a explicação; difícil confiar em um mapa isolado. \\
+\addlinespace
+\textbf{Pouco fiel} & Estável, mas pode ser genérica (próxima da explicação constante). & Pior caso: nem descreve o modelo nem se mantém. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+A Consistency acrescenta a terceira camada: se a explicação, além de fiel e robusta, se repete entre ECGs da mesma classe, o modelo usa um critério estável para aquela classe, e o SHAP o mostra.
+
+\subsection{O que a sensibilidade já acrescenta (diagnóstico)}
 \begin{enumerate}
-\item \textbf{Seguir Yeh et al.} na vizinhança (perturbações sorteadas), porque a de Bhatt et al., com exemplos reais, não é viável com 180\,000 valores por ECG.
-\item \textbf{Ruído só no trecho real}, sem tocar no preenchimento.
-\item \textbf{Escolher o raio com base no ECG}, e não no padrão do Quantus, verificando que a predição se mantém. Como Bhatt et al., descartar as perturbações que mudam a predição.
-\item \textbf{Mesma configuração do GradientSHAP} dos dois lados (50 amostras, as mesmas baselines) e \textbf{medir o piso}: a sensibilidade sem perturbação, que mostra quanto do valor vem da aleatoriedade do método.
-\item \textbf{Distância como em Yeh et al.}: $\ell_2$ entre explicações com norma 1, calculada nas \textbf{36 regiões} (coerente com as demais métricas) e, para referência, ponto a ponto.
-\item \textbf{Max e Avg das mesmas amostras}, como no Quantus e em Bhatt et al.
+\item \textbf{As diferenças entre classes nas outras métricas não vêm de explicações frágeis.} Um ruído pequeno (raio 0,1) muda o mapa por regiões em só 0,06 e preserva o par das 2 regiões principais em 97\% dos casos. As explicações são robustas à entrada; a fidelidade moderada (cerca de 0,6) e as diferenças de Consistency entre classes não se explicam por instabilidade diante de detalhes do sinal.
+\item \textbf{A explicação não é “constante”.} Robustez sozinha poderia indicar uma explicação genérica. Como a fidelidade é positiva em todas as classes, esse não é o caso: as explicações são, ao mesmo tempo, estáveis e informativas sobre o modelo.
+\item \textbf{O ruído do estimador é uma camada de confiabilidade para todas as métricas.} O piso (0,37 por regiões; par top-2 igual em só 67\% entre execuções) é muito maior que o efeito da perturbação. Isso não é uma propriedade do modelo, e sim do GradientSHAP com 50 amostras, e afeta os mapas usados em todas as métricas. Em especial, ajuda a interpretar a Consistency: o par de regiões principais é estável diante da entrada (97\%), mas não diante do sorteio do estimador (67\%). Parte da falta de consistência entre ECGs pode ser ruído do SHAP, e não do modelo.
 \end{enumerate}
 
-\begin{infobox}[note]{Verificações sugeridas antes de implementar (não executadas)}
-Num diagnóstico com poucos ECGs por classe, na CPU: (a) piso da sensibilidade, explicando o mesmo ECG duas vezes sem perturbação; (b) efeito da diferença entre 50 e 20 amostras; (c) para alguns raios, a fração de perturbações que mudam a predição e a sensibilidade resultante; (d) comparação entre a distância ponto a ponto e a distância por regiões; (e) tempo e memória por mapa, para dimensionar a execução no Kaggle.
-\end{infobox}
+\subsection{Perguntas que os resultados por classe vão responder}
+\begin{itemize}
+\item As classes com fidelidade mais baixa (AF, SNR, STD) também têm explicações mais sensíveis? Se sim, a fidelidade baixa vem acompanhada de fragilidade; se não, são explicações estáveis que descrevem pior o modelo.
+\item A sensibilidade acompanha o F1? Classes que o modelo classifica melhor têm explicações mais robustas?
+\item O piso varia entre classes? Uma classe com piso alto tem a Consistency mais penalizada pelo ruído do estimador, o que muda a leitura da Consistency daquela classe.
+\end{itemize}
 
 \section{Resultados}
-\textit{Pendente.} Dependem do diagnóstico e da versão adaptada.
+\textit{Em execução no Kaggle (GPU T4, versão 19 do notebook).}
+
+\section{Versão antiga (Quantus) e por que foi substituída}
+A configuração usada antes (\texttt{quantus.MaxSensitivity} e \texttt{AvgSensitivity}, com 10 amostras) somava ruído de $\pm$0,2 a todos os 180\,000 pontos, inclusive ao preenchimento; refazia a explicação com 20 amostras do GradientSHAP, enquanto os mapas originais tinham 50; não fixava a semente; não descartava perturbações que mudam a predição; e dividia a diferença pelo tamanho do mapa original, em vez de normalizar as duas explicações como no artigo. O diagnóstico acima mostra que o valor resultante era dominado pela aleatoriedade do GradientSHAP. A versão antiga também nunca chegou a produzir resultados no TCC, porque estourava a memória da GPU.
 
 \end{document}
