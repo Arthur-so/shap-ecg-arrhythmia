@@ -369,6 +369,45 @@ Preenchimento & Não se aplica & Pode ser retirado & \textbf{Fora} \\
 \end{center}
 
 \section{Resultados da versão atual}
-\textit{Pendente.} A versão adaptada será calculada no Kaggle para os 622 mapas do modelo B, como foi feito com a Faithfulness Correlation.
+A versão adaptada foi calculada no Kaggle (GPU T4, 20/10/2026) para os \textbf{622 mapas} do modelo B, isto é, as predições corretas do teste, com o código \texttt{src/faithfulness\_estimate.py}. Cada mapa teve as 36 regiões retiradas uma a uma, nas duas baselines. Não houve nenhum valor indefinido. Os arquivos estão em \texttt{results/modeloB\_faithest/}.
+
+\subsection{Por classe}
+A tabela usa a baseline zero; a média do treino deu os mesmos valores até a segunda casa decimal (a maior diferença em um mapa foi 0,11). A Faithfulness Correlation é a do modelo B com grupos de 9 regiões, para comparação. Entre parênteses, a posição da classe (1.º = maior valor).
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrrrrr}
+\toprule
+\textbf{Classe} & \textbf{Mapas} & \textbf{FE (\textit{logit})} & \textbf{Desvio} & \textbf{FE (prob.)} & \textbf{Faithfulness Corr.} & \textbf{F1} \\
+\midrule
+BRD  & 172 & \textbf{0,78} (1.º) & 0,12 & 0,73 & 0,75 (1.º) & 0,927 (2.º) \\
+BRE  &  20 & 0,72 (2.º) & 0,13 & 0,58 & 0,65 (2.º) & 0,870 (4.º) \\
+CVP  &  59 & 0,66 (3.º) & 0,15 & 0,57 & 0,61 (4.º) & 0,837 (5.º) \\
+STE  &  14 & 0,57 (4.º) & 0,16 & 0,53 & 0,60 (5.º) & 0,596 (9.º) \\
+IAVB &  61 & 0,57 (5.º) & 0,20 & 0,55 & 0,65 (3.º) & 0,884 (3.º) \\
+CAP  &  45 & 0,55 (6.º) & 0,16 & 0,53 & 0,52 (8.º) & 0,750 (8.º) \\
+AF   & 108 & 0,51 (7.º) & 0,22 & 0,51 & 0,54 (6.º) & 0,931 (1.º) \\
+SNR  &  78 & 0,51 (8.º) & 0,21 & 0,42 & 0,46 (9.º) & 0,796 (6.º) \\
+STD  &  65 & 0,51 (9.º) & 0,26 & 0,49 & 0,52 (7.º) & 0,778 (7.º) \\
+\midrule
+\textbf{Global} & 622 & \textbf{0,62} & 0,21 & 0,57 & 0,61 & 0,819 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+AF, SNR e STD diferem em menos de 0,01, e na prática empatam nas últimas posições.
+
+\subsection{Verificações}
+\begin{itemize}
+\item \textbf{Teste do sinal (todas as 22\,392 retiradas):} retirar uma região de atribuição positiva baixa o \textit{logit} em 0,32, em média; retirar uma de atribuição negativa o \textbf{aumenta} em 0,34. Em 68\% das retiradas, o sinal da queda coincide com o sinal da atribuição. O comportamento do diagnóstico (seção 10) se confirma no conjunto completo.
+\item \textbf{Distribuição:} a mediana por mapa é 0,65, e só 7 dos 622 mapas têm valor negativo.
+\item \textbf{Saturação da probabilidade:} 84\% das retiradas mudam a probabilidade menos de 0,01. Com a probabilidade, os valores são menores e a ordem das classes muda um pouco (por exemplo, SNR cai para 0,42), o que confirma a escolha do \textit{logit} como saída principal.
+\item \textbf{Onde a retirada pesa:} em média, retirar uma região QRS baixa o \textit{logit} em 0,29; uma ST-T, em 0,12; uma pré-QRS, em 0,01.
+\end{itemize}
+
+\subsection{O que se conclui}
+\begin{enumerate}
+\item \textbf{As explicações são fiéis de forma moderada e em todas as classes.} A correlação global é 0,62, e o sinal da atribuição indica a direção do efeito da retirada na maioria dos casos (68\%).
+\item \textbf{A Faithfulness Estimate concorda com a Faithfulness Correlation.} O valor global é quase o mesmo (0,62 e 0,61), e a ordem das classes é parecida: BRD e BRE no topo; SNR, STD, AF e CAP embaixo. É o esperado, já que, com regiões, a Faithfulness Estimate é o caso da Faithfulness Correlation com grupos de uma região. A concordância mostra que o resultado não depende do tamanho do grupo retirado.
+\item \textbf{A fidelidade coincide com o F1 só em parte} (comparação descritiva, sem coeficiente de correlação). BRD está entre as melhores nas duas medidas. Já AF tem o maior F1 e uma das menores fidelidades, e STE tem o menor F1 e fidelidade intermediária (com só 14 mapas).
+\item \textbf{Comparada à versão antiga} (seção 9, outro modelo), a ordem mudou bastante: STE e BRD continuam altas, mas AF era a mais baixa (0,13) e agora está empatada com SNR e STD. Os valores antigos refletiam o dano ao sinal, e não a fidelidade.
+\end{enumerate}
 
 \end{document}
