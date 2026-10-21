@@ -50,7 +50,7 @@
 \begin{itemize}
     \item \textbf{Novas métricas:} a \textbf{Faithfulness Estimate} e a \textbf{Max-/Avg-Sensitivity} foram revisadas a partir dos artigos originais, reimplementadas e calculadas. Nas duas, a configuração do Quantus usada antes não media o que a métrica pretende.
     \item \textbf{Análise conjunta:} as quatro métricas disponíveis se organizam em \textbf{dois blocos}. Fidelidade (Faithfulness Correlation e Estimate) e robustez (sensibilidade) ordenam as classes do mesmo jeito; a Consistency segue outra ordem.
-    \item \textbf{Achado principal da sensibilidade:} as explicações quase não mudam com perturbações pequenas do ECG, mas o próprio GradientSHAP varia muito de uma execução para outra (cerca de 5 vezes mais). Essa é a maior fonte de incerteza das explicações e afeta a leitura de todas as métricas, em especial da Consistency.
+    \item \textbf{Achado principal da sensibilidade:} as explicações são robustas, pois quase não mudam com perturbações pequenas do ECG. Como referência, trocar a semente do GradientSHAP no mesmo ECG muda o mapa mais do que essas perturbações (cerca de 5 vezes); a Seção~6.4 discute como isso entra na leitura das métricas.
     \item \textbf{Pergunta do TCC:} a qualidade das explicações acompanha o F1 só em parte. Fidelidade e robustez parecem depender mais do \textbf{tipo de classe} (forma do QRS ou ritmo) que do F1.
 \end{itemize}
 
