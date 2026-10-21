@@ -178,14 +178,29 @@ Fraco nos dois blocos & SNR, CAP & Explicações menos fiéis, menos robustas e 
 \end{tabularx}
 \end{table}
 
-\subsection{O ruído do GradientSHAP muda a leitura da Consistency}
-O piso (variação entre execuções do SHAP) não é igual em todas as classes, e isso ajuda a separar o que é do modelo e o que é do estimador:
+\subsection{A Consistency mistura duas causas}
+O GradientSHAP não calcula o mapa de forma exata: ele o estima com 50 sorteios (baselines e ruído), e outro conjunto de sorteios daria um mapa um pouco diferente. O piso mede esse erro de estimativa: em duas execuções no mesmo ECG, o par de regiões principais coincide em só 67\% dos casos.
+
+A Consistency \textbf{capta corretamente} essa variação: as explicações efetivamente geradas são menos consistentes por causa dela, e o valor medido é válido. O que muda é a leitura, porque uma Consistency baixa pode ter duas causas, que a métrica sozinha não separa:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+& \textbf{Origem} & \textbf{Relação com a pergunta do TCC} \\
+\midrule
+A & O modelo usa evidências diferentes em ECGs diferentes da mesma classe & Característica do modelo na classe; faz sentido comparar com o F1 \\ \addlinespace
+B & Erro de estimativa do GradientSHAP (50 amostras por mapa) & Característica da configuração do estimador; diminui com mais amostras e não depende de quão bem o modelo classifica a classe \\
+\bottomrule
+\end{tabularx}
+\end{center}
+O mesmo erro afeta também a Faithfulness Correlation e a Estimate (importâncias com ruído reduzem a correlação), mas a Consistency tende a ser mais sensível, porque usa um rótulo discreto (o par top-2): um erro pequeno pode trocar o rótulo inteiro.
+
+Como o piso varia entre as classes, ele dá uma indicação de qual causa pesa mais em cada uma:
 \begin{itemize}
-    \item \textbf{CAP} tem o maior piso (0,46) e Consistency baixa (8ª): parte da falta de consistência pode ser ruído do SHAP.
-    \item \textbf{BRE} tem o menor piso (0,23) e Consistency baixa (6ª): aqui a causa não é ruído; as explicações de BRE variam de fato entre ECGs (por exemplo, alternando entre o QRS de V1 e o de V2).
-    \item \textbf{STD} tem piso alto (0,40) e mesmo assim Consistency alta (2ª): o padrão de STD se repete apesar do ruído.
+    \item \textbf{CAP} tem o maior piso (0,46) e Consistency baixa (8ª): parte da inconsistência pode vir da causa B.
+    \item \textbf{BRE} tem o menor piso (0,23) e Consistency baixa (6ª): a causa B é pequena, então a inconsistência deve vir principalmente da causa A; as explicações de BRE variam de fato entre ECGs (por exemplo, alternando entre o QRS de V1 e o de V2).
+    \item \textbf{STD} tem piso alto (0,40) e mesmo assim Consistency alta (2ª): o padrão de STD se repete apesar da causa B.
 \end{itemize}
-De modo geral, como o par de regiões principais coincide em só 67\% de duas execuções no mesmo ECG, a Consistency medida tende a estar reduzida pelo ruído do estimador. Gerar os mapas com mais amostras do GradientSHAP diminuiria esse efeito, a um custo maior de GPU.
+Assim, a Consistency é mantida como resultado, com o piso ao lado como contexto. Para separar as duas causas, seria preciso gerar os mapas com mais amostras e recalcular a métrica: se a Consistency de uma classe subir, pesava a causa B; se ficar igual, a causa A. Isso tem custo maior de GPU e muda os mapas usados por todas as métricas.
 
 \subsection{O que isso diz sobre a pergunta do TCC}
 A qualidade das explicações acompanha o F1 \textbf{em parte}:
