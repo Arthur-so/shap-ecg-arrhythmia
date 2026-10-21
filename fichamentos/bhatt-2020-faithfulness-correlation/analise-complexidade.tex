@@ -1,0 +1,304 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Análise: a complexidade de Bhatt et al. (2020) no caso do ECG}} \\[0.35em]
+    {\large BHATT, U.; WELLER, A.; MOURA, J. M. F. \textit{Evaluating and Aggregating Feature-based Model Explanations}. IJCAI, 2020, p.~3016--3022} \\[0.3em]
+    \textbf{Métrica no Quantus:} \texttt{quantus.Complexity} \\[0.2em]
+    \textbf{Complementa:} Fichamento da Faithfulness Correlation (mesma pasta) \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 20/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Por que este documento.} O fichamento da Faithfulness Correlation diz que o artigo propõe três critérios (baixa sensibilidade, alta fidelidade e baixa complexidade) e que “a complexidade não é usada”. Aqui se analisa se valeria a pena usá-la no TCC.
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do artigo (1 a 7). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica a métrica; a \textbf{Parte II} traz o que o artigo diz sobre ela; a \textbf{Parte III} mostra um diagnóstico com os mapas do modelo B e a recomendação.
+
+\begin{infobox}[ok]{Resposta curta}
+\textbf{Vale usar, como métrica complementar e na versão por regiões.} Ela mede algo que as métricas de fidelidade não medem (se a explicação é concentrada em poucas regiões, e portanto fácil de ler), custa quase nada (não chama o modelo) e completa os três critérios do mesmo artigo. A versão do Quantus, ponto a ponto, \textbf{não} serve: ela mede o comprimento do sinal, e não a explicação (seção 7). Como a complexidade é de outra categoria do Quantus (nem fidelidade nem robustez), incluí-la amplia o escopo do TCC e deve ser combinada com o orientador.
+\end{infobox}
+
+\partbar{Parte I · Entendendo a métrica}
+
+\section{O que a complexidade mede}
+Um mapa SHAP dá uma importância a cada atributo da entrada. Se a importância está \textbf{espalhada} por quase todos os atributos, a explicação é difícil de ler: não há como apontar “o modelo olhou aqui”. Se está \textbf{concentrada} em poucos atributos, a explicação é simples. A complexidade mede esse grau de espalhamento.
+
+\begin{infobox}[note]{Definição em uma frase}
+Transformam-se as importâncias (em valor absoluto) em frações que somam 1, e calcula-se a \textbf{entropia} dessas frações. Entropia alta = importância espalhada = explicação complexa; entropia baixa = importância concentrada = explicação simples.
+\end{infobox}
+
+A \textbf{entropia} de uma lista de frações $p_1, \dots, p_d$ é $H = -\sum_i p_i \ln p_i$. Ela vale 0 quando toda a importância está em um único atributo e atinge o máximo, $\ln d$, quando todos os atributos têm a mesma importância.
+
+\section{Um exemplo com 4 atributos}
+\begin{center}\small
+\begin{tabular}{lccccrr}
+\toprule
+& \textbf{At. 1} & \textbf{At. 2} & \textbf{At. 3} & \textbf{At. 4} & \textbf{Entropia} & \textbf{Nº efetivo} \\
+\midrule
+Explicação concentrada & 0,97 & 0,01 & 0,01 & 0,01 & 0,17 & 1,2 \\
+Explicação A (do fichamento) & 0,5 & 0,3 & 0,1 & 0,1 & 1,17 & 3,2 \\
+Explicação uniforme & 0,25 & 0,25 & 0,25 & 0,25 & 1,39 ($=\ln 4$) & 4,0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+O valor da entropia é pouco intuitivo. Por isso, neste documento ele também é mostrado como \textbf{número efetivo de atributos}, $e^{H}$: quantos atributos, todos com a mesma importância, dariam a mesma entropia. A explicação concentrada “usa” cerca de 1 atributo; a uniforme usa os 4. Essa conversão é uma ajuda de leitura deste documento e não está no artigo.
+
+\section{O que a métrica não mede}
+\begin{itemize}
+\item \textbf{Não diz se a explicação está certa.} Uma explicação pode ser bem concentrada no atributo errado. A complexidade fala da \textbf{legibilidade}; a fidelidade (Faithfulness Correlation e Estimate) fala da \textbf{correção}. As duas se complementam.
+\item \textbf{Ignora o sinal.} Importância positiva e negativa contam igual, pelo valor absoluto.
+\item \textbf{Depende do que se chama de atributo.} Com 4 atributos, o máximo é $\ln 4 = 1{,}39$; com 180\,000 pontos, é $\ln 180\,000 = 12{,}1$. Valores só são comparáveis com o mesmo conjunto de atributos.
+\end{itemize}
+
+\partbar{Parte II · O que o artigo diz}
+
+\begin{citacard}{\pagechip{p. 1} §1 Introdução}
+\begin{origquote}“Since humans cannot process a lot of information at once, some have argued for minimal model explanations that contain only relevant and representative features [...]; therefore, an explanation should not be complex (i.e., use few features).”\end{origquote}
+\begin{tradquote}“Como os humanos não conseguem processar muita informação de uma vez, alguns defendem explicações mínimas, que contenham apenas atributos relevantes e representativos [...]; portanto, uma explicação não deve ser complexa (isto é, deve usar poucos atributos).”\end{tradquote}
+\explab{Explicação}
+A motivação é a \textbf{compreensão humana}, e não a correção. É um critério sobre quem lê a explicação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §3.3 Desideratum: Low Complexity}
+\begin{origquote}“A complex explanation is one that uses all d features in its explanation of which features of x are important to f. Though this explanation may be faithful to the model (as defined above), it may be too difficult for the user to understand (especially if d is large).”\end{origquote}
+\begin{tradquote}“Uma explicação complexa é aquela que usa todos os d atributos para explicar quais atributos de x são importantes para f. Embora essa explicação possa ser fiel ao modelo (como definido acima), ela pode ser difícil demais de entender para o usuário (especialmente se d for grande).”\end{tradquote}
+\explab{Explicação}
+O próprio artigo separa as duas coisas: uma explicação pode ser fiel e ainda assim complexa. No ECG, $d = 180\,000$ pontos é exatamente o caso “d grande”.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §3.3 e Definição 4}
+\begin{origquote}“If every feature had equal attribution, the explanation would be complex (even if it is faithful). The simplest explanation would be concentrated on one feature. We define complexity as the entropy of P\textsubscript{g}.”\end{origquote}
+\begin{tradquote}“Se todos os atributos tivessem a mesma atribuição, a explicação seria complexa (mesmo que fiel). A explicação mais simples estaria concentrada em um único atributo. Definimos a complexidade como a entropia de P\textsubscript{g}.”\end{tradquote}
+\explab{Fórmula}
+$P_g(i) = \dfrac{|g(f,x)_i|}{\sum_{j} |g(f,x)_j|}$, \qquad $\mu_C(f, g; x) = -\sum_{i=1}^{d} P_g(i) \ln P_g(i)$.
+
+$P_g(i)$ é a fração da importância total (em valor absoluto) que cabe ao atributo $i$; $\mu_C$ é a entropia dessas frações, calculada para cada exemplo $x$.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §7 Experimentos}
+\begin{origquote}“Before doing aggregation, we unit norm all explanations. For the complexity criterion, we take the positive ℓ1 norm.”\end{origquote}
+\begin{tradquote}“Antes da agregação, normalizamos todas as explicações. Para o critério de complexidade, usamos a norma ℓ1 positiva.”\end{tradquote}
+\explab{Explicação}
+É a divisão pela soma dos valores absolutos que aparece em $P_g$. O artigo não detalha mais nada; em particular, não discute o que seria um atributo em entradas como séries temporais.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} Tabela 1, Tabela 4 e §7.3}
+\begin{origquote}“Note that achieving lowest complexity on an image would imply that all attribution is placed on a single pixel.” [Tabela 1] \quad “We show an example with images since it illustrates the notion of lower complexity well; however, other data types (tabular) might be better suited for complexity optimization.” [§7.3]\end{origquote}
+\begin{tradquote}“Note que atingir a menor complexidade em uma imagem significaria colocar toda a atribuição em um único pixel.” [Tabela 1] \quad “Mostramos um exemplo com imagens porque ele ilustra bem a noção de complexidade menor; no entanto, outros tipos de dados (tabulares) podem ser mais adequados para otimizar a complexidade.” [§7.3]\end{tradquote}
+\explab{Explicação}
+Nas imagens do MNIST (784 pixels), a complexidade fica entre 3,2 e 3,7. Na Tabela 4, as explicações SHAP têm complexidade 1,94 (Adult), 1,36 (Iris) e 2,33 (MIMIC), em dados tabulares com poucos atributos. Os próprios autores reconhecem que, com pontos isolados (pixels), a complexidade mínima não faz sentido: concentrar tudo em um pixel não é uma boa explicação. É o mesmo problema dos pontos isolados do ECG.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §8 Conclusão}
+\begin{origquote}“Though we consider one criterion at a time, future work could further axiomatize our criteria, explore the interaction between different evaluation criteria [...].”\end{origquote}
+\begin{tradquote}“Embora consideremos um critério por vez, trabalhos futuros poderiam axiomatizar melhor os critérios e explorar a interação entre diferentes critérios de avaliação [...].”\end{tradquote}
+\explab{Explicação}
+No artigo, a complexidade serve principalmente para \textbf{comparar e combinar funções de explicação} (§5, p.~3), e não para comparar classes de um mesmo modelo, como no TCC. Olhar a complexidade junto com a fidelidade, como se propõe aqui, é justamente a “interação entre critérios” deixada como trabalho futuro.
+\end{citacard}
+
+\partbar{Parte III · Aplicação ao TCC}
+
+\section{Do artigo ao código do Quantus}
+Arquivo: \texttt{quantus/metrics/complexity/complexity.py} (Quantus 0.6.0). A métrica não está no pipeline atual do TCC (\texttt{src/evaluate.py}).
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Etapa} & \textbf{Artigo} & \textbf{Quantus} \\
+\midrule
+Atributo & Cada atributo $x_i$ & Cada valor do mapa achatado (180\,000 no ECG) \\
+Frações & $|g_i| / \sum_j |g_j|$ & Igual (\texttt{abs=True}) \\
+Entropia & $-\sum P \ln P$ & Igual, com $10^{-12}$ dentro do log \\
+Normalização prévia & Não altera o resultado & \texttt{normalise=True} (também não altera: a entropia das frações não depende da escala) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+O Quantus é fiel à Definição 4. O problema está na escolha do atributo: com 180\,000 pontos isolados, a métrica herda os mesmos defeitos que levaram a reimplementar a Consistency e a Faithfulness Correlation.
+
+\section{Diagnóstico com os 622 mapas do modelo B}
+A complexidade foi calculada nos 622 mapas SHAP do modelo B (predições corretas do teste) de três formas, que diferem só no que se chama de atributo:
+\begin{itemize}
+\item \textbf{(P) Pontos, como no Quantus:} cada um dos 180\,000 valores do mapa, incluindo o trecho de preenchimento.
+\item \textbf{(R) Regiões:} as 36 regiões do batimento (12 derivações × pré-QRS, QRS e ST-T), com a importância de cada uma igual à \textbf{soma do mapa} na região, exatamente como na Consistency, na Faithfulness Correlation e na Faithfulness Estimate.
+\item \textbf{(R-abs) Regiões com valores absolutos:} as mesmas 36 regiões, mas somando o valor absoluto de cada ponto.
+\end{itemize}
+O cálculo usa só os mapas (não chama o modelo) e levou 9 segundos na CPU.
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrrr}
+\toprule
+& \textbf{Máximo possível} & \textbf{Média} & \textbf{Nº efetivo médio} & \textbf{Faixa do nº efetivo} \\
+\midrule
+(P) Pontos (Quantus) & 12,10 & 11,03 & 62\,500 de 180\,000 & 33\,000 a 96\,000 \\
+(R) Regiões, soma do mapa & 3,58 & 3,18 & \textbf{24,2 de 36} & \textbf{15,3 a 30,7} \\
+(R-abs) Regiões, soma de $|\cdot|$ & 3,58 & 3,53 & 34,1 de 36 & 27,9 a 36 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{A versão do Quantus mede o comprimento do sinal}
+Os ECGs têm durações diferentes: o trecho real ocupa em média 7\,500 dos 15\,000 instantes, e o resto é preenchimento. Na versão (P), quanto mais longo o ECG, maior a complexidade, porque há mais pontos com alguma importância. A correlação de postos entre complexidade e comprimento é 0,45 com o preenchimento e chega a \textbf{0,88} quando se exclui o preenchimento. Ou seja, a métrica ordena os mapas quase só pela duração do exame. Além disso, em média \textbf{15\% da importância total} do mapa (em valor absoluto) fica no trecho de preenchimento, que não tem informação clínica. A versão (P), por isso, não serve para o TCC.
+
+\subsection{Com regiões, a métrica distingue os mapas}
+Na versão (R), o número de regiões é sempre 36 (todos os ECGs têm os três tipos de região nas 12 derivações), o preenchimento fica de fora e a complexidade praticamente não depende da duração (correlação de postos de 0,07). Os mapas usam, em média, o equivalente a 24 das 36 regiões, com variação real entre mapas (de 15 a 31).
+
+Na versão (R-abs), quase todos os mapas parecem uniformes (34 de 36). Somar valores absolutos acumula o ruído ponto a ponto do GradientSHAP em todas as regiões e esconde as diferenças. A versão (R) é a coerente com as demais métricas do TCC, que também usam a soma do mapa como importância da região. Há um efeito a registrar: dentro de uma região, partes positivas e negativas se cancelam, e uma região com importância “mista” pesa pouco.
+
+\section{Resultados por classe (versão por regiões)}
+Classes ordenadas da explicação mais concentrada para a mais espalhada. “Top 3” é a fração da importância total que está nas 3 regiões mais importantes do mapa. A Faithfulness Correlation é a do modelo B (baseline zero, $|S| = 9$).
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrrrrrr}
+\toprule
+\textbf{Classe} & \textbf{Mapas} & \textbf{Nº efetivo} & \textbf{Desvio} & \textbf{Top 3} & \textbf{FaithCorr} & \textbf{F1} & \textbf{Posição no F1} \\
+\midrule
+BRD  & 172 & 22,4 & 2,7 & 33\% & 0,75 & 0,927 & 2.º \\
+AF   & 108 & 22,8 & 2,1 & 30\% & 0,54 & 0,931 & 1.º \\
+IAVB &  61 & 23,3 & 2,3 & 29\% & 0,65 & 0,884 & 3.º \\
+CVP  &  59 & 24,7 & 2,4 & 27\% & 0,61 & 0,837 & 5.º \\
+STE  &  14 & 25,5 & 1,7 & 26\% & 0,60 & 0,596 & 9.º \\
+CAP  &  45 & 25,7 & 1,8 & 24\% & 0,52 & 0,750 & 8.º \\
+BRE  &  20 & 25,8 & 1,7 & 26\% & 0,65 & 0,870 & 4.º \\
+STD  &  65 & 26,9 & 1,5 & 23\% & 0,52 & 0,778 & 7.º \\
+SNR  &  78 & 26,9 & 1,6 & 23\% & 0,46 & 0,796 & 6.º \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Leitura descritiva.} As três classes de maior F1 (AF, BRD e IAVB) são as de explicações mais concentradas (22 a 23 regiões efetivas). SNR e STD têm as mais espalhadas (27). As exceções são STE, de menor F1 mas complexidade intermediária, e BRE, de F1 alto mas explicações espalhadas. Dois cuidados: a diferença entre as classes extremas (cerca de 4,5 regiões) é da mesma ordem do desvio dentro de cada classe (1,5 a 2,7); e STE e BRE têm poucos mapas (14 e 20).
+
+\textbf{Uma ressalva de interpretação.} Ser concentrada não é necessariamente melhor no ECG. Algumas classes são, por natureza, visíveis em várias derivações (por exemplo, o ritmo sinusal aparece em todas). Uma explicação espalhada para SNR pode refletir a própria classe, e não uma explicação ruim. Por isso a complexidade deve ser lida junto com a fidelidade, e não sozinha.
+
+\subsection{Relação com a fidelidade}
+Mapa a mapa, explicações mais concentradas tendem a ser mais fiéis: a correlação de postos entre a complexidade (R) e a Faithfulness Correlation nos 622 mapas é $-0{,}41$. Isso é usado aqui apenas como diagnóstico, e não como resultado do TCC. Parte dessa relação pode ser mecânica: quando a importância está concentrada, as somas dos subconjuntos sorteados variam mais, e a correlação fica menos sujeita a ruído. Ainda assim, mostra que as duas métricas não medem exatamente a mesma coisa (a relação é moderada), o que é um argumento para usar ambas.
+
+\subsection{Achado lateral: onde está a região mais importante}
+O diagnóstico também registrou qual região concentra mais importância em cada mapa. Isso não é complexidade, mas ajuda a interpretar os resultados.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Classe} & \textbf{Região mais importante (fração dos mapas)} \\
+\midrule
+BRD  & V1 QRS (87\%) \\
+BRE  & V2 QRS (50\%), V1 QRS (25\%) \\
+IAVB & aVR pré-QRS (62\%), II pré-QRS (10\%), V1 pré-QRS (7\%) \\
+STD  & aVR ST-T (37\%), II ST-T (9\%), V2 ST-T (9\%) \\
+SNR  & aVR pré-QRS (47\%), V1 QRS (18\%) \\
+CVP  & aVR QRS (29\%), aVF QRS (17\%), V2 QRS (10\%) \\
+STE  & aVR pré-QRS (57\%), V1 QRS (21\%) \\
+CAP  & V2 QRS (13\%), V1 pré-QRS (13\%), aVR pré-QRS (11\%) \\
+AF   & V5 QRS (17\%), V4 QRS (16\%), aVR QRS (14\%) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Vários casos batem com os critérios clássicos de diagnóstico: o bloqueio de ramo direito (BRD) se vê no QRS de V1; o de ramo esquerdo (BRE), no QRS de V1 e V2; o bloqueio AV de 1.º grau (IAVB) é um intervalo PR longo, que fica na região pré-QRS; o infradesnivelamento (STD), no segmento ST. Outros chamam atenção, como STE (supradesnivelamento de ST), cuja região principal é pré-QRS e não ST-T, e a classe de menor F1. Essa leitura clínica precisa ser confirmada com a literatura e com o orientador; ela abre a possibilidade de uma análise de \textbf{plausibilidade} das explicações, que hoje não está no escopo.
+
+\section{Vale usar no TCC?}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{XX}
+\toprule
+\textbf{A favor} & \textbf{Cuidados} \\
+\midrule
+Vem do mesmo artigo da Faithfulness Correlation e da Max/Avg-Sensitivity, e completa os três critérios propostos. & Não mede correção, e sim legibilidade. Menor não é automaticamente melhor no ECG: algumas classes são naturalmente espalhadas. \\ \addlinespace
+Custo quase nulo: 9 segundos para os 622 mapas, sem chamar o modelo. & A versão do Quantus (pontos) não serve: mede o comprimento do sinal (0,88) e inclui o preenchimento. \\ \addlinespace
+Sem baseline e sem perturbação: não sofre dos artefatos que afetaram as versões antigas da Faithfulness Correlation e da Estimate. & O resultado depende da divisão em 36 regiões e do uso da soma do mapa (com cancelamento entre positivos e negativos), escolhas que precisam ser justificadas. \\ \addlinespace
+Leitura intuitiva por regiões: “a explicação usa o equivalente a 24 das 36 regiões”. & Diferenças entre classes modestas frente à variação dentro de cada classe. \\ \addlinespace
+Mede algo diferente da fidelidade (relação moderada, $-0{,}41$). & É de outra categoria do Quantus (complexidade); o TCC hoje cobre fidelidade e robustez. Incluí-la amplia o escopo. \\ \addlinespace
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{infobox}[ok]{Recomendação}
+\textbf{Incluir a complexidade como métrica complementar, na versão por regiões (R)}, reportando por classe a entropia e o número efetivo de regiões, sempre ao lado das métricas de fidelidade (uma boa explicação é fiel \textit{e} concentrada). Não usar a \texttt{quantus.Complexity} ponto a ponto. A decisão de ampliar o escopo é do orientador. Se aprovada, a implementação é simples: um módulo \texttt{src/complexity.py} que reaproveita as regiões já usadas nas outras métricas e roda localmente, sem GPU.
+\end{infobox}
+
+\begin{infobox}[note]{Se a decisão for não incluir}
+A frase “a complexidade não é usada” do fichamento da Faithfulness Correlation pode ser justificada assim: o critério mede legibilidade, e não correção; o objetivo do TCC é avaliar a qualidade das explicações em fidelidade e robustez; e a versão disponível no Quantus, ponto a ponto, mede a duração do sinal no caso do ECG.
+\end{infobox}
+
+\vspace{0.5em}
+{\small \textbf{Arquivos do diagnóstico} (pasta não versionada): \\ \texttt{output/leituras/complexity\_diag.py} \\ \texttt{output/leituras/complexity\_diag.csv} (uma linha por mapa)}
+
+\end{document}
