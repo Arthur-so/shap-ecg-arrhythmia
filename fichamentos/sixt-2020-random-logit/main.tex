@@ -352,7 +352,7 @@ STE  & BRE (50\%), CVP (21\%), BRD (21\%) \\
 \bottomrule
 \end{tabularx}
 \end{center}
-O par mais próximo da matriz é STE com BRE (distância média 1,11), seguido de STE com BRD (1,20) e STD com BRE (1,22). Duas observações, ambas a confirmar: (i) o mapa de \textbf{BRE} é o mais parecido para cinco das nove classes, o que sugere que, em ECGs sem BRE, a explicação dessa classe destaca algo comum a vários ECGs; BRE é rara no treino (3,4\%) e não está entre as 32 baselines, e o teste da referência em andamento (ECGs normais como baselines) deve ajudar a ver se isso muda; (ii) STE se aproxima dos bloqueios de ramo (BRE, BRD), o que é coerente com o fato clínico de que bloqueios de ramo alteram o segmento ST, mas essa leitura não é avaliada no TCC.
+O par mais próximo da matriz é STE com BRE (distância média 1,11), seguido de STE com BRD (1,20) e STD com BRE (1,22). Duas observações, ambas a confirmar: (i) o mapa de \textbf{BRE} é o mais parecido para cinco das nove classes, o que sugere que, em ECGs sem BRE, a explicação dessa classe destaca algo comum a vários ECGs; BRE é rara no treino (3,4\%) e não está entre as 32 baselines; verificar se isso muda com outra referência exigiria refazer o Random Logit com ela; (ii) STE se aproxima dos bloqueios de ramo (BRE, BRD), o que é coerente com o fato clínico de que bloqueios de ramo alteram o segmento ST, mas essa leitura não é avaliada no TCC.
 
 \subsection{Relação com as outras métricas (diagnóstico)}
 Mapa a mapa, a distância às classes ausentes tem correlação de postos de $-0{,}38$ com o número efetivo de regiões (mapas mais concentrados são mais específicos), $-0{,}36$ com o piso (mapas com mais erro de estimativa são menos específicos) e $0{,}41$ com o logit da classe explicada (predições mais confiantes, explicações mais específicas). São relações moderadas, usadas aqui só como diagnóstico: o Random Logit não repete nenhuma das outras métricas, mas conversa com a complexidade e com o piso. STD e SNR, duas das três classes menos específicas, são também as de explicações mais espalhadas e de piso alto; STE, a menos específica, tem complexidade intermediária.
@@ -361,7 +361,7 @@ Mapa a mapa, a distância às classes ausentes tem correlação de postos de $-0
 \begin{enumerate}
 \item O GradientSHAP produz explicações \textbf{específicas da classe} no modelo B: a pergunta da seleção de métricas (“o mapa de BRD é diferente do de outra classe no mesmo ECG?”) tem resposta positiva para todas as classes.
 \item A especificidade varia entre classes, e as pontas acompanham o F1 (AF mais específica, STE menos), com o meio misturado. A ordem não repete a de nenhuma métrica anterior: AF, por exemplo, tem a menor Faithfulness Estimate e é a classe mais específica.
-\item Os resultados dependem da referência do GradientSHAP (32 ECGs sorteados do treino) e dos 50 sorteios. O teste com ECGs normais como baselines e com 200 sorteios, em andamento, vai mostrar quanto isso pesa.
+\item Os resultados usam a referência atual do GradientSHAP (32 ECGs sorteados do treino) e 50 sorteios. A verificação com ECGs normais como baselines e 200 sorteios (\url{results/modeloB_basecheck}) mostrou que a nova referência muda os mapas moderadamente (cosseno médio de 0,92 com os atuais, fora SNR) e que 200 sorteios cortam o piso pela metade; se a referência for trocada, o Random Logit deve ser refeito.
 \end{enumerate}
 
 \section{Versão do Quantus e por que não foi usada}
