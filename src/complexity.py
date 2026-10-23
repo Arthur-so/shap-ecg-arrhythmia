@@ -4,7 +4,7 @@ Implementa a Definição 4 do artigo — entropia das frações de importância
 P(i) = |g_i| / Σ_j |g_j| — com atributos adequados ao ECG. Substitui a
 ``quantus.Complexity``, que no ECG trata cada um dos 180 000 pontos do mapa
 como atributo, inclui o preenchimento (padding) e acaba medindo a duração do
-exame (ver ``analise-complexidade`` no fichamento de Bhatt et al., 2020).
+exame (ver ``fichamentos/bhatt-2020-complexity``).
 
 Protocolo, para cada mapa (ECG × classe explicada):
   1. Atributos = 36 regiões do batimento (12 derivações × pré-QRS/QRS/ST-T),
