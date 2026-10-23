@@ -224,7 +224,7 @@ O cálculo usa só os mapas (não chama o modelo) e levou 9 segundos na CPU.
 \subsection{A versão do Quantus mede o comprimento do sinal}\label{sec:pontos}
 Os ECGs têm durações diferentes: o trecho real ocupa em média 7\,500 dos 15\,000 instantes, e o resto é preenchimento. Na versão (P), quanto mais longo o ECG, maior a complexidade, porque há mais pontos com alguma importância. A correlação de postos entre complexidade e comprimento é 0,45 com o preenchimento e chega a \textbf{0,88} quando se exclui o preenchimento. Ou seja, a métrica ordena os mapas quase só pela duração do exame. Além disso, em média \textbf{15\% da importância total} do mapa (em valor absoluto) fica no trecho de preenchimento, que não tem informação clínica. A versão (P), por isso, não serve para o TCC.
 
-\subsection{Com regiões, a métrica distingue os mapas}
+\subsection{Com regiões, a métrica distingue os mapas}\label{sec:regioes}
 Na versão (R), o número de regiões é sempre 36 (todos os ECGs têm os três tipos de região nas 12 derivações), o preenchimento fica de fora e a complexidade praticamente não depende da duração (correlação de postos de 0,07). Os mapas usam, em média, o equivalente a 24 das 36 regiões, com variação real entre mapas (de 15 a 31).
 
 Na versão (R-abs), quase todos os mapas parecem uniformes (34 de 36). Somar valores absolutos acumula o ruído ponto a ponto do GradientSHAP em todas as regiões e esconde as diferenças. A versão (R) é a coerente com as demais métricas do TCC, que também usam a soma do mapa como importância da região. Há um efeito a registrar: dentro de uma região, partes positivas e negativas se cancelam, e uma região com importância “mista” pesa pouco.
@@ -257,9 +257,45 @@ SNR  &  78 & 26,9 & 1,6 & 23\% & 0,46 & 0,796 & 6.º \\
 Mapa a mapa, explicações mais concentradas tendem a ser mais fiéis: a correlação de postos entre a complexidade (R) e a Faithfulness Correlation nos 622 mapas é $-0{,}41$. Isso é usado aqui apenas como diagnóstico, e não como resultado do TCC. Parte dessa relação pode ser mecânica: quando a importância está concentrada, as somas dos subconjuntos sorteados variam mais, e a correlação fica menos sujeita a ruído. Ainda assim, mostra que as duas métricas não medem exatamente a mesma coisa (a relação é moderada), o que é um argumento para usar ambas.
 
 \subsection{Relação com o piso do GradientSHAP}\label{sec:piso}
-A análise da sensibilidade (Max/Avg-Sensitivity) mediu o \textbf{piso} de cada mapa: a distância entre dois mapas do mesmo ECG que diferem só na semente do GradientSHAP (média 0,355 nas 36 regiões). Ele indica o erro de estimativa do método, que usa 50 sorteios por mapa. Esse erro também pode afetar a complexidade: o ruído põe um pouco de importância em todas as regiões e tende a espalhar o mapa. Foi esse efeito, somado ponto a ponto, que deixou a versão (R-abs) quase uniforme.
+Esta seção responde a uma pergunta: parte da complexidade medida pode vir do próprio método de explicação, e não do modelo? Para isso, é preciso entender três ideias: os sorteios do GradientSHAP, o piso e o efeito do erro sobre a entropia.
 
-Para ver o tamanho do efeito na versão (R), cruzaram-se os 622 mapas da complexidade com o piso calculado na sensibilidade (mesmos mapas). Como diagnóstico, e não como resultado do TCC:
+\textbf{(1) O GradientSHAP estima o mapa com 50 sorteios.} O GradientSHAP não calcula o mapa de forma exata; ele \textbf{estima uma média}. Em cada sorteio, ele:
+\begin{enumerate}
+\item escolhe ao acaso uma \textbf{baseline}, isto é, um ECG de referência, entre as 32 sorteadas do treino;
+\item soma ao ECG um pequeno ruído gaussiano (desvio 0,09);
+\item escolhe ao acaso um ponto no caminho entre a baseline e o ECG;
+\item calcula, nesse ponto, o gradiente da saída da classe e o multiplica por (ECG $-$ baseline).
+\end{enumerate}
+O mapa salvo é a \textbf{média de 50 desses termos} (\texttt{n\_samples} $= 50$ em \texttt{explain.py}). Cada termo isolado varia bastante, porque depende da baseline e do ponto sorteados. A média de 50 termos é uma boa aproximação, mas não é exata: com outros 50 sorteios (outra \textbf{semente} do gerador aleatório), sai um mapa um pouco diferente. Exemplo com uma única região cujo valor “verdadeiro” (a média com infinitos sorteios) é 0:
+\begin{center}\small
+\begin{tabular}{lcl}
+\toprule
+\textbf{Sorteios} & \textbf{Valor da região no mapa} & \textbf{Leitura} \\
+\midrule
+50 sorteios, semente $s$ & $+0{,}03$ & parece levemente a favor da classe \\
+50 sorteios, semente $s+1$ & $-0{,}02$ & parece levemente contra \\
+Infinitos sorteios & $0$ & a região não importa \\
+\bottomrule
+\end{tabular}
+\end{center}
+Essa diferença não vem do modelo nem do ECG: é o \textbf{erro de estimativa} da média.
+
+\textbf{(2) O piso mede o tamanho desse erro.} A análise da sensibilidade (Max/Avg-Sensitivity) gerou, para cada um dos 622 mapas, dois mapas do \textbf{mesmo ECG} e da \textbf{mesma classe}, que diferem só nos sorteios (sementes $s$ e $s+1$). A distância entre eles, nas 36 regiões e com os mapas normalizados para norma 1, é o \textbf{piso}. Como nada mudou além dos sorteios, o piso é a variação que o método produz sozinho. A média é 0,355 (a distância vai de 0, mapas iguais, a 2, mapas opostos).
+
+\textbf{(3) Por que o erro afeta a complexidade.} O erro de estimativa põe pequenas importâncias, positivas ou negativas, em regiões que o modelo talvez nem use. Como a complexidade soma as importâncias em valor absoluto, essas sobras \textbf{espalham} o mapa e aumentam a entropia. Exemplo com 4 regiões:
+\begin{center}\small
+\begin{tabular}{lrrrrr}
+\toprule
+& \textbf{Região 1} & \textbf{Região 2} & \textbf{Região 3} & \textbf{Região 4} & \textbf{Nº efetivo} \\
+\midrule
+Mapa sem erro (infinitos sorteios) & 0,70 & 0,20 & 0,10 & 0,00 & 2,2 \\
+Mapa com erro (50 sorteios) & 0,65 & 0,20 & 0,10 & 0,05 & 2,7 \\
+\bottomrule
+\end{tabular}
+\end{center}
+O modelo é o mesmo nas duas linhas; só o erro de estimativa fez o mapa parecer usar mais regiões. Portanto, a complexidade medida mistura duas coisas: \textbf{o quanto o modelo espalha a evidência} e \textbf{o ruído do GradientSHAP}. Foi esse mesmo efeito, acumulado ponto a ponto, que deixou a versão (R-abs) quase uniforme (seção~\ref{sec:regioes}).
+
+\textbf{O que o cruzamento mostrou.} Se o ruído fosse a causa principal, os mapas com piso maior seriam sempre os mais espalhados. Para verificar, cruzaram-se os 622 mapas da complexidade com o piso calculado na sensibilidade (mesmos ECGs e classes). Como diagnóstico, e não como resultado do TCC:
 \begin{center}\small
 \begin{tabular}{lrrrrrrrrr}
 \toprule
@@ -274,7 +310,9 @@ Piso & 0,32 & 0,35 & 0,36 & 0,32 & 0,35 & \textbf{0,46} & \textbf{0,23} & 0,40 &
 \item \textbf{Há relação, mas moderada.} Mapa a mapa, a correlação de postos entre o número efetivo de regiões e o piso é 0,38: mapas com mais erro de estimativa tendem a ser um pouco mais espalhados.
 \item \textbf{O ruído não explica a ordem das classes.} BRE tem o \textbf{menor} piso de todas (0,23) e mesmo assim explicações espalhadas (25,8). CAP tem o \textbf{maior} piso (0,46) e complexidade intermediária. SNR e STD combinam piso alto e explicações espalhadas, e nelas parte da complexidade pode vir do ruído.
 \end{itemize}
-\textbf{Como entra na leitura.} A complexidade de cada mapa mistura duas coisas, como a Consistency: o quanto o modelo de fato espalha a evidência e o ruído de estimativa do GradientSHAP. Por isso o piso por classe é reportado ao lado da complexidade, como contexto. Separar as duas exigiria refazer os mapas com mais sorteios, decisão que continua pendente com o orientador.
+\textbf{Como entra na leitura.} O ruído explica uma parte do espalhamento, mas não a ordem das classes. Por isso, a complexidade é usada como está, sem nenhuma correção, e o piso de cada classe é reportado ao lado, como contexto: quando uma classe tem explicações espalhadas \textit{e} piso alto (SNR, STD), parte do espalhamento pode ser do método; quando tem piso baixo (BRE), o espalhamento é mais provavelmente do modelo. A Consistency mistura as mesmas duas causas.
+
+\textbf{Refazer os mapas com mais sorteios.} A única forma de reduzir o erro de estimativa é aumentar o número de sorteios da média (\texttt{n\_samples}). O erro de uma média cai aproximadamente com $1/\sqrt{n}$: com 200 sorteios em vez de 50 (4 vezes mais), o erro cai mais ou menos pela metade. O piso diminuiria, e a complexidade passaria a refletir mais o modelo e menos o método. O custo é regerar os 622 mapas no Kaggle (cerca de 4 vezes o tempo do SHAP atual) e refazer todas as métricas que usam os mapas. É uma decisão pendente com o orientador; \textbf{nada foi refeito}, e todos os resultados deste documento usam os mapas com 50 sorteios.
 
 \subsection{Relação com o eMPRT}\label{sec:emprt}
 O eMPRT (Hedström et al., 2023), escolhido na seleção de métricas, mede quanto a entropia da explicação \textbf{sobe} quando os pesos do modelo são todos sorteados de novo: $q = (\xi(\hat{e}) - \xi(e))/\xi(e)$, em que $e$ é o mapa do modelo treinado e $\hat{e}$ o do modelo randomizado. A entropia $\xi$ usada no TCC será a mesma desta métrica, nas 36 regiões. Duas consequências:
@@ -337,7 +375,7 @@ Custo quase nulo: 9 segundos para os 622 mapas, sem chamar o modelo. & A versão
 Sem baseline e sem perturbação: não sofre dos artefatos que afetaram as versões antigas da Faithfulness Correlation e da Estimate. & O resultado depende da divisão em 36 regiões e do uso da soma do mapa (com cancelamento entre positivos e negativos), escolhas que precisam ser justificadas. \\ \addlinespace
 Leitura intuitiva por regiões: “a explicação usa o equivalente a 24 das 36 regiões”. & Diferenças entre classes modestas frente à variação dentro de cada classe. \\ \addlinespace
 Mede algo diferente da fidelidade (relação moderada, $-0{,}41$). & É de outra categoria do Quantus (complexidade); incluí-la amplia o escopo do TCC. \\ \addlinespace
-Fornece a entropia do eMPRT e o teto de cada mapa para lê-lo (seção~\ref{sec:emprt}). & Parte da complexidade pode vir do erro de estimativa do GradientSHAP (relação de 0,38 com o piso; seção~\ref{sec:piso}). \\ \addlinespace
+Fornece a entropia do eMPRT e o teto de cada mapa para lê-lo (seção~\ref{sec:emprt}). & Parte da complexidade pode vir do erro de estimativa do GradientSHAP, que faz a média de só 50 sorteios (relação de 0,38 com o piso; seção~\ref{sec:piso}). \\ \addlinespace
 \bottomrule
 \end{tabularx}
 \end{center}
