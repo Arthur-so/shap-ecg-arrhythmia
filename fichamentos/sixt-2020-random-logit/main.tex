@@ -1,0 +1,370 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Random Logit}} \\[0.35em]
+    {\large SIXT, L.; GRANZ, M.; LANDGRAF, T. \textit{When Explanations Lie: Why Many Modified BP Attributions Fail}. ICML, 2020 (arXiv:1912.09818v7)} \\[0.3em]
+    \textbf{Métrica no Quantus:} \texttt{quantus.RandomLogit} \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 23/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do artigo (20 páginas, incluindo o apêndice). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica a métrica sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} descreve a versão implementada no TCC, sua aderência ao artigo, o diagnóstico e os resultados; a versão do Quantus aparece resumida no final.
+
+\begin{infobox}[note]{Por que esta métrica}
+O documento \textit{Seleção de métricas} (22/10/2026) escolheu o Random Logit por responder a uma pergunta que nenhuma métrica do TCC alcança: \textbf{a explicação é específica da classe?} A fidelidade, a robustez, a Consistency e a complexidade olham sempre o mapa da classe explicada, sem compará-lo ao mapa de outra classe no mesmo ECG.
+\end{infobox}
+
+\partbar{Parte I · Entendendo a métrica}
+
+\section{O problema que a métrica resolve}
+Cada mapa SHAP do TCC explica a saída de \textbf{uma} classe para \textbf{um} ECG: por exemplo, por que o modelo deu um logit alto para BRD neste exame. O modelo, porém, tem 9 saídas, e o mesmo ECG pode ser explicado para qualquer uma delas. Se o mapa que explica BRD for praticamente igual ao mapa que explica AF no mesmo ECG, ele não está mostrando por que o modelo decidiu BRD; está mostrando algo comum a todas as saídas, como os trechos de maior amplitude do sinal. Uma explicação assim é \textbf{insensível à classe}.
+
+\section{A ideia em uma frase e um exemplo}
+\begin{infobox}[note]{Definição em uma frase}
+Explica-se o mesmo ECG para a classe de interesse e para outra classe, e compara-se os dois mapas: se forem quase iguais, a explicação não é específica da classe.
+\end{infobox}
+O nome vem do artigo: compara-se a explicação do logit verdadeiro com a de um \textbf{logit sorteado} (\textit{random logit}) entre as outras classes. Exemplo com 4 regiões, importâncias já normalizadas:
+\begin{center}\small
+\begin{tabular}{lrrrrl}
+\toprule
+& \textbf{V1 QRS} & \textbf{II pré-QRS} & \textbf{V5 QRS} & \textbf{aVR ST-T} & \textbf{Leitura} \\
+\midrule
+BRD (classe explicada) & 0,90 & 0,10 & 0,30 & 0,30 & --- \\
+AF, método A & 0,88 & 0,12 & 0,32 & 0,29 & quase igual \textit{(insensível)} \\
+AF, método B & 0,10 & 0,85 & 0,20 & $-0{,}48$ & diferente \textit{(específico)} \\
+\bottomrule
+\end{tabular}
+\end{center}
+No método A, o mapa aponta V1 QRS seja qual for a classe; ele não diz nada sobre a decisão por BRD. No método B, o mapa de AF destaca outra região (a pré-QRS, onde fica a onda P, ausente na fibrilação atrial), e o de BRD destaca o QRS de V1, que é onde o bloqueio de ramo direito aparece.
+
+\section{Por que uma explicação pode ser insensível à classe}
+O artigo identifica uma causa \textbf{teórica} em uma família de métodos, os de retropropagação modificada (LRP, Deep Taylor, Guided BP e outros). Neles, a relevância atravessa a rede por uma cadeia de matrizes não negativas, e essa cadeia converge para uma matriz de \textbf{posto 1}: qualquer vetor multiplicado por ela sai na mesma direção. Na prática, a última camada, que é a que distingue as classes, deixa de influenciar o mapa.
+
+O GradientSHAP, usado no TCC, \textbf{não} pertence a essa família. Ele é baseado no gradiente, e o artigo afirma que métodos baseados no gradiente não sofrem essa convergência. Há, porém, um segundo motivo, mais simples, pelo qual o mapa pode depender pouco da classe. Aproximadamente, o GradientSHAP calcula
+\[
+\text{mapa}_c(x) \approx \mathbb{E}\big[(x - x') \odot \nabla_x f_c(\tilde{x})\big],
+\]
+em que $x'$ é uma baseline sorteada do treino e $\tilde{x}$ um ponto entre $x'$ e $x$. O fator $(x - x')$ é \textbf{o mesmo para todas as classes}: só o gradiente muda com $c$. Se a diferença entre o ECG e as baselines dominar o produto (por exemplo, nos complexos QRS, de maior amplitude), os mapas de classes diferentes ficam parecidos. É o mesmo efeito apontado por Adebayo et al.\ (2018, §5.2) para métodos do tipo gradiente × entrada. O Random Logit mede justamente se isso acontece.
+
+\section{Passo a passo}
+Para cada mapa (ECG $x$, classe explicada $c$):
+\begin{enumerate}
+\item Gera-se o mapa de referência de $c$.
+\item Para outra classe $c'$, gera-se o mapa de $c'$ no mesmo ECG.
+\item Mede-se a distância (ou a semelhança) entre os dois mapas.
+\item Repete-se para outros ECGs e resume-se por classe.
+\end{enumerate}
+Distância alta indica explicação específica da classe; distância próxima de zero, explicação insensível.
+
+\section{Três cuidados de leitura}
+\begin{itemize}
+\item \textbf{O mapa de $c'$ explica uma saída baixa.} Se $c'$ não está presente no ECG, o modelo dá a ela um logit negativo, e o mapa de $c'$ explica \textbf{por que} essa classe não foi predita. Isso continua sendo uma explicação legítima da saída $c'$; o teste só pergunta se ela difere da explicação de $c$.
+\item \textbf{Classes presentes no mesmo ECG.} Um ECG pode ter mais de um diagnóstico (por exemplo, AF e BRD). Nesse caso, mapas parecidos podem ser legítimos, pois as duas classes podem usar a mesma evidência. O artigo não trata esse caso, porque as bases de imagens usadas têm um objeto por imagem.
+\item \textbf{Ruído do método.} O GradientSHAP sorteia baselines e ruído; dois mapas da \textbf{mesma} classe, com sementes diferentes, já diferem (o piso medido na sensibilidade). Uma distância entre classes só indica especificidade se for maior que essa variação.
+\end{itemize}
+
+\section{Traduzindo para o ECG}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Entrada & Imagem (ImageNet, CIFAR-10) & ECG de 12 derivações \\
+Classe explicada & Rótulo verdadeiro (um por imagem) & Classe do mapa, presente e predita corretamente \\
+Outra classe & Logit sorteado entre as demais & Classes ausentes nos rótulos do ECG (as presentes à parte) \\
+Atributos & Pixels & 36 regiões do batimento \\
+Comparação & SSIM & Distância $\ell_2$ entre vetores de norma 1 \\
+Referência & Nenhuma & Piso do GradientSHAP (outra semente) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+O artigo trata principalmente da teoria da convergência (§2) e de uma métrica própria, a \textit{cosine similarity convergence} (CSC). O Random Logit aparece como um dos três testes da avaliação (§3), ao lado do teste de randomização de parâmetros de Adebayo et al.\ (2018). As citações abaixo cobrem a motivação (p.~1--2), o alcance da teoria (p.~2--3), o teste (p.~5), os resultados (p.~6) e a discussão (p.~6 e 8).
+
+\begin{citacard}{\pagechip{p. 1} Figura 1}
+\begin{origquote}“(b-e) Class insensitivity of LRPα1β0 on VGG-16. Explanation for (c) Persian cat (283) and (d) King Charles Spaniel (156). (e) Difference (c) - (d), both normalized to [0, 1]. L1-norm of (e) = 0.000371.”\end{origquote}
+\begin{tradquote}“(b-e) Insensibilidade à classe do LRPα1β0 na VGG-16. Explicação para (c) gato persa (283) e (d) King Charles Spaniel (156). (e) Diferença (c) $-$ (d), ambas normalizadas para [0, 1]. Norma L1 de (e) = 0,000371.”\end{tradquote}
+\explab{Explicação}
+É o exemplo que motiva o teste: a mesma imagem explicada para duas classes diferentes dá mapas praticamente idênticos (a diferença é da ordem de $10^{-4}$). A explicação mostra a imagem, e não a decisão.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“The paper focuses on modified BP methods, as other attribution methods do not suffer from the converges problem. They either rely on the gradient directly [...], which does not converge or consider the model as a black-box (Ribeiro et al., 2016; Lundberg \& Lee, 2017).”\end{origquote}
+\begin{tradquote}“O artigo se concentra nos métodos de retropropagação modificada, pois os outros métodos de atribuição não sofrem do problema da convergência. Eles ou se baseiam diretamente no gradiente [...], que não converge, ou tratam o modelo como caixa-preta (Ribeiro et al., 2016; Lundberg \& Lee, 2017).”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP (Lundberg \& Lee, 2017) combina as duas coisas: usa o gradiente e vem da família SHAP. Pela teoria do artigo, ele não deveria ser insensível à classe. O teste, no TCC, verifica isso na prática e procura o outro motivo possível (o fator $x - x'$, seção~3).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“Our findings show that many modified BP methods are prone to class-insensitive explanations and provide saliency maps that rather highlight low-level features.”\end{origquote}
+\begin{tradquote}“Nossos resultados mostram que muitos métodos de retropropagação modificada tendem a dar explicações insensíveis à classe e produzem mapas que destacam sobretudo características de baixo nível.”\end{tradquote}
+\explab{Explicação}
+“Características de baixo nível” são bordas e contornos na imagem. No ECG, o equivalente seriam os trechos de maior amplitude, como o QRS. Um mapa que sempre destaca o QRS, seja qual for a classe, estaria nessa situação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §2.2 LRP\textsubscript{z}}
+\begin{origquote}“LRPz can be considered a gradient-based and not a modified BP method. The gradient is not converging to a rank-1 matrix and therefore gradient⊙input is also not converging.”\end{origquote}
+\begin{tradquote}“O LRP\textsubscript{z} pode ser considerado um método baseado no gradiente, e não de retropropagação modificada. O gradiente não converge para uma matriz de posto 1 e, portanto, o gradiente⊙entrada também não converge.”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP é uma média de gradiente $\odot$ (entrada $-$ baseline). O artigo garante que esse tipo de método não sofre a convergência para o posto 1, mas não diz que ele seja específico da classe por outros motivos. Essa é a lacuna que o teste no TCC cobre.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §3 Avaliação}
+\begin{origquote}“Random Logit: We display the difference of saliency maps explaining the ground-truth and a random logit in Figure 4a. As the logit value is responsible for the predicted class, the saliency maps should change. We use the SSIM metric (Wang et al., 2004) as in (Adebayo et al., 2018).”\end{origquote}
+\begin{tradquote}“Random Logit: mostramos a diferença entre os mapas que explicam o logit verdadeiro e um logit sorteado na Figura 4a. Como o logit é o responsável pela classe predita, os mapas deveriam mudar. Usamos a medida SSIM (Wang et al., 2004), como em Adebayo et al.\ (2018).”\end{tradquote}
+\explab{Explicação}
+É a definição completa do teste no artigo: um parágrafo, sem fórmula própria. Os elementos são o logit verdadeiro, um logit sorteado entre os demais e uma medida de semelhança entre os dois mapas. A SSIM (\textit{structural similarity}) é uma medida de semelhança de imagens, que compara janelas vizinhas de pixels; vai até 1 (imagens iguais).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §3 Avaliação, configuração}
+\begin{origquote}“All results were computed on 200 images from the validation set. To justify the sample size, we show bootstrap confidence intervals in Figure 4b.”\end{origquote}
+\begin{tradquote}“Todos os resultados foram calculados em 200 imagens do conjunto de validação. Para justificar o tamanho da amostra, mostramos intervalos de confiança por \textit{bootstrap} na Figura 4b.”\end{tradquote}
+\explab{Explicação}
+O artigo usa um logit sorteado por imagem e 200 imagens no total. No TCC, com 622 mapas e só 9 classes, é viável comparar cada mapa com \textbf{todas} as outras classes, o que dispensa o sorteio.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §4 Resultados e Figura 4}
+\begin{origquote}“Our random logit analysis reveals that converging methods produce almost identical saliency maps, independently of the output logit (SSIM very close to 1). The rest of the field (SSIM between 0.4 and 0.8) produces saliency maps different from the ground-truth logit's map (see Figure 4a).”\end{origquote}
+\begin{tradquote}“Nossa análise com logits sorteados revela que os métodos que convergem produzem mapas quase idênticos, independentemente do logit de saída (SSIM muito próxima de 1). O restante (SSIM entre 0,4 e 0,8) produz mapas diferentes do mapa do logit verdadeiro (ver Figura 4a).”\end{tradquote}
+\explab{Explicação}
+O resultado é uma separação em dois grupos, e não uma escala fina: mapas que não mudam com a classe (SSIM perto de 1) e mapas que mudam (0,4 a 0,8). O artigo não compara a SSIM com nenhuma referência de ruído do método, nem fixa um valor a partir do qual o mapa é “específico”.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §5 Discussão}
+\begin{origquote}“First, it is easy to blame the network for unreasonable explanations -- no ground truth exists. Second, MNIST, CIFAR, and ImageNet contain only a single object class per image -- not revealing the class insensitivity.”\end{origquote}
+\begin{tradquote}“Primeiro, é fácil culpar a rede por explicações sem sentido, pois não existe uma verdade de referência. Segundo, MNIST, CIFAR e ImageNet têm uma única classe de objeto por imagem, o que não revela a insensibilidade à classe.”\end{tradquote}
+\explab{Explicação}
+O ECG multirrótulo é exatamente o caso que o artigo diz faltar: um mesmo exame pode conter evidências de classes diferentes em lugares diferentes (onda P, QRS, segmento ST). Se a explicação for insensível à classe, isso aparece aqui com mais facilidade do que nas bases de imagens.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §5 Discussão}
+\begin{origquote}“[...] it might not be too problematic for some applications if the saliency maps are independent of the later network's layers. For example, to explain Alzheimer's disease [...], local low-level features are sufficient as they are predictive for the disease and the data lacks conflicting evidences (i.e. the whole brain is affected).”\end{origquote}
+\begin{tradquote}“[...] pode não ser tão problemático em algumas aplicações que os mapas independam das camadas finais da rede. Por exemplo, para explicar a doença de Alzheimer [...], características locais de baixo nível bastam, pois são preditivas da doença e os dados não têm evidências conflitantes (isto é, o cérebro inteiro é afetado).”\end{tradquote}
+\explab{Explicação}
+A insensibilidade à classe só é um problema quando há evidências diferentes para classes diferentes. No ECG há: o ritmo (AF, SNR) depende da onda P e dos intervalos; os bloqueios de ramo (BRD, BRE), da forma do QRS; STD e STE, do segmento ST. Por isso o teste faz sentido no TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §5 Métodos que não convergem}
+\begin{origquote}“All here mentioned attribution methods do not converge, as they either rely on the gradient or treat the model as black-box. Only when the BP algorithm is modified, the convergence problem can occur. The here mentioned algorithms might still suffer from other limitations.”\end{origquote}
+\begin{tradquote}“Nenhum dos métodos aqui mencionados converge, pois eles ou se baseiam no gradiente ou tratam o modelo como caixa-preta. O problema da convergência só pode ocorrer quando o algoritmo de retropropagação é modificado. Os algoritmos aqui mencionados ainda podem sofrer de outras limitações.”\end{tradquote}
+\explab{Explicação}
+A lista inclui SHAP. A última frase é a que importa para o TCC: o GradientSHAP escapa da convergência, mas “pode sofrer de outras limitações”. A dependência do fator $x - x'$ (seção~3) é uma delas, e o Random Logit é a forma de medi-la.
+\end{citacard}
+
+\partbar{Parte III · Aplicação ao TCC}
+
+\section{Versão implementada no TCC}\label{sec:versao}
+Código: \texttt{src/random\_logit.py} (commit \texttt{3a81dec}). Para cada um dos 622 mapas do modelo B (ECG × classe explicada $c$, predições corretas do teste):
+\begin{enumerate}
+\item \textbf{Mapa de referência de $c$.} O GradientSHAP é refeito com a configuração dos mapas do TCC (as mesmas 32 baselines do treino, 50 sorteios, desvio do ruído 0,09) e com a semente fixa daquele mapa, a mesma da sensibilidade. O mapa de referência é, portanto, o mesmo usado na Max/Avg-Sensitivity.
+\item \textbf{Mapas das outras 8 classes.} O mesmo ECG é explicado para cada uma das outras classes $c'$, com a \textbf{mesma semente}: os sorteios internos do GradientSHAP (baselines, ponto no caminho e ruído) são idênticos, e a diferença entre os mapas vem só da classe explicada.
+\item \textbf{Distância} $\ell_2$ entre os dois mapas normalizados para norma 1, nas \textbf{36 regiões do batimento} (principal) e ponto a ponto (referência), como na sensibilidade. Vai de 0 (mapas iguais) a 2 (mapas opostos). A distância se relaciona com o cosseno entre os mapas por $\cos = 1 - d^2/2$: $d = \sqrt{2} \approx 1{,}41$ corresponde a mapas sem relação (cosseno 0), e $d > 1{,}41$, a mapas que tendem a ter sinais opostos nas mesmas regiões.
+\item \textbf{Classes ausentes e presentes.} O resultado principal usa as classes $c'$ \textbf{ausentes} nos rótulos do ECG (4\,886 pares). As \textbf{presentes} (90 pares, de ECGs com mais de um diagnóstico) são analisadas à parte.
+\item \textbf{Piso:} distância entre a referência e outro mapa de $c$ com outra semente (variação própria do método). Uma distância entre classes só indica especificidade se passar do piso.
+\item \textbf{Por mapa:} distância média às classes ausentes, menor distância (classe ausente mais parecida), razão entre a distância média e o piso e fração dos pares acima do piso. \textbf{Por classe:} média sobre os mapas. Como diagnóstico, uma matriz $9 \times 9$ com a distância média entre o mapa da classe explicada (linha) e o de cada outra classe (coluna).
+\end{enumerate}
+São $1 + 1 + 8 = 10$ execuções do GradientSHAP por mapa (referência, piso e as 8 outras classes), $10 \times 622 = 6\,220$ no total.
+
+\section{Aderência ao artigo}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXl}
+\toprule
+\textbf{Aspecto} & \textbf{Artigo} & \textbf{Versão do TCC} & \textbf{Aderente?} \\
+\midrule
+Ideia & Comparar o mapa do logit verdadeiro com o de outro logit (p.~5) & Igual & Sim \\ \addlinespace
+Outra classe & Um logit sorteado entre os demais (p.~5) & Todas as 8 outras; ausentes como resultado principal & Sim, ampliado \\ \addlinespace
+Medida & SSIM entre imagens (p.~5) & Distância $\ell_2$ com norma 1 nas 36 regiões & Adaptado \\ \addlinespace
+Referência de ruído & Nenhuma & Piso do GradientSHAP & Acréscimo do TCC \\ \addlinespace
+Semente & Não discutida & A mesma nos dois mapas & Escolha do TCC \\ \addlinespace
+Amostra & 200 imagens (p.~5) & 622 mapas & Sim \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Por que não SSIM.} A SSIM compara janelas vizinhas de pixels de uma imagem. No ECG, “vizinhos” no arranjo $12 \times 15\,000$ incluem derivações diferentes, e o trecho de preenchimento entraria na comparação. A distância $\ell_2$ com norma 1 nas 36 regiões é a mesma usada na sensibilidade, o que torna o piso diretamente comparável.
+
+\textbf{Por que todas as classes.} O artigo sorteia um logit por imagem porque tem 1\,000 classes. Com 9, comparar com todas custa pouco (cerca de 70 min na T4) e elimina a variação do sorteio.
+
+\section{Diagnóstico}
+Antes da execução completa, um diagnóstico na CPU explicou 3 ECGs (2 de SNR e 1 de AF) para todas as classes. Ele foi interrompido nesse ponto, mas os 3 ECGs já mostraram o padrão: piso entre 0,33 e 0,45 e distância às outras classes entre 0,95 e 1,85, quase sempre entre 1,4 e 1,7, em todos os pares. Também mostraram que, ao comparar com um mapa de outra classe gerado com outra semente (o que o Quantus faria), o resultado praticamente não muda, porque a diferença entre classes é muito maior que o ruído do método. A mesma semente foi mantida por ser a forma correta de isolar o efeito da classe.
+
+\section{Resultados}\label{sec:resultados}
+Execução: Kaggle (GPU T4), versão 20 do \texttt{shap-ecg-arrhythmia-runner}, 23/10/2026, 68 min, com o modelo e os mapas do dataset \texttt{arthurso/shap-ecg-modelob}. Nenhum erro, nenhum valor indefinido. Resultados em \texttt{results/modeloB\_rlogit/}.
+
+\subsection{Por classe}
+Classes ordenadas da explicação mais específica (maior distância às classes ausentes) para a menos específica. “Cosseno” é o cosseno médio entre os mapas (0 = sem relação; negativo = sinais opostos). “Mín.” é a distância média à classe ausente mais parecida.
+\begin{center}\small
+\begin{tabular}{lrrrrrrrr}
+\toprule
+\textbf{Classe} & \textbf{Mapas} & \textbf{Distância} & \textbf{Cosseno} & \textbf{Mín.} & \textbf{Piso} & \textbf{Razão} & \textbf{F1} & \textbf{Posição no F1} \\
+\midrule
+AF   & 108 & 1,667 & $-0{,}40$ & 1,39 & 0,35 & 5,3 & 0,931 & 1.º \\
+CVP  &  59 & 1,620 & $-0{,}34$ & 1,22 & 0,32 & 5,6 & 0,837 & 5.º \\
+BRE  &  20 & 1,617 & $-0{,}34$ & 1,21 & 0,23 & 7,2 & 0,870 & 4.º \\
+BRD  & 172 & 1,586 & $-0{,}28$ & 1,26 & 0,32 & 5,5 & 0,927 & 2.º \\
+IAVB &  61 & 1,585 & $-0{,}28$ & 1,24 & 0,36 & 5,0 & 0,884 & 3.º \\
+CAP  &  45 & 1,578 & $-0{,}26$ & 1,28 & 0,46 & 3,8 & 0,750 & 8.º \\
+STD  &  65 & 1,485 & $-0{,}13$ & 1,13 & 0,40 & 4,0 & 0,778 & 7.º \\
+SNR  &  78 & 1,472 & $-0{,}11$ & 1,16 & 0,41 & 3,8 & 0,796 & 6.º \\
+STE  &  14 & 1,397 & $-0{,}01$ & 1,02 & 0,35 & 4,1 & 0,596 & 9.º \\
+\midrule
+Global & 622 & 1,574 & $-0{,}26$ & 1,25 & 0,36 & 5,0 & 0,819 & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{infobox}[ok]{Resultado principal}
+\textbf{As explicações do GradientSHAP são específicas da classe.} Em todas as classes, a distância entre o mapa da classe explicada e o de uma classe ausente fica entre 3,8 e 7,2 vezes o piso, e 99,98\% dos 4\,886 pares ausentes estão acima do piso do próprio mapa (só 1 par não está). Mesmo a classe ausente mais parecida fica, em média, a 1,25, mais de 3 vezes o piso. O GradientSHAP não sofre a insensibilidade à classe descrita por Sixt et al., como a teoria do artigo previa para métodos baseados no gradiente, e o fator (ECG $-$ baseline), comum a todas as classes, não domina os mapas.
+\end{infobox}
+
+\textbf{Leitura descritiva frente ao F1.} As pontas coincidem: AF, a classe de maior F1, tem as explicações mais específicas, e STE, a de menor F1, as menos específicas. STD e SNR, 7.º e 6.º no F1, estão entre as três menos específicas. No meio, a ordem se mistura: CVP e BRE (5.º e 4.º no F1) ficam à frente de BRD e IAVB (2.º e 3.º), e CAP (8.º no F1) fica no meio. As diferenças entre os extremos (1,67 em AF contra 1,40 em STE) são várias vezes o desvio dentro de cada classe (0,05 a 0,11), então a separação das pontas é real; as do meio (1,58 a 1,62) não. STE tem só 14 mapas e BRE, 20.
+
+\subsection{Verificação: a distância vem do sinal oposto dos mapas?}
+A distância média (1,57) é maior que $\sqrt{2}$, e o cosseno médio é negativo ($-0{,}26$): o mapa da classe ausente tende a ter sinal oposto ao da classe explicada nas mesmas regiões. Há uma razão mecânica para isso. A soma de um mapa do GradientSHAP acompanha a saída do modelo para o ECG menos a saída média para as baselines. Para a classe explicada, presente no ECG, essa diferença é positiva; para uma classe ausente, costuma ser negativa (o ECG tem menos daquela classe que a média das baselines). Mapas com somas de sinais opostos tendem a ter cosseno negativo sem que isso diga algo sobre \textit{onde} eles olham. Uma inversão completa do mapa (mesmas regiões, sinal trocado) contaria como distância máxima, embora destaque as mesmas regiões.
+
+Para separar os dois efeitos, a soma esperada de cada mapa de classe ausente foi calculada com a saída do modelo no ECG e a saída média nas 32 baselines (diagnóstico):
+\begin{center}\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Pares de classes ausentes} & \textbf{Pares} & \textbf{Cosseno médio} & \textbf{Distância média} \\
+\midrule
+Soma esperada de $c'$ negativa (sinal oposto) & 3\,462 (71\%) & $-0{,}32$ & 1,61 \\
+Soma esperada de $c'$ positiva (mesmo sinal) & 1\,424 (29\%) & $-0{,}12$ & 1,48 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{O sinal oposto explica parte do cosseno negativo}, mas não a especificidade: mesmo quando os dois mapas têm somas do mesmo sinal, a distância é 1,48, cerca de 4 vezes o piso, e o cosseno fica perto de 0. Os mapas apontam para \textbf{regiões diferentes}, e não apenas para as mesmas regiões com sinal trocado.
+\item \textbf{Inversões completas e mapas muito parecidos são raros:} só 2,1\% dos pares têm cosseno abaixo de $-0{,}8$, e 1,7\% acima de 0,5.
+\item \textbf{As pontas da ordem se mantêm} nos pares de mesmo sinal: AF ($-0{,}22$) e BRD ($-0{,}21$) continuam as mais específicas, e STD ($0{,}00$) e STE ($+0{,}06$), as menos.
+\end{itemize}
+Uma verificação direta, com a distância entre os valores absolutos dos mapas, exigiria guardar os vetores das 36 regiões de cada par, o que esta execução não fez.
+
+\subsection{Classes presentes no mesmo ECG}
+Nos 90 pares em que $c'$ também está nos rótulos do ECG, a distância média é 1,40, menor que nos pares ausentes (1,57), como esperado: duas classes presentes podem usar parte da mesma evidência. As distâncias mais baixas aparecem quando a classe explicada é STE (1,08), STD (1,20) ou CAP (1,27). Com tão poucos pares por combinação (de 1 a 15), esses números servem só como indicação.
+
+\subsection{Quais classes têm explicações parecidas (matriz)}
+A classe ausente mais parecida com cada classe explicada (fração dos mapas):
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Classe explicada} & \textbf{Classe ausente mais parecida} \\
+\midrule
+AF   & STD (39\%), CAP (19\%), CVP (15\%) \\
+BRD  & STE (31\%), AF (19\%), BRE (19\%) \\
+BRE  & CVP (35\%), STE (20\%), CAP (15\%) \\
+CAP  & AF (42\%), SNR (13\%), CVP (13\%) \\
+CVP  & BRE (69\%), STD (10\%), AF (8\%) \\
+IAVB & BRE (64\%), STE (15\%), STD (11\%) \\
+SNR  & BRE (28\%), STE (26\%), CAP (14\%) \\
+STD  & BRE (58\%), IAVB (15\%), CVP (8\%) \\
+STE  & BRE (50\%), CVP (21\%), BRD (21\%) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+O par mais próximo da matriz é STE com BRE (distância média 1,11), seguido de STE com BRD (1,20) e STD com BRE (1,22). Duas observações, ambas a confirmar: (i) o mapa de \textbf{BRE} é o mais parecido para cinco das nove classes, o que sugere que, em ECGs sem BRE, a explicação dessa classe destaca algo comum a vários ECGs; BRE é rara no treino (3,4\%) e não está entre as 32 baselines, e o teste da referência em andamento (ECGs normais como baselines) deve ajudar a ver se isso muda; (ii) STE se aproxima dos bloqueios de ramo (BRE, BRD), o que é coerente com o fato clínico de que bloqueios de ramo alteram o segmento ST, mas essa leitura não é avaliada no TCC.
+
+\subsection{Relação com as outras métricas (diagnóstico)}
+Mapa a mapa, a distância às classes ausentes tem correlação de postos de $-0{,}38$ com o número efetivo de regiões (mapas mais concentrados são mais específicos), $-0{,}36$ com o piso (mapas com mais erro de estimativa são menos específicos) e $0{,}41$ com o logit da classe explicada (predições mais confiantes, explicações mais específicas). São relações moderadas, usadas aqui só como diagnóstico: o Random Logit não repete nenhuma das outras métricas, mas conversa com a complexidade e com o piso. STD e SNR, duas das três classes menos específicas, são também as de explicações mais espalhadas e de piso alto; STE, a menos específica, tem complexidade intermediária.
+
+\subsection{O que se conclui}
+\begin{enumerate}
+\item O GradientSHAP produz explicações \textbf{específicas da classe} no modelo B: a pergunta da seleção de métricas (“o mapa de BRD é diferente do de outra classe no mesmo ECG?”) tem resposta positiva para todas as classes.
+\item A especificidade varia entre classes, e as pontas acompanham o F1 (AF mais específica, STE menos), com o meio misturado. A ordem não repete a de nenhuma métrica anterior: AF, por exemplo, tem a menor Faithfulness Estimate e é a classe mais específica.
+\item Os resultados dependem da referência do GradientSHAP (32 ECGs sorteados do treino) e dos 50 sorteios. O teste com ECGs normais como baselines e com 200 sorteios, em andamento, vai mostrar quanto isso pesa.
+\end{enumerate}
+
+\section{Versão do Quantus e por que não foi usada}
+A \texttt{quantus.RandomLogit} (Quantus 0.6.0) nunca entrou no pipeline do TCC. Ela sorteia, para cada exemplo, uma classe diferente da explicada (entre todas, sem olhar os rótulos do ECG), gera o mapa dessa classe com uma nova chamada da função de explicação e compara com o mapa salvo usando SSIM sobre o mapa achatado. No ECG, isso traria três problemas: (i) o mapa salvo e o mapa novo viriam de sorteios diferentes do GradientSHAP, e a diferença incluiria o piso inteiro (0,355); (ii) a SSIM sobre os 180\,000 pontos, com o preenchimento, compara janelas que misturam derivações; (iii) a classe sorteada poderia estar presente no ECG. A versão própria resolve os três: mesma semente nos dois mapas, distância nas 36 regiões e classes ausentes separadas das presentes.
+
+\end{document}
