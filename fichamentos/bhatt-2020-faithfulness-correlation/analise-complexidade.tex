@@ -95,7 +95,7 @@
 
 \textbf{Por que este documento.} O fichamento da Faithfulness Correlation diz que o artigo propõe três critérios (baixa sensibilidade, alta fidelidade e baixa complexidade) e que “a complexidade não é usada”. Aqui se analisa se valeria a pena usá-la no TCC.
 
-\textbf{O que mudou nesta versão (23/10).} Depois da primeira versão, a seleção de métricas (documento \textit{Seleção de métricas}, 22/10) escolheu as próximas métricas pela dimensão nova que trazem: Random Logit, eMPRT e esta complexidade. A localização clínica foi avaliada e deixada de fora. Esta versão registra a decisão, compara a métrica com as outras duas de complexidade do Quantus (seção~\ref{sec:escolha}), relaciona o resultado com o piso do GradientSHAP medido na sensibilidade (seção~\ref{sec:piso}) e com o eMPRT, que usa a mesma entropia (seção~\ref{sec:emprt}), e descreve a implementação (seção~\ref{sec:impl}).
+\textbf{O que mudou nesta versão (23/10).} Depois da primeira versão, a seleção de métricas (documento \textit{Seleção de métricas}, 22/10) escolheu as próximas métricas pela dimensão nova que trazem: Random Logit, eMPRT e esta complexidade. A localização clínica foi avaliada e deixada de fora. Esta versão registra a decisão, compara a métrica com as outras duas de complexidade do Quantus (seção~\ref{sec:escolha}), relaciona o resultado com o piso do GradientSHAP medido na sensibilidade (seção~\ref{sec:piso}) e com o eMPRT, que usa a mesma entropia (seção~\ref{sec:emprt}), e traz a implementação (\texttt{src/complexity.py}) com os resultados oficiais e a verificação pelo índice de Gini (seção~\ref{sec:impl}).
 
 \textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do artigo (1 a 7). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica a métrica; a \textbf{Parte II} traz o que o artigo diz sobre ela; a \textbf{Parte III} mostra um diagnóstico com os mapas do modelo B, a escolha entre as métricas de complexidade e a decisão.
 
@@ -322,7 +322,7 @@ No Quantus, para o ECG & Pontos com preenchimento (mede a duração) & Pontos co
 Qualquer uma delas precisaria da versão por regiões. A escolha entre elas:
 \begin{itemize}
 \item \textbf{Complexity (escolhida).} Não tem parâmetro, não depende da escala e tem leitura intuitiva pelo número efetivo de regiões (“a explicação de BRD usa o equivalente a 22 regiões; a de SNR, 27”). É também a entropia do eMPRT (seção~\ref{sec:emprt}), e o diagnóstico já foi feito com ela.
-\item \textbf{Sparseness (verificação).} O índice de Gini também não tem parâmetro nem depende da escala. A diferença é de ênfase: o Gini é mais sensível a quanto as primeiras regiões concentram; a entropia considera a distribuição inteira. Com 36 regiões, espera-se que as duas ordenem as classes de modo parecido, mas isso ainda não foi calculado. O Gini será calculado no mesmo módulo, a custo de uma linha de código: se ordenar as classes como a entropia, reforça o resultado; se divergir, a diferença vira discussão.
+\item \textbf{Sparseness (verificação).} O índice de Gini também não tem parâmetro nem depende da escala. A diferença é de ênfase: o Gini é mais sensível a quanto as primeiras regiões concentram; a entropia considera a distribuição inteira. O Gini foi calculado no mesmo módulo, como verificação, e \textbf{confirma a entropia}: a ordem das classes é a mesma, exceto por uma troca entre BRD e AF no topo, com diferença desprezível; mapa a mapa, a correlação de postos entre as duas é $-0{,}99$ (seção~\ref{sec:impl}). A escolha entre entropia e Gini, portanto, não muda o resultado.
 \item \textbf{Effective Complexity (fora).} Depende de um limiar sobre o valor da importância. A soma de um mapa do GradientSHAP acompanha a diferença de saída do modelo entre o ECG e as baselines, que varia entre ECGs e classes; com um limiar fixo, classes de saída maior teriam mais regiões acima dele mesmo com a mesma concentração. Dividir pelo máximo, como no Quantus, troca esse problema pela escolha de um limiar relativo arbitrário. E com 36 regiões o resultado é uma contagem grosseira, com poucos valores possíveis.
 \end{itemize}
 
@@ -346,10 +346,10 @@ Fornece a entropia do eMPRT e o teto de cada mapa para lê-lo (seção~\ref{sec:
 \textbf{A complexidade entra no TCC como métrica complementar, na versão por regiões (R)}, junto com Random Logit e eMPRT (documento \textit{Seleção de métricas}). O objetivo não é verificar se a explicação é clinicamente compatível, mas comparar o quanto as explicações de cada classe são concentradas ou espalhadas, o que dá base para discutir os resultados de fidelidade, robustez e randomização. A métrica é sempre lida ao lado da fidelidade (uma boa explicação é fiel \textit{e} concentrada) e do piso. A \texttt{quantus.Complexity} ponto a ponto não é usada. A ampliação do escopo será apresentada ao orientador junto com a mudança de rumo da seleção.
 \end{infobox}
 
-\section{Implementação prevista}\label{sec:impl}
-Um módulo \texttt{src/complexity.py}, no mesmo padrão de \texttt{src/consistency.py} e \texttt{src/sensitivity.py}:
+\section{Implementação e resultados}\label{sec:impl}
+Módulo \texttt{src/complexity.py}, no mesmo padrão de \texttt{src/consistency.py} e \texttt{src/sensitivity.py}:
 \begin{itemize}
-\item \textbf{Entrada:} os 622 mapas do modelo B, já salvos. Não chama o modelo, roda na CPU em segundos e não precisa do Kaggle.
+\item \textbf{Entrada:} os 622 mapas do modelo B, já salvos. Não chama o modelo, roda na CPU em cerca de 10 segundos e não precisa do Kaggle.
 \item \textbf{Regiões:} as mesmas 36 da Faithfulness Correlation (função \texttt{region\_index}), com a importância da região igual à soma do mapa.
 \item \textbf{Por mapa:} entropia $H$, número efetivo de regiões $e^{H}$, fração nas 3 regiões mais importantes, região mais importante e, como verificação, o índice de Gini.
 \item \textbf{Por classe:} média e desvio do número efetivo de regiões e do Gini, com o piso da sensibilidade ao lado como contexto e a ordem comparada à do F1 de forma descritiva (sem correlação com o F1).
@@ -357,7 +357,33 @@ Um módulo \texttt{src/complexity.py}, no mesmo padrão de \texttt{src/consisten
 \end{itemize}
 A função da entropia por regiões fica exposta para ser reaproveitada pelo eMPRT.
 
+\textbf{Execução (23/10/2026).} Os valores coincidem com os do diagnóstico da seção~5 (diferença máxima de $5 \times 10^{-6}$ na entropia, por arredondamento, e a mesma região mais importante em todos os mapas). Classes da explicação mais concentrada para a mais espalhada:
+\begin{center}\small
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Classe} & \textbf{Mapas} & \textbf{Entropia} & \textbf{Nº efetivo (de 36)} & \textbf{Gini} & \textbf{Top 3} & \textbf{Piso} \\
+\midrule
+BRD  & 172 & 3,10 & 22,4 & 0,508 & 32,7\% & 0,32 \\
+AF   & 108 & 3,12 & 22,8 & 0,514 & 29,9\% & 0,35 \\
+IAVB &  61 & 3,14 & 23,3 & 0,503 & 29,3\% & 0,36 \\
+CVP  &  59 & 3,20 & 24,7 & 0,469 & 27,1\% & 0,32 \\
+STE  &  14 & 3,24 & 25,5 & 0,450 & 25,8\% & 0,35 \\
+CAP  &  45 & 3,25 & 25,7 & 0,445 & 24,4\% & 0,46 \\
+BRE  &  20 & 3,25 & 25,8 & 0,443 & 26,4\% & 0,23 \\
+STD  &  65 & 3,29 & 26,9 & 0,414 & 22,9\% & 0,40 \\
+SNR  &  78 & 3,29 & 26,9 & 0,414 & 23,0\% & 0,41 \\
+\midrule
+Global & 622 & 3,18 & 24,2 & 0,475 & 28,1\% & 0,36 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Gini como verificação.} Gini maior significa explicação mais concentrada, o oposto da entropia. A ordem pelo Gini é a mesma da entropia, exceto pela troca entre BRD (0,508) e AF (0,514). Mapa a mapa, a correlação de postos entre as duas medidas é $-0{,}99$. O resultado não depende de qual das duas é usada.
+\item \textbf{Leitura frente ao F1 (descritiva).} Valem as observações da seção~6: as três classes de maior F1 (AF, BRD e IAVB) têm as explicações mais concentradas; SNR e STD, as mais espalhadas; STE e BRE são as exceções. A diferença entre os extremos (4,5 regiões) é da ordem do desvio dentro das classes, e o piso (seção~\ref{sec:piso}) mostra que parte do espalhamento pode vir do erro de estimativa do GradientSHAP.
+\end{itemize}
+
 \vspace{0.5em}
-{\small \textbf{Arquivos do diagnóstico} (pasta não versionada): \\ \texttt{output/leituras/complexity\_diag.py} \\ \texttt{output/leituras/complexity\_diag.csv} (uma linha por mapa)}
+{\small \textbf{Resultados} (versionados): \texttt{results/modeloB\_complexity/} (\texttt{complexity.csv}, \texttt{complexity\_mapas.csv} e \texttt{README.md} com o comando). \\
+\textbf{Arquivos do diagnóstico} (pasta não versionada): \\ \texttt{output/leituras/complexity\_diag.py} \\ \texttt{output/leituras/complexity\_diag.csv} (uma linha por mapa)}
 
 \end{document}
