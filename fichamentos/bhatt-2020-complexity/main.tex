@@ -261,7 +261,7 @@ Esta seção responde a uma pergunta: parte da complexidade medida pode vir do p
 
 \textbf{(1) O GradientSHAP estima o mapa com 50 sorteios.} O GradientSHAP não calcula o mapa de forma exata; ele \textbf{estima uma média}. Em cada sorteio, ele:
 \begin{enumerate}
-\item escolhe ao acaso uma \textbf{baseline}, isto é, um ECG de referência, entre as 32 sorteadas do treino;
+\item escolhe ao acaso uma \textbf{baseline}, isto é, um ECG de referência, entre as 32 do conjunto de baselines (ver o quadro abaixo);
 \item soma ao ECG um pequeno ruído gaussiano (desvio 0,09);
 \item escolhe ao acaso um ponto no caminho entre a baseline e o ECG;
 \item calcula, nesse ponto, o gradiente da saída da classe e o multiplica por (ECG $-$ baseline).
@@ -280,7 +280,33 @@ Infinitos sorteios & $0$ & a região não importa \\
 \end{center}
 Essa diferença não vem do modelo nem do ECG: é o \textbf{erro de estimativa} da média.
 
+\begin{infobox}[note]{As 32 baselines e as sementes}
+O GradientSHAP explica o ECG em comparação com ECGs de referência: a pergunta é o que, neste ECG, faz a saída diferir da saída para um ECG “típico”. As \textbf{32 baselines} são 32 ECGs do conjunto de treino (de 4\,812), escolhidos ao acaso e que, juntos, representam esse ECG típico. O número 32 é o padrão de \texttt{src/explain.py} (\texttt{-{}-n-baselines 32}); é uma escolha de configuração do método, entre representatividade e custo, sem justificativa formal registrada. Há dois níveis de sorteio:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{XXX}
+\toprule
+\textbf{O que é sorteado} & \textbf{Quando} & \textbf{Semente} \\
+\midrule
+Quais 32 ECGs do treino formam o conjunto de baselines & Uma única vez & Sempre a mesma (42, a semente do projeto) \\ \addlinespace
+Em cada um dos 50 sorteios de um mapa: qual das 32 usar, o ruído e o ponto no caminho & A cada mapa & Uma semente própria de cada mapa \\
+\bottomrule
+\end{tabularx}
+\end{center}
+As 32 baselines são, portanto, as mesmas para os 622 mapas e para todas as métricas que refazem o GradientSHAP (sensibilidade, Random Logit). O que muda de um mapa para outro, e entre as duas execuções do piso, são os 50 sorteios feitos dentro desse conjunto fixo.
+\end{infobox}
+
 \textbf{(2) O piso mede o tamanho desse erro.} A análise da sensibilidade (Max/Avg-Sensitivity) gerou, para cada um dos 622 mapas, dois mapas do \textbf{mesmo ECG} e da \textbf{mesma classe}, que diferem só nos sorteios (sementes $s$ e $s+1$). A distância entre eles, nas 36 regiões e com os mapas normalizados para norma 1, é o \textbf{piso}. Como nada mudou além dos sorteios, o piso é a variação que o método produz sozinho. A média é 0,355 (a distância vai de 0, mapas iguais, a 2, mapas opostos).
+
+\textbf{Piso de uma classe.} Cada mapa tem o seu piso; o piso de uma classe é a \textbf{média dos pisos dos seus mapas}. Por exemplo, o piso de BRD (0,32) é a média dos 172 pisos dos mapas de BRD.
+
+\textbf{Por que o piso muda de uma classe para outra, se o erro é do GradientSHAP.} O erro vem do método (a média de só 50 termos), mas o \textbf{tamanho} do erro depende de quanto os 50 termos discordam entre si, e isso depende de como o modelo responde para aquela classe. Cada termo é o gradiente num ponto sorteado vezes (ECG $-$ baseline). Se, para aquela classe, o modelo responde de forma parecida qualquer que seja a baseline ou o ponto sorteado, os termos se parecem e a média de 50 já é estável: piso baixo. Se a resposta muda muito conforme o sorteio (por exemplo, o gradiente muda bruscamente ao longo do caminho), os termos discordam e a média de 50 oscila: piso alto. É como estimar uma média com 50 lançamentos: com uma moeda, a estimativa sai estável; com um dado de 20 faces, oscila bem mais. O número de lançamentos é o mesmo; muda o que está sendo sorteado. Assim, o piso é uma propriedade da combinação \textbf{método $\times$ modelo $\times$ classe}: não é um defeito clínico da classe, nem só do GradientSHAP (com mais sorteios ele cairia em todas as classes, mas as diferenças entre elas tenderiam a continuar).
+
+Dois resultados ajudam a ler os pisos por classe (diagnóstico):
+\begin{itemize}
+\item \textbf{O tamanho da saída explicada não explica o piso.} A soma de um mapa acompanha a diferença entre a saída do modelo para o ECG e a saída média para as baselines. A correlação de postos entre essa soma e o piso, nos 622 mapas, é $-0{,}07$: praticamente nula.
+\item \textbf{Dentro de cada classe, o piso varia bastante.} O desvio é de cerca de 0,10 na maioria das classes, enquanto as médias vão de 0,23 (BRE) a 0,46 (CAP). A exceção clara é BRE, com piso baixo e pouca variação (desvio 0,05); nas demais, as diferenças entre classes são modestas frente à variação entre mapas.
+\end{itemize}
+Por que exatamente uma classe tem piso maior que outra não foi medido; a explicação acima (os termos discordam mais em umas classes do que em outras) é a leitura mais provável, mas não foi verificada.
 
 \textbf{(3) Por que o erro afeta a complexidade.} O erro de estimativa põe pequenas importâncias, positivas ou negativas, em regiões que o modelo talvez nem use. Como a complexidade soma as importâncias em valor absoluto, essas sobras \textbf{espalham} o mapa e aumentam a entropia. Exemplo com 4 regiões:
 \begin{center}\small
