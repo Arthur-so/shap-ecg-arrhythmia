@@ -84,9 +84,9 @@
     {\LARGE \textbf{Análise: a complexidade de Bhatt et al. (2020) no caso do ECG}} \\[0.35em]
     {\large BHATT, U.; WELLER, A.; MOURA, J. M. F. \textit{Evaluating and Aggregating Feature-based Model Explanations}. IJCAI, 2020, p.~3016--3022} \\[0.3em]
     \textbf{Métrica no Quantus:} \texttt{quantus.Complexity} \\[0.2em]
-    \textbf{Complementa:} Fichamento da Faithfulness Correlation (mesma pasta) \\[0.2em]
+    \textbf{Complementa:} Fichamento da Faithfulness Correlation (mesma pasta) e Seleção de métricas (\texttt{fichamentos/selecao-de-metricas}) \\[0.2em]
     \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
-    \textbf{Atualizado em:} 20/10/2026 \\[0.2em]
+    \textbf{Atualizado em:} 23/10/2026 (primeira versão: 20/10/2026) \\[0.2em]
     \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
 \end{center}
 \vspace{-0.5em}
@@ -95,10 +95,12 @@
 
 \textbf{Por que este documento.} O fichamento da Faithfulness Correlation diz que o artigo propõe três critérios (baixa sensibilidade, alta fidelidade e baixa complexidade) e que “a complexidade não é usada”. Aqui se analisa se valeria a pena usá-la no TCC.
 
-\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do artigo (1 a 7). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica a métrica; a \textbf{Parte II} traz o que o artigo diz sobre ela; a \textbf{Parte III} mostra um diagnóstico com os mapas do modelo B e a recomendação.
+\textbf{O que mudou nesta versão (23/10).} Depois da primeira versão, a seleção de métricas (documento \textit{Seleção de métricas}, 22/10) escolheu as próximas métricas pela dimensão nova que trazem: Random Logit, eMPRT e esta complexidade. A localização clínica foi avaliada e deixada de fora. Esta versão registra a decisão, compara a métrica com as outras duas de complexidade do Quantus (seção~\ref{sec:escolha}), relaciona o resultado com o piso do GradientSHAP medido na sensibilidade (seção~\ref{sec:piso}) e com o eMPRT, que usa a mesma entropia (seção~\ref{sec:emprt}), e descreve a implementação (seção~\ref{sec:impl}).
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do artigo (1 a 7). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica a métrica; a \textbf{Parte II} traz o que o artigo diz sobre ela; a \textbf{Parte III} mostra um diagnóstico com os mapas do modelo B, a escolha entre as métricas de complexidade e a decisão.
 
 \begin{infobox}[ok]{Resposta curta}
-\textbf{Vale usar, como métrica complementar e na versão por regiões.} Ela mede algo que as métricas de fidelidade não medem (se a explicação é concentrada em poucas regiões, e portanto fácil de ler), custa quase nada (não chama o modelo) e completa os três critérios do mesmo artigo. A versão do Quantus, ponto a ponto, \textbf{não} serve: ela mede o comprimento do sinal, e não a explicação (seção 7). Como a complexidade é de outra categoria do Quantus (nem fidelidade nem robustez), incluí-la amplia o escopo do TCC e deve ser combinada com o orientador.
+\textbf{Incluída no TCC, como métrica complementar e na versão por regiões.} Ela mede algo que as métricas de fidelidade não medem (se a explicação é concentrada em poucas regiões, e portanto fácil de ler), custa quase nada (não chama o modelo) e completa os três critérios do mesmo artigo. A versão do Quantus, ponto a ponto, \textbf{não} serve: ela mede o comprimento do sinal, e não a explicação (seção~\ref{sec:pontos}). Entre as três métricas de complexidade do Quantus, a entropia de Bhatt et al.\ é a escolhida; o índice de Gini (Sparseness) entra só como verificação, e a Effective Complexity fica de fora (seção~\ref{sec:escolha}). A inclusão amplia o escopo do TCC para além de fidelidade e robustez e foi decidida junto com Random Logit e eMPRT; a mudança de rumo vai ao orientador.
 \end{infobox}
 
 \partbar{Parte I · Entendendo a métrica}
@@ -219,7 +221,7 @@ O cálculo usa só os mapas (não chama o modelo) e levou 9 segundos na CPU.
 \end{tabularx}
 \end{center}
 
-\subsection{A versão do Quantus mede o comprimento do sinal}
+\subsection{A versão do Quantus mede o comprimento do sinal}\label{sec:pontos}
 Os ECGs têm durações diferentes: o trecho real ocupa em média 7\,500 dos 15\,000 instantes, e o resto é preenchimento. Na versão (P), quanto mais longo o ECG, maior a complexidade, porque há mais pontos com alguma importância. A correlação de postos entre complexidade e comprimento é 0,45 com o preenchimento e chega a \textbf{0,88} quando se exclui o preenchimento. Ou seja, a métrica ordena os mapas quase só pela duração do exame. Além disso, em média \textbf{15\% da importância total} do mapa (em valor absoluto) fica no trecho de preenchimento, que não tem informação clínica. A versão (P), por isso, não serve para o TCC.
 
 \subsection{Com regiões, a métrica distingue os mapas}
@@ -254,6 +256,33 @@ SNR  &  78 & 26,9 & 1,6 & 23\% & 0,46 & 0,796 & 6.º \\
 \subsection{Relação com a fidelidade}
 Mapa a mapa, explicações mais concentradas tendem a ser mais fiéis: a correlação de postos entre a complexidade (R) e a Faithfulness Correlation nos 622 mapas é $-0{,}41$. Isso é usado aqui apenas como diagnóstico, e não como resultado do TCC. Parte dessa relação pode ser mecânica: quando a importância está concentrada, as somas dos subconjuntos sorteados variam mais, e a correlação fica menos sujeita a ruído. Ainda assim, mostra que as duas métricas não medem exatamente a mesma coisa (a relação é moderada), o que é um argumento para usar ambas.
 
+\subsection{Relação com o piso do GradientSHAP}\label{sec:piso}
+A análise da sensibilidade (Max/Avg-Sensitivity) mediu o \textbf{piso} de cada mapa: a distância entre dois mapas do mesmo ECG que diferem só na semente do GradientSHAP (média 0,355 nas 36 regiões). Ele indica o erro de estimativa do método, que usa 50 sorteios por mapa. Esse erro também pode afetar a complexidade: o ruído põe um pouco de importância em todas as regiões e tende a espalhar o mapa. Foi esse efeito, somado ponto a ponto, que deixou a versão (R-abs) quase uniforme.
+
+Para ver o tamanho do efeito na versão (R), cruzaram-se os 622 mapas da complexidade com o piso calculado na sensibilidade (mesmos mapas). Como diagnóstico, e não como resultado do TCC:
+\begin{center}\small
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+& \textbf{BRD} & \textbf{AF} & \textbf{IAVB} & \textbf{CVP} & \textbf{STE} & \textbf{CAP} & \textbf{BRE} & \textbf{STD} & \textbf{SNR} \\
+\midrule
+Nº efetivo & 22,4 & 22,8 & 23,3 & 24,7 & 25,5 & 25,7 & 25,8 & 26,9 & 26,9 \\
+Piso & 0,32 & 0,35 & 0,36 & 0,32 & 0,35 & \textbf{0,46} & \textbf{0,23} & 0,40 & 0,41 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Há relação, mas moderada.} Mapa a mapa, a correlação de postos entre o número efetivo de regiões e o piso é 0,38: mapas com mais erro de estimativa tendem a ser um pouco mais espalhados.
+\item \textbf{O ruído não explica a ordem das classes.} BRE tem o \textbf{menor} piso de todas (0,23) e mesmo assim explicações espalhadas (25,8). CAP tem o \textbf{maior} piso (0,46) e complexidade intermediária. SNR e STD combinam piso alto e explicações espalhadas, e nelas parte da complexidade pode vir do ruído.
+\end{itemize}
+\textbf{Como entra na leitura.} A complexidade de cada mapa mistura duas coisas, como a Consistency: o quanto o modelo de fato espalha a evidência e o ruído de estimativa do GradientSHAP. Por isso o piso por classe é reportado ao lado da complexidade, como contexto. Separar as duas exigiria refazer os mapas com mais sorteios, decisão que continua pendente com o orientador.
+
+\subsection{Relação com o eMPRT}\label{sec:emprt}
+O eMPRT (Hedström et al., 2023), escolhido na seleção de métricas, mede quanto a entropia da explicação \textbf{sobe} quando os pesos do modelo são todos sorteados de novo: $q = (\xi(\hat{e}) - \xi(e))/\xi(e)$, em que $e$ é o mapa do modelo treinado e $\hat{e}$ o do modelo randomizado. A entropia $\xi$ usada no TCC será a mesma desta métrica, nas 36 regiões. Duas consequências:
+\begin{itemize}
+\item \textbf{Uma função, duas métricas.} O módulo da complexidade fornece a entropia que o eMPRT usa, e os dois resultados ficam diretamente comparáveis.
+\item \textbf{A complexidade limita o eMPRT.} A entropia não passa de $\ln 36 = 3{,}58$. Como os mapas do modelo treinado já têm entropia média 3,18, o aumento $q$ é de no máximo cerca de 13\% (de 5\% a 32\% conforme o mapa). O teto também muda com a classe: cerca de 15\% para BRD, AF e IAVB (mapas mais concentrados) e só 9\% para SNR e STD (os mais espalhados). Sem levar isso em conta, um $q$ menor em SNR poderia parecer pior explicação, quando reflete apenas menos espaço para subir. Por isso, no eMPRT, $q$ será lido junto com o teto de cada mapa.
+\end{itemize}
+
 \subsection{Achado lateral: onde está a região mais importante}
 O diagnóstico também registrou qual região concentra mais importância em cada mapa. Isso não é complexidade, mas ajuda a interpretar os resultados.
 \begin{center}\small
@@ -273,9 +302,31 @@ AF   & V5 QRS (17\%), V4 QRS (16\%), aVR QRS (14\%) \\
 \bottomrule
 \end{tabularx}
 \end{center}
-Vários casos batem com os critérios clássicos de diagnóstico: o bloqueio de ramo direito (BRD) se vê no QRS de V1; o de ramo esquerdo (BRE), no QRS de V1 e V2; o bloqueio AV de 1.º grau (IAVB) é um intervalo PR longo, que fica na região pré-QRS; o infradesnivelamento (STD), no segmento ST. Outros chamam atenção, como STE (supradesnivelamento de ST), cuja região principal é pré-QRS e não ST-T, e a classe de menor F1. Essa leitura clínica precisa ser confirmada com a literatura e com o orientador; ela abre a possibilidade de uma análise de \textbf{plausibilidade} das explicações, que hoje não está no escopo.
+Vários casos batem com os critérios clássicos de diagnóstico: o bloqueio de ramo direito (BRD) se vê no QRS de V1; o de ramo esquerdo (BRE), no QRS de V1 e V2; o bloqueio AV de 1.º grau (IAVB) é um intervalo PR longo, que fica na região pré-QRS; o infradesnivelamento (STD), no segmento ST. Outros chamam atenção, como STE (supradesnivelamento de ST), cuja região principal é pré-QRS e não ST-T, e a classe de menor F1. Essa leitura clínica precisa ser confirmada com a literatura e com o orientador. Uma análise formal de \textbf{plausibilidade} (localização com máscaras clínicas) foi avaliada na seleção de métricas e deixada de fora: ela mede se a explicação coincide com o critério clínico, e não se é fiel ao modelo, e só daria para definir máscaras para cerca de 5 das 9 classes. A tabela fica apenas como apoio à interpretação.
 
-\section{Vale usar no TCC?}
+\section{Qual métrica de complexidade usar}\label{sec:escolha}
+O Quantus traz três métricas de complexidade. As três medem a mesma propriedade (quão concentrada está a importância) e diferem só na conta. As definições abaixo vêm do código do Quantus 0.6.0 (\texttt{quantus/metrics/complexity/}); os artigos de Chalasani et al.\ (2020) e de Nguyen e Martínez (2020) não foram lidos.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+& \textbf{Complexity} (Bhatt et al., 2020) & \textbf{Sparseness} (Chalasani et al., 2020) & \textbf{Effective Complexity} (Nguyen e Martínez, 2020) \\
+\midrule
+Conta & Entropia das frações de $|$importância$|$ & Índice de Gini dos valores de $|$importância$|$ & Quantos valores de $|$importância$|$ passam de um limiar $\varepsilon$ \\ \addlinespace
+Escala & 0 a $\ln 36$; vira nº efetivo de regiões (1 a 36) & 0 (uniforme) a 1 (tudo em uma região) & 0 a 36 regiões \\ \addlinespace
+Depende da escala do mapa? & Não (usa frações) & Não & \textbf{Sim} \\ \addlinespace
+Parâmetro a escolher & Nenhum & Nenhum & \textbf{O limiar} $\varepsilon$ \\ \addlinespace
+No Quantus, para o ECG & Pontos com preenchimento (mede a duração) & Pontos com preenchimento & Pontos com preenchimento; $\varepsilon = 10^{-5}$ após dividir pelo máximo, o que conta praticamente todo ponto não nulo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Qualquer uma delas precisaria da versão por regiões. A escolha entre elas:
+\begin{itemize}
+\item \textbf{Complexity (escolhida).} Não tem parâmetro, não depende da escala e tem leitura intuitiva pelo número efetivo de regiões (“a explicação de BRD usa o equivalente a 22 regiões; a de SNR, 27”). É também a entropia do eMPRT (seção~\ref{sec:emprt}), e o diagnóstico já foi feito com ela.
+\item \textbf{Sparseness (verificação).} O índice de Gini também não tem parâmetro nem depende da escala. A diferença é de ênfase: o Gini é mais sensível a quanto as primeiras regiões concentram; a entropia considera a distribuição inteira. Com 36 regiões, espera-se que as duas ordenem as classes de modo parecido, mas isso ainda não foi calculado. O Gini será calculado no mesmo módulo, a custo de uma linha de código: se ordenar as classes como a entropia, reforça o resultado; se divergir, a diferença vira discussão.
+\item \textbf{Effective Complexity (fora).} Depende de um limiar sobre o valor da importância. A soma de um mapa do GradientSHAP acompanha a diferença de saída do modelo entre o ECG e as baselines, que varia entre ECGs e classes; com um limiar fixo, classes de saída maior teriam mais regiões acima dele mesmo com a mesma concentração. Dividir pelo máximo, como no Quantus, troca esse problema pela escolha de um limiar relativo arbitrário. E com 36 regiões o resultado é uma contagem grosseira, com poucos valores possíveis.
+\end{itemize}
+
+\section{Decisão}\label{sec:decisao}
 \begin{center}\small
 \begin{tabularx}{\linewidth}{XX}
 \toprule
@@ -285,18 +336,26 @@ Vem do mesmo artigo da Faithfulness Correlation e da Max/Avg-Sensitivity, e comp
 Custo quase nulo: 9 segundos para os 622 mapas, sem chamar o modelo. & A versão do Quantus (pontos) não serve: mede o comprimento do sinal (0,88) e inclui o preenchimento. \\ \addlinespace
 Sem baseline e sem perturbação: não sofre dos artefatos que afetaram as versões antigas da Faithfulness Correlation e da Estimate. & O resultado depende da divisão em 36 regiões e do uso da soma do mapa (com cancelamento entre positivos e negativos), escolhas que precisam ser justificadas. \\ \addlinespace
 Leitura intuitiva por regiões: “a explicação usa o equivalente a 24 das 36 regiões”. & Diferenças entre classes modestas frente à variação dentro de cada classe. \\ \addlinespace
-Mede algo diferente da fidelidade (relação moderada, $-0{,}41$). & É de outra categoria do Quantus (complexidade); o TCC hoje cobre fidelidade e robustez. Incluí-la amplia o escopo. \\ \addlinespace
+Mede algo diferente da fidelidade (relação moderada, $-0{,}41$). & É de outra categoria do Quantus (complexidade); incluí-la amplia o escopo do TCC. \\ \addlinespace
+Fornece a entropia do eMPRT e o teto de cada mapa para lê-lo (seção~\ref{sec:emprt}). & Parte da complexidade pode vir do erro de estimativa do GradientSHAP (relação de 0,38 com o piso; seção~\ref{sec:piso}). \\ \addlinespace
 \bottomrule
 \end{tabularx}
 \end{center}
 
-\begin{infobox}[ok]{Recomendação}
-\textbf{Incluir a complexidade como métrica complementar, na versão por regiões (R)}, reportando por classe a entropia e o número efetivo de regiões, sempre ao lado das métricas de fidelidade (uma boa explicação é fiel \textit{e} concentrada). Não usar a \texttt{quantus.Complexity} ponto a ponto. A decisão de ampliar o escopo é do orientador. Se aprovada, a implementação é simples: um módulo \texttt{src/complexity.py} que reaproveita as regiões já usadas nas outras métricas e roda localmente, sem GPU.
+\begin{infobox}[ok]{Decisão (22/10/2026)}
+\textbf{A complexidade entra no TCC como métrica complementar, na versão por regiões (R)}, junto com Random Logit e eMPRT (documento \textit{Seleção de métricas}). O objetivo não é verificar se a explicação é clinicamente compatível, mas comparar o quanto as explicações de cada classe são concentradas ou espalhadas, o que dá base para discutir os resultados de fidelidade, robustez e randomização. A métrica é sempre lida ao lado da fidelidade (uma boa explicação é fiel \textit{e} concentrada) e do piso. A \texttt{quantus.Complexity} ponto a ponto não é usada. A ampliação do escopo será apresentada ao orientador junto com a mudança de rumo da seleção.
 \end{infobox}
 
-\begin{infobox}[note]{Se a decisão for não incluir}
-A frase “a complexidade não é usada” do fichamento da Faithfulness Correlation pode ser justificada assim: o critério mede legibilidade, e não correção; o objetivo do TCC é avaliar a qualidade das explicações em fidelidade e robustez; e a versão disponível no Quantus, ponto a ponto, mede a duração do sinal no caso do ECG.
-\end{infobox}
+\section{Implementação prevista}\label{sec:impl}
+Um módulo \texttt{src/complexity.py}, no mesmo padrão de \texttt{src/consistency.py} e \texttt{src/sensitivity.py}:
+\begin{itemize}
+\item \textbf{Entrada:} os 622 mapas do modelo B, já salvos. Não chama o modelo, roda na CPU em segundos e não precisa do Kaggle.
+\item \textbf{Regiões:} as mesmas 36 da Faithfulness Correlation (função \texttt{region\_index}), com a importância da região igual à soma do mapa.
+\item \textbf{Por mapa:} entropia $H$, número efetivo de regiões $e^{H}$, fração nas 3 regiões mais importantes, região mais importante e, como verificação, o índice de Gini.
+\item \textbf{Por classe:} média e desvio do número efetivo de regiões e do Gini, com o piso da sensibilidade ao lado como contexto e a ordem comparada à do F1 de forma descritiva (sem correlação com o F1).
+\item \textbf{Saída:} \texttt{results/modeloB\_complexity/} (tabela por mapa e por classe), seguindo o padrão das outras métricas.
+\end{itemize}
+A função da entropia por regiões fica exposta para ser reaproveitada pelo eMPRT.
 
 \vspace{0.5em}
 {\small \textbf{Arquivos do diagnóstico} (pasta não versionada): \\ \texttt{output/leituras/complexity\_diag.py} \\ \texttt{output/leituras/complexity\_diag.csv} (uma linha por mapa)}

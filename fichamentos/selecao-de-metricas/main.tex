@@ -1,0 +1,473 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{‖}{\ensuremath{\|}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{ξ}{\ensuremath{\xi}}
+\newunicodechar{≪}{\ensuremath{\ll}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Seleção de métricas: o que ainda falta medir}} \\[0.35em]
+    {\large Fichamentos curtos e avaliação de cinco artigos para o TCC} \\[0.3em]
+    {\normalsize SIXT et al. (2020) · ADEBAYO et al. (2018) · HEDSTRÖM et al. (2023) · ARRAS et al. (2022) · RONG et al. (2022)} \\[0.3em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 22/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[Sixt p. N]} indica a página do PDF do artigo citado (o mesmo vale para os demais autores). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica por que fazer uma seleção e faz a triagem de todas as métricas do Quantus; a \textbf{Parte II} traz um fichamento curto de cada um dos cinco artigos; a \textbf{Parte III} avalia cada candidata para o TCC (o que mediria, se a versão do Quantus serve, a complexidade de uma versão própria e o custo) e termina com a recomendação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Problema.} Seguir a lista do Quantus métrica a métrica leva a medir de novo o que já está medido. A Sensitivity-N, por exemplo, é praticamente a Faithfulness Correlation com o tamanho do grupo variando.
+\item \textbf{Critério.} Priorizar métricas que respondam a uma \textbf{pergunta nova} sobre as explicações, de preferência \textbf{por classe} (para comparar com o F1).
+\item \textbf{Recomendação.} (1) \textbf{Random Logit}: a explicação é específica da classe? (2) \textbf{eMPRT}: a explicação depende do modelo ou só da forma do ECG? (3) \textbf{Localização com máscaras clínicas}: a explicação aponta onde o cardiologista olharia? Esta depende de uma decisão do orientador. O \textbf{ROAD} fica de fora, por medir de novo a fidelidade.
+\item \textbf{Decisão (22/10).} Seguir com \textbf{Random Logit}, \textbf{eMPRT} e a \textbf{complexidade} de Bhatt et al.\ por regiões. A localização clínica fica de fora: o TCC não vai avaliar se a explicação é clinicamente compatível, e sim compará-las entre si. Ver o quadro no fim do documento.
+\item \textbf{Quantus.} Nenhuma das quatro implementações serve sem adaptação; as versões próprias são de complexidade baixa a média.
+\end{itemize}
+\end{infobox}
+
+\partbar{Parte I · Por que selecionar}
+
+\section{O que já está coberto}
+Todas as métricas do TCC usam os mesmos 622 mapas GradientSHAP (predições corretas do modelo B) e as mesmas \textbf{36 regiões} (12 derivações $\times$ pré-QRS, QRS e ST-T, cada região reunindo o mesmo trecho em todos os batimentos completos).
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Dimensão} & \textbf{Pergunta} & \textbf{Métricas no TCC} \\
+\midrule
+Fidelidade & A importância de cada região acompanha o efeito de retirá-la? & Faithfulness Correlation e Faithfulness Estimate (0,62 global) \\
+\addlinespace
+Robustez & Se o ECG muda um pouco, a explicação muda muito? & Max/Avg-Sensitivity (0,07; piso do GradientSHAP de 0,36) \\
+\addlinespace
+Consistência & ECGs com a mesma explicação têm a mesma predição? & Consistency \\
+\addlinespace
+Complexidade & A explicação é concentrada ou espalhada? & Analisada; incluída em 22/10 (ver o quadro final) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Nos resultados, a robustez acompanhou a fidelidade (as mesmas classes no topo e na base), e a Consistency seguiu outra ordem. Ficam sem resposta três perguntas, que nenhuma métrica atual alcança:
+\begin{enumerate}
+\item \textbf{A explicação é específica da classe?} No mesmo ECG, o mapa que explica BRD é diferente do que explica outra classe?
+\item \textbf{A explicação depende do modelo?} Se os pesos do modelo forem embaralhados, o mapa muda, ou ele reflete só a forma do ECG?
+\item \textbf{A explicação é clinicamente plausível?} O mapa aponta as regiões que o critério clínico de cada classe usa?
+\end{enumerate}
+
+\section{Critérios de seleção}
+\begin{enumerate}
+\item \textbf{Pergunta nova:} não repetir a fidelidade nem a robustez, já cobertas.
+\item \textbf{Resultado por classe:} a pergunta do TCC compara a qualidade da explicação com o F1 de cada classe.
+\item \textbf{Aplicável ao ECG:} sem máscara de referência pronta, com as 36 regiões e com o preenchimento de zeros no fim do sinal.
+\item \textbf{Controle do ruído do GradientSHAP:} métricas que comparam dois mapas precisam ser lidas contra o piso (a variação entre duas execuções do GradientSHAP no mesmo ECG).
+\item \textbf{Custo:} poder rodar na GPU T4 do Kaggle em tempo razoável.
+\end{enumerate}
+
+\section{Triagem das métricas do Quantus}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{2.2cm}X}
+\toprule
+\textbf{Métricas} & \textbf{Situação} & \textbf{Motivo} \\
+\midrule
+\multicolumn{3}{l}{\textit{Fidelidade}} \\
+Faithfulness Correlation, Faithfulness Estimate & No TCC & Versões próprias por regiões. \\
+SensitivityN & Repete & É a Faithfulness Correlation variando o tamanho do grupo; se útil, a curva sai do código atual. \\
+Pixel Flipping, Region Perturbation, Selectivity, IROF & Repete & Mesma ideia (retirar primeiro as regiões mais importantes); com 36 regiões, viram a mesma métrica. \\
+Monotonicity (Arya; Nguyen) & Repete & Fidelidade de novo; a de Arya é binária e rígida demais diante do ruído. \\
+Infidelity & Repete & Fidelidade de novo, com erro quadrático que depende da escala do mapa. \\
+ROAD & Avaliada & Fidelidade com preenchimento mais realista (seção 12). \\
+Sufficiency & Retirada & Já retirada do TCC. \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Robustez}} \\
+Max/Avg-Sensitivity, Consistency & No TCC & Versões próprias. \\
+Local Lipschitz, Continuity, RIS, RRS, ROS & Repete & Medem quanto o mapa muda quando a entrada muda; só a normalização difere. A ROS divide pela mudança da saída, quase nula nas perturbações. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{2.2cm}X}
+\toprule
+\textbf{Métricas} & \textbf{Situação} & \textbf{Motivo} \\
+\midrule
+\multicolumn{3}{l}{\textit{Localização}} \\
+Relevance Mass e Rank Accuracy & Avaliadas & Representam o grupo (seção 11). \\
+Pointing Game, Attribution Localization, Top-K, AUC & Equivalentes & Todas exigem máscara; com 36 regiões, diferem pouco das escolhidas. \\
+Focus & Não se aplica & Exige montar mosaicos com exemplos de classes diferentes; no ECG, seria emendar sinais, o que muda a entrada. \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Complexidade}} \\
+Sparseness, Complexity, Effective Complexity & Complexity & Mesma dimensão entre si. Escolhida a Complexity (entropia), por regiões; Gini como verificação; Effective Complexity depende de um limiar. \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Randomização}} \\
+MPRT, Smooth MPRT, Efficient MPRT, Random Logit & Avaliadas & Dimensões novas (seções 9 e 10). \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Axiomática}} \\
+Completeness & Diagnóstico & No GradientSHAP, mede o erro de estimativa (o mesmo ruído do piso), não a qualidade da explicação. \\
+Non-Sensitivity & Repete & Próxima da Faithfulness Estimate. \\
+Input Invariance & Não se aplica & Exige um modelo construído para ser invariante ao deslocamento. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\partbar{Parte II · Fichamentos curtos}
+
+\section{Sixt, Granz e Landgraf (2020): Random Logit}
+\textbf{Referência.} SIXT, L.; GRANZ, M.; LANDGRAF, T. \textit{When Explanations Lie: Why Many Modified BP Attributions Fail}. ICML, 2020 (arXiv:1912.09818v7; 20 páginas).
+
+\textbf{Ideia.} Vários métodos de explicação baseados em retropropagação modificada (LRP, Deep Taylor, Guided BP, entre outros) produzem mapas que quase não dependem das últimas camadas do modelo. Uma consequência é que o mapa de uma classe fica igual ao de outra. O artigo prova a causa (a cadeia de matrizes não negativas converge para uma matriz de posto 1) e propõe dois testes: comparar o mapa da classe verdadeira com o de uma classe sorteada (\textbf{Random Logit}) e embaralhar os pesos, como em Adebayo et al.
+
+\textbf{Achados.} Os métodos de retropropagação modificada, exceto o DeepLIFT, falham; métodos baseados diretamente no gradiente não sofrem desse problema.
+
+\begin{citacard}{\pagechip{Sixt p. 1} Resumo}
+\begin{origquote}“We find empirically that the explanations of all mentioned methods, except for DeepLIFT, are independent of the parameters of later layers.”\end{origquote}
+\begin{tradquote}“Verificamos empiricamente que as explicações de todos os métodos mencionados, exceto o DeepLIFT, são independentes dos parâmetros das camadas finais.”\end{tradquote}
+\end{citacard}
+
+\begin{citacard}{\pagechip{Sixt p. 2} §1 Introdução}
+\begin{origquote}“The paper focuses on modified BP methods, as other attribution methods do not suffer from the converges problem. They either rely on the gradient directly [...], which does not converge or consider the model as a black-box [...].”\end{origquote}
+\begin{tradquote}“O artigo se concentra nos métodos de retropropagação modificada, pois outros métodos de atribuição não sofrem do problema de convergência. Eles ou se baseiam diretamente no gradiente [...], que não converge, ou tratam o modelo como caixa-preta [...].”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP se baseia no gradiente. Pela teoria do artigo, ele não deveria falhar dessa forma; o teste no ECG é, então, uma verificação empírica, e não a busca de uma falha esperada.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Sixt p. 5} §3 Random Logit}
+\begin{origquote}“We display the difference of saliency maps explaining the ground-truth and a random logit in Figure 4a. As the logit value is responsible for the predicted class, the saliency maps should change. We use the SSIM metric (Wang et al., 2004) as in (Adebayo et al., 2018).”\end{origquote}
+\begin{tradquote}“Mostramos a diferença entre os mapas que explicam a classe verdadeira e um logit sorteado na Figura 4a. Como o valor do logit é responsável pela classe prevista, os mapas deveriam mudar. Usamos a métrica SSIM (Wang et al., 2004), como em (Adebayo et al., 2018).”\end{tradquote}
+\explab{Explicação}
+Esta é a definição do teste: explicar a mesma entrada para outra classe e medir a semelhança entre os dois mapas. A SSIM é uma medida de semelhança de imagens; no ECG, faz mais sentido usar a mesma distância por regiões das outras métricas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Sixt p. 6} §5 Discussão}
+\begin{origquote}“Second, MNIST, CIFAR, and ImageNet contain only a single object class per image -- not revealing the class insensitivity.”\end{origquote}
+\begin{tradquote}“Segundo, MNIST, CIFAR e ImageNet contêm só uma classe de objeto por imagem, o que não revela a insensibilidade à classe.”\end{tradquote}
+\explab{Explicação}
+O ECG multirrótulo é o caso oposto: várias classes são avaliadas no mesmo sinal, e algumas podem coexistir. É justamente onde a especificidade de classe importa.
+\end{citacard}
+
+\textbf{O que importa para o TCC.} O teste é simples e responde a uma pergunta que nenhuma métrica atual responde. Mesmo que o GradientSHAP não sofra da falha descrita, o mapa dele é aproximadamente “gradiente $\times$ (ECG $-$ baseline)”, e o fator do sinal é o mesmo para todas as classes; os mapas de classes diferentes podem sair parecidos por esse motivo (ver Adebayo et al., seção 5).
+
+\section{Adebayo et al. (2018): Model Parameter Randomisation Test (MPRT)}
+\textbf{Referência.} ADEBAYO, J.; GILMER, J.; MUELLY, M.; GOODFELLOW, I.; HARDT, M.; KIM, B. \textit{Sanity Checks for Saliency Maps}. NeurIPS, 2018 (30 páginas).
+
+\textbf{Ideia.} Um método de explicação útil precisa depender do que o modelo aprendeu. O teste embaralha os pesos do modelo, da última camada para a primeira (em cascata) ou uma camada por vez (independente), e compara o mapa do modelo treinado com o do modelo embaralhado. Se continuarem parecidos, o método não descreve o modelo.
+
+\textbf{Achados.} Guided Backprop e Guided GradCAM quase não mudam. Gradiente $\times$ entrada e Integrated Gradients continuam \textbf{visualmente} parecidos com o original, porque o sinal de entrada domina o mapa, mas o \textbf{sinal} das importâncias muda logo.
+
+\begin{citacard}{\pagechip{Adebayo p. 4} §3 MPRT}
+\begin{origquote}“Consequently, for a saliency method to be useful for debugging a model, it ought to be sensitive to model parameters.”\end{origquote}
+\begin{tradquote}“Consequentemente, para que um método de saliência seja útil para depurar um modelo, ele deve ser sensível aos parâmetros do modelo.”\end{tradquote}
+\end{citacard}
+
+\begin{citacard}{\pagechip{Adebayo p. 4} §3.1 Randomização em cascata}
+\begin{origquote}“In the cascading randomization, we randomize the weights of a model starting from the top layer, successively, all the way to the bottom layer.”\end{origquote}
+\begin{tradquote}“Na randomização em cascata, os pesos do modelo são sorteados de novo a partir da última camada, sucessivamente, até a primeira.”\end{tradquote}
+\end{citacard}
+
+\begin{citacard}{\pagechip{Adebayo p. 5} §3.1 O perigo da inspeção visual}
+\begin{origquote}“However, re-initialization disrupts the sign of the map, so that the spearman rank correlation without absolute values goes to zero [...] almost as soon as the top layers are randomized.”\end{origquote}
+\begin{tradquote}“No entanto, a reinicialização desfaz o sinal do mapa, de modo que a correlação de postos de Spearman sem valor absoluto vai a zero [...] quase assim que as camadas finais são sorteadas.”\end{tradquote}
+\explab{Explicação}
+Comparar mapas em valor absoluto esconde a mudança. As distâncias do TCC usam as importâncias \textbf{com sinal}, o que evita esse problema.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Adebayo p. 9} §5.2 Produto entrada $\times$ gradiente}
+\begin{origquote}“This experiment indicates that methods that approximate the ‘input-times-gradient’ mostly return the input, in cases where the gradients look visually noisy as they tend to do.”\end{origquote}
+\begin{tradquote}“Este experimento indica que métodos que aproximam o ‘entrada vezes gradiente’ devolvem principalmente a entrada, nos casos em que os gradientes são visualmente ruidosos, como costumam ser.”\end{tradquote}
+\explab{Explicação}
+É o ponto mais relevante para o ECG. O GradientSHAP multiplica o gradiente por (ECG $-$ baseline). Onde o sinal tem amplitude grande (o QRS), o mapa tende a ser grande, independentemente do que o modelo aprendeu. O teste de randomização mede quanto disso acontece.
+\end{citacard}
+
+\textbf{O que importa para o TCC.} A pergunta (o mapa depende do modelo?) é essencial e ainda não foi feita. A versão original, porém, tem problemas apontados por Hedström et al.
+
+\section{Hedström et al. (2023): Smooth MPRT e Efficient MPRT}
+\textbf{Referência.} HEDSTRÖM, A.; WEBER, L.; LAPUSCHKIN, S.; HÖHNE, M. \textit{Sanity Checks Revisited: An Exploration to Repair the Model Parameter Randomisation Test}. Workshop XAI in Action, NeurIPS, 2023 (19 páginas).
+
+\textbf{Ideia.} O artigo aponta três problemas no MPRT original e propõe duas versões. O \textbf{Smooth MPRT (sMPRT)} tira a média dos mapas de 50 entradas com ruído antes de comparar. O \textbf{Efficient MPRT (eMPRT)} compara só o modelo treinado com o modelo \textbf{totalmente} embaralhado e mede quanto a \textbf{entropia} do mapa aumenta: a explicação de um modelo aleatório deveria ser mais espalhada.
+
+\begin{citacard}{\pagechip{Hedström p. 1} Resumo}
+\begin{origquote}“[...] Smooth MPRT and Efficient MPRT, where the former minimises the impact that noise has on the evaluation results through sampling and the latter circumvents the need for biased similarity measurements by re-interpreting the test through the explanation's rise in complexity, after full parameter randomisation.”\end{origquote}
+\begin{tradquote}“[...] Smooth MPRT e Efficient MPRT: o primeiro reduz, por amostragem, o impacto do ruído nos resultados; o segundo dispensa medidas de similaridade enviesadas, reinterpretando o teste pelo aumento da complexidade da explicação após a randomização completa dos parâmetros.”\end{tradquote}
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 3} §2.1.1 Ordem das camadas}
+\begin{origquote}“(iii) architectures with skip connections, e.g., ResNets [29] maintain a baseline explanation that stays constant even after randomisation, preserving certain features.”\end{origquote}
+\begin{tradquote}“(iii) arquiteturas com conexões de atalho, como as ResNets [29], mantêm uma explicação de base que permanece constante mesmo após a randomização, preservando certas características.”\end{tradquote}
+\explab{Explicação}
+O modelo do TCC é uma ResNet34. Embaralhar camada por camada a partir do topo deixaria parte do mapa intacta pelos atalhos; por isso, a comparação deve ser feita após a randomização completa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 4} §2.1.1 Medidas de similaridade}
+\begin{origquote}“This is problematic since it implies that certain explanation methods with more intrinsic (shattering) noise, e.g., gradient-based methods, will be favoured in ranking comparisons, ultimately biasing evaluation outcomes.”\end{origquote}
+\begin{tradquote}“Isso é problemático porque implica que métodos de explicação com mais ruído intrínseco, como os baseados em gradiente, serão favorecidos nas comparações, enviesando os resultados da avaliação.”\end{tradquote}
+\explab{Explicação}
+Se o mapa já é ruidoso, ele “muda” com o modelo embaralhado mesmo que não dependa do modelo. Com o piso do GradientSHAP medido no TCC (0,36 por regiões), o MPRT original sairia artificialmente bom. O eMPRT evita isso; outra saída é comparar a distância com o piso.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 4} §3.1 Problemas do sMPRT}
+\begin{origquote}“Second, the practice of removing noise by adding noise is already a defining characteristic in some attribution methods, e.g., SmoothGrad [21] and NoiseGrad [25], limiting sMPRT's efficacy with these methods [...].”\end{origquote}
+\begin{tradquote}“Segundo, remover ruído adicionando ruído já é uma característica de alguns métodos de atribuição, como SmoothGrad [21] e NoiseGrad [25], o que limita a eficácia do sMPRT com esses métodos [...].”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP também soma ruído à entrada (o parâmetro \texttt{stdevs}). O sMPRT acrescentaria pouco e multiplicaria o custo por 50.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 5} §3.2 Definição 3 (eMPRT)}
+\begin{origquote}“Since Φ ought to faithfully capture the behaviour of the model f -- a fully randomised model [...] should therefore lead to reduced information content in its explanation ê.”\end{origquote}
+\begin{tradquote}“Como Φ deve capturar fielmente o comportamento do modelo $f$, um modelo totalmente aleatório [...] deveria levar a um conteúdo de informação menor na sua explicação $\hat{e}$.”\end{tradquote}
+\explab{Explicação}
+A medida é $q = (\xi(\hat{e}) - \xi(e)) / \xi(e)$, em que $\xi$ é a entropia do mapa: $e$ é o mapa do modelo treinado e $\hat{e}$, o do modelo embaralhado. Valores positivos indicam que a explicação ficou mais espalhada, como esperado.
+\end{citacard}
+
+\textbf{O que importa para o TCC.} O eMPRT é barato (um mapa extra por exemplo), evita os dois problemas que atingiriam o TCC (atalhos da ResNet e ruído do GradientSHAP) e usa a mesma entropia já estudada na análise da complexidade.
+
+\section{Arras, Osman e Samek (2022): Relevance Mass e Rank Accuracy}
+\textbf{Referência.} ARRAS, L.; OSMAN, A.; SAMEK, W. \textit{CLEVR-XAI: A benchmark dataset for the ground truth evaluation of neural network explanations}. Information Fusion, 2022 (51 páginas).
+
+\textbf{Ideia.} Para avaliar explicações contra uma resposta conhecida, os autores criam uma base sintética de perguntas sobre imagens de objetos geométricos, em que se sabe exatamente quais objetos importam para a resposta. Propõem duas métricas contra essa máscara: a \textbf{Relevance Mass Accuracy} (fração da importância que cai dentro da máscara) e a \textbf{Relevance Rank Accuracy} (das $K$ posições mais importantes, quantas caem na máscara, sendo $K$ o tamanho da máscara).
+
+\begin{citacard}{\pagechip{Arras p. 5} §2 Trabalhos relacionados}
+\begin{origquote}“More generally such localization based evaluations could also be misleading, since they assume the model's classification decision is based solely on the object itself, and not on its context or background, which on real-world image datasets can not be ensured.”\end{origquote}
+\begin{tradquote}“De forma mais geral, avaliações baseadas em localização também podem enganar, pois supõem que a decisão do modelo se baseia apenas no próprio objeto, e não no contexto ou no fundo, o que não pode ser garantido em bases de imagens reais.”\end{tradquote}
+\explab{Explicação}
+É o motivo de os autores usarem dados sintéticos. No ECG não há resposta conhecida: a máscara viria do critério clínico, e um valor baixo pode significar que o SHAP erra \textbf{ou} que o modelo usa outra evidência. A métrica mede plausibilidade clínica, não fidelidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Arras p. 5} §2 Pointing Game}
+\begin{origquote}“As noticed in previous work a naive baseline pointing to the center of the image already performs well on the latter type of evaluation [39].”\end{origquote}
+\begin{tradquote}“Como observado em trabalhos anteriores, uma referência ingênua que aponta para o centro da imagem já vai bem nesse tipo de avaliação [39].”\end{tradquote}
+\explab{Explicação}
+Qualquer métrica de localização precisa de um nível de acaso. Com 36 regiões e uma máscara de $K$ regiões, o acaso da Rank Accuracy é $K/36$.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Arras p. 14} §3.5 Definições}
+\begin{origquote}“The relevance mass accuracy is computed as the ratio of the sum of the relevance values lying within the ground truth mask over the sum of all relevance values over the entire image. [...] Let K be the size of the ground truth mask. Get the K highest relevance values. Then count how many of these values lie within the ground truth pixel locations, and divide by the size of the ground truth.”\end{origquote}
+\begin{tradquote}“A relevance mass accuracy é a razão entre a soma das relevâncias dentro da máscara e a soma de todas as relevâncias da imagem. [...] Seja $K$ o tamanho da máscara. Tomam-se os $K$ maiores valores de relevância, conta-se quantos estão dentro da máscara e divide-se pelo tamanho da máscara.”\end{tradquote}
+\explab{Explicação}
+As duas contas são diretas com as 36 regiões. O artigo trabalha com relevâncias positivas (após um passo de agregação dos canais); no TCC, a soma seria feita só sobre as importâncias positivas.
+\end{citacard}
+
+\textbf{O que importa para o TCC.} A pergunta é nova e responde à limitação admitida no relatório de 21/10 (as métricas avaliam se o SHAP descreve o modelo, e não se o modelo usa o critério clínico correto). O custo está em definir as máscaras.
+
+\section{Rong et al. (2022): ROAD}
+\textbf{Referência.} RONG, Y.; LEEMANN, T.; BORISOV, V.; KASNECI, G.; KASNECI, E. \textit{A Consistent and Efficient Evaluation Strategy for Attribution Methods}. ICML, 2022 (26 páginas).
+
+\textbf{Ideia.} Nas métricas que retiram as regiões mais importantes, o \textbf{formato} da parte retirada pode revelar a classe, independentemente dos valores retirados. Para reduzir esse vazamento, os autores preenchem a parte retirada com uma interpolação dos vizinhos mais um pouco de ruído (\textit{Noisy Linear Imputation}) e acompanham a acurácia conforme a fração retirada aumenta, retirando primeiro as mais importantes (MoRF) ou as menos importantes (LeRF).
+
+\begin{citacard}{\pagechip{Rong p. 1} Resumo}
+\begin{origquote}“Our findings reveal that the results are strongly affected by information leakage through the shape of the removed pixels as opposed to their actual values.”\end{origquote}
+\begin{tradquote}“Nossos resultados mostram que as avaliações são fortemente afetadas pelo vazamento de informação pelo formato dos pixels retirados, e não pelos seus valores.”\end{tradquote}
+\explab{Explicação}
+No ECG, o vazamento seria real: retirar o QRS de todos os batimentos deixa buracos cujo espaçamento revela o ritmo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Rong p. 3} §3.1 Ordens de retirada}
+\begin{origquote}“[...] two removal orders: MoRF (Most Relevant First) or LeRF (Least Relevant First), where the subsequent removal starts with the most important pixels for the former and the least important ones for the latter.”\end{origquote}
+\begin{tradquote}“[...] duas ordens de retirada: MoRF (mais relevantes primeiro) e LeRF (menos relevantes primeiro); a retirada começa pelos pixels mais importantes na primeira e pelos menos importantes na segunda.”\end{tradquote}
+\end{citacard}
+
+\begin{citacard}{\pagechip{Rong p. 7} §5.2 Noisy Linear Imputation}
+\begin{origquote}“To this end, we suppose that each pixel can be approximated by the weighted mean of its neighbors [...] as image pixels are highly correlated.”\end{origquote}
+\begin{tradquote}“Para isso, supomos que cada pixel pode ser aproximado pela média ponderada dos seus vizinhos [...], já que os pixels de uma imagem são altamente correlacionados.”\end{tradquote}
+\explab{Explicação}
+Em imagens, os vizinhos estão nas duas direções. No ECG, só faz sentido interpolar no tempo, dentro de cada derivação; derivações adjacentes no arranjo não são vizinhas.
+\end{citacard}
+
+\textbf{O que importa para o TCC.} A ideia é boa, mas a pergunta continua sendo de fidelidade, dimensão já coberta.
+
+\partbar{Parte III · Avaliação para o TCC}
+
+\section{Random Logit no ECG}
+\textbf{O que mediria.} Para cada mapa (ECG, classe explicada $c$), o mesmo ECG é explicado para outra classe $c'$, e mede-se a distância entre os dois mapas. Distância próxima do piso significa que o mapa de $c$ é quase o de $c'$ (explicação pouco específica); distância bem acima do piso, que a explicação é específica da classe.
+
+\textbf{Versão proposta.}
+\begin{enumerate}
+\item \textbf{Mesma semente} do GradientSHAP nos dois mapas, como na sensibilidade, para que a diferença venha da classe e não do sorteio. Usando a mesma fórmula de semente, o mapa de referência é exatamente o da sensibilidade, e o piso de cada mapa já está calculado em \texttt{results/modeloB\_sens}.
+\item \textbf{Distância} $\ell_2$ entre os mapas normalizados, nas 36 regiões, como nas demais métricas.
+\item \textbf{Escolha de $c'$:} classes \textbf{ausentes} nos rótulos do ECG. Classes presentes (por exemplo, AF e STD no mesmo ECG) podem ter explicações legitimamente parecidas e seriam analisadas à parte.
+\item \textbf{Resultado por classe:} distância média às outras classes e razão em relação ao piso. Como diagnóstico, uma matriz $9 \times 9$ com a distância média entre os mapas de cada par de classes (por exemplo, BRD e BRE, ambas definidas pelo QRS, podem ficar próximas).
+\end{enumerate}
+
+\textbf{O Quantus serve?} Não. A implementação (\texttt{quantus.RandomLogit}) compara o mapa salvo com um mapa novo, gerado com outros sorteios, o mesmo problema encontrado na sensibilidade; usa SSIM, medida de imagens, sobre os 180\,000 pontos com o preenchimento; e sorteia $c'$ entre todas as outras classes, sem distinguir as presentes no ECG.
+
+\textbf{Complexidade da versão própria: baixa.} Cerca de 100 linhas, reaproveitando as funções de \texttt{src/sensitivity.py}.
+
+\textbf{Custo.} Cada mapa GradientSHAP leva cerca de 0,7 s na T4. Com uma classe sorteada por mapa: cerca de 1\,250 mapas, uns 15 min. Com as 8 outras classes: cerca de 5\,600 mapas, cerca de 1 h.
+
+\section{eMPRT no ECG}
+\textbf{O que mediria.} Se o mapa depende do que o modelo aprendeu ou só da forma do ECG. É um teste de sanidade do método, que sustenta a leitura de todas as outras métricas.
+
+\textbf{Versão proposta.}
+\begin{enumerate}
+\item \textbf{Randomização completa} da ResNet34 (pesos sorteados de novo em todas as camadas), evitando o problema dos atalhos; repetida com 3 sementes diferentes.
+\item O mesmo ECG e a mesma classe são explicados no modelo embaralhado, com a \textbf{mesma semente} e as mesmas baselines do GradientSHAP.
+\item \textbf{Entropia por regiões:} $\xi$ calculada sobre a fração de $|$importância$|$ de cada uma das 36 regiões, a mesma da análise da complexidade. Resultado: $q = (\xi(\hat{e}) - \xi(e))/\xi(e)$, por classe.
+\item \textbf{Complementos baratos:} a distância por regiões entre $e$ e $\hat{e}$, comparada com o piso (o MPRT original, agora sem o viés do ruído); e a fração de mapas do modelo embaralhado cujas 2 regiões principais são QRS, que mede quanto a amplitude do sinal domina o mapa.
+\end{enumerate}
+
+\begin{infobox}[warn]{Cuidado na leitura}
+Na análise da complexidade, o número efetivo de regiões foi 24,2 de 36. A entropia do modelo treinado já está, portanto, perto do máximo ($\ln 24{,}2 \approx 3{,}19$ contra $\ln 36 \approx 3{,}58$), e o aumento possível é de no máximo cerca de 12\%. Por isso, a distância comparada com o piso deve ser lida junto com a entropia.
+\end{infobox}
+
+\textbf{O Quantus serve?} Não. O \texttt{quantus.EfficientMPRT} calcula a entropia de um histograma dos valores ponto a ponto, incluindo o preenchimento; é o mesmo defeito encontrado na análise da complexidade, em que a versão ponto a ponto media a duração do ECG.
+
+\textbf{Complexidade da versão própria: baixa.} Reinicializar os pesos e reaproveitar a entropia por regiões e as distâncias já implementadas.
+
+\textbf{Custo.} Um mapa extra por exemplo e por semente: cerca de 15 min por semente, uns 45 min com 3.
+
+\textbf{Limite.} O resultado é mais do método do que da classe; a comparação com o F1 tende a ser fraca. O valor está em validar as demais métricas.
+
+\section{Localização com máscaras clínicas}
+\textbf{O que mediria.} Se a importância positiva cai nas regiões que o critério clínico de cada classe usa (Relevance Mass Accuracy) e se as regiões mais importantes estão entre elas (Relevance Rank Accuracy, com acaso $K/36$).
+
+\textbf{Proposta inicial de máscaras} (a validar com o orientador e a literatura clínica):
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Classe} & \textbf{Regiões esperadas} & \textbf{Aplicável?} \\
+\midrule
+BRD & QRS em V1 e V2 (padrão rSR'); QRS em I, V5 e V6 (onda S alargada) & Sim \\
+BRE & QRS em I, aVL, V5 e V6 (R alargada); QRS em V1 & Sim \\
+IAVB & Pré-QRS (contém a onda P e o intervalo PR), todas as derivações & Sim (máscara ampla) \\
+STD, STE & ST-T, todas as derivações (o território afetado varia) & Sim (máscara ampla) \\
+AF & Pré-QRS (ausência da onda P); a irregularidade do ritmo não tem região & Parcial \\
+CVP, CAP & QRS ou pré-QRS do batimento prematuro; a região soma todos os batimentos & Não \\
+SNR & Não há região específica & Não \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Limites.} Só 5 das 9 classes têm máscara clara. Nas máscaras amplas (12 de 36 regiões), o acaso já é 1/3, o que deixa pouca margem. E a leitura depende da fidelidade: como a Faithfulness Estimate indica que o SHAP descreve razoavelmente o modelo, um valor baixo apontaria mais para o modelo do que para a explicação.
+
+\textbf{O Quantus serve?} Em parte. As contas são triviais, mas ele exige a máscara ponto a ponto.
+
+\textbf{Complexidade da versão própria: baixa no código, alta na definição.} Usa os mapas já existentes e roda na CPU, sem GPU. O trabalho está em definir e justificar as máscaras.
+
+\section{ROAD no ECG}
+\textbf{O que mediria.} A queda da predição ao retirar as regiões em ordem de importância (MoRF e LeRF), com a região retirada preenchida por interpolação no tempo em cada derivação, mais ruído.
+
+\textbf{O Quantus serve?} Não. A interpolação dele usa os 8 vizinhos de uma imagem; no ECG, trataria derivações adjacentes como vizinhas. Também retira porcentagens de pontos, e não regiões, incluindo o preenchimento.
+
+\textbf{Complexidade da versão própria: média} (interpolação, curvas e área sob a curva). O custo de GPU é baixo, porque são só passagens pelo modelo.
+
+\textbf{Por que fica de fora.} Mede de novo a fidelidade. Poderia servir para verificar se as duas Faithfulness dependem do preenchimento com zero, mas não traz uma dimensão nova.
+
+\section{Comparação e recomendação}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXcccl}
+\toprule
+\textbf{Métrica} & \textbf{Pergunta} & \textbf{Nova?} & \textbf{Por classe?} & \textbf{Quantus serve?} & \textbf{Custo} \\
+\midrule
+Random Logit & A explicação é específica da classe? & Sim & Sim & Não & Baixo; 15--60 min \\
+eMPRT & A explicação depende do modelo? & Sim & Fraco & Não & Baixo; 15--45 min \\
+Localização & A explicação é clinicamente plausível? & Sim & 5 de 9 & Parcial & Sem GPU; máscaras \\
+ROAD & A remoção ordenada derruba a predição? & Não & Sim & Não & Médio \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{enumerate}
+\item \textbf{Random Logit primeiro.} É a que mais conversa com a pergunta do TCC e reaproveita quase tudo da sensibilidade, inclusive o piso.
+\item \textbf{eMPRT em seguida.} É barato e protege a interpretação das outras métricas. Como a complexidade foi incluída, as duas compartilham a mesma entropia por regiões.
+\item \textbf{Localização: levar ao orientador.} A pergunta é boa, mas a definição das máscaras é uma decisão metodológica que ele deveria validar.
+\item \textbf{ROAD: deixar de fora}, ou citar como trabalho futuro.
+\end{enumerate}
+
+\begin{infobox}[ok]{Decisão tomada (22/10/2026)}
+\begin{enumerate}
+\item \textbf{Entram:} Random Logit, eMPRT e a complexidade de Bhatt et al.\ (entropia nas 36 regiões). A complexidade não exige leitura nova: já foi analisada (\url{fichamentos/bhatt-2020-faithfulness-correlation/analise-complexidade.pdf}) e fornece a entropia do eMPRT.
+\item \textbf{Fica de fora:} a localização com máscaras clínicas. O TCC não vai avaliar se a explicação é clinicamente compatível; a complexidade permite comparar se uma explicação é mais concentrada ou mais espalhada que outra, o que basta para a discussão.
+\item \textbf{Ordem de implementação:} complexidade (CPU, segundos), Random Logit e eMPRT.
+\end{enumerate}
+\end{infobox}
+
+\begin{infobox}[note]{Para levar ao orientador}
+\begin{enumerate}
+\item A troca do rumo: selecionar métricas por dimensão nova, em vez de seguir a lista do Quantus.
+\item As três métricas escolhidas, que ampliam o escopo para além de fidelidade e robustez.
+\item Pendência anterior que se cruza com esta: refazer ou não os mapas com mais amostras do GradientSHAP (todas as métricas que comparam mapas dependem do piso, e a complexidade também sofre parte desse efeito).
+\end{enumerate}
+\end{infobox}
+
+\end{document}
