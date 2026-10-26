@@ -51,6 +51,7 @@ import torch
 from src.config import CLASSES, SEED
 from src.consistency import _real_length
 from src.faithfulness_correlation import region_index
+from src.gshap import add_args, map_seed
 from src.sensitivity import DISTANCES, distances
 
 
@@ -82,30 +83,22 @@ def summarize_map(pairs: list[dict], floor: float) -> dict:
 # Pipeline
 # --------------------------------------------------------------------------- #
 def run(args: argparse.Namespace) -> None:
-    from captum.attr import GradientShap
-
     from src.data.dataset import ECGDataset
     from src.device import get_device
-    from src.explain import sample_baselines
+    from src.gshap import Explainer
     from src.model.resnet34_1d import load_checkpoint_model
 
     device = get_device()
     model, _ = load_checkpoint_model(Path(args.checkpoint), device)
     data_dir = Path(args.data_dir)
-    baselines = sample_baselines(ECGDataset(data_dir / "train.npz"), args.n_baselines,
-                                 device, args.seed)
-    gradient_shap = GradientShap(model)
+    train = ECGDataset(data_dir / "train.npz")
+    explain = Explainer(model, train.X, train.Y, device, reference=args.reference,
+                        seed=args.seed, n_baselines=args.n_baselines, per_class=args.per_class,
+                        n_samples=args.n_samples, chunks=args.chunks, stdevs=args.stdevs)
+    print(f"[info] {explain.describe()}")
     test = np.load(data_dir / "test.npz")
     X, Y = test["X"], test["Y"]
     lengths = test["lengths"] if "lengths" in test.files else None
-
-    def explain(x: np.ndarray, c: int, seed: int) -> np.ndarray:
-        torch.manual_seed(seed)
-        np.random.seed(seed)
-        xt = torch.from_numpy(x[None].astype(np.float32)).to(device).requires_grad_(True)
-        attr = gradient_shap.attribute(xt, baselines=baselines, target=c,
-                                       n_samples=args.n_samples, stdevs=args.stdevs)
-        return attr.detach().cpu().numpy()[0].astype(np.float64)
 
     @torch.no_grad()
     def logits(x: np.ndarray) -> np.ndarray:
@@ -156,7 +149,7 @@ def run(args: argparse.Namespace) -> None:
                 region_cache[ti] = region_index(x, length)
             regions = region_cache[ti]
             z = logits(x)
-            seed = args.seed * 100_003 + ti * 11 + c  # mesma referência de sensitivity.py
+            seed = map_seed(args.seed, ti, c)  # mesma semente de explain.py e sensitivity.py
             ref = explain(x, c, seed)
             floor = distances(ref, explain(x, c, seed + 1), regions)
             pairs = []
@@ -243,9 +236,7 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--attr-dir", type=str, default="results/attributions",
                    help="mapas salvos (só para saber quais ECG × classe avaliar)")
     p.add_argument("--results-dir", type=str, default="results")
-    p.add_argument("--n-baselines", type=int, default=32)
-    p.add_argument("--n-samples", type=int, default=50)
-    p.add_argument("--stdevs", type=float, default=0.09)
+    add_args(p)
     p.add_argument("--limit", type=int, default=0, help=">0: só os N primeiros mapas de cada classe")
     p.add_argument("--log-every", type=int, default=25)
     p.add_argument("--seed", type=int, default=SEED)

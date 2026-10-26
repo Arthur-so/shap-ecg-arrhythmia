@@ -47,10 +47,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from src.baseline_check import CHUNK_STEP, random_indices
 from src.config import CLASSES, SEED
 from src.consistency import LEADS, REGIONS, _real_length
 from src.faithfulness_correlation import region_index
+from src.gshap import CHUNK_STEP, balanced_indices, random_indices
 from src.sensitivity import region_vector, unit_distance
 
 PAIRS = [("atual_200", "atual", "atual200"),
@@ -59,15 +59,6 @@ PAIRS = [("atual_200", "atual", "atual200"),
          ("piso_balanceada200", "balanceada200", "balanceada200'")]
 SUMS = ["atual", "atual200", "balanceada200"]
 SAVED = ["atual200", "balanceada200"]
-
-
-def balanced_indices(Y: np.ndarray, per_class: int, seed: int) -> np.ndarray:
-    """``per_class`` ECGs de rótulo único de cada classe, sorteados com ``seed``."""
-    rng = np.random.default_rng(seed)
-    single = Y.sum(axis=1) == 1
-    idx = [rng.choice(np.flatnonzero(single & (Y[:, k] == 1)), size=per_class, replace=False)
-           for k in range(Y.shape[1])]
-    return np.concatenate(idx)
 
 
 def run(args: argparse.Namespace) -> None:

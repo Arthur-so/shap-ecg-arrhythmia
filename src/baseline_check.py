@@ -63,6 +63,7 @@ import torch
 from src.config import CLASSES, SEED
 from src.consistency import LEADS, REGIONS, _real_length
 from src.faithfulness_correlation import region_index
+from src.gshap import CHUNK_STEP, normal_indices, random_indices
 from src.sensitivity import region_vector, unit_distance
 
 # (nome, mapa 1, mapa 2)
@@ -75,19 +76,6 @@ PAIRS = [("piso", "atual", "atual'"),
          ("normal_50_200", "normal", "normal200")]
 SUMS = ["atual", "normal", "normal200", "aleatoria"]
 TOPS = ["atual", "normal", "normal200"]
-CHUNK_STEP = 7_919  # distância entre as sementes dos blocos de 50 sorteios
-
-
-def normal_indices(Y: np.ndarray, n: int, seed: int) -> np.ndarray:
-    """``n`` ECGs com rótulo único SNR (ritmo sinusal normal), sorteados com ``seed``."""
-    snr = CLASSES.index("SNR")
-    pool = np.flatnonzero((Y[:, snr] == 1) & (Y.sum(axis=1) == 1))
-    return np.random.default_rng(seed).choice(pool, size=min(n, pool.size), replace=False)
-
-
-def random_indices(n_total: int, n: int, seed: int) -> np.ndarray:
-    """Mesmo sorteio de ``explain.sample_baselines`` (sem reposição, ``seed``)."""
-    return np.random.default_rng(seed).choice(n_total, size=min(n, n_total), replace=False)
 
 
 def run(args: argparse.Namespace) -> None:

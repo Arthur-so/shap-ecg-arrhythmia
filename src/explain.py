@@ -1,8 +1,12 @@
 """Geração de explicações GradientSHAP via Captum (seção 4.3 da proposta).
 
 O GradientSHAP é aplicado apenas às amostras corretamente classificadas do
-conjunto de teste, em relação à classe predita, usando como distribuição de
-referência (baseline) amostras extraídas aleatoriamente do conjunto de treino.
+conjunto de teste, em relação à classe predita. A referência (baselines), as
+sementes e o número de sorteios vêm de ``src/gshap.py``: por padrão, desde
+26/10/2026, 4 ECGs de rótulo único de cada classe do treino e 200 sorteios por
+mapa (4 blocos de 50), com uma semente própria por mapa. A configuração antiga
+(32 ECGs sorteados do treino, 50 sorteios) corresponde a
+``--reference treino --chunks 1``.
 
 Para cada amostra e cada classe positiva corretamente predita (pred=1 e
 rótulo verdadeiro=1) é gerado um mapa de atribuição de dimensão (12, 15000).
@@ -18,8 +22,7 @@ Uso:
     python -m src.explain \
         --data-dir data/processed \
         --checkpoint checkpoints/resnet34_1d_best.pt \
-        --out-dir results/attributions \
-        --n-baselines 32
+        --out-dir results/attributions
 """
 from __future__ import annotations
 
@@ -33,6 +36,7 @@ import torch
 from src.config import CLASSES, SEED
 from src.data.dataset import ECGDataset
 from src.device import get_device
+from src.gshap import Explainer, add_args, map_seed
 from src.model.resnet34_1d import load_checkpoint_model
 
 
@@ -60,8 +64,6 @@ def sample_baselines(train_ds: ECGDataset, n: int, device: torch.device,
 
 
 def generate_explanations(args: argparse.Namespace) -> None:
-    from captum.attr import GradientShap
-
     out_dir = Path(args.out_dir)
     if getattr(args, "skip_if_exists", False) and out_dir.exists() and any(out_dir.glob("*.npz")):
         print(f"[skip] atribuições já existem em {out_dir} — pulando GradientSHAP")
@@ -78,10 +80,11 @@ def generate_explanations(args: argparse.Namespace) -> None:
     thresholds = resolve_thresholds(Path(args.checkpoint), device, args.threshold)
     print("[info] limiares por classe: "
           + " ".join(f"{c}={t:.2f}" for c, t in zip(CLASSES, thresholds)))
-    baselines = sample_baselines(train_ds, args.n_baselines, device, args.seed)
-    print(f"[info] {baselines.shape[0]} baselines amostrados do treino")
-
-    gradient_shap = GradientShap(model)
+    explainer = Explainer(model, train_ds.X, train_ds.Y, device, reference=args.reference,
+                          seed=args.seed, n_baselines=args.n_baselines,
+                          per_class=args.per_class, n_samples=args.n_samples,
+                          chunks=args.chunks, stdevs=args.stdevs)
+    print(f"[info] {explainer.describe()}")
 
     # acumuladores por classe
     acc_attr: dict[str, list[np.ndarray]] = {c: [] for c in CLASSES}
@@ -104,12 +107,8 @@ def generate_explanations(args: argparse.Namespace) -> None:
         n_correct += 1
 
         for c in correct_classes:
-            x.requires_grad_(True)
-            attr = gradient_shap.attribute(
-                x, baselines=baselines, target=int(c),
-                n_samples=args.n_samples, stdevs=args.stdevs,
-            )
-            attr_np = attr.detach().cpu().numpy()[0].astype(np.float32)
+            attr_np = explainer(np.asarray(test_ds.X[i], dtype=np.float32), int(c),
+                                map_seed(args.seed, i, int(c))).astype(np.float32)
             cls = CLASSES[c]
             acc_attr[cls].append(attr_np)
             acc_idx[cls].append(i)
@@ -140,12 +139,7 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--data-dir", type=str, default="data/processed")
     p.add_argument("--checkpoint", type=str, default="checkpoints/resnet34_1d_best.pt")
     p.add_argument("--out-dir", type=str, default="results/attributions")
-    p.add_argument("--n-baselines", type=int, default=32,
-                   help="nº de amostras de treino usadas como baseline")
-    p.add_argument("--n-samples", type=int, default=50,
-                   help="nº de amostras de ruído do GradientSHAP")
-    p.add_argument("--stdevs", type=float, default=0.09,
-                   help="desvio do ruído gaussiano do GradientSHAP")
+    add_args(p)
     p.add_argument("--threshold", type=float, default=None,
                    help="limiar único para todas as classes; por padrão usa os "
                         "limiares por classe salvos no checkpoint (ou 0.5)")
