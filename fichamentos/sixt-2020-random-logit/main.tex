@@ -88,7 +88,7 @@
     {\large SIXT, L.; GRANZ, M.; LANDGRAF, T. \textit{When Explanations Lie: Why Many Modified BP Attributions Fail}. ICML, 2020 (arXiv:1912.09818v7)} \\[0.3em]
     \textbf{Métrica no Quantus:} \texttt{quantus.RandomLogit} \\[0.2em]
     \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
-    \textbf{Atualizado em:} 23/10/2026 \\[0.2em]
+    \textbf{Atualizado em:} 26/10/2026 \\[0.2em]
     \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
 \end{center}
 \vspace{-0.5em}
@@ -110,28 +110,55 @@ Cada mapa SHAP do TCC explica a saída de \textbf{uma} classe para \textbf{um} E
 \begin{infobox}[note]{Definição em uma frase}
 Explica-se o mesmo ECG para a classe de interesse e para outra classe, e compara-se os dois mapas: se forem quase iguais, a explicação não é específica da classe.
 \end{infobox}
-O nome vem do artigo: compara-se a explicação do logit verdadeiro com a de um \textbf{logit sorteado} (\textit{random logit}) entre as outras classes. Exemplo com 4 regiões, importâncias já normalizadas:
+O nome vem do artigo: compara-se a explicação do logit verdadeiro com a de um \textbf{logit sorteado} (\textit{random logit}) entre as outras classes.
+
+\textbf{Exemplo.} Um ECG com bloqueio de ramo direito (BRD) é explicado duas vezes: para BRD, a classe presente, e para AF, uma classe ausente. A tabela mostra o que fariam dois métodos de explicação \textbf{imaginários}, inventados só para ilustrar: o método 1, que \textbf{falharia} no teste, e o método 2, que \textbf{passaria}. Os números também são inventados (4 regiões, importâncias já normalizadas):
 \begin{center}\small
 \begin{tabular}{lrrrrl}
 \toprule
 & \textbf{V1 QRS} & \textbf{II pré-QRS} & \textbf{V5 QRS} & \textbf{aVR ST-T} & \textbf{Leitura} \\
 \midrule
 BRD (classe explicada) & 0,90 & 0,10 & 0,30 & 0,30 & --- \\
-AF, método A & 0,88 & 0,12 & 0,32 & 0,29 & quase igual \textit{(insensível)} \\
-AF, método B & 0,10 & 0,85 & 0,20 & $-0{,}48$ & diferente \textit{(específico)} \\
+AF, método 1 & 0,88 & 0,12 & 0,32 & 0,29 & quase igual \textit{(insensível)} \\
+AF, método 2 & 0,10 & 0,85 & 0,20 & $-0{,}48$ & diferente \textit{(específico)} \\
 \bottomrule
 \end{tabular}
 \end{center}
-No método A, o mapa aponta V1 QRS seja qual for a classe; ele não diz nada sobre a decisão por BRD. No método B, o mapa de AF destaca outra região (a pré-QRS, onde fica a onda P, ausente na fibrilação atrial), e o de BRD destaca o QRS de V1, que é onde o bloqueio de ramo direito aparece.
+\begin{itemize}
+\item \textbf{Método 1 (insensível à classe):} o mapa de AF sai quase igual ao de BRD; os dois apontam V1 QRS. O mapa mostra onde o ECG tem um sinal marcante, mas não por que o modelo decidiu cada classe: perguntar sobre BRD ou sobre AF dá a mesma resposta. É o comportamento que Sixt et al.\ encontraram em métodos como o LRP (seção~\ref{sec:porque}).
+\item \textbf{Método 2 (específico da classe):} o mapa de AF destaca outra região, a pré-QRS, onde fica a onda P, que falta na fibrilação atrial; o de BRD destaca o QRS de V1, onde o bloqueio de ramo direito aparece. Cada pergunta recebe a sua resposta. É o que se espera de uma boa explicação.
+\end{itemize}
+O Random Logit mede de qual dos dois lados está o método usado no TCC, o GradientSHAP.
 
-\section{Por que uma explicação pode ser insensível à classe}
-O artigo identifica uma causa \textbf{teórica} em uma família de métodos, os de retropropagação modificada (LRP, Deep Taylor, Guided BP e outros). Neles, a relevância atravessa a rede por uma cadeia de matrizes não negativas, e essa cadeia converge para uma matriz de \textbf{posto 1}: qualquer vetor multiplicado por ela sai na mesma direção. Na prática, a última camada, que é a que distingue as classes, deixa de influenciar o mapa.
+\section{Por que medir, se a teoria diz que o GradientSHAP não falha}\label{sec:porque}
+O artigo explica \textbf{por que} alguns métodos dão mapas insensíveis à classe e diz que os métodos baseados no gradiente, como o GradientSHAP, estão livres desse problema. Ainda assim, há três motivos para fazer o teste no TCC.
 
-O GradientSHAP, usado no TCC, \textbf{não} pertence a essa família. Ele é baseado no gradiente, e o artigo afirma que métodos baseados no gradiente não sofrem essa convergência. Há, porém, um segundo motivo, mais simples, pelo qual o mapa pode depender pouco da classe. Aproximadamente, o GradientSHAP calcula
+\textbf{(1) A garantia do artigo cobre uma causa, e há outra.} A causa estudada no artigo está nos métodos de \textbf{retropropagação modificada} (LRP, Deep Taylor, Guided BP e outros). Eles levam a importância da saída até a entrada camada por camada, com regras próprias, e essa cadeia de regras acaba sempre na mesma direção, qualquer que seja a classe de partida: tecnicamente, converge para uma matriz de \textbf{posto 1}. Na prática, a última camada, que é a que distingue as classes, deixa de influenciar o mapa. O gradiente não tem essa convergência, e é isso que o artigo garante.
+
+Há, porém, uma segunda causa possível, que a teoria do artigo não cobre. Aproximadamente, o GradientSHAP calcula
 \[
 \text{mapa}_c(x) \approx \mathbb{E}\big[(x - x') \odot \nabla_x f_c(\tilde{x})\big],
 \]
-em que $x'$ é uma baseline sorteada do treino e $\tilde{x}$ um ponto entre $x'$ e $x$. O fator $(x - x')$ é \textbf{o mesmo para todas as classes}: só o gradiente muda com $c$. Se a diferença entre o ECG e as baselines dominar o produto (por exemplo, nos complexos QRS, de maior amplitude), os mapas de classes diferentes ficam parecidos. É o mesmo efeito apontado por Adebayo et al.\ (2018, §5.2) para métodos do tipo gradiente × entrada. O Random Logit mede justamente se isso acontece.
+em que $x$ é o ECG, $x'$ uma baseline sorteada do treino, $\tilde{x}$ um ponto entre as duas e $\nabla_x f_c$ o gradiente da saída da classe $c$. O mapa é um produto de dois fatores, e só um deles depende da classe:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Fator} & \textbf{Depende da classe?} & \textbf{Onde é grande} \\
+\midrule
+$x - x'$ (ECG $-$ baseline) & Não: é o mesmo para as 9 classes & Onde o ECG difere da referência, como no QRS, de maior amplitude \\
+$\nabla_x f_c$ (gradiente) & Sim & Onde a saída da classe $c$ é sensível ao sinal \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Se o primeiro fator dominar o produto, os mapas de todas as classes destacam os mesmos trechos, e o GradientSHAP se comportaria como o método 1 da seção anterior, por outro motivo. Adebayo et al.\ (2018, §5.2) apontam esse efeito em métodos do tipo gradiente × entrada. O próprio Sixt et al.\ ressalvam que os métodos baseados no gradiente “ainda podem sofrer de outras limitações” (p.~8).
+
+\textbf{(2) O artigo não testou o caso do ECG.} Os resultados do artigo são em imagens com um único objeto por imagem, e os autores reconhecem que esse tipo de base esconde a insensibilidade à classe (p.~6). O ECG multirrótulo, em que cada classe tem a sua evidência num trecho diferente do batimento, é justamente o caso em que ela apareceria (ver, na Parte II, a citação sobre a doença de Alzheimer, p.~6).
+
+\textbf{(3) O teste não é só “passa ou falha”.} Mesmo que o GradientSHAP passe, a métrica mede \textbf{quanto} o mapa de cada classe se diferencia dos das outras. Isso dá um valor por classe, que pode ser comparado com o F1, como as demais métricas do TCC.
+
+\begin{infobox}[note]{Em resumo}
+A teoria do artigo indica que o GradientSHAP não deveria falhar, mas não garante isso no ECG: há outra causa possível (o fator ECG $-$ baseline, comum a todas as classes), o caso multirrótulo não foi testado no artigo, e o grau de especificidade de cada classe é, por si, um resultado.
+\end{infobox}
 
 \section{Passo a passo}
 Para cada mapa (ECG $x$, classe explicada $c$):
@@ -150,7 +177,7 @@ Distância alta indica explicação específica da classe; distância próxima d
 \item \textbf{Ruído do método.} O GradientSHAP sorteia baselines e ruído; dois mapas da \textbf{mesma} classe, com sementes diferentes, já diferem (o piso medido na sensibilidade). Uma distância entre classes só indica especificidade se for maior que essa variação.
 \end{itemize}
 
-\section{Traduzindo para o ECG}
+\section{Traduzindo para o ECG}\label{sec:ecg}
 \begin{center}\small
 \begin{tabularx}{\linewidth}{lXX}
 \toprule
@@ -182,7 +209,7 @@ O artigo trata principalmente da teoria da convergência (§2) e de uma métrica
 \begin{origquote}“The paper focuses on modified BP methods, as other attribution methods do not suffer from the converges problem. They either rely on the gradient directly [...], which does not converge or consider the model as a black-box (Ribeiro et al., 2016; Lundberg \& Lee, 2017).”\end{origquote}
 \begin{tradquote}“O artigo se concentra nos métodos de retropropagação modificada, pois os outros métodos de atribuição não sofrem do problema da convergência. Eles ou se baseiam diretamente no gradiente [...], que não converge, ou tratam o modelo como caixa-preta (Ribeiro et al., 2016; Lundberg \& Lee, 2017).”\end{tradquote}
 \explab{Explicação}
-O GradientSHAP (Lundberg \& Lee, 2017) combina as duas coisas: usa o gradiente e vem da família SHAP. Pela teoria do artigo, ele não deveria ser insensível à classe. O teste, no TCC, verifica isso na prática e procura o outro motivo possível (o fator $x - x'$, seção~3).
+O GradientSHAP (Lundberg \& Lee, 2017) combina as duas coisas: usa o gradiente e vem da família SHAP. Pela teoria do artigo, ele não deveria ser insensível à classe. O teste, no TCC, verifica isso na prática e procura o outro motivo possível (o fator $x - x'$, seção~\ref{sec:porque}).
 \end{citacard}
 
 \begin{citacard}{\pagechip{p. 2} §1 Introdução}
@@ -231,14 +258,28 @@ O ECG multirrótulo é exatamente o caso que o artigo diz faltar: um mesmo exame
 \begin{origquote}“[...] it might not be too problematic for some applications if the saliency maps are independent of the later network's layers. For example, to explain Alzheimer's disease [...], local low-level features are sufficient as they are predictive for the disease and the data lacks conflicting evidences (i.e. the whole brain is affected).”\end{origquote}
 \begin{tradquote}“[...] pode não ser tão problemático em algumas aplicações que os mapas independam das camadas finais da rede. Por exemplo, para explicar a doença de Alzheimer [...], características locais de baixo nível bastam, pois são preditivas da doença e os dados não têm evidências conflitantes (isto é, o cérebro inteiro é afetado).”\end{tradquote}
 \explab{Explicação}
-A insensibilidade à classe só é um problema quando há evidências diferentes para classes diferentes. No ECG há: o ritmo (AF, SNR) depende da onda P e dos intervalos; os bloqueios de ramo (BRD, BRE), da forma do QRS; STD e STE, do segmento ST. Por isso o teste faz sentido no TCC.
+Os autores dizem que um mapa insensível à classe nem sempre atrapalha. No Alzheimer, a doença afeta o cérebro inteiro: qualquer região que o mapa destaque é evidência da doença, então um mapa que destaca sempre as mesmas regiões, seja qual for a pergunta, ainda é útil. Não há “evidências conflitantes”, isto é, regiões que indiquem uma resposta e regiões que indiquem outra.
+
+O ECG é o caso oposto: cada classe tem a sua evidência num trecho diferente do batimento.
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Classes} & \textbf{Onde está a evidência} \\
+\midrule
+AF, SNR (ritmo) & Onda P e intervalos entre batimentos (região pré-QRS) \\
+BRD, BRE (bloqueios de ramo) & Forma do QRS \\
+STD, STE (desnivelamento de ST) & Segmento ST (região ST-T) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Se o mapa fosse o mesmo para todas as classes, destacaria o mesmo trecho para todas e estaria errado para a maioria delas: um mapa que aponta o QRS serve para BRD, mas não para AF nem para STD. Por isso, no ECG, a insensibilidade à classe seria um problema real, e o teste faz sentido no TCC.
 \end{citacard}
 
 \begin{citacard}{\pagechip{p. 8} §5 Métodos que não convergem}
 \begin{origquote}“All here mentioned attribution methods do not converge, as they either rely on the gradient or treat the model as black-box. Only when the BP algorithm is modified, the convergence problem can occur. The here mentioned algorithms might still suffer from other limitations.”\end{origquote}
 \begin{tradquote}“Nenhum dos métodos aqui mencionados converge, pois eles ou se baseiam no gradiente ou tratam o modelo como caixa-preta. O problema da convergência só pode ocorrer quando o algoritmo de retropropagação é modificado. Os algoritmos aqui mencionados ainda podem sofrer de outras limitações.”\end{tradquote}
 \explab{Explicação}
-A lista inclui SHAP. A última frase é a que importa para o TCC: o GradientSHAP escapa da convergência, mas “pode sofrer de outras limitações”. A dependência do fator $x - x'$ (seção~3) é uma delas, e o Random Logit é a forma de medi-la.
+A lista inclui SHAP. A última frase é a que importa para o TCC: o GradientSHAP escapa da convergência, mas “pode sofrer de outras limitações”. A dependência do fator $x - x'$ (seção~\ref{sec:porque}) é uma delas, e o Random Logit é a forma de medi-la.
 \end{citacard}
 
 \partbar{Parte III · Aplicação ao TCC}
