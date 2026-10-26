@@ -82,19 +82,20 @@
 
 \begin{center}
     {\LARGE \textbf{Verificação da referência do GradientSHAP}} \\[0.35em]
-    {\large ECGs normais como baselines e 200 sorteios} \\[0.3em]
-    \textbf{Código:} \texttt{src/baseline\_check.py} \quad \textbf{Resultados:} \texttt{results/modeloB\_basecheck/} \\[0.2em]
+    {\large ECGs normais, referência balanceada e 200 sorteios} \\[0.3em]
+    \textbf{Código:} \texttt{src/baseline\_check.py}, \texttt{src/baseline\_balanced.py} \\[0.2em]
+    \textbf{Resultados:} \texttt{results/modeloB\_basecheck/}, \texttt{results/modeloB\_basebal/} \\[0.2em]
     \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
-    \textbf{Atualizado em:} 25/10/2026 \\[0.2em]
+    \textbf{Atualizado em:} 26/10/2026 (primeira versão: 25/10/2026) \\[0.2em]
     \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
 \end{center}
 \vspace{-0.5em}
 \hrule
 \vspace{0.8em}
 
-\textbf{Por que este documento.} Ao estudar a complexidade e o Random Logit, surgiram duas dúvidas sobre a forma como os mapas SHAP do TCC são gerados: (1) os ECGs de referência usados pelo GradientSHAP (as \textbf{baselines}) são uma mistura de arritmias sorteada do treino, quando clinicamente a referência natural seria o ECG \textbf{normal}; (2) cada mapa é a média de só \textbf{50 sorteios}, e o erro dessa média (o \textbf{piso}) é grande. Este documento descreve um teste que mede o peso das duas escolhas e termina com as opções de decisão.
+\textbf{Por que este documento.} Ao estudar a complexidade e o Random Logit, surgiram duas dúvidas sobre a forma como os mapas SHAP do TCC são gerados: (1) os ECGs de referência usados pelo GradientSHAP (as \textbf{baselines}) são uma mistura de arritmias sorteada do treino, quando clinicamente a referência natural seria o ECG \textbf{normal}; (2) cada mapa é a média de só \textbf{50 sorteios}, e o erro dessa média (o \textbf{piso}) é grande. Este documento descreve dois testes que medem o peso das duas escolhas e termina com as opções de decisão. O primeiro comparou a referência atual com uma referência de ECGs normais; o segundo, feito depois, testou uma referência \textbf{balanceada por classe} e a referência atual com 200 sorteios, para separar o efeito da referência do efeito dos sorteios.
 
-\textbf{Como ler.} A \textbf{Parte I} explica o que é a referência e por que ela importa; a \textbf{Parte II} descreve o teste; a \textbf{Parte III} traz os resultados; a \textbf{Parte IV}, as opções para a decisão. Todos os números são médias sobre os 622 mapas do modelo B (predições corretas do teste) e usam as 36 regiões do batimento (12 derivações × pré-QRS, QRS e ST-T), como as demais métricas do TCC.
+\textbf{Como ler.} A \textbf{Parte I} explica o que é a referência e por que ela importa; a \textbf{Parte II} descreve o primeiro teste; a \textbf{Parte III} traz os seus resultados; a \textbf{Parte IV} traz o segundo teste e compara as quatro opções; a \textbf{Parte V}, as opções para a decisão. Todos os números são médias sobre os 622 mapas do modelo B (predições corretas do teste) e usam as 36 regiões do batimento (12 derivações × pré-QRS, QRS e ST-T), como as demais métricas do TCC.
 
 \begin{infobox}[note]{Resumo}
 \begin{itemize}
@@ -102,7 +103,9 @@
 \item \textbf{A referência normal muda os mapas, mas moderadamente.} Fora SNR, o mapa com referência normal e 200 sorteios tem cosseno médio de 0,92 com o mapa atual. Trocar só o sorteio das 32 baselines por outro aleatório já muda o mapa quase tanto.
 \item \textbf{Com a referência normal, a classe SNR perde o sentido:} explicar um ECG normal em relação a ECGs normais deixa quase nada a explicar (soma média do mapa $-1{,}5$, contra 16,2 hoje).
 \item \textbf{Prévia com os mapas novos:} a Consistency sobe na maioria das classes (global 0,42 $\to$ 0,54); a complexidade praticamente não muda.
-\item \textbf{Nada foi trocado.} Os resultados oficiais continuam com os mapas atuais. A decisão de adotar a nova referência é do aluno com o orientador (Parte IV).
+\item \textbf{Só aumentar os sorteios quase não muda as métricas} (referência atual com 200 sorteios: Consistency 0,42 $\to$ 0,44; complexidade igual). A subida da Consistency vem principalmente da troca de referência, e não da redução do ruído.
+\item \textbf{A referência balanceada} (4 ECGs de cada classe) fica entre a atual e a normal: mantém SNR interpretável, corrige o peso excessivo de BRD e muda os mapas além do ruído, mas pouco (Consistency 0,46).
+\item \textbf{Nada foi trocado.} Os resultados oficiais continuam com os mapas atuais. A decisão de adotar uma nova referência é do aluno com o orientador (Parte V).
 \end{itemize}
 \end{infobox}
 
@@ -302,38 +305,120 @@ Consistency com $k = 2$ (valor observado); complexidade em número efetivo de re
 \section{Limitações do teste}
 \begin{itemize}
 \item Só uma referência normal (um sorteio de 32 SNR) foi testada; outro sorteio de normais também mudaria os mapas, como mostrou o controle aleatório.
-\item Não foi gerado o mapa com a referência \textbf{atual} e 200 sorteios, que separaria o efeito dos sorteios do efeito da referência nas métricas.
+\item Este primeiro teste não gerou o mapa com a referência \textbf{atual} e 200 sorteios, que separaria o efeito dos sorteios do efeito da referência nas métricas. O segundo teste (Parte IV) resolve isso.
 \item A hipótese levantada no Random Logit (o mapa de BRE parece com o de muitas classes porque BRE não está nas baselines) não pode ser testada sem refazer o Random Logit com a nova referência.
 \end{itemize}
 
-\newpage
-\partbar{Parte IV · Decisão}
+\partbar{Parte IV · Segundo teste: referência balanceada}
+
+\section{Desenho do segundo teste}
+O primeiro teste deixou duas perguntas: (1) quanto da mudança veio da referência e quanto dos 200 sorteios? (2) existe uma referência que corrija o desbalanceamento da atual sem tirar o sentido de SNR? Para responder, gerou-se, para os mesmos 622 mapas e com as mesmas sementes internas:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Mapa} & \textbf{Referência} & \textbf{Sorteios} \\
+\midrule
+atual200 & a atual (32 do treino) & 200 \\
+balanceada200 & \textbf{4 ECGs de cada uma das 9 classes} (36, rótulo único, treino, semente 42) & 200 \\
+balanceada200$'$ & a mesma, outra semente (para o piso) & 200 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Com os mapas normal200 do primeiro teste, ficam quatro opções comparáveis, todas sobre os mesmos ECGs: \textbf{A} (atual, 50 sorteios, os mapas de hoje), \textbf{B} (normal, 200), \textbf{C} (atual, 200) e \textbf{D} (balanceada, 200). Execução: Kaggle (GPU T4), versão 22 do runner, 25--26/10/2026, cerca de 85 min. Nenhum erro. As distâncias entre os mapas de 200 sorteios e as métricas foram calculadas localmente com os mapas salvos.
+
+\section{O que muda nos mapas}
+Distância média entre os mapas (36 regiões, norma 1). Como referência de ruído, dois mapas com a \textbf{mesma} referência e 200 sorteios ficam a cerca de 0,17 a 0,18 um do outro (piso com 200 sorteios: 0,167 na normal e 0,183 na balanceada).
+\begin{center}\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+& \textbf{SNR} & \textbf{AF} & \textbf{IAVB} & \textbf{BRE} & \textbf{BRD} & \textbf{CAP} & \textbf{CVP} & \textbf{STD} & \textbf{STE} & \textbf{Sem SNR} \\
+\midrule
+A × C (só sorteios) & 0,25 & 0,22 & 0,21 & 0,14 & 0,20 & 0,28 & 0,20 & 0,24 & 0,22 & 0,21 \\
+C × D (atual × balanceada) & 0,37 & 0,28 & 0,26 & 0,25 & 0,32 & 0,39 & 0,26 & 0,36 & 0,28 & 0,31 \\
+C × B (atual × normal) & 0,99 & 0,30 & 0,31 & 0,28 & 0,34 & 0,40 & 0,27 & 0,39 & 0,36 & 0,33 \\
+D × B (balanceada × normal) & 0,92 & 0,28 & 0,28 & 0,20 & 0,23 & 0,37 & 0,25 & 0,35 & 0,33 & 0,27 \\ \addlinespace
+Piso da balanceada (200) & 0,23 & 0,19 & 0,18 & 0,13 & 0,13 & 0,25 & 0,17 & 0,23 & 0,18 & 0,18 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Só os sorteios (A × C):} 0,21, o que se espera do erro de 50 sorteios do mapa atual. Aumentar os sorteios não muda o que o mapa diz; só o torna mais preciso.
+\item \textbf{A referência muda os mapas além do ruído, mas pouco:} com 200 sorteios dos dois lados, trocar a referência atual pela balanceada dá 0,31 e pela normal, 0,33 (fora SNR), contra um ruído de cerca de 0,18.
+\item \textbf{A balanceada fica entre a atual e a normal}, um pouco mais perto da normal (0,27 de distância) do que a atual está (0,33). Em BRD a aproximação é clara (0,23): a referência balanceada tira o excesso de BRD da atual.
+\item \textbf{SNR continua interpretável com a balanceada} (0,37 da atual, perto das demais classes), ao contrário da normal (0,99).
+\end{itemize}
+
+\textbf{Soma dos mapas.} Com a balanceada, a soma média do mapa de SNR é 14,0 (16,2 na atual; $-1{,}5$ na normal), ou seja, SNR tem o que explicar. A de BRD vai de 11,2 para 17,1, perto dos 18,6 da normal: o excesso de BRD nas baselines atuais, que “comia” parte da explicação de BRD, desaparece. \textbf{Região mais importante igual à do mapa atual:} 82\% com C, 72\% com D e 66\% com B.
+
+\section{O que muda nas métricas}
+Consistency ($k = 2$, valor observado) e complexidade (número efetivo de regiões, de 36), recalculadas com cada conjunto de mapas:
+\begin{center}\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+\textbf{Consistency} & \textbf{SNR} & \textbf{AF} & \textbf{IAVB} & \textbf{BRE} & \textbf{BRD} & \textbf{CAP} & \textbf{CVP} & \textbf{STD} & \textbf{STE} & \textbf{Global} & \textbf{Sem SNR} \\
+\midrule
+A. Atual, 50 & 0,21 & 0,42 & 0,45 & 0,25 & 0,64 & 0,14 & 0,26 & 0,51 & 0,03 & 0,42 & 0,45 \\
+C. Atual, 200 & 0,25 & 0,46 & 0,43 & 0,33 & 0,64 & 0,11 & 0,35 & 0,52 & 0,09 & 0,44 & 0,46 \\
+D. Balanceada, 200 & 0,26 & 0,46 & 0,42 & 0,34 & 0,72 & 0,16 & 0,38 & 0,39 & 0,08 & 0,46 & 0,48 \\
+B. Normal, 200 & (0,58) & 0,47 & 0,59 & 0,35 & 0,76 & 0,16 & 0,50 & 0,45 & 0,03 & 0,54 & 0,54 \\
+\midrule
+\textbf{Complexidade} & & & & & & & & & & & \\
+A. Atual, 50 & 26,9 & 22,8 & 23,3 & 25,8 & 22,4 & 25,7 & 24,7 & 26,9 & 25,5 & 24,2 & \\
+C. Atual, 200 & 26,9 & 22,7 & 23,0 & 25,9 & 22,3 & 26,1 & 24,9 & 26,9 & 25,7 & 24,2 & \\
+D. Balanceada, 200 & 26,2 & 22,9 & 23,0 & 26,2 & 22,2 & 25,4 & 25,0 & 26,9 & 25,5 & 24,1 & \\
+B. Normal, 200 & (25,7) & 22,8 & 22,6 & 26,2 & 23,1 & 25,7 & 24,8 & 27,4 & 25,6 & 24,3 & \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Os 200 sorteios, sozinhos, mudam pouco a Consistency} (A $\to$ C: 0,42 $\to$ 0,44). Algumas classes sobem (BRE, CVP, STE), outras ficam iguais ou caem (IAVB, CAP). Isso responde a uma dúvida antiga: o relatório de 21/10 apontava que a Consistency mistura a variação real do modelo com o erro de estimativa dos 50 sorteios. Medido agora, o erro de estimativa pesa pouco; a Consistency baixa de várias classes reflete principalmente o modelo usar evidências diferentes em ECGs diferentes.
+\item \textbf{A referência pesa mais que os sorteios na Consistency:} com 200 sorteios nos dois casos, a balanceada dá 0,46 e a normal, 0,54 (fora SNR, 0,48 e 0,54), contra 0,44 da atual. Com a normal, as explicações ficam mais parecidas entre ECGs da mesma classe.
+\item \textbf{As pontas não mudam em nenhuma opção:} BRD é sempre a mais consistente, e CAP e STE, as menos. No meio, há trocas: STD cai com a balanceada (0,52 $\to$ 0,39), e CVP e IAVB sobem com a normal.
+\item \textbf{A complexidade praticamente não depende da escolha} (24,1 a 24,3 no global; mesmas classes nas pontas).
+\end{itemize}
+
+\partbar{Parte V · Decisão}
 
 \section{Opções}
 \begin{center}\small
-\begin{tabularx}{\linewidth}{lXXX}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{lXXXX}
 \toprule
-& \textbf{A. Manter} & \textbf{B. Referência normal + 200 sorteios} & \textbf{C. Referência atual + 200 sorteios} \\
+& \textbf{A. Manter} & \textbf{B. Normal, 200} & \textbf{C. Atual, 200} & \textbf{D. Balanceada, 200} \\
 \midrule
-O que muda & Nada & Referência e sorteios & Só os sorteios \\ \addlinespace
-Pergunta do mapa & Diferença em relação à média do treino (mistura de arritmias) & Diferença em relação a um coração saudável & Igual à atual \\ \addlinespace
-Ruído (piso) & 0,355 & cerca de 0,17 & cerca de 0,17 (esperado) \\ \addlinespace
-SNR & Normal & Sem sentido; precisa de tratamento à parte & Normal \\ \addlinespace
-Custo & Nenhum & Mapas já gerados; refazer FaithCorr e FaithEst (cerca de 30 min cada), sensibilidade (cerca de 5,5 h) e Random Logit (cerca de 4,5 h) e revisar os textos & Gerar os mapas (cerca de 30 min) e refazer as mesmas métricas, com o mesmo custo \\ \addlinespace
-Defesa no texto & Justificar a mistura como padrão do SHAP e citar o teste & Mais natural clinicamente; citar o teste & Reduz o ruído sem mudar a pergunta \\
+Pergunta do mapa & Diferença em relação à média do treino (mistura desbalanceada) & Diferença em relação a um coração saudável & Igual à A & Diferença em relação a um ECG médio que não privilegia nenhuma classe \\ \addlinespace
+Ruído (piso) & 0,355 & 0,167 & cerca de 0,18 & 0,183 \\ \addlinespace
+SNR & Normal & Sem sentido & Normal & Normal \\ \addlinespace
+Peso de BRD na referência & 14 de 32 & 0 & 14 de 32 & 4 de 36 \\ \addlinespace
+Consistency (sem SNR) & 0,45 & 0,54 & 0,46 & 0,48 \\ \addlinespace
+Defesa no texto & Padrão do SHAP; citar os testes & Mais natural clinicamente; tirar SNR ou tratá-la à parte & Reduz o ruído; referência continua desbalanceada & Reduz o ruído; referência neutra entre as classes; SNR mantida \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-\textbf{Tratamento de SNR na opção B.} Duas saídas possíveis: (i) explicar SNR com a referência atual e as demais classes com a normal, o que mistura duas perguntas na mesma tabela; ou (ii) tirar SNR das métricas de explicação e explicar no texto por quê (a classe é a própria referência). A comparação com o F1 passaria a ter 8 classes.
+\textbf{Custo de B, C e D (igual nas três).} Os mapas já foram gerados nos testes. É preciso refazer a Faithfulness Correlation e a Estimate (cerca de 30 min cada), a sensibilidade (cerca de 5,5 h) e o Random Logit (cerca de 4,5 h), que refazem o GradientSHAP e ficam 4 vezes mais lentos com 200 sorteios, além de revisar os textos. A Consistency e a complexidade já estão calculadas (Parte IV).
 
-\begin{infobox}[note]{Leitura do teste para a decisão}
-Os resultados indicam que as conclusões principais do TCC tendem a se manter com qualquer das opções: os mapas mudam moderadamente (cosseno de 0,92), a complexidade não muda e a Consistency sobe sem trocar as classes das pontas (BRD no topo; CAP e STE na base). O que a opção B oferece é uma pergunta mais natural (o que afasta o ECG do normal) e metade do ruído; o que ela custa é o tratamento de SNR e refazer as métricas que chamam o modelo. A opção C reduz o ruído sem mudar a pergunta nem afetar SNR. Em B e C, o custo maior vem da sensibilidade e do Random Logit, que refazem o GradientSHAP e, com 200 sorteios, ficam cerca de 4 vezes mais lentos (cerca de 10 h de Kaggle no total, em execuções separadas); reduzir o número de perturbações da sensibilidade ou de classes do Random Logit diminuiria esse custo.
+\textbf{Tratamento de SNR na opção B.} Duas saídas possíveis: (i) explicar SNR com outra referência e as demais classes com a normal, o que mistura duas perguntas na mesma tabela; ou (ii) tirar SNR das métricas de explicação e explicar no texto por quê (a classe é a própria referência). A comparação com o F1 passaria a ter 8 classes.
+
+\begin{infobox}[note]{Leitura dos testes para a decisão}
+\begin{itemize}
+\item \textbf{As conclusões principais do TCC se mantêm em qualquer opção:} os mapas mudam pouco, a complexidade não muda e as pontas da Consistency são as mesmas.
+\item \textbf{Os 200 sorteios valem pela precisão,} não por mudar resultados: o piso cai pela metade, o que fortalece a sensibilidade (hoje, piso 5 vezes maior que a métrica), o Random Logit e a leitura da Consistency.
+\item \textbf{Entre as referências,} a balanceada (D) resolve o problema concreto da atual (BRD em excesso, BRE e STE ausentes) e mantém as 9 classes comparáveis com o F1; a normal (B) responde à pergunta mais clínica, ao custo de SNR.
+\item \textbf{Sugestão para a discussão com o orientador:} opção D como principal, com a referência normal (B) citada como análise complementar, já que os resultados com ela estão neste documento.
+\end{itemize}
 \end{infobox}
 
-\textbf{Para levar ao orientador:} qual referência usar (A, B ou C); se B, como tratar SNR; e se o número de sorteios passa a 200 (B ou C), sabendo que as métricas que dependem do piso (Consistency, sensibilidade, Random Logit) ficam mais precisas.
+\textbf{Para levar ao orientador:} qual referência usar (A, B, C ou D); se B, como tratar SNR; e se o número de sorteios passa a 200, com o custo de cerca de 10 h de Kaggle para refazer a sensibilidade e o Random Logit.
 
 \vspace{0.5em}
-{\small \textbf{Arquivos:} \texttt{src/baseline\_check.py} (commit \texttt{c3e5420}); \url{results/modeloB_basecheck/} (\texttt{baseline\_check.csv} por classe, \texttt{baseline\_check\_mapas.csv} por mapa, \texttt{previa\_normal200/} com a Consistency e a complexidade recalculadas); mapas normal200 fora do git, em \texttt{output/modeloB\_normal200/}.}
+{\small\sloppy \textbf{Arquivos}
+\begin{itemize}
+\item Primeiro teste: \texttt{src/baseline\_check.py} (commit \texttt{c3e5420}); resultados em \url{results/modeloB_basecheck/}, com a prévia das métricas da opção B em \texttt{previa\_normal200/}.
+\item Segundo teste: \texttt{src/baseline\_balanced.py} (commit \texttt{4d07014}); resultados em \url{results/modeloB_basebal/}, com as métricas das opções C e D e as distâncias entre os mapas de 200 sorteios em \texttt{previa\_200/}.
+\item Mapas de 200 sorteios (fora do git): \url{output/modeloB_normal200/}, \url{output/modeloB_atual200/}, \url{output/modeloB_balanceada200/}.
+\end{itemize}}
 
 \end{document}
