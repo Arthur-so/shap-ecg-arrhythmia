@@ -1,0 +1,339 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Verificação da referência do GradientSHAP}} \\[0.35em]
+    {\large ECGs normais como baselines e 200 sorteios} \\[0.3em]
+    \textbf{Código:} \texttt{src/baseline\_check.py} \quad \textbf{Resultados:} \texttt{results/modeloB\_basecheck/} \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 25/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Por que este documento.} Ao estudar a complexidade e o Random Logit, surgiram duas dúvidas sobre a forma como os mapas SHAP do TCC são gerados: (1) os ECGs de referência usados pelo GradientSHAP (as \textbf{baselines}) são uma mistura de arritmias sorteada do treino, quando clinicamente a referência natural seria o ECG \textbf{normal}; (2) cada mapa é a média de só \textbf{50 sorteios}, e o erro dessa média (o \textbf{piso}) é grande. Este documento descreve um teste que mede o peso das duas escolhas e termina com as opções de decisão.
+
+\textbf{Como ler.} A \textbf{Parte I} explica o que é a referência e por que ela importa; a \textbf{Parte II} descreve o teste; a \textbf{Parte III} traz os resultados; a \textbf{Parte IV}, as opções para a decisão. Todos os números são médias sobre os 622 mapas do modelo B (predições corretas do teste) e usam as 36 regiões do batimento (12 derivações × pré-QRS, QRS e ST-T), como as demais métricas do TCC.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{200 sorteios cortam o erro pela metade.} O piso (distância entre dois mapas que só diferem nos sorteios) cai de 0,33 para 0,17, como prevê a estatística de uma média.
+\item \textbf{A referência normal muda os mapas, mas moderadamente.} Fora SNR, o mapa com referência normal e 200 sorteios tem cosseno médio de 0,92 com o mapa atual. Trocar só o sorteio das 32 baselines por outro aleatório já muda o mapa quase tanto.
+\item \textbf{Com a referência normal, a classe SNR perde o sentido:} explicar um ECG normal em relação a ECGs normais deixa quase nada a explicar (soma média do mapa $-1{,}5$, contra 16,2 hoje).
+\item \textbf{Prévia com os mapas novos:} a Consistency sobe na maioria das classes (global 0,42 $\to$ 0,54); a complexidade praticamente não muda.
+\item \textbf{Nada foi trocado.} Os resultados oficiais continuam com os mapas atuais. A decisão de adotar a nova referência é do aluno com o orientador (Parte IV).
+\end{itemize}
+\end{infobox}
+
+\partbar{Parte I · A referência do GradientSHAP}
+
+\section{O que é a referência}
+O GradientSHAP não explica a saída do modelo “em absoluto”. Ele explica a \textbf{diferença} entre a saída para o ECG e a saída média para um conjunto de ECGs de referência, as \textbf{baselines}. A soma de todas as importâncias do mapa é, aproximadamente,
+\[
+\text{soma do mapa} \approx f_c(\text{ECG}) - \text{média de } f_c(\text{baselines}),
+\]
+em que $f_c$ é o logit da classe explicada $c$. Cada importância vem de termos do tipo gradiente × (ECG $-$ baseline). Por isso, uma região do ECG que é \textbf{parecida} com a mesma região das baselines recebe pouca importância, mesmo que o modelo a use: o fator (ECG $-$ baseline) é pequeno ali.
+
+\begin{infobox}[note]{Consequência}
+O mapa responde à pergunta: \textit{o que neste ECG difere da referência e leva o modelo à classe $c$?} Trocar a referência troca a pergunta.
+\end{infobox}
+
+\section{As 32 baselines atuais}
+Em \texttt{src/explain.py}, a referência são 32 ECGs sorteados do conjunto de treino (4\,812 ECGs), sempre com a semente 42 do projeto. O número 32 é o padrão do código, sem justificativa formal registrada. O sorteio ficou desbalanceado por acaso:
+\begin{center}\small
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+& \textbf{SNR} & \textbf{AF} & \textbf{IAVB} & \textbf{BRE} & \textbf{BRD} & \textbf{CAP} & \textbf{CVP} & \textbf{STD} & \textbf{STE} \\
+\midrule
+\% no treino & 13,3 & 17,8 & 10,5 & 3,4 & 27,1 & 9,0 & 10,2 & 12,7 & 3,2 \\
+Esperado em 32 & 4,3 & 5,7 & 3,3 & 1,1 & 8,7 & 2,9 & 3,3 & 4,0 & 1,0 \\
+\textbf{Nas 32 atuais} & 2 & 4 & 5 & \textbf{0} & \textbf{14} & 2 & 5 & 1 & \textbf{0} \\
+\bottomrule
+\end{tabular}
+\end{center}
+Nenhuma baseline é individualmente extrema (duração de 10 a 30 s, amplitude máxima abaixo do percentil 99 do treino), mas BRD está super-representado e BRE e STE estão ausentes.
+
+\section{Por que o ECG normal}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Referência} & \textbf{Pergunta que o mapa responde} \\
+\midrule
+Atual: mistura de ECGs do treino & O que neste ECG faz o modelo dar à classe uma saída diferente da que ele dá, em média, aos ECGs do treino (a maioria com alguma arritmia)? \\ \addlinespace
+ECGs normais (SNR) & O que neste ECG, em relação a um coração saudável, levou o modelo à classe? \\
+\bottomrule
+\end{tabularx}
+\end{center}
+A primeira é o padrão do SHAP (uma amostra dos dados como referência) e não está errada, mas compara a arritmia com outras arritmias. A segunda é mais próxima do raciocínio clínico: uma arritmia se define pelo que a afasta do ritmo normal. A escolha da referência é uma questão conhecida na literatura de explicabilidade (ver, por exemplo, Sturmfels, Lundberg e Lee, 2020, \textit{Visualizing the Impact of Feature Attribution Baselines}, Distill; não fichado).
+
+\textbf{Um efeito colateral previsto.} Com a referência normal, a classe SNR perde o sentido: explicar um ECG normal em relação a ECGs normais deixa a soma do mapa perto de zero, e o mapa vira quase só ruído.
+
+\section{Os 50 sorteios e o piso}
+O GradientSHAP estima o mapa como a média de \texttt{n\_samples} $= 50$ termos sorteados (qual baseline, um ponto no caminho entre ela e o ECG e um pequeno ruído). Com outros 50 sorteios, sai um mapa um pouco diferente. O \textbf{piso} é a distância entre dois mapas do mesmo ECG e da mesma classe que só diferem nos sorteios; na sensibilidade, foi 0,355. O erro de uma média cai aproximadamente com $1/\sqrt{n}$: com 200 sorteios (4 vezes mais), o piso deveria cair pela metade. A explicação detalhada está na seção 6.2 do fichamento da complexidade (\texttt{fichamentos/bhatt-2020-complexity}).
+
+\partbar{Parte II · O teste}
+
+\section{Desenho}
+Para cada um dos 622 mapas (ECG × classe explicada), o GradientSHAP foi refeito em sete versões, todas com a \textbf{mesma semente} de sorteios internos, para que as diferenças venham só da referência ou do número de sorteios:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Mapa} & \textbf{Referência (32 ECGs do treino)} & \textbf{Sorteios} \\
+\midrule
+atual & a de \texttt{explain.py} (semente 42) & 50, semente $s$ \\
+atual$'$ & a de \texttt{explain.py} & 50, semente $s+1$ \\
+normal & 32 ECGs com rótulo único SNR (semente 42) & 50, semente $s$ \\
+normal$'$ & a mesma normal & 50, semente $s+1$ \\
+aleatória & outro sorteio do treino (semente 43): SNR 6, AF 2, IAVB 6, BRE 1, BRD 7, CAP 3, CVP 2, STD 5, STE 1 & 50, semente $s$ \\
+normal200 & a mesma normal; 4 blocos de 50, o 1.º é o mapa normal & 200 \\
+normal200$'$ & a mesma normal; 4 blocos a partir de normal$'$ & 200 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Os 200 sorteios são feitos como média de 4 execuções de 50 com sementes diferentes, o que equivale estatisticamente a uma média de 200 e cabe na memória da GPU. As 32 normais são ECGs do \textbf{treino} (nenhum do teste) com rótulo único de SNR; todos os 642 SNR do treino têm rótulo único.
+
+\textbf{Comparações.} Distância $\ell_2$ entre os mapas normalizados para norma 1, nas 36 regiões (0 = iguais; 2 = opostos; o cosseno entre os mapas é $1 - d^2/2$):
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Comparação} & \textbf{O que mede} \\
+\midrule
+atual × atual$'$ & Piso atual (50 sorteios) \\
+atual × aleatória & Quanto muda o mapa só por trocar o sorteio das 32 baselines (controle) \\
+atual × normal & Efeito da referência normal, com 50 sorteios \\
+atual × normal200 & Efeito da referência normal, com o mapa normal mais preciso \\
+normal × normal$'$ & Piso com a referência normal, 50 sorteios \\
+normal200 × normal200$'$ & Piso com a referência normal, 200 sorteios \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Também foram registradas a soma de cada mapa e a região mais importante. Os mapas normal200 foram salvos para recalcular as métricas sem gerar os mapas de novo.
+
+\textbf{Execução.} Kaggle (GPU T4), versão 21 do runner, 23/10/2026, 72 min ($11$ execuções de 50 sorteios por mapa, cerca de 6\,800 no total). Nenhum erro.
+
+\section{Como ler o resultado}
+\begin{itemize}
+\item \textbf{atual × normal perto do piso:} a referência pesa pouco; basta justificar a escolha no texto.
+\item \textbf{atual × normal bem acima do piso e acima de atual × aleatória:} a referência normal muda a explicação de fato.
+\item \textbf{atual × normal $\approx$ atual × aleatória, ambos acima do piso:} os mapas dependem de qual conjunto se usa, mas não especificamente de ele ser normal.
+\end{itemize}
+
+\partbar{Parte III · Resultados}
+
+\section{Os sorteios: 200 cortam o piso pela metade}
+\begin{center}\small
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+& \textbf{SNR} & \textbf{AF} & \textbf{IAVB} & \textbf{BRE} & \textbf{BRD} & \textbf{CAP} & \textbf{CVP} & \textbf{STD} & \textbf{STE} & \textbf{Global} \\
+\midrule
+Piso atual (50) & 0,41 & 0,35 & 0,36 & 0,23 & 0,32 & 0,46 & 0,32 & 0,40 & 0,35 & 0,355 \\
+Piso normal (50) & 0,51 & 0,31 & 0,30 & 0,30 & 0,25 & 0,41 & 0,29 & 0,39 & 0,36 & 0,331 \\
+\textbf{Piso normal (200)} & 0,26 & 0,17 & 0,15 & 0,15 & 0,12 & 0,21 & 0,15 & 0,20 & 0,15 & \textbf{0,167} \\
+\bottomrule
+\end{tabular}
+\end{center}
+Com a mesma referência normal, passar de 50 para 200 sorteios reduz o piso de 0,331 para 0,167, quase exatamente a metade prevista ($1/\sqrt{4}$), e em todas as classes. A ordem dos pisos entre as classes se mantém (CAP e STD mais altos; BRD mais baixo), o que confirma que o piso depende de como o modelo responde a cada classe, e não só do número de sorteios.
+
+\section{A referência: muda os mapas, mas moderadamente}
+\begin{center}\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+& \textbf{Piso} & \textbf{Atual ×} & \textbf{Atual ×} & \textbf{Atual ×} & \textbf{Cosseno} & \textbf{Acima} \\
+\textbf{Classe} & \textbf{atual} & \textbf{aleatória} & \textbf{normal (50)} & \textbf{normal (200)} & \textbf{(200)} & \textbf{do piso} \\
+\midrule
+SNR  & 0,41 & 0,52 & 0,99 & 1,01 & 0,47 & 99\% \\
+AF   & 0,35 & 0,37 & 0,41 & 0,37 & 0,92 & 54\% \\
+IAVB & 0,36 & 0,36 & 0,40 & 0,37 & 0,92 & 56\% \\
+BRE  & 0,23 & 0,30 & 0,37 & 0,32 & 0,95 & 75\% \\
+BRD  & 0,32 & 0,36 & 0,41 & 0,39 & 0,92 & 81\% \\
+CAP  & 0,46 & 0,52 & 0,54 & 0,49 & 0,87 & 67\% \\
+CVP  & 0,32 & 0,36 & 0,37 & 0,34 & 0,94 & 64\% \\
+STD  & 0,40 & 0,46 & 0,50 & 0,46 & 0,89 & 72\% \\
+STE  & 0,35 & 0,41 & 0,44 & 0,42 & 0,91 & 86\% \\
+\midrule
+Sem SNR & 0,35 & 0,39 & 0,43 & 0,39 & 0,92 & 69\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+“× normal (200)” é a distância entre o mapa atual e o mapa com referência normal e 200 sorteios; “Acima do piso” é a fração dos mapas em que essa distância passa do piso atual do próprio mapa.
+
+\begin{itemize}
+\item \textbf{A referência normal muda os mapas além do ruído}, em 69\% dos mapas (fora SNR). Mas a mudança é moderada: o cosseno médio entre o mapa atual e o novo é 0,92 (1 seria igual). As regiões que importam continuam, em grande parte, as mesmas.
+\item \textbf{Trocar só o sorteio das 32 baselines já muda o mapa quase tanto} (0,39 contra 0,39 com a referência normal e 200 sorteios, fora SNR). Ou seja, os mapas atuais dependem de qual conjunto de referência foi sorteado; a referência normal não muda os mapas muito mais do que outro sorteio qualquer.
+\item \textbf{Parte da distância é ruído do próprio mapa atual.} Mesmo um mapa normal perfeito ficaria a cerca de 0,25 do mapa atual só pelo erro dos 50 sorteios do mapa atual (piso $\div \sqrt{2}$). O efeito da referência em si é, portanto, menor do que os 0,39 sugerem.
+\end{itemize}
+
+\subsection{Região mais importante}
+Fração dos mapas em que a região mais importante é a mesma no mapa atual e no mapa normal (200): 66\% no global; 92\% em BRD, 76\% em CVP, 65 a 67\% em AF, IAVB e BRE, 57\% em STE, 45 a 47\% em STD e CAP, e 29\% em SNR. Alguns deslocamentos:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Classe} & \textbf{Referência atual} & \textbf{Referência normal (200)} \\
+\midrule
+BRD  & V1 QRS (85\%) & V1 QRS (91\%) \\
+IAVB & aVR pré-QRS (62\%), II pré-QRS (13\%) & aVR pré-QRS (52\%), II pré-QRS (33\%) \\
+STD  & aVR ST-T (37\%), II ST-T (11\%) & II ST-T (26\%), aVR ST-T (17\%) \\
+STE  & aVR pré-QRS (57\%), V1 QRS (21\%) & aVR pré-QRS (29\%), V2 pré-QRS (21\%) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Esses deslocamentos são registrados como observação; a plausibilidade clínica das regiões não é avaliada no TCC.
+
+\subsection{Soma dos mapas}
+\begin{center}\small
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+& \textbf{SNR} & \textbf{AF} & \textbf{IAVB} & \textbf{BRE} & \textbf{BRD} & \textbf{CAP} & \textbf{CVP} & \textbf{STD} & \textbf{STE} \\
+\midrule
+Atual & 16,2 & 15,9 & 16,9 & 21,4 & 11,2 & 12,9 & 13,5 & 13,3 & 12,9 \\
+Normal (200) & \textbf{$-1{,}5$} & 16,5 & 17,6 & 20,3 & \textbf{18,6} & 11,9 & 15,8 & 14,3 & 12,3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{SNR:} a soma vai a $-1{,}5$, ou seja, quase nada a explicar, como previsto. Com a referência normal, os mapas de SNR não são interpretáveis (a distância ao mapa atual, perto de 1, e a baixa coincidência da região principal confirmam isso).
+\item \textbf{BRD:} a soma sobe de 11,2 para 18,6. É o efeito esperado do desbalanceamento: 14 das 32 baselines atuais têm BRD, então a saída média de BRD na referência atual é alta e sobra menos diferença para explicar. Com a referência normal, a explicação de BRD passa a cobrir toda a evidência de BRD.
+\item Nas demais classes, a soma muda pouco.
+\end{itemize}
+
+\section{Prévia das métricas com os mapas novos}
+Os mapas normal200 permitem recalcular, sem GPU, as métricas que não chamam o modelo. Nesta prévia mudam \textbf{duas coisas ao mesmo tempo} (referência e número de sorteios), então os efeitos não podem ser separados.
+\begin{center}\small
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+& \textbf{SNR} & \textbf{AF} & \textbf{IAVB} & \textbf{BRE} & \textbf{BRD} & \textbf{CAP} & \textbf{CVP} & \textbf{STD} & \textbf{STE} & \textbf{Global} \\
+\midrule
+Consistency atual & 0,21 & 0,42 & 0,45 & 0,25 & 0,64 & 0,14 & 0,26 & 0,51 & 0,03 & 0,42 \\
+Consistency nova & (0,58) & 0,47 & 0,59 & 0,35 & 0,76 & 0,16 & 0,50 & 0,45 & 0,03 & 0,54 \\ \addlinespace
+Complexidade atual & 26,9 & 22,8 & 23,3 & 25,8 & 22,4 & 25,7 & 24,7 & 26,9 & 25,5 & 24,2 \\
+Complexidade nova & (25,7) & 22,8 & 22,6 & 26,2 & 23,1 & 25,7 & 24,8 & 27,4 & 25,6 & 24,3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Consistency com $k = 2$ (valor observado); complexidade em número efetivo de regiões (de 36). Os valores de SNR estão entre parênteses porque, com a referência normal, não são interpretáveis.
+\begin{itemize}
+\item \textbf{Consistency:} sobe na maioria das classes (CVP 0,26 $\to$ 0,50; IAVB 0,45 $\to$ 0,59; BRD 0,64 $\to$ 0,76), cai em STD (0,51 $\to$ 0,45) e não muda em CAP e STE, que continuam as menos consistentes. É coerente com o que se esperava: com menos ruído, o par das 2 regiões principais se repete mais entre ECGs da mesma classe.
+\item \textbf{Complexidade:} praticamente igual (24,2 $\to$ 24,3 no global); as classes mais concentradas continuam AF, BRD e IAVB, e a mais espalhada, STD.
+\item As métricas que chamam o modelo (Faithfulness Correlation e Estimate, Max/Avg-Sensitivity, Random Logit) não foram recalculadas.
+\end{itemize}
+
+\section{Limitações do teste}
+\begin{itemize}
+\item Só uma referência normal (um sorteio de 32 SNR) foi testada; outro sorteio de normais também mudaria os mapas, como mostrou o controle aleatório.
+\item Não foi gerado o mapa com a referência \textbf{atual} e 200 sorteios, que separaria o efeito dos sorteios do efeito da referência nas métricas.
+\item A hipótese levantada no Random Logit (o mapa de BRE parece com o de muitas classes porque BRE não está nas baselines) não pode ser testada sem refazer o Random Logit com a nova referência.
+\end{itemize}
+
+\newpage
+\partbar{Parte IV · Decisão}
+
+\section{Opções}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+& \textbf{A. Manter} & \textbf{B. Referência normal + 200 sorteios} & \textbf{C. Referência atual + 200 sorteios} \\
+\midrule
+O que muda & Nada & Referência e sorteios & Só os sorteios \\ \addlinespace
+Pergunta do mapa & Diferença em relação à média do treino (mistura de arritmias) & Diferença em relação a um coração saudável & Igual à atual \\ \addlinespace
+Ruído (piso) & 0,355 & cerca de 0,17 & cerca de 0,17 (esperado) \\ \addlinespace
+SNR & Normal & Sem sentido; precisa de tratamento à parte & Normal \\ \addlinespace
+Custo & Nenhum & Mapas já gerados; refazer FaithCorr e FaithEst (cerca de 30 min cada), sensibilidade (cerca de 5,5 h) e Random Logit (cerca de 4,5 h) e revisar os textos & Gerar os mapas (cerca de 30 min) e refazer as mesmas métricas, com o mesmo custo \\ \addlinespace
+Defesa no texto & Justificar a mistura como padrão do SHAP e citar o teste & Mais natural clinicamente; citar o teste & Reduz o ruído sem mudar a pergunta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Tratamento de SNR na opção B.} Duas saídas possíveis: (i) explicar SNR com a referência atual e as demais classes com a normal, o que mistura duas perguntas na mesma tabela; ou (ii) tirar SNR das métricas de explicação e explicar no texto por quê (a classe é a própria referência). A comparação com o F1 passaria a ter 8 classes.
+
+\begin{infobox}[note]{Leitura do teste para a decisão}
+Os resultados indicam que as conclusões principais do TCC tendem a se manter com qualquer das opções: os mapas mudam moderadamente (cosseno de 0,92), a complexidade não muda e a Consistency sobe sem trocar as classes das pontas (BRD no topo; CAP e STE na base). O que a opção B oferece é uma pergunta mais natural (o que afasta o ECG do normal) e metade do ruído; o que ela custa é o tratamento de SNR e refazer as métricas que chamam o modelo. A opção C reduz o ruído sem mudar a pergunta nem afetar SNR. Em B e C, o custo maior vem da sensibilidade e do Random Logit, que refazem o GradientSHAP e, com 200 sorteios, ficam cerca de 4 vezes mais lentos (cerca de 10 h de Kaggle no total, em execuções separadas); reduzir o número de perturbações da sensibilidade ou de classes do Random Logit diminuiria esse custo.
+\end{infobox}
+
+\textbf{Para levar ao orientador:} qual referência usar (A, B ou C); se B, como tratar SNR; e se o número de sorteios passa a 200 (B ou C), sabendo que as métricas que dependem do piso (Consistency, sensibilidade, Random Logit) ficam mais precisas.
+
+\vspace{0.5em}
+{\small \textbf{Arquivos:} \texttt{src/baseline\_check.py} (commit \texttt{c3e5420}); \url{results/modeloB_basecheck/} (\texttt{baseline\_check.csv} por classe, \texttt{baseline\_check\_mapas.csv} por mapa, \texttt{previa\_normal200/} com a Consistency e a complexidade recalculadas); mapas normal200 fora do git, em \texttt{output/modeloB\_normal200/}.}
+
+\end{document}
