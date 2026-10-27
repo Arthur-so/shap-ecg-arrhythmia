@@ -287,7 +287,7 @@ A lista inclui SHAP. A última frase é a que importa para o TCC: o GradientSHAP
 \section{Versão implementada no TCC}\label{sec:versao}
 Código: \texttt{src/random\_logit.py} (commit \texttt{3a81dec}). Para cada um dos 622 mapas do modelo B (ECG × classe explicada $c$, predições corretas do teste):
 \begin{enumerate}
-\item \textbf{Mapa de referência de $c$.} O GradientSHAP é refeito com a configuração dos mapas do TCC (as mesmas 32 baselines do treino, 50 sorteios, desvio do ruído 0,09) e com a semente fixa daquele mapa, a mesma da sensibilidade. O mapa de referência é, portanto, o mesmo usado na Max/Avg-Sensitivity.
+\item \textbf{Mapa de referência de $c$.} O GradientSHAP é refeito com a configuração dos mapas do TCC (\texttt{src/gshap.py}: referência balanceada de 36 ECGs, 200 sorteios, desvio do ruído 0,09; na versão 1, 32 ECGs sorteados do treino e 50 sorteios) e com a semente fixa daquele mapa, a mesma da sensibilidade. O mapa de referência é, portanto, o mesmo usado na Max/Avg-Sensitivity.
 \item \textbf{Mapas das outras 8 classes.} O mesmo ECG é explicado para cada uma das outras classes $c'$, com a \textbf{mesma semente}: os sorteios internos do GradientSHAP (baselines, ponto no caminho e ruído) são idênticos, e a diferença entre os mapas vem só da classe explicada.
 \item \textbf{Distância} $\ell_2$ entre os dois mapas normalizados para norma 1, nas \textbf{36 regiões do batimento} (principal) e ponto a ponto (referência), como na sensibilidade. Vai de 0 (mapas iguais) a 2 (mapas opostos). A distância se relaciona com o cosseno entre os mapas por $\cos = 1 - d^2/2$: $d = \sqrt{2} \approx 1{,}41$ corresponde a mapas sem relação (cosseno 0), e $d > 1{,}41$, a mapas que tendem a ter sinais opostos nas mesmas regiões.
 \item \textbf{Classes ausentes e presentes.} O resultado principal usa as classes $c'$ \textbf{ausentes} nos rótulos do ECG (4\,886 pares). As \textbf{presentes} (90 pares, de ECGs com mais de um diagnóstico) são analisadas à parte.
@@ -314,98 +314,106 @@ Amostra & 200 imagens (p.~5) & 622 mapas & Sim \\
 
 \textbf{Por que não SSIM.} A SSIM compara janelas vizinhas de pixels de uma imagem. No ECG, “vizinhos” no arranjo $12 \times 15\,000$ incluem derivações diferentes, e o trecho de preenchimento entraria na comparação. A distância $\ell_2$ com norma 1 nas 36 regiões é a mesma usada na sensibilidade, o que torna o piso diretamente comparável.
 
-\textbf{Por que todas as classes.} O artigo sorteia um logit por imagem porque tem 1\,000 classes. Com 9, comparar com todas custa pouco (cerca de 70 min na T4) e elimina a variação do sorteio.
+\textbf{Por que todas as classes.} O artigo sorteia um logit por imagem porque tem 1\,000 classes. Com 9, comparar com todas custa pouco (cerca de 70 min na T4 com 50 sorteios; 4,4 h com 200) e elimina a variação do sorteio.
 
 \section{Diagnóstico}
 Antes da execução completa, um diagnóstico na CPU explicou 3 ECGs (2 de SNR e 1 de AF) para todas as classes. Ele foi interrompido nesse ponto, mas os 3 ECGs já mostraram o padrão: piso entre 0,33 e 0,45 e distância às outras classes entre 0,95 e 1,85, quase sempre entre 1,4 e 1,7, em todos os pares. Também mostraram que, ao comparar com um mapa de outra classe gerado com outra semente (o que o Quantus faria), o resultado praticamente não muda, porque a diferença entre classes é muito maior que o ruído do método. A mesma semente foi mantida por ser a forma correta de isolar o efeito da classe.
 
 \section{Resultados}\label{sec:resultados}
-Execução: Kaggle (GPU T4), versão 20 do \texttt{shap-ecg-arrhythmia-runner}, 23/10/2026, 68 min, com o modelo e os mapas do dataset \texttt{arthurso/shap-ecg-modelob}. Nenhum erro, nenhum valor indefinido. Resultados em \texttt{results/modeloB\_rlogit/}.
+\textbf{Duas execuções.} A primeira usou os mapas da versão 1: referência de 32 ECGs sorteados do treino e 50 sorteios (Kaggle, versão 20 do \texttt{shap-ecg-arrhythmia-runner}, 23/10/2026, 68 min; resultados em \texttt{results/modeloB\_rlogit/}). Desde 26/10/2026 o TCC usa a versão 2 dos mapas, a opção D do documento \texttt{fichamentos/verificacao-referencia-gradientshap}: referência balanceada, com 4 ECGs de rótulo único de cada uma das 9 classes (36), e 200 sorteios por mapa. O Random Logit foi refeito com essa configuração (versão 23 do runner, 26/10/2026, 264 min, dataset \texttt{arthurso/shap-ecg-modelob-v2}; resultados em \texttt{results/modeloB\_v2/rlogit/}). Nas duas execuções não houve erro nem valor indefinido. As tabelas abaixo são da versão 2; a versão 1 aparece só para comparação.
 
 \subsection{Por classe}
-Classes ordenadas da explicação mais específica (maior distância às classes ausentes) para a menos específica. “Cosseno” é o cosseno médio entre os mapas (0 = sem relação; negativo = sinais opostos). “Mín.” é a distância média à classe ausente mais parecida.
+Classes ordenadas da explicação mais específica (maior distância às classes ausentes) para a menos específica. “Cosseno” é o cosseno médio entre os mapas (0 = sem relação; negativo = sinais opostos). “Mín.” é a distância média à classe ausente mais parecida. “Razão” é a distância dividida pelo piso do próprio mapa, em média. As duas últimas colunas são a distância e a posição da classe com os mapas da versão 1.
 \begin{center}\small
-\begin{tabular}{lrrrrrrrr}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrrrr}
 \toprule
-\textbf{Classe} & \textbf{Mapas} & \textbf{Distância} & \textbf{Cosseno} & \textbf{Mín.} & \textbf{Piso} & \textbf{Razão} & \textbf{F1} & \textbf{Posição no F1} \\
+\textbf{Classe} & \textbf{Mapas} & \textbf{Distância} & \textbf{Cosseno} & \textbf{Mín.} & \textbf{Piso} & \textbf{Razão} & \textbf{F1} & \textbf{Pos. F1} & \textbf{Dist. v1} & \textbf{Pos. v1} \\
 \midrule
-AF   & 108 & 1,667 & $-0{,}40$ & 1,39 & 0,35 & 5,3 & 0,931 & 1.º \\
-CVP  &  59 & 1,620 & $-0{,}34$ & 1,22 & 0,32 & 5,6 & 0,837 & 5.º \\
-BRE  &  20 & 1,617 & $-0{,}34$ & 1,21 & 0,23 & 7,2 & 0,870 & 4.º \\
-BRD  & 172 & 1,586 & $-0{,}28$ & 1,26 & 0,32 & 5,5 & 0,927 & 2.º \\
-IAVB &  61 & 1,585 & $-0{,}28$ & 1,24 & 0,36 & 5,0 & 0,884 & 3.º \\
-CAP  &  45 & 1,578 & $-0{,}26$ & 1,28 & 0,46 & 3,8 & 0,750 & 8.º \\
-STD  &  65 & 1,485 & $-0{,}13$ & 1,13 & 0,40 & 4,0 & 0,778 & 7.º \\
-SNR  &  78 & 1,472 & $-0{,}11$ & 1,16 & 0,41 & 3,8 & 0,796 & 6.º \\
-STE  &  14 & 1,397 & $-0{,}01$ & 1,02 & 0,35 & 4,1 & 0,596 & 9.º \\
+AF   & 108 & 1,687 & $-0{,}44$ & 1,42 & 0,19 &  9,6 & 0,931 & 1.º & 1,667 & 1.º \\
+BRD  & 172 & 1,633 & $-0{,}35$ & 1,35 & 0,13 & 13,2 & 0,927 & 2.º & 1,586 & 4.º \\
+CVP  &  59 & 1,627 & $-0{,}35$ & 1,26 & 0,17 & 11,0 & 0,837 & 5.º & 1,620 & 2.º \\
+BRE  &  20 & 1,622 & $-0{,}33$ & 1,33 & 0,13 & 12,8 & 0,870 & 4.º & 1,617 & 3.º \\
+IAVB &  61 & 1,607 & $-0{,}32$ & 1,31 & 0,18 &  9,8 & 0,884 & 3.º & 1,585 & 5.º \\
+CAP  &  45 & 1,578 & $-0{,}26$ & 1,27 & 0,25 &  6,7 & 0,750 & 8.º & 1,578 & 6.º \\
+STD  &  65 & 1,483 & $-0{,}13$ & 1,16 & 0,23 &  7,0 & 0,778 & 7.º & 1,485 & 7.º \\
+SNR  &  78 & 1,479 & $-0{,}12$ & 1,18 & 0,23 &  6,8 & 0,796 & 6.º & 1,472 & 8.º \\
+STE  &  14 & 1,427 & $-0{,}05$ & 1,02 & 0,18 &  8,6 & 0,596 & 9.º & 1,397 & 9.º \\
 \midrule
-Global & 622 & 1,574 & $-0{,}26$ & 1,25 & 0,36 & 5,0 & 0,819 & --- \\
+Global & 622 & 1,595 & $-0{,}30$ & 1,29 & 0,18 & 10,0 & 0,819 & --- & 1,574 & --- \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \begin{infobox}[ok]{Resultado principal}
-\textbf{As explicações do GradientSHAP são específicas da classe.} Em todas as classes, a distância entre o mapa da classe explicada e o de uma classe ausente fica entre 3,8 e 7,2 vezes o piso, e 99,98\% dos 4\,886 pares ausentes estão acima do piso do próprio mapa (só 1 par não está). Mesmo a classe ausente mais parecida fica, em média, a 1,25, mais de 3 vezes o piso. O GradientSHAP não sofre a insensibilidade à classe descrita por Sixt et al., como a teoria do artigo previa para métodos baseados no gradiente, e o fator (ECG $-$ baseline), comum a todas as classes, não domina os mapas.
+\textbf{As explicações do GradientSHAP são específicas da classe.} Em todas as classes, a distância entre o mapa da classe explicada e o de uma classe ausente fica entre 6,7 e 13,2 vezes o piso, e \textbf{todos} os 4\,886 pares ausentes estão acima do piso do próprio mapa. Mesmo a classe ausente mais parecida fica, em média, a 1,29, cerca de 7 vezes o piso. O GradientSHAP não sofre a insensibilidade à classe descrita por Sixt et al., como a teoria do artigo previa para métodos baseados no gradiente, e o fator (ECG $-$ baseline), comum a todas as classes, não domina os mapas.
 \end{infobox}
 
-\textbf{Leitura descritiva frente ao F1.} As pontas coincidem: AF, a classe de maior F1, tem as explicações mais específicas, e STE, a de menor F1, as menos específicas. STD e SNR, 7.º e 6.º no F1, estão entre as três menos específicas. No meio, a ordem se mistura: CVP e BRE (5.º e 4.º no F1) ficam à frente de BRD e IAVB (2.º e 3.º), e CAP (8.º no F1) fica no meio. As diferenças entre os extremos (1,67 em AF contra 1,40 em STE) são várias vezes o desvio dentro de cada classe (0,05 a 0,11), então a separação das pontas é real; as do meio (1,58 a 1,62) não. STE tem só 14 mapas e BRE, 20.
+\textbf{O que mudou em relação à versão 1.} As distâncias entre classes quase não mudaram (média global de 1,574 para 1,595; nenhuma classe mudou mais de 0,05). O piso caiu pela metade (0,36 → 0,18), como esperado com quatro vezes mais sorteios. Por isso a razão dobrou (5,0 → 10,0), e o único par que ficava abaixo do piso na versão 1 passou a ficar acima. A especificidade, portanto, é uma propriedade das explicações, e não do ruído do método: a distância entre classes é a mesma com pouco ou muito ruído.
+
+\textbf{Leitura descritiva frente ao F1.} As pontas coincidem: AF, a classe de maior F1, tem as explicações mais específicas, e STE, a de menor F1, as menos específicas. STD e SNR, 7.º e 6.º no F1, estão entre as três menos específicas. Com os mapas da versão 2, a concordância no topo também ficou maior: BRD, 2.ª no F1, subiu da 4.ª para a 2.ª posição, e as cinco classes de maior F1 (AF, BRD, IAVB, BRE e CVP) ocupam as cinco primeiras posições, embora em outra ordem entre si. As diferenças entre os extremos (1,69 em AF contra 1,43 em STE) são várias vezes o desvio dentro de cada classe (0,06 a 0,11), então a separação das pontas é real. As do meio (1,58 a 1,63) não são: a troca de posições entre BRD, CVP, BRE e IAVB de uma versão para outra mostra que essa ordem não é estável. STE tem só 14 mapas e BRE, 20.
 
 \subsection{Verificação: a distância vem do sinal oposto dos mapas?}
-A distância média (1,57) é maior que $\sqrt{2}$, e o cosseno médio é negativo ($-0{,}26$): o mapa da classe ausente tende a ter sinal oposto ao da classe explicada nas mesmas regiões. Há uma razão mecânica para isso. A soma de um mapa do GradientSHAP acompanha a saída do modelo para o ECG menos a saída média para as baselines. Para a classe explicada, presente no ECG, essa diferença é positiva; para uma classe ausente, costuma ser negativa (o ECG tem menos daquela classe que a média das baselines). Mapas com somas de sinais opostos tendem a ter cosseno negativo sem que isso diga algo sobre \textit{onde} eles olham. Uma inversão completa do mapa (mesmas regiões, sinal trocado) contaria como distância máxima, embora destaque as mesmas regiões.
+A distância média (1,60) é maior que $\sqrt{2}$, e o cosseno médio é negativo ($-0{,}30$): o mapa da classe ausente tende a ter sinal oposto ao da classe explicada nas mesmas regiões. Há uma razão mecânica para isso. A soma de um mapa do GradientSHAP acompanha a saída do modelo para o ECG menos a saída média para as baselines. Para a classe explicada, presente no ECG, essa diferença é positiva; para uma classe ausente, costuma ser negativa (o ECG tem menos daquela classe que a média das baselines). Mapas com somas de sinais opostos tendem a ter cosseno negativo sem que isso diga algo sobre \textit{onde} eles olham. Uma inversão completa do mapa (mesmas regiões, sinal trocado) contaria como distância máxima, embora destaque as mesmas regiões.
 
-Para separar os dois efeitos, a soma esperada de cada mapa de classe ausente foi calculada com a saída do modelo no ECG e a saída média nas 32 baselines (diagnóstico):
+Para separar os dois efeitos, a soma esperada de cada mapa de classe ausente foi calculada com a saída do modelo no ECG e a saída média nos 36 ECGs da referência (diagnóstico):
 \begin{center}\small
 \begin{tabular}{lrrr}
 \toprule
 \textbf{Pares de classes ausentes} & \textbf{Pares} & \textbf{Cosseno médio} & \textbf{Distância média} \\
 \midrule
-Soma esperada de $c'$ negativa (sinal oposto) & 3\,462 (71\%) & $-0{,}32$ & 1,61 \\
-Soma esperada de $c'$ positiva (mesmo sinal) & 1\,424 (29\%) & $-0{,}12$ & 1,48 \\
+Soma esperada de $c'$ negativa (sinal oposto) & 3\,824 (78\%) & $-0{,}34$ & 1,63 \\
+Soma esperada de $c'$ positiva (mesmo sinal) & 1\,062 (22\%) & $-0{,}12$ & 1,48 \\
 \bottomrule
 \end{tabular}
 \end{center}
 \begin{itemize}
-\item \textbf{O sinal oposto explica parte do cosseno negativo}, mas não a especificidade: mesmo quando os dois mapas têm somas do mesmo sinal, a distância é 1,48, cerca de 4 vezes o piso, e o cosseno fica perto de 0. Os mapas apontam para \textbf{regiões diferentes}, e não apenas para as mesmas regiões com sinal trocado.
-\item \textbf{Inversões completas e mapas muito parecidos são raros:} só 2,1\% dos pares têm cosseno abaixo de $-0{,}8$, e 1,7\% acima de 0,5.
-\item \textbf{As pontas da ordem se mantêm} nos pares de mesmo sinal: AF ($-0{,}22$) e BRD ($-0{,}21$) continuam as mais específicas, e STD ($0{,}00$) e STE ($+0{,}06$), as menos.
+\item \textbf{O sinal oposto explica parte do cosseno negativo}, mas não a especificidade: mesmo quando os dois mapas têm somas do mesmo sinal, a distância é 1,48, cerca de 8 vezes o piso, e o cosseno fica perto de 0. Os mapas apontam para \textbf{regiões diferentes}, e não apenas para as mesmas regiões com sinal trocado.
+\item \textbf{Inversões completas e mapas muito parecidos são raros:} só 2,6\% dos pares têm cosseno abaixo de $-0{,}8$, e 1,1\% acima de 0,5.
+\item \textbf{As pontas da ordem se mantêm} nos pares de mesmo sinal: AF ($-0{,}24$) e BRD ($-0{,}21$) continuam as mais específicas, e STD ($-0{,}02$) e STE ($+0{,}03$), as menos.
+\item A fração de pares com sinal oposto muda com a referência (71\% na versão 1, 78\% na versão 2), porque a soma esperada depende da saída média do modelo nos ECGs da referência. Por exemplo, a saída média de BRD cai de $-3{,}4$ para $-9{,}6$, já que a referência antiga tinha 14 ECGs de BRD e a nova tem 4. A conclusão do teste é a mesma nas duas versões.
 \end{itemize}
-Uma verificação direta, com a distância entre os valores absolutos dos mapas, exigiria guardar os vetores das 36 regiões de cada par, o que esta execução não fez.
+Uma verificação direta, com a distância entre os valores absolutos dos mapas, exigiria guardar os vetores das 36 regiões de cada par, o que as execuções não fizeram.
 
 \subsection{Classes presentes no mesmo ECG}
-Nos 90 pares em que $c'$ também está nos rótulos do ECG, a distância média é 1,40, menor que nos pares ausentes (1,57), como esperado: duas classes presentes podem usar parte da mesma evidência. As distâncias mais baixas aparecem quando a classe explicada é STE (1,08), STD (1,20) ou CAP (1,27). Com tão poucos pares por combinação (de 1 a 15), esses números servem só como indicação.
+Nos 90 pares em que $c'$ também está nos rótulos do ECG, a distância média é 1,36, menor que nos pares ausentes (1,60), como esperado: duas classes presentes podem usar parte da mesma evidência. As distâncias mais baixas aparecem quando a classe explicada é STE (1,11) ou STD (1,19). Com tão poucos pares por combinação (de 5 a 29 por classe explicada), esses números servem só como indicação.
 
 \subsection{Quais classes têm explicações parecidas (matriz)}
 A classe ausente mais parecida com cada classe explicada (fração dos mapas):
 \begin{center}\small
-\begin{tabularx}{\linewidth}{lX}
+\begin{tabularx}{\linewidth}{lXX}
 \toprule
-\textbf{Classe explicada} & \textbf{Classe ausente mais parecida} \\
+\textbf{Classe explicada} & \textbf{Classe ausente mais parecida (versão 2)} & \textbf{Versão 1} \\
 \midrule
-AF   & STD (39\%), CAP (19\%), CVP (15\%) \\
-BRD  & STE (31\%), AF (19\%), BRE (19\%) \\
-BRE  & CVP (35\%), STE (20\%), CAP (15\%) \\
-CAP  & AF (42\%), SNR (13\%), CVP (13\%) \\
-CVP  & BRE (69\%), STD (10\%), AF (8\%) \\
-IAVB & BRE (64\%), STE (15\%), STD (11\%) \\
-SNR  & BRE (28\%), STE (26\%), CAP (14\%) \\
-STD  & BRE (58\%), IAVB (15\%), CVP (8\%) \\
-STE  & BRE (50\%), CVP (21\%), BRD (21\%) \\
+AF   & STD (27\%), BRD (26\%), CVP (22\%) & STD (39\%), CAP (19\%), CVP (15\%) \\
+BRD  & STE (31\%), AF (27\%), BRE (15\%) & STE (31\%), AF (19\%), BRE (19\%) \\
+BRE  & CVP (35\%), IAVB (20\%), STE (20\%) & CVP (35\%), STE (20\%), CAP (15\%) \\
+CAP  & AF (36\%), CVP (31\%), SNR (11\%) & AF (42\%), SNR (13\%), CVP (13\%) \\
+CVP  & BRE (58\%), BRD (20\%), STD (10\%) & BRE (69\%), STD (10\%), AF (8\%) \\
+IAVB & BRE (61\%), STE (15\%), BRD (13\%) & BRE (64\%), STE (15\%), STD (11\%) \\
+SNR  & STE (28\%), BRE (22\%), CVP (17\%) & BRE (28\%), STE (26\%), CAP (14\%) \\
+STD  & BRE (37\%), IAVB (25\%), BRD (14\%) & BRE (58\%), IAVB (15\%), CVP (8\%) \\
+STE  & BRD (57\%), BRE (21\%), CVP (7\%) & BRE (50\%), CVP (21\%), BRD (21\%) \\
 \bottomrule
 \end{tabularx}
 \end{center}
-O par mais próximo da matriz é STE com BRE (distância média 1,11), seguido de STE com BRD (1,20) e STD com BRE (1,22). Duas observações, ambas a confirmar: (i) o mapa de \textbf{BRE} é o mais parecido para cinco das nove classes, o que sugere que, em ECGs sem BRE, a explicação dessa classe destaca algo comum a vários ECGs; BRE é rara no treino (3,4\%) e não está entre as 32 baselines; verificar se isso muda com outra referência exigiria refazer o Random Logit com ela; (ii) STE se aproxima dos bloqueios de ramo (BRE, BRD), o que é coerente com o fato clínico de que bloqueios de ramo alteram o segmento ST, mas essa leitura não é avaliada no TCC.
+O par mais próximo da matriz é agora STE com BRD (distância média 1,05), seguido de STE com BRE (1,23) e STD com BRE (1,26). Duas observações:
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{BRE perdeu parte do papel de “classe mais parecida”.} Na versão 1, o mapa de BRE era o mais parecido para cinco das nove classes (30\% de todos os mapas), e uma das hipóteses era a ausência de BRE na referência (BRE é rara no treino, 3,4\%, e não estava entre as 32 baselines sorteadas). Com 4 ECGs de BRE na referência, BRE continua a mais parecida para três classes (CVP, IAVB e STD), mas para 23\% dos mapas, e com frações menores em cada classe. A composição da referência explica, portanto, parte do efeito, mas não todo: CVP e IAVB continuam com mais da metade dos mapas mais próximos de BRE.
+\item \textbf{STE se aproxima dos bloqueios de ramo} (BRD e BRE) nas duas versões, agora mais de BRD. Isso é coerente com o fato clínico de que bloqueios de ramo alteram o segmento ST, mas essa leitura não é avaliada no TCC.
+\end{enumerate}
 
 \subsection{Relação com as outras métricas (diagnóstico)}
-Mapa a mapa, a distância às classes ausentes tem correlação de postos de $-0{,}38$ com o número efetivo de regiões (mapas mais concentrados são mais específicos), $-0{,}36$ com o piso (mapas com mais erro de estimativa são menos específicos) e $0{,}41$ com o logit da classe explicada (predições mais confiantes, explicações mais específicas). São relações moderadas, usadas aqui só como diagnóstico: o Random Logit não repete nenhuma das outras métricas, mas conversa com a complexidade e com o piso. STD e SNR, duas das três classes menos específicas, são também as de explicações mais espalhadas e de piso alto; STE, a menos específica, tem complexidade intermediária.
+Mapa a mapa, a distância às classes ausentes tem correlação de postos de $-0{,}46$ com o número efetivo de regiões (mapas mais concentrados são mais específicos), $-0{,}47$ com o piso (mapas com mais erro de estimativa são menos específicos) e $0{,}44$ com o logit da classe explicada (predições mais confiantes, explicações mais específicas). Na versão 1, os valores eram $-0{,}38$, $-0{,}36$ e $0{,}41$. São relações moderadas, usadas aqui só como diagnóstico: o Random Logit não repete nenhuma das outras métricas, mas conversa com a complexidade e com o piso. STD e SNR, duas das três classes menos específicas, são também das explicações mais espalhadas e têm piso alto; STE, a menos específica, tem complexidade intermediária.
 
 \subsection{O que se conclui}
 \begin{enumerate}
-\item O GradientSHAP produz explicações \textbf{específicas da classe} no modelo B: a pergunta da seleção de métricas (“o mapa de BRD é diferente do de outra classe no mesmo ECG?”) tem resposta positiva para todas as classes.
-\item A especificidade varia entre classes, e as pontas acompanham o F1 (AF mais específica, STE menos), com o meio misturado. A ordem não repete a de nenhuma métrica anterior: AF, por exemplo, tem a menor Faithfulness Estimate e é a classe mais específica.
-\item Os resultados usam a referência atual do GradientSHAP (32 ECGs sorteados do treino) e 50 sorteios. A verificação com ECGs normais como baselines e 200 sorteios (\url{results/modeloB_basecheck}) mostrou que a nova referência muda os mapas moderadamente (cosseno médio de 0,92 com os atuais, fora SNR) e que 200 sorteios cortam o piso pela metade; se a referência for trocada, o Random Logit deve ser refeito.
+\item O GradientSHAP produz explicações \textbf{específicas da classe} no modelo B: a pergunta da seleção de métricas (“o mapa de BRD é diferente do de outra classe no mesmo ECG?”) tem resposta positiva para todas as classes, nas duas versões dos mapas.
+\item A especificidade varia entre classes, e as pontas acompanham o F1 (AF mais específica, STE menos; STD e SNR também embaixo). No meio, a ordem não é estável entre as versões. A ordem não repete a de nenhuma métrica anterior: AF, por exemplo, tem uma das menores Faithfulness Estimate (7.ª de 9) e é a classe mais específica.
+\item Trocar a referência e quadruplicar os sorteios mantém as distâncias entre classes e corta o piso pela metade. A conclusão principal fica mais forte, e não muda.
 \end{enumerate}
 
 \section{Versão do Quantus e por que não foi usada}
-A \texttt{quantus.RandomLogit} (Quantus 0.6.0) nunca entrou no pipeline do TCC. Ela sorteia, para cada exemplo, uma classe diferente da explicada (entre todas, sem olhar os rótulos do ECG), gera o mapa dessa classe com uma nova chamada da função de explicação e compara com o mapa salvo usando SSIM sobre o mapa achatado. No ECG, isso traria três problemas: (i) o mapa salvo e o mapa novo viriam de sorteios diferentes do GradientSHAP, e a diferença incluiria o piso inteiro (0,355); (ii) a SSIM sobre os 180\,000 pontos, com o preenchimento, compara janelas que misturam derivações; (iii) a classe sorteada poderia estar presente no ECG. A versão própria resolve os três: mesma semente nos dois mapas, distância nas 36 regiões e classes ausentes separadas das presentes.
+A \texttt{quantus.RandomLogit} (Quantus 0.6.0) nunca entrou no pipeline do TCC. Ela sorteia, para cada exemplo, uma classe diferente da explicada (entre todas, sem olhar os rótulos do ECG), gera o mapa dessa classe com uma nova chamada da função de explicação e compara com o mapa salvo usando SSIM sobre o mapa achatado. No ECG, isso traria três problemas: (i) o mapa salvo e o mapa novo viriam de sorteios diferentes do GradientSHAP, e a diferença incluiria o piso inteiro (0,18 com os mapas da versão 2; 0,36 com os da versão 1); (ii) a SSIM sobre os 180\,000 pontos, com o preenchimento, compara janelas que misturam derivações; (iii) a classe sorteada poderia estar presente no ECG. A versão própria resolve os três: mesma semente nos dois mapas, distância nas 36 regiões e classes ausentes separadas das presentes.
 
 \end{document}

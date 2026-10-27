@@ -280,45 +280,52 @@ O artigo não retira pixels: ele argumenta que, em entradas de alta dimensão, o
 O modelo é muito confiante nas predições corretas: num diagnóstico com 18 ECGs, a mediana do \textit{logit} original foi 7,07, o que corresponde a uma probabilidade de 99,9\%. Nessa faixa, a probabilidade satura: nos 622 mapas, 84\% das retiradas mudam a probabilidade menos de 0,01, e a correlação passa a depender de poucas retiradas. O \textit{logit} é a mesma saída antes da sigmoide, não satura e distingue melhor os efeitos. Por isso é a saída principal. A probabilidade é calculada nas mesmas retiradas e reportada para mostrar que a conclusão não muda (seção 9).
 
 \section{Resultados}
-A versão adaptada foi calculada no Kaggle (GPU T4, 20/10/2026) para os \textbf{622 mapas} do modelo B, isto é, as predições corretas do teste, com o código \texttt{src/faithfulness\_estimate.py}. Cada mapa teve as 36 regiões retiradas uma a uma, nas duas baselines. Não houve nenhum valor indefinido. Os arquivos estão em \texttt{results/modeloB\_faithest/}.
+A versão adaptada foi calculada inicialmente no Kaggle (GPU T4, 20/10/2026) com os mapas da versão 1 (32 ECGs sorteados do treino como referência do GradientSHAP, 50 sorteios). Desde 26/10/2026 o TCC usa a versão 2 dos mapas (opção D do documento \texttt{fichamentos/verificacao-referencia-gradientshap}): referência balanceada, com 4 ECGs de rótulo único de cada uma das 9 classes (36), e 200 sorteios por mapa. A métrica foi recalculada com os mapas novos, com o mesmo código \texttt{src/faithfulness\_estimate.py}, para os mesmos \textbf{622 mapas} do modelo B (predições corretas do teste; versão 23 do notebook). Cada mapa teve as 36 regiões retiradas uma a uma, nas duas baselines. Não houve nenhum valor indefinido. Os arquivos estão em \texttt{results/modeloB\_v2/faithest/}; os da versão 1, em \texttt{results/modeloB\_faithest/}.
 
 \subsection{Por classe}
-A tabela usa a baseline zero; a média do treino deu os mesmos valores até a segunda casa decimal (a maior diferença em um mapa foi 0,11). A Faithfulness Correlation é a do modelo B com grupos de 9 regiões, para comparação. Entre parênteses, a posição da classe (1.º = maior valor).
+A tabela usa os mapas da versão 2 e a baseline zero. A média do treino deu os mesmos valores até a segunda casa decimal (a maior diferença em um mapa foi 0,10). A Faithfulness Correlation é a do modelo B com grupos de 9 regiões, também com os mapas da versão 2, para comparação. Entre parênteses, a posição da classe (1.º = maior valor). A última coluna repete a Faithfulness Estimate da versão 1.
 \begin{center}\small
-\begin{tabularx}{\linewidth}{Xrrrrrr}
+\begin{tabularx}{\linewidth}{Xrrrrrrr}
 \toprule
-\textbf{Classe} & \textbf{Mapas} & \textbf{FE (\textit{logit})} & \textbf{Desvio} & \textbf{FE (prob.)} & \textbf{Faithfulness Corr.} & \textbf{F1} \\
+\textbf{Classe} & \textbf{Mapas} & \textbf{FE (\textit{logit})} & \textbf{Desvio} & \textbf{FE (prob.)} & \textbf{Faithf. Corr.} & \textbf{F1} & \textbf{FE, versão 1} \\
 \midrule
-BRD  & 172 & \textbf{0,78} (1.º) & 0,12 & 0,73 & 0,75 (1.º) & 0,927 (2.º) \\
-BRE  &  20 & 0,72 (2.º) & 0,13 & 0,58 & 0,65 (2.º) & 0,870 (4.º) \\
-CVP  &  59 & 0,66 (3.º) & 0,15 & 0,57 & 0,61 (4.º) & 0,837 (5.º) \\
-STE  &  14 & 0,57 (4.º) & 0,16 & 0,53 & 0,60 (5.º) & 0,596 (9.º) \\
-IAVB &  61 & 0,57 (5.º) & 0,20 & 0,55 & 0,65 (3.º) & 0,884 (3.º) \\
-CAP  &  45 & 0,55 (6.º) & 0,16 & 0,53 & 0,52 (8.º) & 0,750 (8.º) \\
-AF   & 108 & 0,51 (7.º) & 0,22 & 0,51 & 0,54 (6.º) & 0,931 (1.º) \\
-SNR  &  78 & 0,51 (8.º) & 0,21 & 0,42 & 0,46 (9.º) & 0,796 (6.º) \\
-STD  &  65 & 0,51 (9.º) & 0,26 & 0,49 & 0,52 (7.º) & 0,778 (7.º) \\
+BRD  & 172 & \textbf{0,78} (1.º) & 0,11 & 0,76 & 0,75 (1.º) & 0,927 (2.º) & 0,78 \\
+BRE  &  20 & 0,70 (2.º) & 0,14 & 0,56 & 0,65 (2.º) & 0,870 (4.º) & 0,72 \\
+CVP  &  59 & 0,66 (3.º) & 0,14 & 0,57 & 0,62 (5.º) & 0,837 (5.º) & 0,66 \\
+STE  &  14 & 0,59 (4.º) & 0,15 & 0,53 & 0,63 (4.º) & 0,596 (9.º) & 0,57 \\
+IAVB &  61 & 0,55 (5.º) & 0,19 & 0,54 & 0,65 (3.º) & 0,884 (3.º) & 0,57 \\
+CAP  &  45 & 0,54 (6.º) & 0,17 & 0,52 & 0,50 (7.º) & 0,750 (8.º) & 0,55 \\
+AF   & 108 & 0,52 (7.º) & 0,21 & 0,51 & 0,54 (6.º) & 0,931 (1.º) & 0,51 \\
+SNR  &  78 & 0,49 (8.º) & 0,23 & 0,40 & 0,45 (9.º) & 0,796 (6.º) & 0,51 \\
+STD  &  65 & 0,49 (9.º) & 0,22 & 0,47 & 0,47 (8.º) & 0,778 (7.º) & 0,51 \\
 \midrule
-\textbf{Global} & 622 & \textbf{0,62} & 0,21 & 0,57 & 0,61 & 0,819 \\
+\textbf{Global} & 622 & \textbf{0,61} & 0,21 & 0,57 & 0,60 & 0,819 & 0,62 \\
 \bottomrule
 \end{tabularx}
 \end{center}
-AF, SNR e STD diferem em menos de 0,01, e na prática empatam nas últimas posições.
+SNR e STD diferem em menos de 0,01 e, na prática, empatam na última posição.
+
+\subsection{O que mudou em relação à versão 1}
+\begin{itemize}
+\item \textbf{A ordem das classes é exatamente a mesma}, da 1.ª à 9.ª posição.
+\item \textbf{Os valores mudam pouco:} a média global passa de 0,62 para 0,61, e nenhuma classe muda mais de 0,02. Mapa a mapa, a diferença média entre as duas versões é de 0,07, e a correlação entre os valores das duas versões é 0,90 (diagnóstico, só para conferir a estabilidade).
+\end{itemize}
+Assim, a fidelidade medida não depende do ruído do GradientSHAP nem da escolha dos ECGs de referência da versão 1.
 
 \subsection{Verificações}
 \begin{itemize}
-\item \textbf{Teste do sinal (todas as 22\,392 retiradas):} retirar uma região de atribuição positiva baixa o \textit{logit} em 0,32, em média; retirar uma de atribuição negativa o \textbf{aumenta} em 0,34. Em 68\% das retiradas, o sinal da queda coincide com o sinal da atribuição. Retirar o que ajuda a classe baixa a saída, e retirar o que atrapalha a aumenta.
+\item \textbf{Teste do sinal (todas as 22\,392 retiradas):} retirar uma região de atribuição positiva baixa o \textit{logit} em 0,31, em média; retirar uma de atribuição negativa o \textbf{aumenta} em 0,36. Em 68\% das retiradas, o sinal da queda coincide com o sinal da atribuição. Retirar o que ajuda a classe baixa a saída, e retirar o que atrapalha a aumenta.
 \item \textbf{Distribuição:} a mediana por mapa é 0,65, e só 7 dos 622 mapas têm valor negativo.
-\item \textbf{Probabilidade (saída do artigo):} global de 0,57, contra 0,62 com o \textit{logit}. Os valores ficam menores, sobretudo em BRE (0,72 $\rightarrow$ 0,58) e SNR (0,51 $\rightarrow$ 0,42), mas a ordem das classes muda pouco: BRD, BRE e CVP continuam no topo, e SNR, STD e AF, embaixo. A conclusão não depende da escolha da saída.
-\item \textbf{Onde a retirada pesa:} em média, retirar uma região QRS baixa o \textit{logit} em 0,29; uma ST-T, em 0,12; uma pré-QRS, em 0,01.
+\item \textbf{Probabilidade (saída do artigo):} global de 0,57, contra 0,61 com o \textit{logit}. Os valores ficam menores, sobretudo em BRE (0,70 $\rightarrow$ 0,56) e SNR (0,49 $\rightarrow$ 0,40), mas a ordem das classes muda pouco: BRD, BRE e CVP continuam no topo, e SNR, STD e AF, embaixo. A conclusão não depende da escolha da saída.
+\item \textbf{Onde a retirada pesa:} em média, retirar uma região QRS baixa o \textit{logit} em 0,29; uma ST-T, em 0,12; uma pré-QRS, em 0,01. Esses valores não dependem dos mapas (só do modelo e da baseline), por isso são iguais nas duas versões.
 \end{itemize}
 
 \subsection{O que se conclui}
 \begin{enumerate}
-\item \textbf{As explicações são fiéis de forma moderada e em todas as classes.} A correlação global é 0,62, e o sinal da atribuição indica a direção do efeito da retirada na maioria dos casos (68\%).
-\item \textbf{A Faithfulness Estimate concorda com a Faithfulness Correlation.} O valor global é quase o mesmo (0,62 e 0,61), e a ordem das classes é parecida: BRD e BRE no topo; SNR, STD, AF e CAP embaixo. É o esperado, já que, com regiões, a Faithfulness Estimate é o caso da Faithfulness Correlation com grupos de uma região. A concordância mostra que o resultado não depende do tamanho do grupo retirado.
+\item \textbf{As explicações são fiéis de forma moderada e em todas as classes.} A correlação global é 0,61, e o sinal da atribuição indica a direção do efeito da retirada na maioria dos casos (68\%).
+\item \textbf{A Faithfulness Estimate concorda com a Faithfulness Correlation.} O valor global é quase o mesmo (0,61 e 0,60), e a ordem das classes é parecida: BRD e BRE no topo; SNR, STD, AF e CAP embaixo. É o esperado, já que, com regiões, a Faithfulness Estimate é o caso da Faithfulness Correlation com grupos de uma região. A concordância mostra que o resultado não depende do tamanho do grupo retirado.
 \item \textbf{A fidelidade coincide com o F1 só em parte} (comparação descritiva, sem coeficiente de correlação). BRD está entre as melhores nas duas medidas. Já AF tem o maior F1 e uma das menores fidelidades, e STE tem o menor F1 e fidelidade intermediária (com só 14 mapas).
-
+\item \textbf{O resultado é estável:} refazer os mapas com outra referência e quatro vezes mais sorteios não muda a ordem das classes.
 \end{enumerate}
 
 \section{Versão antiga (Quantus) e por que foi substituída}

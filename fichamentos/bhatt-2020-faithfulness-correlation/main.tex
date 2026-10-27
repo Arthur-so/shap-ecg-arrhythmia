@@ -389,34 +389,42 @@ Exemplos & Teste ($\geq$ 50 pontos) & Predições corretas, por classe & Prediç
 Num caso sintético com um modelo linear, em que a atribuição exata de cada região é exatamente o efeito de retirá-la, a métrica deu \textbf{1,0}. Com a atribuição invertida, deu \textbf{$-$1,0}; com uma atribuição aleatória, $-$0,12 (perto de zero). Um teste completo com 18 mapas reais também rodou sem valores indefinidos. Nesse teste, as baselines zero e média do treino deram praticamente o mesmo resultado: como os batimentos não estão alinhados entre pacientes, a média de cada ponto (derivação, instante) nos ECGs de treino fica perto de zero.
 
 \section{Resultados da versão atual}
-A métrica foi calculada no Kaggle (GPU) para os 622 mapas do modelo B (versão 17 do notebook, com o modelo e os mapas do dataset \texttt{arthurso/shap-ecg-modelob}), com 50 subconjuntos por mapa. \textbf{Nenhum valor ficou indefinido.} As duas baselines deram resultados praticamente iguais (diferença máxima de 0,003), por isso a tabela mostra só a baseline zero.
+Desde 26/10/2026 o TCC usa a versão 2 dos mapas SHAP (opção D do documento de verificação da referência, \texttt{fichamentos/verificacao-referencia-gradientshap}). Os mapas passaram a ser gerados com uma referência balanceada (4 ECGs de rótulo único de cada uma das 9 classes, 36 no total) e 200 sorteios por mapa, em vez de 32 ECGs sorteados do treino e 50 sorteios. A métrica foi recalculada no Kaggle (GPU) para os mesmos 622 mapas do modelo B, com os mapas novos e o mesmo protocolo (versão 23 do notebook, dataset \texttt{arthurso/shap-ecg-modelob-v2}). Os resultados estão em \texttt{results/modeloB\_v2/faithcorr/}. \textbf{Nenhum valor ficou indefinido.} As duas baselines deram resultados praticamente iguais (diferença máxima de 0,003), por isso a tabela mostra só a baseline zero. A última coluna repete o valor com os mapas da versão 1, para comparação.
 
 \begin{center}\small
-\begin{tabularx}{\linewidth}{lrrrrX}
+\begin{tabularx}{\linewidth}{Xrrrrrr}
 \toprule
-\textbf{Classe} & \textbf{Mapas} & \textbf{F1} & \textbf{$|S|$ = 4} & \textbf{$|S|$ = 9} & \textbf{$|S|$ = 18} \\
+\textbf{Classe} & \textbf{Mapas} & \textbf{F1} & \textbf{$|S|$ = 4} & \textbf{$|S|$ = 9} & \textbf{$|S|$ = 18} & \textbf{Versão 1, $|S|$ = 9} \\
 \midrule
-BRD  & 172 & 0,927 & 0,77 & \textbf{0,74} & 0,69 \\
-BRE  &  20 & 0,870 & 0,69 & \textbf{0,65} & 0,51 \\
-IAVB &  61 & 0,884 & 0,58 & \textbf{0,64} & 0,62 \\
-CVP  &  59 & 0,837 & 0,64 & \textbf{0,61} & 0,54 \\
-STE  &  14 & 0,596 & 0,57 & \textbf{0,60} & 0,53 \\
-AF   & 108 & 0,931 & 0,54 & \textbf{0,54} & 0,55 \\
-STD  &  65 & 0,778 & 0,50 & \textbf{0,52} & 0,43 \\
-CAP  &  45 & 0,750 & 0,54 & \textbf{0,52} & 0,44 \\
-SNR  &  78 & 0,796 & 0,49 & \textbf{0,46} & 0,39 \\
+BRD  & 172 & 0,927 & 0,77 & \textbf{0,75} & 0,69 & 0,74 \\
+BRE  &  20 & 0,870 & 0,67 & \textbf{0,65} & 0,52 & 0,65 \\
+IAVB &  61 & 0,884 & 0,59 & \textbf{0,65} & 0,64 & 0,64 \\
+STE  &  14 & 0,596 & 0,59 & \textbf{0,63} & 0,53 & 0,60 \\
+CVP  &  59 & 0,837 & 0,64 & \textbf{0,62} & 0,55 & 0,61 \\
+AF   & 108 & 0,931 & 0,53 & \textbf{0,54} & 0,56 & 0,54 \\
+CAP  &  45 & 0,750 & 0,54 & \textbf{0,50} & 0,40 & 0,52 \\
+STD  &  65 & 0,778 & 0,48 & \textbf{0,47} & 0,38 & 0,52 \\
+SNR  &  78 & 0,796 & 0,47 & \textbf{0,45} & 0,36 & 0,46 \\
 \midrule
-\textbf{Global} & 622 & 0,819 & 0,61 & \textbf{0,61} & 0,55 \\
+\textbf{Global} & 622 & 0,819 & 0,61 & \textbf{0,60} & 0,55 & 0,61 \\
 \bottomrule
 \end{tabularx}
 \end{center}
-\textit{Valores de Faithfulness Correlation (média por classe), baseline zero; $|S|$ é o número de regiões, de 36, retiradas de uma vez em cada subconjunto. F1 no teste, com limiares por classe. Classes ordenadas pela coluna $|S|$ = 9.}
+\textit{Valores de Faithfulness Correlation (média por classe), baseline zero, mapas da versão 2; $|S|$ é o número de regiões, de 36, retiradas de uma vez em cada subconjunto. F1 no teste, com limiares por classe. Classes ordenadas pela coluna $|S|$ = 9.}
+
+\subsection{O que mudou em relação à versão 1}
+\begin{itemize}
+\item \textbf{Média global praticamente igual:} 0,61 → 0,60 ($|S|$ = 9). Nenhuma classe mudou mais de 0,03, exceto STD ($-$0,05).
+\item \textbf{Mapa a mapa, os valores mudam pouco:} a diferença média entre as duas versões, no mesmo ECG e na mesma classe, é de 0,07, e a correlação entre os valores das duas versões é 0,90 (diagnóstico, só para conferir a estabilidade).
+\item \textbf{Ordem das classes:} BRD continua no topo e SNR na base, em todos os tamanhos de subconjunto. Só há trocas entre vizinhas: STE e CVP trocam a 4ª e a 5ª posições, e STD e CAP trocam a 7ª e a 8ª.
+\end{itemize}
+Conclusão: trocar a referência e quadruplicar os sorteios não altera a leitura da métrica. A fidelidade medida é uma propriedade das explicações do modelo, e não do ruído do GradientSHAP nem da escolha dos 32 ECGs de referência da versão 1.
 
 \subsection{Leitura}
 \begin{enumerate}
-\item \textbf{As explicações são fiéis ao modelo, de forma moderada.} Todas as classes têm correlação positiva, entre 0,39 e 0,77, e a média global é 0,61. Quando o SHAP dá mais importância a um grupo de regiões, retirar esse grupo derruba mais a saída do modelo. Como ordem de grandeza, o valor fica na faixa que o artigo obtém para explicações SHAP em dados tabulares (0,31 a 0,68).
+\item \textbf{As explicações são fiéis ao modelo, de forma moderada.} Todas as classes têm correlação positiva, entre 0,36 e 0,77, e a média global é 0,60. Quando o SHAP dá mais importância a um grupo de regiões, retirar esse grupo derruba mais a saída do modelo. Como ordem de grandeza, o valor fica na faixa que o artigo obtém para explicações SHAP em dados tabulares (0,31 a 0,68).
 \item \textbf{Diferenças entre classes.} BRD tem as explicações mais fiéis em todos os tamanhos de subconjunto, e SNR as menos fiéis, também em todos. As demais classes trocam de posição conforme $|S|$.
-\item \textbf{Efeito do tamanho do subconjunto.} A fidelidade global é igual com 4 e 9 regiões (0,61) e cai com 18 (0,55). O artigo observa que a fidelidade sobe com $|S|$ até o subconjunto conter os atributos informativos; aqui, retirar metade do ECG de uma vez já não aumenta a correlação.
+\item \textbf{Efeito do tamanho do subconjunto.} A fidelidade global é quase igual com 4 e 9 regiões (0,61 e 0,60) e cai com 18 (0,55). O artigo observa que a fidelidade sobe com $|S|$ até o subconjunto conter os atributos informativos; aqui, retirar metade do ECG de uma vez já não aumenta a correlação. AF e IAVB são exceções: o valor com 18 regiões é parecido com o de 9.
 \end{enumerate}
 
 \subsection{Comparação descritiva com o F1 ($|S|$ = 9)}
@@ -426,18 +434,18 @@ SNR  &  78 & 0,796 & 0,49 & \textbf{0,46} & 0,39 \\
 \textbf{Classe} & \textbf{Posição no F1} & \textbf{Posição na Faithfulness Correlation} & \textbf{Leitura} \\
 \midrule
 BRD  & 2º & 1º & Concordância no topo \\
-IAVB & 3º & 3º & Concordância no topo \\
 BRE  & 4º & 2º & Concordância no topo \\
-CVP  & 5º & 4º & Posições próximas \\
-STD  & 7º & 7º & Concordância na base \\
-CAP  & 8º & 8º & Concordância na base \\
+IAVB & 3º & 3º & Concordância no topo \\
+CVP  & 5º & 5º & Mesma posição, no meio \\
+CAP  & 8º & 7º & Concordância na base \\
+STD  & 7º & 8º & Concordância na base \\
 AF   & 1º & 6º & \textbf{Discordância}: melhor F1, fidelidade intermediária \\
 SNR  & 6º & 9º & \textbf{Discordância}: fidelidade mais baixa entre todas \\
-STE  & 9º & 5º & \textbf{Discordância}: pior F1, fidelidade intermediária (só 14 mapas) \\
+STE  & 9º & 4º & \textbf{Discordância}: pior F1, fidelidade intermediária (só 14 mapas) \\
 \bottomrule
 \end{tabularx}
 \end{center}
-As duas ordenações coincidem em seis das nove classes (topo: BRD, IAVB, BRE; base: STD, CAP; CVP no meio) e divergem em três (AF, SNR e STE). Desempenho e fidelidade tendem a andar juntos, mas não de forma estrita. A comparação é descritiva, pelos mesmos motivos explicados no fichamento da Consistency: as nove classes não são observações independentes.
+As duas ordenações coincidem em seis das nove classes (topo: BRD, BRE, IAVB; base: CAP, STD; CVP no meio) e divergem em três (AF, SNR e STE), exatamente como na versão 1. Desempenho e fidelidade tendem a andar juntos, mas não de forma estrita. A comparação é descritiva, pelos mesmos motivos explicados no fichamento da Consistency: as nove classes não são observações independentes.
 
 \section{Como redigir no TCC}
 \begin{infobox}[ok]{Sugestão}
@@ -445,7 +453,7 @@ As duas ordenações coincidem em seis das nove classes (topo: BRD, IAVB, BRE; b
 \end{infobox}
 
 \begin{infobox}[ok]{Sugestão: resultados}
-“A Faithfulness Correlation foi positiva em todas as classes, com média global de 0,61 (subconjuntos de 9 regiões), variando de 0,46 (SNR) a 0,74 (BRD). As duas baselines produziram valores praticamente idênticos. Comparando as ordenações, as classes de maior e menor desempenho preditivo coincidem, em sua maioria, com as de maior e menor fidelidade (BRD, IAVB e BRE no topo; STD e CAP na base), com exceções em AF, SNR e STE.”
+“A Faithfulness Correlation foi positiva em todas as classes, com média global de 0,60 (subconjuntos de 9 regiões), variando de 0,45 (SNR) a 0,75 (BRD). As duas baselines produziram valores praticamente idênticos, e os resultados se mantiveram ao refazer os mapas com outra referência e com 50 sorteios em vez de 200 (média global de 0,61). Comparando as ordenações, as classes de maior e menor desempenho preditivo coincidem, em sua maioria, com as de maior e menor fidelidade (BRD, BRE e IAVB no topo; CAP e STD na base), com exceções em AF, SNR e STE.”
 \end{infobox}
 
 \end{document}
