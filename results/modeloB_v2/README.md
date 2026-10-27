@@ -17,14 +17,14 @@ Os resultados da versão 1 (32 ECGs sorteados do treino, 50 sorteios) continuam 
 | Pasta | Métrica | Execução |
 |---|---|---|
 | `consistency/` | Consistency (k = 2) | Local (CPU), 26/10/2026 |
-| `complexity/` | Complexidade (entropia por regiões; Gini como verificação) | Local (CPU), 26/10/2026; o piso será acrescentado após a sensibilidade |
+| `complexity/` | Complexidade (entropia por regiões; Gini como verificação), com o piso da sensibilidade v2 | Local (CPU), 26/10/2026; piso acrescentado em 27/10/2026 |
 | `faithcorr/` | Faithfulness Correlation (\|S\| = 4, 9, 18; baselines zero e média) | Kaggle, versão 23 do runner, 26/10/2026 |
 | `faithest/` | Faithfulness Estimate (36 retiradas; logit e probabilidade) | Kaggle, versão 23 do runner, 26/10/2026 |
 | `rlogit/` | Random Logit (mapas das 9 classes com a mesma semente; piso) | Kaggle, versão 23 do runner, 26/10/2026, 264 min |
-| `sens/` | Max/Avg-Sensitivity | Kaggle, versão 24 do runner (em execução) |
+| `sens/` | Max/Avg-Sensitivity (10 perturbações de raio 0,1; piso) | Kaggle, versão 24 do runner, 27/10/2026, 329 min |
 
 Os arquivos de cada pasta têm o mesmo formato das pastas da versão 1 (ver os README de
-`results/modeloB_faithcorr/`, `modeloB_faithest/` e `modeloB_rlogit/`). Nenhum valor indefinido.
+`results/modeloB_faithcorr/`, `modeloB_faithest/`, `modeloB_rlogit/` e `modeloB_sens/`). Nenhum valor indefinido.
 
 Resumo (média global):
 
@@ -36,3 +36,6 @@ Resumo (média global):
 | Faithfulness Estimate (logit, baseline zero) | 0,611 | 0,615 |
 | Random Logit: distância às classes ausentes | 1,595 | 1,574 |
 | Random Logit: piso | 0,183 | 0,355 |
+| Max-Sensitivity (regiões) | 0,045 | 0,072 |
+| Avg-Sensitivity (regiões) | 0,036 | 0,058 |
+| Piso da sensibilidade (regiões) | 0,183 | 0,355 |

@@ -582,35 +582,46 @@ Todos os mapas ficaram com a mesma explicação, (+, +, +, +, +). Para a métric
 
 \section{Resultados atuais (modelo B)}
 
-O modelo B é o classificador atual: treino alinhado a Zhang et al. (2021), BCE simples e limiares por classe, com F1‑macro de \textbf{0,819} no teste (artigo: 0,813). Foram gerados 622 mapas SHAP, um para cada predição correta do teste. A Consistency global foi \textbf{0,42}, contra 0,13 esperado ao acaso.
+O modelo B é o classificador atual: treino alinhado a Zhang et al. (2021), BCE simples e limiares por classe, com F1‑macro de \textbf{0,819} no teste (artigo: 0,813). Foram gerados 622 mapas SHAP, um para cada predição correta do teste.
+
+\textbf{Versão dos mapas.} Desde 26/10/2026 o TCC usa a versão 2 dos mapas, a opção D do documento \url{fichamentos/verificacao-referencia-gradientshap}. A referência do GradientSHAP deixou de ser 32 ECGs sorteados do treino e passou a ser \textbf{balanceada}: 4 ECGs de rótulo único de cada uma das 9 classes, 36 no total. Cada mapa passou a ser a média de \textbf{200 sorteios}, em vez de 50. A Consistency foi recalculada com os mapas novos, com o mesmo código e as mesmas escolhas (\texttt{results/modeloB\_v2/consistency/}). A Consistency global foi \textbf{0,455}, contra 0,13 esperado ao acaso; com os mapas da versão 1, era 0,42.
 
 \begin{center}\small
-\begin{tabularx}{\linewidth}{lrrrrX}
+\begin{tabularx}{\linewidth}{lrrrrXr}
 \toprule
-\textbf{Classe} & \textbf{Mapas} & \textbf{F1} & \textbf{Consistency} & \textbf{Acaso} & \textbf{Explicação mais comum (k = 2)} \\
+\textbf{Classe} & \textbf{Mapas} & \textbf{F1} & \textbf{Consistency} & \textbf{Acaso} & \textbf{Explicação mais comum (k = 2)} & \textbf{Versão 1} \\
 \midrule
-BRD & 172 & 0,927 & 0,64 & 0,23 & V1·QRS + V2·QRS \\
-STD & 65 & 0,778 & 0,51 & 0,09 & II·ST‑T + aVR·ST‑T \\
-IAVB & 61 & 0,884 & 0,45 & 0,08 & II·pré‑QRS + aVR·pré‑QRS \\
-AF & 108 & 0,931 & 0,42 & 0,14 & V4·QRS + V5·QRS \\
-CVP & 59 & 0,837 & 0,26 & 0,08 & aVR·QRS + V5/aVF·QRS \\
-BRE & 20 & 0,870 & 0,25 & 0,03 & V1·QRS + V2·QRS \\
-SNR & 78 & 0,796 & 0,21 & 0,10 & aVR·pré‑QRS + V1·QRS \\
-CAP & 45 & 0,750 & 0,14 & 0,06 & dispersa \\
-STE & 14 & 0,596 & 0,03 & 0,02 & pré‑QRS (esperado: ST‑T) \\
+BRD & 172 & 0,927 & 0,72 & 0,23 & V1·QRS + V2·QRS (33\%) & 0,64 \\
+AF & 108 & 0,931 & 0,46 & 0,14 & V4·QRS + V5·QRS (10\%) & 0,42 \\
+IAVB & 61 & 0,884 & 0,42 & 0,08 & II·pré‑QRS + aVR·pré‑QRS (62\%) & 0,45 \\
+STD & 65 & 0,778 & 0,39 & 0,09 & aVR·ST‑T com II, I ou aVR·pré‑QRS (cerca de 8\% cada) & 0,51 \\
+CVP & 59 & 0,837 & 0,38 & 0,08 & aVR·QRS + aVF·QRS (19\%) & 0,26 \\
+BRE & 20 & 0,870 & 0,34 & 0,03 & V1·QRS + V2·QRS (50\%) & 0,25 \\
+SNR & 78 & 0,796 & 0,26 & 0,10 & II·pré‑QRS + aVR·pré‑QRS (24\%) & 0,21 \\
+CAP & 45 & 0,750 & 0,16 & 0,06 & dispersa (a mais comum, 11\%) & 0,14 \\
+STE & 14 & 0,596 & 0,08 & 0,02 & II·pré‑QRS + aVR·pré‑QRS (29\%; esperado: ST‑T) & 0,03 \\
 \bottomrule
 \end{tabularx}
 \end{center}
+\textit{Entre parênteses, a fração dos mapas da classe com a explicação mais comum. Última coluna: Consistency com os mapas da versão 1.}
 
 \begin{infobox}[ok]{O que é o valor esperado ao acaso}
-É a Consistency que se obteria se as explicações não tivessem nenhuma relação com a classe, como se as classes fossem sorteadas entre os mapas. Nada é descontado: ele serve só como referência. Não é zero porque, mesmo com explicações sorteadas, mapas com a mesma explicação às vezes seriam da mesma classe por coincidência, o que é mais frequente nas classes grandes. Por exemplo, 172 dos 622 mapas são de BRD, e o acaso dessa classe é 0,23; o STE tem 14 mapas, e o acaso dele é 0,02. Assim, BRD (0,64) está bem acima do acaso, e STE (0,03) praticamente nele.
+É a Consistency que se obteria se as explicações não tivessem nenhuma relação com a classe, como se as classes fossem sorteadas entre os mapas. Nada é descontado: ele serve só como referência. Não é zero porque, mesmo com explicações sorteadas, mapas com a mesma explicação às vezes seriam da mesma classe por coincidência, o que é mais frequente nas classes grandes. Por exemplo, 172 dos 622 mapas são de BRD, e o acaso dessa classe é 0,23; o STE tem 14 mapas, e o acaso dele é 0,02. Assim, BRD (0,72) está bem acima do acaso, e STE (0,08) pouco acima dele.
 \end{infobox}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{figs/f1_vs_consistency.png}
-\caption{F1 × Consistency por classe (modelo B). Círculos vazios: valor esperado ao acaso; a haste mostra o quanto cada classe fica acima dele.}
+\includegraphics[width=0.7\linewidth]{figs/f1_vs_consistency_v2.png}
+\caption{F1 × Consistency por classe (modelo B, mapas da versão 2). Círculos vazios: valor esperado ao acaso; a haste mostra o quanto cada classe fica acima dele.}
 \end{figure}
+
+\subsection{O que mudou em relação à versão 1}
+\begin{itemize}
+\item \textbf{A Consistency global subiu pouco} (0,42 → 0,455). Sete classes subiram, principalmente CVP (+0,12), BRE (+0,09) e BRD (+0,08); STD caiu ($-$0,12), e IAVB caiu levemente.
+\item \textbf{A subida não vem da redução do ruído.} No teste da referência (\url{results/modeloB_basebal}), manter a referência antiga e só passar de 50 para 200 sorteios levou a Consistency de 0,42 para 0,44, embora o erro de estimativa dos mapas (o piso) tenha caído pela metade. A maior parte da mudança vem da troca da referência. A falta de consistência entre ECGs é, portanto, uma propriedade das explicações do modelo, e não do ruído do GradientSHAP.
+\item \textbf{STD perdeu consistência} porque o par mais comum deixou de ser só de ST‑T: com a referência balanceada, parte dos mapas de STD combina aVR·ST‑T com aVR·pré‑QRS, e as explicações se dividem entre mais pares.
+\item \textbf{As pontas continuam as mesmas}: BRD em 1º lugar, CAP e STE nas duas últimas posições.
+\end{itemize}
 
 \subsection{Comparação descritiva com o F1}
 \begin{center}\small
@@ -619,11 +630,11 @@ STE & 14 & 0,596 & 0,03 & 0,02 & pré‑QRS (esperado: ST‑T) \\
 \textbf{Classe} & \textbf{Posição no F1} & \textbf{Posição na Consistency} & \textbf{Leitura} \\
 \midrule
 BRD & 2º & 1º & Concordância no topo \\
+AF & 1º & 2º & Concordância no topo \\
 IAVB & 3º & 3º & Concordância no topo \\
-AF & 1º & 4º & Concordância no topo \\
-CVP & 5º & 5º & Posições intermediárias e próximas \\
+CVP & 5º & 5º & Mesma posição, no meio \\
 SNR & 6º & 7º & Posições intermediárias e próximas \\
-STD & 7º & 2º & \textbf{Discordância}: F1 intermediário, explicações muito consistentes (ST‑T) \\
+STD & 7º & 4º & \textbf{Discordância}: F1 intermediário, explicações mais consistentes que o F1 sugere \\
 BRE & 4º & 6º & \textbf{Discordância}: bom F1, explicações pouco consistentes (20 mapas) \\
 CAP & 8º & 8º & Concordância na base \\
 STE & 9º & 9º & Concordância na base \\
@@ -631,32 +642,34 @@ STE & 9º & 9º & Concordância na base \\
 \end{tabularx}
 \end{center}
 
-As duas ordenações coincidem nas pontas e divergem no meio, com STD e BRE.
+As duas ordenações coincidem nas pontas e divergem no meio, com STD e BRE, como na versão 1. Com os mapas novos, a concordância ficou maior: as três classes de maior F1 são as três de maior Consistency, e a discordância de STD diminuiu (de 2º para 4º lugar na Consistency).
 
 \subsection{Sensibilidade às escolhas do método}
-O cálculo foi repetido com 9 combinações de regiões (janela do QRS de 140, 180 ou 220 ms × fim do ST‑T em 40, 45 ou 50\% do RR) e com k ∈ \{1, 2, 3\}:
+O cálculo foi repetido, com os mapas da versão 2, com 9 combinações de regiões (janela do QRS de 140, 180 ou 220 ms × fim do ST‑T em 40, 45 ou 50\% do RR) e com k ∈ \{1, 2, 3\}:
 
 \begin{center}\small
 \begin{tabularx}{\linewidth}{lrrX}
 \toprule
 \textbf{k} & \textbf{Mapas sem par} & \textbf{Consistency global} & \textbf{Observação} \\
 \midrule
-1 & 1–2\% & 0,40–0,45 & Mais verificável; explicação mais pobre \\
-2 & 17–20\% & 0,39–0,45 & Escolha atual; BRD sempre em 1º, CAP e STE sempre nas duas últimas posições \\
-3 & 46–50\% & 0,29–0,32 & Metade dos mapas sem par: não verificável \texttt{[p. 11]} \\
+1 & 1–2\% & 0,43–0,47 & Mais verificável; explicação mais pobre \\
+2 & 15–19\% & 0,41–0,47 & Escolha atual; BRD sempre em 1º, CAP e STE sempre nas duas últimas posições \\
+3 & 40–44\% & 0,32–0,38 & Quase metade dos mapas sem par: não verificável \texttt{[p. 11]} \\
 \bottomrule
 \end{tabularx}
 \end{center}
+Na versão 1, as faixas eram parecidas (k = 2: 17–20\% sem par e Consistency de 0,39 a 0,45).
 
 \section{Interpretação e limitações}
 
 \textbf{Conclusões parciais}, só com F1 e Consistency:
 \begin{enumerate}
-\item As explicações carregam informação sobre a classe, de forma moderada: 0,42 contra 0,13 ao acaso, cerca de 3 vezes o esperado, mas longe de 1.
-\item A Consistency é alta onde o diagnóstico depende de um marcador morfológico localizado (BRD, STD, IAVB), e as regiões destacadas coincidem com os critérios clínicos (QRS em V1 no BRD, ST‑T no STD, intervalo PR no IAVB). É plausibilidade, ainda sem validação por especialista.
-\item Desempenho e consistência coincidem nas pontas (BRD, IAVB e AF no topo; CAP e STE na base), com exceções no meio (STD e BRE). As duas dimensões andam juntas, mas não se confundem.
+\item As explicações carregam informação sobre a classe, de forma moderada: 0,455 contra 0,13 ao acaso, cerca de 3,5 vezes o esperado, mas longe de 1.
+\item A Consistency é alta onde o diagnóstico depende de um marcador morfológico localizado (BRD, IAVB), e as regiões destacadas coincidem com os critérios clínicos (QRS em V1 e V2 no BRD, intervalo PR no IAVB). STD ainda destaca o ST‑T, mas de forma menos repetida que na versão 1. É plausibilidade, ainda sem validação por especialista.
+\item Desempenho e consistência coincidem nas pontas (BRD, AF e IAVB no topo; CAP e STE na base), com exceções no meio (STD e BRE). As duas dimensões andam juntas, mas não se confundem.
 \item O padrão depende do modelo: com o classificador anterior (F1 0,641), as posições coincidiam menos (BRE era 3º no F1 e último na Consistency).
 \item A discretização determina o resultado da métrica: a versão padrão do Quantus produzia uma coincidência artificial com o F1.
+\item O resultado não depende do ruído do GradientSHAP: reduzir o erro de estimativa pela metade quase não muda a Consistency.
 \end{enumerate}
 
 \textbf{Limitações.}
@@ -678,7 +691,7 @@ O cálculo foi repetido com 9 combinações de regiões (janela do QRS de 140, 1
 \end{infobox}
 
 \begin{infobox}[ok]{Sugestão: resultados}
-“A consistency global foi de 0,42, frente a 0,13 esperado ao acaso. Os valores mais altos ocorreram em classes com marcador morfológico localizado (BRD, 0,64; STD, 0,51; IAVB, 0,45), cujas regiões mais frequentes coincidem com critérios clínicos, e os mais baixos em STE (0,03) e CAP (0,14). Comparando as ordenações, as classes de melhor e pior desempenho preditivo coincidem com as de maior e menor consistency, com exceções nas posições intermediárias (STD e BRE).”
+“A consistency global foi de 0,455, frente a 0,13 esperado ao acaso. Os valores mais altos ocorreram em BRD (0,72), AF (0,46) e IAVB (0,42); em BRD e IAVB, as regiões mais frequentes coincidem com critérios clínicos (QRS em V1 e V2; intervalo PR). Os mais baixos ocorreram em STE (0,08) e CAP (0,16). Comparando as ordenações, as classes de melhor e pior desempenho preditivo coincidem com as de maior e menor consistency, com exceções nas posições intermediárias (STD e BRE). Reduzir pela metade o erro de estimativa do GradientSHAP, com 200 sorteios por mapa em vez de 50, quase não alterou a métrica (0,42 para 0,44), o que indica que a baixa consistência de algumas classes reflete o modelo, e não o ruído do método de explicação.”
 \end{infobox}
 
 \end{document}

@@ -338,7 +338,7 @@ Piso & 0,32 & 0,35 & 0,36 & 0,32 & 0,35 & \textbf{0,46} & \textbf{0,23} & 0,40 &
 \end{itemize}
 \textbf{Como entra na leitura.} O ruído explica uma parte do espalhamento, mas não a ordem das classes. Por isso, a complexidade é usada como está, sem nenhuma correção, e o piso de cada classe é reportado ao lado, como contexto: quando uma classe tem explicações espalhadas \textit{e} piso alto (SNR, STD), parte do espalhamento pode ser do método; quando tem piso baixo (BRE), o espalhamento é mais provavelmente do modelo. A Consistency mistura as mesmas duas causas.
 
-\textbf{Refazer os mapas com mais sorteios.} A única forma de reduzir o erro de estimativa é aumentar o número de sorteios da média (\texttt{n\_samples}). O erro de uma média cai aproximadamente com $1/\sqrt{n}$: com 200 sorteios em vez de 50 (4 vezes mais), o erro cai mais ou menos pela metade. O piso diminuiria, e a complexidade passaria a refletir mais o modelo e menos o método. O custo é regerar os 622 mapas no Kaggle (cerca de 4 vezes o tempo do SHAP atual) e refazer todas as métricas que usam os mapas. É uma decisão pendente com o orientador; \textbf{nada foi refeito}, e todos os resultados deste documento usam os mapas com 50 sorteios.
+\textbf{Refazer os mapas com mais sorteios.} A única forma de reduzir o erro de estimativa é aumentar o número de sorteios da média (\texttt{n\_samples}). O erro de uma média cai aproximadamente com $1/\sqrt{n}$: com 200 sorteios em vez de 50 (4 vezes mais), o erro cai mais ou menos pela metade. O piso diminuiria, e a complexidade passaria a refletir mais o modelo e menos o método. O custo é regerar os 622 mapas no Kaggle (cerca de 4 vezes o tempo do SHAP atual) e refazer todas as métricas que usam os mapas. Isso foi feito depois, junto com a troca da referência (versão 2 dos mapas, 26/10/2026). As seções 5 a 9 usam os mapas da versão 1, com 50 sorteios; o resultado com 200 sorteios está na seção~\ref{sec:v2}, e a previsão acima não se confirmou.
 
 \subsection{Relação com o eMPRT}\label{sec:emprt}
 O eMPRT (Hedström et al., 2023), escolhido na seleção de métricas, mede quanto a entropia da explicação \textbf{sobe} quando os pesos do modelo são todos sorteados de novo: $q = (\xi(\hat{e}) - \xi(e))/\xi(e)$, em que $e$ é o mapa do modelo treinado e $\hat{e}$ o do modelo randomizado. A entropia $\xi$ usada no TCC será a mesma desta métrica, nas 36 regiões. Duas consequências:
@@ -401,7 +401,7 @@ Custo quase nulo: 9 segundos para os 622 mapas, sem chamar o modelo. & A versão
 Sem baseline e sem perturbação: não sofre dos artefatos que afetaram as versões antigas da Faithfulness Correlation e da Estimate. & O resultado depende da divisão em 36 regiões e do uso da soma do mapa (com cancelamento entre positivos e negativos), escolhas que precisam ser justificadas. \\ \addlinespace
 Leitura intuitiva por regiões: “a explicação usa o equivalente a 24 das 36 regiões”. & Diferenças entre classes modestas frente à variação dentro de cada classe. \\ \addlinespace
 Mede algo diferente da fidelidade (relação moderada, $-0{,}41$). & É de outra categoria do Quantus (complexidade); incluí-la amplia o escopo do TCC. \\ \addlinespace
-Fornece a entropia do eMPRT e o teto de cada mapa para lê-lo (seção~\ref{sec:emprt}). & Parte da complexidade pode vir do erro de estimativa do GradientSHAP, que faz a média de só 50 sorteios (relação de 0,38 com o piso; seção~\ref{sec:piso}). \\ \addlinespace
+Fornece a entropia do eMPRT e o teto de cada mapa para lê-lo (seção~\ref{sec:emprt}). & Parte da complexidade poderia vir do erro de estimativa do GradientSHAP (relação de 0,38 com o piso; seção~\ref{sec:piso}). Com 200 sorteios, o erro caiu pela metade e a complexidade não mudou (seção~\ref{sec:v2}). \\ \addlinespace
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -446,8 +446,46 @@ Global & 622 & 3,18 & 24,2 & 0,475 & 28,1\% & 0,36 \\
 \item \textbf{Leitura frente ao F1 (descritiva).} Valem as observações da seção~6: as três classes de maior F1 (AF, BRD e IAVB) têm as explicações mais concentradas; SNR e STD, as mais espalhadas; STE e BRE são as exceções. A diferença entre os extremos (4,5 regiões) é da ordem do desvio dentro das classes, e o piso (seção~\ref{sec:piso}) mostra que parte do espalhamento pode vir do erro de estimativa do GradientSHAP.
 \end{itemize}
 
+\section{Resultados com os mapas da versão 2}\label{sec:v2}
+\textbf{O que mudou nos mapas.} Desde 26/10/2026 o TCC usa a versão 2 dos mapas SHAP, a opção D do documento \url{fichamentos/verificacao-referencia-gradientshap}. A referência (o conjunto de baselines) deixou de ser 32 ECGs sorteados do treino e passou a ser \textbf{balanceada}: 4 ECGs de rótulo único de cada uma das 9 classes, 36 no total. Cada mapa passou a ser a média de \textbf{200 sorteios} (4 blocos de 50), em vez de 50. Com isso, as seções anteriores continuam valendo como explicação do método, mas os números atuais são os desta seção. A complexidade foi recalculada na CPU com os mapas novos (\texttt{results/modeloB\_v2/complexity/}), e o piso de cada mapa vem da sensibilidade refeita com a mesma configuração (Kaggle, versão 24 do runner, 27/10/2026).
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrrrrrr}
+\toprule
+\textbf{Classe} & \textbf{Mapas} & \textbf{Nº efetivo} & \textbf{Desvio} & \textbf{Gini} & \textbf{Top 3} & \textbf{Piso} & \textbf{Nº efetivo, versão 1} \\
+\midrule
+BRD  & 172 & 22,2 & 2,3 & 0,514 & 32,9\% & 0,13 & 22,4 \\
+AF   & 108 & 22,9 & 2,3 & 0,513 & 29,6\% & 0,19 & 22,8 \\
+IAVB &  61 & 23,0 & 2,2 & 0,508 & 29,7\% & 0,18 & 23,3 \\
+CVP  &  59 & 25,0 & 2,4 & 0,460 & 27,1\% & 0,17 & 24,7 \\
+CAP  &  45 & 25,4 & 1,9 & 0,451 & 25,8\% & \textbf{0,25} & 25,7 \\
+STE  &  14 & 25,5 & 1,7 & 0,453 & 24,8\% & 0,18 & 25,5 \\
+SNR  &  78 & 26,2 & 1,3 & 0,433 & 24,1\% & 0,23 & 26,9 \\
+BRE  &  20 & 26,2 & 1,8 & 0,435 & 24,6\% & \textbf{0,13} & 25,8 \\
+STD  &  65 & 26,9 & 1,7 & 0,416 & 23,0\% & 0,23 & 26,9 \\
+\midrule
+Global & 622 & 24,1 & 2,7 & 0,479 & 28,4\% & 0,18 & 24,2 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\textit{Classes da explicação mais concentrada para a mais espalhada. Nº efetivo de regiões de 36; piso = distância entre dois mapas do mesmo ECG e classe que diferem só nos sorteios (seção~\ref{sec:piso}).}
+
+\textbf{O que se observa.}
+\begin{itemize}
+\item \textbf{A complexidade quase não mudou.} A média global foi de 24,2 para 24,1 regiões efetivas, e nenhuma classe mudou mais de 0,8. As três classes mais concentradas continuam BRD, AF e IAVB, e STD continua a mais espalhada. As trocas ficam no meio e no fim da ordem, entre classes separadas por menos de 1 região: SNR (26,9 → 26,2) e BRE (25,8 → 26,2) passam a empatar, e CAP passa à frente de STE. Mapa a mapa, a ordem dos valores das duas versões tem correlação de postos de 0,76, com diferença média de 1,5 região (diagnóstico).
+\item \textbf{O piso caiu pela metade} (0,36 → 0,18), como previsto pelo erro de uma média, que cai com $1/\sqrt{n}$. A queda ocorreu em todas as classes, e as diferenças entre elas continuam: CAP tem o maior piso (0,25), e BRE e BRD, os menores (0,13).
+\item \textbf{A previsão do fim da seção~\ref{sec:piso} não se confirmou.} Esperava-se que, com menos erro de estimativa, os mapas ficassem mais concentrados. Mas o erro caiu pela metade e a complexidade ficou praticamente igual. No teste da referência (\url{results/modeloB_basebal}), usar 200 sorteios com a referência antiga também deixou a complexidade igual. Logo, o espalhamento dos mapas vem do modelo, e não do ruído do GradientSHAP. A relação mapa a mapa entre complexidade e piso continua moderada (correlação de postos de 0,44; 0,38 na versão 1), mas ela indica que os mapas mais difíceis de estimar são também os mais espalhados, e não que o ruído cause o espalhamento.
+\item \textbf{O ruído continua não explicando a ordem das classes.} BRE tem o menor piso (0,13) e explicações das mais espalhadas (26,2); CAP tem o maior piso (0,25) e complexidade intermediária.
+\item \textbf{Gini e entropia continuam concordando} (correlação de postos de $-0{,}99$ mapa a mapa), e a relação com a fidelidade se mantém: correlação de postos de $-0{,}38$ entre o número efetivo e a Faithfulness Correlation da versão 2 ($-0{,}41$ na versão 1). Ambas são usadas só como diagnóstico.
+\item \textbf{Teto do eMPRT.} A entropia média continua em 3,18, e o aumento máximo possível $q$ continua em cerca de 13\% (de 4\% a 29\% conforme o mapa): cerca de 15\% para BRD, AF e IAVB e de 9\% a 10\% para SNR, STD e BRE.
+\end{itemize}
+
+\textbf{Região mais importante (versão 2).} A tabela da seção anterior muda pouco: em 71\% dos mapas, a região mais importante é a mesma nas duas versões. Os padrões ficam, em geral, mais nítidos: BRD em V1 QRS (90\%), BRE em V2 QRS (65\%) e V1 QRS (15\%), IAVB em aVR pré-QRS (69\%) e II pré-QRS (13\%), SNR em aVR pré-QRS (60\%) e STE em aVR pré-QRS (64\%). STD fica dividida entre aVR ST-T (23\%) e aVR pré-QRS (22\%). AF e CAP continuam sem região dominante: aVR pré-QRS aparece em 21\% e 33\% dos mapas.
+
+\textbf{Leitura frente ao F1 (descritiva).} Continua igual à da versão 1: as três classes de maior F1 (AF, BRD e IAVB) têm as explicações mais concentradas; SNR e STD, das mais espalhadas; STE (menor F1, complexidade intermediária) e BRE (F1 alto, explicações espalhadas) são as exceções.
+
 \vspace{0.5em}
-{\small \textbf{Resultados} (versionados): \texttt{results/modeloB\_complexity/} (\texttt{complexity.csv}, \texttt{complexity\_mapas.csv} e \texttt{README.md} com o comando). \\
+{\small \textbf{Resultados} (versionados): versão 2 em \url{results/modeloB_v2/complexity/}; \\ versão 1 em \url{results/modeloB_complexity/} (\texttt{complexity.csv}, \texttt{complexity\_mapas.csv} e \texttt{README.md} com o comando). \\
 \textbf{Arquivos do diagnóstico} (pasta não versionada): \\ \texttt{output/leituras/complexity\_diag.py} \\ \texttt{output/leituras/complexity\_diag.csv} (uma linha por mapa)}
 
 \end{document}

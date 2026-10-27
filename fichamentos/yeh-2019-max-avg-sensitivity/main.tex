@@ -294,7 +294,7 @@ Em dados tabulares com poucos atributos, há exemplos reais próximos o bastante
 \section{Versão implementada no TCC}
 Código: \texttt{src/sensitivity.py} (commit \texttt{ecc19ce}). Para cada um dos 622 mapas do modelo B (ECG × classe explicada, predições corretas do teste):
 \begin{enumerate}
-\item \textbf{Explicação de referência.} O mapa GradientSHAP do ECG é refeito com a mesma configuração usada para gerar os mapas do TCC (as mesmas 32 baselines do treino, 50 amostras, desvio do ruído 0,09) e com uma \textbf{semente aleatória fixa} para aquele mapa.
+\item \textbf{Explicação de referência.} O mapa GradientSHAP do ECG é refeito com a mesma configuração usada para gerar os mapas do TCC (\texttt{src/gshap.py}: referência balanceada de 36 ECGs, 200 sorteios, desvio do ruído 0,09; na versão 1 dos mapas, 32 ECGs sorteados do treino e 50 sorteios) e com uma \textbf{semente aleatória fixa} para aquele mapa.
 \item \textbf{Perturbações.} Uma perturbação é uma versão do ECG com um ruído pequeno somado. O ruído é sorteado \textbf{ponto a ponto}: cada ponto de cada derivação do \textbf{trecho real} recebe seu próprio valor, sorteado de forma uniforme entre $-0{,}1$ e $+0{,}1$ (em escala z-score; qualquer valor nesse intervalo tem a mesma chance, então muitos pontos mudam bem menos que 0,1). Não é um deslocamento do sinal inteiro: pontos vizinhos podem subir ou descer. Com quatro pontos, por exemplo:
 \begin{center}\small
 \begin{tabular}{lrrrr}
@@ -429,7 +429,7 @@ A Consistency acrescenta a terceira camada: se a explicação, além de fiel e r
 \begin{enumerate}
 \item \textbf{As diferenças entre classes nas outras métricas não vêm de explicações frágeis.} Um ruído pequeno (raio 0,1) muda o mapa por regiões em só 0,06 e preserva o par das 2 regiões principais em 97\% dos casos. As explicações são robustas à entrada; a fidelidade moderada (cerca de 0,6) e as diferenças de Consistency entre classes não se explicam por instabilidade diante de detalhes do sinal.
 \item \textbf{A explicação não é “constante”.} Robustez sozinha poderia indicar uma explicação genérica. Como a fidelidade é positiva em todas as classes, esse não é o caso: as explicações são, ao mesmo tempo, estáveis e informativas sobre o modelo.
-\item \textbf{O ruído do estimador é uma camada de confiabilidade para todas as métricas.} O piso (0,37 por regiões; par top-2 igual em só 67\% entre execuções) é muito maior que o efeito da perturbação. Isso não é uma propriedade do modelo, e sim do GradientSHAP com 50 amostras, e afeta os mapas usados em todas as métricas. Em especial, ajuda a interpretar a Consistency: o par de regiões principais é estável diante da entrada (97\%), mas não diante do sorteio do estimador (67\%). Parte da falta de consistência entre ECGs pode ser ruído do SHAP, e não do modelo.
+\item \textbf{O ruído do estimador é uma camada de confiabilidade para todas as métricas.} O piso (0,37 por regiões; par top-2 igual em só 67\% entre execuções) é muito maior que o efeito da perturbação. Isso não é uma propriedade do modelo, e sim do GradientSHAP com 50 amostras, e afeta os mapas usados em todas as métricas. Em especial, ajuda a interpretar a Consistency: o par de regiões principais é estável diante da entrada (97\%), mas não diante do sorteio do estimador (67\%). Parte da falta de consistência entre ECGs pode ser ruído do SHAP, e não do modelo. (Esse diagnóstico usa os mapas da versão 1; com 200 sorteios, o piso cai para 0,18, e a seção 13 mostra que a Consistency quase não muda com isso.)
 \end{enumerate}
 
 \subsection{Perguntas que os resultados por classe vão responder}
@@ -440,56 +440,67 @@ A Consistency acrescenta a terceira camada: se a explicação, além de fiel e r
 \end{itemize}
 
 \section{Resultados}
-A versão implementada foi calculada no Kaggle (GPU T4, 21/10/2026, 83 minutos) para os \textbf{622 mapas} do modelo B, com 10 perturbações de raio 0,1 por mapa. Das 6\,220 perturbações, só 1 mudou a predição e foi descartada. Os arquivos estão em \texttt{results/modeloB\_sens/}.
+\def\UrlBreaks{\do\/\do-}\sloppy
+\textbf{Duas execuções.} A primeira usou os mapas da versão 1: referência de 32 ECGs sorteados do treino e 50 sorteios (Kaggle, GPU T4, 21/10/2026, 83 minutos; resultados em \texttt{results/modeloB\_sens/}). Desde 26/10/2026 o TCC usa a versão 2 dos mapas, a opção D do documento \url{fichamentos/verificacao-referencia-gradientshap}: referência balanceada, com 4 ECGs de rótulo único de cada uma das 9 classes (36), e 200 sorteios por mapa. A sensibilidade foi refeita com essa configuração (versão 24 do runner, 27/10/2026, 329 minutos, dataset \texttt{arthurso/shap-ecg-modelob-v2}; resultados em \texttt{results/modeloB\_v2/sens/}). Nas duas, foram \textbf{622 mapas} com 10 perturbações de raio 0,1 por mapa, e só 1 das 6\,220 perturbações mudou a predição e foi descartada. As tabelas são da versão 2; a versão 1 aparece para comparação.
 
 \subsection{Por classe}
-Distâncias nas 36 regiões (escala de 0 a 2). Classes ordenadas da mais robusta (menor Max-Sensitivity) para a menos robusta. Entre parênteses, a posição da classe em cada medida (na sensibilidade e no piso, 1º = menor valor; nas demais, 1º = maior valor).
+Distâncias nas 36 regiões (escala de 0 a 2). Classes ordenadas da mais robusta (menor Max-Sensitivity) para a menos robusta. Entre parênteses, a posição da classe em cada medida (na sensibilidade e no piso, 1º = menor valor; nas demais, 1º = maior valor). FE e Consistency também são as da versão 2. A última coluna repete a Max-Sensitivity da versão 1.
 \begin{center}\small
-\begin{tabularx}{\linewidth}{Xrrrrrrr}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{Xrrrrrrrr}
 \toprule
-\textbf{Classe} & \textbf{Mapas} & \textbf{Max} & \textbf{Avg} & \textbf{Piso} & \textbf{FE} & \textbf{Consistency} & \textbf{F1} \\
+\textbf{Classe} & \textbf{Mapas} & \textbf{Max} & \textbf{Avg} & \textbf{Piso} & \textbf{FE} & \textbf{Consistency} & \textbf{F1} & \textbf{Max v1} \\
 \midrule
-BRE  &  20 & 0,047 (1º) & 0,037 & 0,23 (1º) & 0,72 (2º) & 0,25 (6º) & 0,870 (4º) \\
-BRD  & 172 & 0,058 (2º) & 0,046 & 0,32 (2º) & 0,78 (1º) & 0,64 (1º) & 0,927 (2º) \\
-IAVB &  61 & 0,064 (3º) & 0,051 & 0,36 (6º) & 0,57 (5º) & 0,45 (3º) & 0,884 (3º) \\
-STE  &  14 & 0,071 (4º) & 0,059 & 0,35 (5º) & 0,57 (4º) & 0,03 (9º) & 0,596 (9º) \\
-CVP  &  59 & 0,073 (5º) & 0,058 & 0,32 (3º) & 0,66 (3º) & 0,26 (5º) & 0,837 (5º) \\
-SNR  &  78 & 0,077 (6º) & 0,062 & 0,41 (8º) & 0,51 (8º) & 0,21 (7º) & 0,796 (6º) \\
-AF   & 108 & 0,081 (7º) & 0,064 & 0,35 (4º) & 0,51 (7º) & 0,42 (4º) & 0,931 (1º) \\
-STD  &  65 & 0,085 (8º) & 0,069 & 0,40 (7º) & 0,51 (9º) & 0,51 (2º) & 0,778 (7º) \\
-CAP  &  45 & 0,096 (9º) & 0,079 & 0,46 (9º) & 0,55 (6º) & 0,14 (8º) & 0,750 (8º) \\
+BRD  & 172 & 0,029 (1º) & 0,023 & 0,13 (2º) & 0,78 (1º) & 0,72 (1º) & 0,927 (2º) & 0,058 \\
+BRE  &  20 & 0,033 (2º) & 0,027 & 0,13 (1º) & 0,70 (2º) & 0,34 (6º) & 0,870 (4º) & 0,047 \\
+IAVB &  61 & 0,041 (3º) & 0,032 & 0,18 (5º) & 0,55 (5º) & 0,42 (3º) & 0,884 (3º) & 0,064 \\
+STE  &  14 & 0,045 (4º) & 0,036 & 0,18 (4º) & 0,59 (4º) & 0,08 (9º) & 0,596 (9º) & 0,071 \\
+CVP  &  59 & 0,047 (5º) & 0,038 & 0,17 (3º) & 0,66 (3º) & 0,38 (5º) & 0,837 (5º) & 0,073 \\
+SNR  &  78 & 0,049 (6º) & 0,039 & 0,23 (8º) & 0,49 (8º) & 0,26 (7º) & 0,796 (6º) & 0,077 \\
+STD  &  65 & 0,056 (7º) & 0,045 & 0,23 (7º) & 0,49 (9º) & 0,39 (4º) & 0,778 (7º) & 0,085 \\
+AF   & 108 & 0,056 (8º) & 0,043 & 0,19 (6º) & 0,52 (7º) & 0,46 (2º) & 0,931 (1º) & 0,081 \\
+CAP  &  45 & 0,066 (9º) & 0,054 & 0,25 (9º) & 0,54 (6º) & 0,16 (8º) & 0,750 (8º) & 0,096 \\
 \midrule
-\textbf{Global} & 622 & \textbf{0,072} & 0,058 & 0,36 & 0,62 & 0,42 & 0,819 \\
+\textbf{Global} & 622 & \textbf{0,045} & 0,036 & 0,18 & 0,61 & 0,46 & 0,819 & 0,072 \\
 \bottomrule
 \end{tabularx}
 \end{center}
+STD e AF empatam na Max-Sensitivity (0,056) e trocam de posição na Avg.
+
+\subsection{O que mudou em relação à versão 1}
+\begin{itemize}
+\item \textbf{A sensibilidade caiu cerca de 40\%} (Max global de 0,072 para 0,045), em todas as classes. A explicação está no próprio método: os dois mapas comparados (ECG original e perturbado) usam a mesma semente, mas o GradientSHAP avalia o gradiente em pontos diferentes, porque a entrada mudou. Assim, os erros de estimativa dos dois mapas não se cancelam por completo, e uma parte da sensibilidade da versão 1 era esse erro. Com 200 sorteios, o erro diminui e a sensibilidade mede mais a reação da explicação ao ECG.
+\item \textbf{O piso caiu pela metade} (0,36 → 0,18), como esperado com quatro vezes mais sorteios. Ele continua maior que a sensibilidade em todos os mapas, agora cerca de 4 vezes (eram 5).
+\item \textbf{A ordem das classes quase não mudou:} só BRD e BRE trocam as duas primeiras posições, e AF e STD, a 7ª e a 8ª. Mapa a mapa, a ordem dos valores das duas versões tem correlação de postos de 0,78 (diagnóstico).
+\end{itemize}
 
 \subsection{Verificações}
 \begin{itemize}
-\item \textbf{As explicações são robustas em termos absolutos.} A maior mudança média é 0,07 numa escala até 2, e o desvio dentro de cada classe é pequeno (0,01 a 0,02).
-\item \textbf{O ruído do estimador domina em todos os mapas.} Em nenhum dos 622 mapas a Max-Sensitivity passou do piso; em média, o piso é cerca de 5 vezes maior. O diagnóstico com 18 ECGs se confirma no conjunto completo.
-\item \textbf{Max e Avg dizem a mesma coisa aqui.} A Max é, em média, só 1,24 vez a Avg, e as duas ordenam as classes do mesmo jeito (exceto uma troca entre CVP e STE). Com perturbações pequenas e uniformes, não há “piores casos” isolados; basta acompanhar uma delas.
-\item \textbf{A distância ponto a ponto é dominada por ruído fino do mapa.} Ela é cerca de 4 vezes maior (0,31) e tem um piso de 0,85, próximo do de mapas pouco relacionados. Por isso a distância por regiões é a principal, como nas demais métricas.
+\item \textbf{As explicações são robustas em termos absolutos.} A maior mudança média é 0,045 numa escala até 2, e o desvio dentro de cada classe é pequeno (0,007 a 0,019).
+\item \textbf{O ruído do estimador ainda domina em todos os mapas.} Em nenhum dos 622 mapas a Max-Sensitivity passou do piso; em média, o piso é cerca de 4 vezes maior.
+\item \textbf{Max e Avg dizem a mesma coisa aqui.} A Max é, em média, 1,26 vez a Avg, e as duas ordenam as classes do mesmo jeito (exceto a troca entre AF e STD). Com perturbações pequenas e uniformes, não há “piores casos” isolados; basta acompanhar uma delas.
+\item \textbf{A distância ponto a ponto é dominada por ruído fino do mapa.} Ela é cerca de 5 vezes maior (0,24) e tem um piso de 0,53. Por isso a distância por regiões é a principal, como nas demais métricas.
 \end{itemize}
 
 \subsection{Respostas às perguntas da seção 12.4}
 \begin{enumerate}
-\item \textbf{As classes de fidelidade mais baixa também têm explicações mais sensíveis? Sim.} As 4 classes menos robustas (SNR, AF, STD e CAP, posições 6 a 9) são exatamente as 4 menos fiéis na Faithfulness Estimate (posições 6 a 9), e BRE e BRD são as 2 primeiras nas duas medidas. Mapa a mapa, a relação aparece na mesma direção (correlação de postos de $-$0,44 entre Max-Sensitivity e Faithfulness Estimate, usada só como diagnóstico). Ou seja, onde o SHAP descreve pior o modelo, ele também é mais frágil.
-\item \textbf{A sensibilidade acompanha o F1? Só em parte, como as outras métricas.} BRD (2º no F1, 2º na robustez) e CAP (8º e 9º) coincidem. AF tem o maior F1 e é a 7ª em robustez; STE tem o menor F1 e é a 4ª.
-\item \textbf{O piso varia entre classes? Sim, de 0,23 (BRE) a 0,46 (CAP)}, e isso ajuda a ler a Consistency:
+\item \textbf{As classes de fidelidade mais baixa também têm explicações mais sensíveis? Sim.} As 4 classes menos robustas (SNR, STD, AF e CAP, posições 6 a 9) são exatamente as 4 menos fiéis na Faithfulness Estimate (posições 6 a 9), e BRD e BRE são as 2 primeiras nas duas medidas. Mapa a mapa, a relação aparece na mesma direção (correlação de postos de $-$0,52 entre Max-Sensitivity e Faithfulness Estimate, usada só como diagnóstico; $-$0,44 na versão 1). Ou seja, onde o SHAP descreve pior o modelo, ele também é mais frágil.
+\item \textbf{A sensibilidade acompanha o F1? Só em parte, como as outras métricas.} BRD (2º no F1, 1º na robustez) e CAP (8º e 9º) coincidem. AF tem o maior F1 e é a 8ª em robustez; STE tem o menor F1 e é a 4ª.
+\item \textbf{O piso varia entre classes? Sim, de 0,13 (BRE e BRD) a 0,25 (CAP)}, e isso ajuda a ler a Consistency:
 \begin{itemize}
 \item \textbf{CAP} tem o maior piso e a 8ª Consistency: parte da baixa consistência de CAP pode vir do ruído do estimador.
 \item \textbf{BRE} tem o menor piso e só a 6ª Consistency: a baixa consistência de BRE \textbf{não} é ruído do estimador; as explicações de BRE são estáveis em cada ECG, mas variam entre ECGs (por exemplo, alternando entre o QRS de V1 e o de V2).
-\item \textbf{STD} tem piso alto (7º) e mesmo assim a 2ª Consistency: o padrão de STD se repete entre ECGs apesar do ruído.
+\item \textbf{STD} tem piso alto (7º) e mesmo assim Consistency intermediária (4ª): o padrão de STD se repete entre ECGs apesar do ruído.
 \end{itemize}
+Além disso, cortar o piso pela metade quase não mudou a Consistency: com a referência antiga, passar de 50 para 200 sorteios levou a Consistency global de 0,42 para 0,44 (teste da referência, \texttt{results/modeloB\_basebal}). A falta de consistência entre ECGs vem, portanto, principalmente do modelo, e não do ruído do SHAP, o que corrige a suspeita do item 3 da seção 12.3.
 \end{enumerate}
 
 \subsection{O que se conclui}
 \begin{enumerate}
-\item \textbf{Conceitualmente, a robustez é uma terceira dimensão; nos resultados, ela acompanha a fidelidade.} As classes com explicações mais fiéis são também as mais robustas. Com os dados atuais, as métricas se organizam em dois blocos: \textbf{fidelidade e robustez} de um lado, \textbf{consistência} de outro. A sensibilidade corrobora a fidelidade, em vez de trazer uma ordenação nova.
+\item \textbf{Conceitualmente, a robustez é uma terceira dimensão; nos resultados, ela acompanha a fidelidade.} As classes com explicações mais fiéis são também as mais robustas, nas duas versões dos mapas. Com os dados atuais, as métricas se organizam em dois blocos: \textbf{fidelidade e robustez} de um lado, \textbf{consistência} de outro. A sensibilidade corrobora a fidelidade, em vez de trazer uma ordenação nova.
 \item \textbf{Reforça a leitura por tipo de classe.} BRE e BRD, definidas pela forma do QRS, têm explicações fiéis e robustas. AF, SNR e CAP, ligadas ao ritmo ou ao batimento como um todo, e STD, têm explicações menos fiéis e menos robustas.
-\item \textbf{Afasta a explicação “frágil” para as diferenças entre classes.} Mesmo nas classes menos robustas, a explicação muda pouco com a perturbação (no máximo 0,10 por regiões).
-\item \textbf{Põe o ruído do GradientSHAP no centro da confiabilidade.} A variação entre execuções do SHAP é cerca de 5 vezes maior que o efeito da perturbação, em todos os mapas. É a principal fonte de incerteza das explicações e precisa ser levada em conta ao interpretar todas as métricas, em especial a Consistency.
+\item \textbf{Afasta a explicação “frágil” para as diferenças entre classes.} Mesmo nas classes menos robustas, a explicação muda pouco com a perturbação (no máximo 0,07 por regiões).
+\item \textbf{O ruído do GradientSHAP continua sendo a principal incerteza de um mapa isolado, mas não decide as conclusões por classe.} Com 200 sorteios, a variação entre execuções caiu pela metade e ainda é cerca de 4 vezes maior que o efeito da perturbação. Mesmo assim, a ordem das classes na sensibilidade, na fidelidade e na Consistency praticamente não mudou entre as versões dos mapas.
 \end{enumerate}
 
 \section{Versão antiga (Quantus) e por que foi substituída}
