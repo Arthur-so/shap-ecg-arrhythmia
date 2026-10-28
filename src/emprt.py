@@ -25,7 +25,10 @@ Protocolo, para cada mapa (ECG × classe explicada c):
        - correlação de Spearman, entre as regiões, da |importância| com a
          amplitude do sinal em relação à referência, média de Σ|x − b|
          (Adebayo et al., §5.2: entrada × gradiente tende a devolver a entrada);
-       - se as 2 regiões principais são QRS e se a principal coincide.
+       - se as 2 regiões principais são QRS e se a principal coincide;
+       - verificação de aderência: q com a entropia do artigo (Equação 4,
+         histograma de 100 faixas dos valores do mapa, com sinal), calculada
+         nos pontos do trecho real do ECG, sem o preenchimento.
 
 Ao final salva:
   - ``results/emprt.csv``: médias por classe explicada.
@@ -65,7 +68,8 @@ QRS = REGIONS.index("QRS")
 N_SLOTS = 12 * len(REGIONS)  # posição fixa de cada região no .npz
 STATS = ["entropia_e", "entropia_r", "q", "teto", "q_teto", "d_sinal", "razao_sinal",
          "acima_piso_sinal", "d_abs", "razao_abs", "rho_amp_e", "rho_amp_r",
-         "top2_qrs_e", "top2_qrs_r", "top1_igual"]
+         "top2_qrs_e", "top2_qrs_r", "top1_igual", "hist_e", "hist_r", "q_hist"]
+HIST_BINS = 100  # B do artigo (Suplemento 6.1)
 
 
 # --------------------------------------------------------------------------- #
@@ -94,12 +98,19 @@ def amplitude(x: np.ndarray, baselines: np.ndarray, regions: list[tuple]) -> np.
                      for lead, t, _ in regions])
 
 
+def hist_entropy(values: np.ndarray, bins: int = HIST_BINS) -> float:
+    """Equação 4 do artigo: entropia do histograma dos valores do mapa (com sinal)."""
+    c, _ = np.histogram(values, bins=bins)
+    p = c[c > 0] / c.sum()
+    return float(-(p * np.log(p)).sum())
+
+
 def top2_qrs(g: np.ndarray, labels: np.ndarray) -> float:
     return float(np.all(labels[np.argsort(np.abs(g))[-2:]] == QRS))
 
 
 def compare(g_e: np.ndarray, g_r: np.ndarray, amp: np.ndarray, labels: np.ndarray,
-            floor: float) -> dict[str, float]:
+            floor: float, hist_e: float, hist_r: float) -> dict[str, float]:
     """Medidas de um par (mapa do modelo treinado, mapa do modelo aleatório)."""
     h_e, h_r = entropy(g_e), entropy(g_r)
     ceiling = (np.log(len(g_e)) - h_e) / h_e
@@ -114,7 +125,8 @@ def compare(g_e: np.ndarray, g_r: np.ndarray, amp: np.ndarray, labels: np.ndarra
             "d_abs": d_a, "razao_abs": d_a / floor if ok else float("nan"),
             "rho_amp_e": spearman(np.abs(g_e), amp), "rho_amp_r": spearman(np.abs(g_r), amp),
             "top2_qrs_e": top2_qrs(g_e, labels), "top2_qrs_r": top2_qrs(g_r, labels),
-            "top1_igual": float(np.argmax(np.abs(g_e)) == np.argmax(np.abs(g_r)))}
+            "top1_igual": float(np.argmax(np.abs(g_e)) == np.argmax(np.abs(g_r))),
+            "hist_e": hist_e, "hist_r": hist_r, "q_hist": (hist_r - hist_e) / hist_e}
 
 
 def _slots(regions: list[tuple], g: np.ndarray) -> np.ndarray:
@@ -190,10 +202,11 @@ def run(args: argparse.Namespace) -> None:
             if ti not in region_cache:
                 length = int(lengths[ti]) if lengths is not None else _real_length(x)
                 regions = region_index(x, length, with_labels=True)
-                region_cache[ti] = (regions, np.array([r for _, _, r in regions]),
+                region_cache[ti] = (regions, length, np.array([r for _, _, r in regions]),
                                     amplitude(x.astype(np.float64), baselines, regions))
-            regions, labels, amp = region_cache[ti]
+            regions, length, labels, amp = region_cache[ti]
             g_e = region_vector(np.asarray(a, dtype=np.float64), regions)
+            h_e = hist_entropy(np.asarray(a, dtype=np.float64)[:, :length])
             fl = floor.get((str(rid), cls), float("nan"))
             seed = map_seed(args.seed, ti, c)  # mesma semente do mapa salvo
             if args.check_repro and ti == int(items[0][1]):
@@ -202,10 +215,12 @@ def run(args: argparse.Namespace) -> None:
                       f"distância {d:.4f} (≈ 0 se a configuração é a mesma)")
             rows, g_rs = [], []
             for s, explain in zip(rand_seeds, explainers):
-                g_r = region_vector(explain(x, c, seed), regions)
+                m_r = explain(x, c, seed)
+                g_r = region_vector(m_r, regions)
                 g_rs.append(_slots(regions, g_r))
                 row = {"record_id": str(rid), "classe": cls, "semente_modelo": s,
-                       **compare(g_e, g_r, amp, labels, fl)}
+                       **compare(g_e, g_r, amp, labels, fl, h_e,
+                                 hist_entropy(m_r[:, :length]))}
                 rows.append(row)
                 w_p.writerow(fmt(row))
             row = {"record_id": str(rid), "classe": cls, "n_regioes": len(regions),
@@ -270,6 +285,7 @@ def _aggregate(per_map: list[dict]) -> list[dict]:
             row[f"{s}_media"] = float(v.mean()) if v.size else float("nan")
             row[f"{s}_desvio"] = float(v.std()) if v.size else float("nan")
         row["frac_q_positivo"] = float(np.mean([r["q"] > 0 for r in sel]))
+        row["frac_q_hist_positivo"] = float(np.mean([r["q_hist"] > 0 for r in sel]))
         rows.append(row)
     return rows
 
@@ -278,13 +294,14 @@ def _print_table(rows: list[dict]) -> None:
     print("\neMPRT por classe explicada (36 regiões; média das sementes de randomização)")
     print(f"{'classe':>7} {'n':>4} {'q':>7} {'teto':>6} {'q/teto':>7} {'q>0':>6} "
           f"{'d sinal':>8} {'d |·|':>6} {'piso':>6} {'ρ amp e':>8} {'ρ amp ê':>8} "
-          f"{'QRS e':>6} {'QRS ê':>6}")
+          f"{'QRS e':>6} {'QRS ê':>6} {'q hist':>7}")
     for r in rows:
         print(f"{r['classe']:>7} {r['n']:4d} {r['q_media']:7.3f} {r['teto_media']:6.3f} "
               f"{r['q_teto_media']:7.2f} {r['frac_q_positivo']:6.1%} "
               f"{r['d_sinal_media']:8.3f} {r['d_abs_media']:6.3f} {r['piso_regioes_media']:6.3f} "
               f"{r['rho_amp_e_media']:8.2f} {r['rho_amp_r_media']:8.2f} "
-              f"{r['top2_qrs_e_media']:6.1%} {r['top2_qrs_r_media']:6.1%}")
+              f"{r['top2_qrs_e_media']:6.1%} {r['top2_qrs_r_media']:6.1%} "
+              f"{r['q_hist_media']:7.3f}")
 
 
 def build_argparser() -> argparse.ArgumentParser:
