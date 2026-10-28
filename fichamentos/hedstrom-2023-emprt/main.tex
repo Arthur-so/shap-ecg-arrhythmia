@@ -1,0 +1,427 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: eMPRT}} \\[0.35em]
+    {\large HEDSTRÖM, A.; WEBER, L.; LAPUSCHKIN, S.; HÖHNE, M. \textit{Sanity Checks Revisited: An Exploration to Repair the Model Parameter Randomisation Test}. XAI in Action Workshop, NeurIPS, 2023} \\[0.3em]
+    \textbf{Métrica no Quantus:} \texttt{quantus.EfficientMPRT} \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 27/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do artigo (19 páginas, incluindo o suplemento). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica a métrica sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento, com duas citações do artigo original do teste (Adebayo et al., 2018); a \textbf{Parte III} descreve a versão implementada no TCC, sua aderência ao artigo e os resultados.
+
+\begin{infobox}[note]{Por que esta métrica}
+O documento \textit{Seleção de métricas} (22/10/2026) escolheu o eMPRT para responder a uma pergunta que nenhuma outra métrica do TCC faz: \textbf{o mapa depende do que o modelo aprendeu?} Em 27/10, depois do Random Logit, a métrica chegou a ser retirada, com o argumento de que o Random Logit já cobria essa pergunta. A decisão foi revista no mesmo dia, por dois motivos explicados na seção~\ref{sec:porque}: os métodos do tipo entrada $\times$ gradiente, como o GradientSHAP, são justamente os que Adebayo et al.\ apontam como suscetíveis a esse problema, e o Random Logit compara mapas com sinal, o que não exclui que a \textbf{magnitude} do mapa siga a amplitude do sinal.
+\end{infobox}
+
+\partbar{Parte I · Entendendo a métrica}
+
+\section{O problema que a métrica resolve}
+O modelo decide olhando a forma do ECG, e por isso uma explicação fiel destaca trechos do ECG. A pergunta do teste é outra: se o mapa destaca esses trechos \textbf{porque o modelo os usa} ou porque eles se destacariam \textbf{com qualquer rede}, mesmo uma que não aprendeu nada.
+
+O risco vem da forma do GradientSHAP. Aproximadamente, ele calcula
+\[
+\text{mapa}_c(x) \approx \mathbb{E}\big[(x - x') \odot \nabla_x f_c(\tilde{x})\big],
+\]
+em que $x$ é o ECG, $x'$ um ECG da referência, $\tilde{x}$ um ponto entre os dois e $\nabla_x f_c$ o gradiente da saída da classe $c$.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Fator} & \textbf{Depende do que o modelo aprendeu?} & \textbf{Onde é grande} \\
+\midrule
+$x - x'$ (ECG $-$ referência) & Não: só do ECG e da referência & Onde o ECG difere da referência, como nos picos do QRS \\
+$\nabla_x f_c$ (gradiente) & Sim & Onde a saída da classe $c$ é sensível ao sinal \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Se o primeiro fator dominar o produto, o mapa destaca o QRS porque o QRS tem a maior amplitude, e não porque o modelo o usa. O mapa pareceria plausível e, ainda assim, não diria nada sobre o modelo.
+
+\section{A ideia em uma frase e um exemplo}
+\begin{infobox}[note]{Definição em uma frase}
+Explica-se o mesmo ECG com o modelo treinado e com uma cópia do modelo de pesos totalmente sorteados, e mede-se quanto o mapa fica mais espalhado: se a explicação depende do modelo, o mapa do modelo aleatório deve ser mais espalhado.
+\end{infobox}
+O nome vem do artigo: \textit{Efficient Model Parameter Randomisation Test}, uma versão “eficiente” do teste de randomização dos parâmetros do modelo (MPRT) de Adebayo et al.\ (2018).
+
+\textbf{Por que “mais espalhado”.} Um modelo de pesos sorteados não aprendeu nenhuma regra: a saída não depende de nenhum trecho em particular do ECG. Uma explicação fiel a esse modelo não deveria apontar regiões específicas; a importância deveria se espalhar. O espalhamento é medido pela \textbf{entropia} do mapa, a mesma medida da complexidade (Bhatt et al., 2020): baixa quando a importância está em poucas regiões, alta quando está distribuída.
+
+\textbf{Exemplo.} Um ECG de BRD é explicado com o modelo treinado e com o modelo aleatório. A tabela mostra dois métodos de explicação \textbf{imaginários}, com números inventados (4 regiões; frações da importância total):
+\begin{center}\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrl}
+\toprule
+& \textbf{V1 QRS} & \textbf{II QRS} & \textbf{V1 ST-T} & \textbf{II pré-QRS} & \textbf{Entropia} & \textbf{Leitura} \\
+\midrule
+Modelo treinado & 0,70 & 0,15 & 0,10 & 0,05 & 0,91 & --- \\
+Aleatório, método 1 & 0,55 & 0,35 & 0,05 & 0,05 & 1,00 & quase igual \textit{(falha)} \\
+Aleatório, método 2 & 0,30 & 0,25 & 0,25 & 0,20 & 1,38 & mais espalhado \textit{(passa)} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Método 1 (falha):} com o modelo aleatório, o mapa continua concentrado no QRS, os picos de maior amplitude. A explicação descreve o ECG, e não o modelo. O eMPRT dá $q = (1{,}00 - 0{,}91)/0{,}91 \approx 0{,}10$.
+\item \textbf{Método 2 (passa):} com o modelo aleatório, a importância se espalha. O que concentrava o mapa do modelo treinado vinha do que ele aprendeu. O eMPRT dá $q = (1{,}38 - 0{,}91)/0{,}91 \approx 0{,}52$.
+\end{itemize}
+Com 4 regiões, a entropia máxima é $\ln 4 \approx 1{,}39$; no TCC, com 36 regiões, é $\ln 36 \approx 3{,}58$.
+
+\section{Por que medir, se o Random Logit já passou}\label{sec:porque}
+O Random Logit (Sixt et al., 2020) mostrou que, no mesmo ECG, o mapa de uma classe é muito diferente do de outra (distância média 1,60 de no máximo 2, cerca de 10 vezes o piso). Como o fator $x - x'$ é o mesmo para todas as classes, isso indica que ele não domina os mapas. A indicação, porém, não é completa:
+\begin{enumerate}
+\item \textbf{O GradientSHAP é o caso suspeito.} Adebayo et al.\ (2018, p.~9) observam que métodos que aproximam entrada $\times$ gradiente “devolvem principalmente a entrada” quando o modelo é randomizado (ver Parte II).
+\item \textbf{O Random Logit compara mapas com sinal.} Adebayo et al.\ (p.~5) mostram que a randomização pode trocar o sinal das importâncias e manter as regiões de maior magnitude. No Random Logit, 78\% dos pares têm somas de sinais opostos: uma distância alta é compatível com mapas cujo sinal muda entre classes enquanto a magnitude segue a amplitude do QRS. O fichamento do Random Logit já registrava que essa verificação, com valores absolutos, não pôde ser feita.
+\end{enumerate}
+O eMPRT e os complementos da versão do TCC (distância entre magnitudes, relação com a amplitude do sinal) respondem diretamente a essa pergunta.
+
+\section{Do MPRT ao eMPRT}
+O \textbf{MPRT} original (Adebayo et al., 2018) sorteia de novo os pesos do modelo camada por camada, da última para a primeira, e a cada passo compara o mapa do modelo parcialmente randomizado com o do modelo treinado, por uma medida de semelhança (SSIM ou correlação de Spearman). Hedström et al.\ apontam três problemas:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Problema} & \textbf{O que acontece} & \textbf{Como o eMPRT resolve} \\
+\midrule
+Pré-processamento & Normalizar pelo máximo ou tomar valores absolutos muda o resultado & A entropia já normaliza; nenhuma escolha extra \\ \addlinespace
+Ordem das camadas & Randomizar só as camadas finais preserva o que vem das iniciais; em ResNets, os atalhos (\textit{skip connections}) levam a informação adiante & Compara só o modelo treinado com o modelo \textbf{totalmente} randomizado \\ \addlinespace
+Medida de semelhança & SSIM e Spearman dão semelhança baixa a mapas ruidosos, o que favorece métodos com ruído, como os de gradiente & Troca a semelhança entre dois mapas pelo aumento da entropia \\
+\bottomrule
+\end{tabularx}
+\end{center}
+O terceiro problema é o mesmo que o TCC enfrentou na sensibilidade e no Random Logit com o piso do GradientSHAP: um mapa ruidoso “muda” com o modelo randomizado mesmo que não dependa dele.
+
+\section{Passo a passo}
+Para cada mapa (ECG $x$, classe explicada $c$):
+\begin{enumerate}
+\item Gera-se o mapa $e$ com o modelo treinado $f$.
+\item Sorteiam-se de novo todos os pesos de $f$, obtendo $\hat{f}$, e gera-se o mapa $\hat{e}$ do mesmo ECG e da mesma classe.
+\item Calcula-se o aumento relativo da complexidade:
+\[
+q = \frac{\xi(\hat{e}) - \xi(e)}{\xi(e)},
+\]
+em que $\xi$ é a entropia do mapa.
+\item Resume-se $q$ por classe.
+\end{enumerate}
+$q > 0$ indica que o mapa ficou mais espalhado com o modelo aleatório, como esperado; $q \le 0$, que não ficou.
+
+\section{Três cuidados de leitura}
+\begin{itemize}
+\item \textbf{O teto.} A entropia não passa de $\ln n$ ($n$ = número de atributos). Se o mapa do modelo treinado já é espalhado, $q$ tem pouco espaço para subir. No TCC, os mapas usam em média 24 das 36 regiões, e o aumento máximo possível é de cerca de 13\% (fichamento da complexidade). Por isso cada $q$ é lido junto com o teto do próprio mapa, $(\ln n - \xi(e))/\xi(e)$.
+\item \textbf{O pressuposto.} O teste supõe que um modelo aleatório produz mapas mais espalhados. Para métodos do tipo entrada $\times$ gradiente, o mapa do modelo aleatório pode, ao contrário, \textbf{concentrar-se} onde a entrada é grande, porque o gradiente deixa de ter estrutura e o fator $x - x'$ passa a dominar. Nesse caso, $q$ sai negativo, e o sinal de $q$ já é um resultado.
+\item \textbf{Entropia de quê.} O artigo usa a entropia do \textbf{histograma dos valores} do mapa (100 faixas): mede se os valores estão concentrados em poucas faixas ou distribuídos, sem olhar \textbf{onde} estão. O TCC usa a entropia \textbf{espacial} nas 36 regiões, a da complexidade, que mede onde a importância está. A versão do artigo é calculada como verificação (seção~\ref{sec:aderencia}).
+\end{itemize}
+
+\section{Traduzindo para o ECG}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Entrada & Imagem (ImageNet, MNIST, fMNIST) & ECG de 12 derivações \\
+Modelo & VGG-16, ResNet-18, LeNet & ResNet34-1D (modelo B) \\
+Randomização & Todas as camadas & Todas as camadas, 3 sementes \\
+Complexidade $\xi$ & Entropia do histograma dos valores (100 faixas) & Entropia nas 36 regiões; histograma como verificação \\
+GradientSHAP & 5 sorteios & 200 sorteios, referência balanceada \\
+Referência de ruído & Nenhuma & Piso do GradientSHAP \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+O artigo é curto (7 páginas mais o suplemento). Propõe duas variações do MPRT: o \textbf{sMPRT}, que tira a média dos mapas de entradas com ruído antes de comparar, e o \textbf{eMPRT}, objeto deste fichamento. As citações cobrem a motivação (p.~1--2), os problemas do MPRT (p.~3--4), a definição (p.~5), os resultados (p.~6), as limitações (p.~7) e a configuração (p.~12--13). Duas citações de Adebayo et al.\ (2018) explicam por que o GradientSHAP é o caso a verificar.
+
+\begin{citacard}{\pagechip{Hedström p. 1} Introdução}
+\begin{origquote}“[...] the Model Parameter Randomisation Test (MPRT) [15] measures the degree to which an explanation deteriorates as the model parameters are progressively randomised, i.e., layer-by-layer, starting from the output. This test posits that a greater difference in the explanation function's output, in response to parameter randomisation, signifies a higher quality of the explanation method.”\end{origquote}
+\begin{tradquote}“[...] o MPRT [15] mede quanto uma explicação se deteriora à medida que os parâmetros do modelo são randomizados progressivamente, isto é, camada por camada, a partir da saída. O teste supõe que uma diferença maior na saída da função de explicação, em resposta à randomização dos parâmetros, indica um método de explicação de melhor qualidade.”\end{tradquote}
+\explab{Explicação}
+É a ideia de partida: uma explicação útil deve mudar quando o modelo muda. Se o mapa fica igual depois que o modelo perdeu tudo o que aprendeu, ele não descrevia o modelo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 3} §2.1.1 (b) Ordem das camadas}
+\begin{origquote}“[...] top-down randomisation induces only modest alterations in the forward pass where (i) irrelevant features from lower, non-randomised layers persist in higher, randomised layers, (ii) high activations in lower layers are relatively likely to continue to dominate the network's response and (iii) architectures with skip connections, e.g., ResNets [29] maintain a baseline explanation that stays constant even after randomisation, preserving certain features.”\end{origquote}
+\begin{tradquote}“[...] a randomização de cima para baixo provoca apenas alterações modestas na passagem direta, em que (i) características irrelevantes das camadas inferiores, não randomizadas, persistem nas camadas superiores, randomizadas, (ii) ativações altas nas camadas inferiores tendem a continuar dominando a resposta da rede e (iii) arquiteturas com atalhos, como as ResNets [29], mantêm uma explicação de base que fica constante mesmo depois da randomização, preservando certas características.”\end{tradquote}
+\explab{Explicação}
+O modelo do TCC é uma ResNet34, com atalhos entre os blocos. Randomizar camada por camada, como no MPRT original, poderia deixar a informação passar pelos atalhos e fazer o teste parecer mais difícil do que é. Por isso a versão do TCC randomiza o modelo inteiro de uma vez.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 4} §2.1.1 (c) Medidas de semelhança}
+\begin{origquote}“Another shortcoming identified by [20] is the property of SSIM and other pairwise similarity measures, e.g., Spearman Rank Correlation, to be minimised by statistically uncorrelated random processes. This is problematic since it implies that certain explanation methods with more intrinsic (shattering) noise, e.g., gradient-based methods, will be favoured in ranking comparisons [...].”\end{origquote}
+\begin{tradquote}“Outra deficiência apontada por [20] é que a SSIM e outras medidas de semelhança entre pares, como a correlação de postos de Spearman, são minimizadas por processos aleatórios não correlacionados. Isso é problemático, pois implica que métodos de explicação com mais ruído intrínseco (de fragmentação), como os baseados no gradiente, serão favorecidos nas comparações [...].”\end{tradquote}
+\explab{Explicação}
+Dois mapas ruidosos são pouco parecidos entre si mesmo que o modelo não mude. Com uma medida de semelhança, o ruído passa por “sensibilidade ao modelo”. No TCC, esse efeito tem tamanho conhecido: o piso do GradientSHAP. Por isso a distância entre os mapas, quando usada como complemento, é sempre comparada com o piso.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 4--5} §3.2 Definição 3 (eMPRT)}
+\begin{origquote}“This test effectively removes the layer-by-layer pairwise comparison between e and ê and instead compute the relative rise in explanation complexity using only two model states, i.e., the original- and fully randomised model. [...] $\hat{q}$\textsuperscript{eMPRT} = ($\xi$(ê) − $\xi$(e)) / $\xi$(e), with $\xi$ : R\textsuperscript{D} → R is a complexity function [...].”\end{origquote}
+\begin{tradquote}“Este teste elimina a comparação par a par, camada por camada, entre $e$ e $\hat{e}$ e, em vez disso, calcula o aumento relativo da complexidade da explicação usando só dois estados do modelo, o original e o totalmente randomizado. [...] $\hat{q}^{\text{eMPRT}} = (\xi(\hat{e}) - \xi(e))/\xi(e)$, em que $\xi$ é uma função de complexidade [...].”\end{tradquote}
+\explab{Explicação}
+É a definição completa. Dois mapas por exemplo, um número por mapa. A divisão por $\xi(e)$ torna o resultado relativo à complexidade inicial do método.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 5} §3.2 O pressuposto}
+\begin{origquote}“Since $\Phi$ ought to faithfully capture the behaviour of the model f --- a fully randomised model (resulting in higher entropy of f\textsubscript{L}(x) [...]) should therefore lead to reduced information content in its explanation ê. Equation 3 quantifies this heightened explanation complexity as a rise in relative entropy, where a positive value [...] indicates a rise in complexity and a negative value [...] suggests a decrease in complexity.”\end{origquote}
+\begin{tradquote}“Como $\Phi$ deve capturar fielmente o comportamento do modelo $f$, um modelo totalmente randomizado (que resulta em maior entropia de $f_L(x)$ [...]) deveria levar a menos conteúdo de informação na sua explicação $\hat{e}$. A Equação 3 quantifica esse aumento da complexidade como um aumento relativo da entropia: um valor positivo [...] indica aumento da complexidade, e um valor negativo [...] sugere diminuição.”\end{tradquote}
+\explab{Explicação}
+O raciocínio é: o modelo aleatório não “sabe” nada, logo a sua explicação também não deveria apontar nada em particular. O artigo admite o caso $q < 0$, mas não discute quando ele aconteceria. Para o GradientSHAP, ele acontece se o mapa do modelo aleatório se concentra onde a entrada é grande (Adebayo et al., abaixo).
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 5} §3.2 Equação 4 (entropia)}
+\begin{origquote}“To set $\xi$, we employ a histogram entropy measure, grounded in Shannon-Entropy [32]. Specifically, attribution values e are binned across B distinct slots [...]. Opting for this complexity measure offers three advantages: preservation of the inherent sign of attributions, implicit normalisation and adaptability to diverse dimensionalities and distributions, wherein B can be contextually chosen.”\end{origquote}
+\begin{tradquote}“Para definir $\xi$, usamos uma entropia de histograma, baseada na entropia de Shannon [32]. Os valores das atribuições $e$ são distribuídos em $B$ faixas [...]. Essa medida de complexidade tem três vantagens: preserva o sinal das atribuições, normaliza implicitamente e se adapta a diferentes dimensões e distribuições, com $B$ escolhido conforme o contexto.”\end{tradquote}
+\explab{Explicação}
+A entropia do artigo olha a \textbf{distribuição dos valores}, e não a sua posição: um mapa com todos os valores parecidos tem entropia baixa, esteja onde estiver a importância. O TCC usa a entropia \textbf{espacial} das 36 regiões, que responde à pergunta da seção~1 (o mapa aponta onde?). A do artigo é calculada como verificação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 6} §4 eMPRT em ação}
+\begin{origquote}“First, the different explanation methods begin with varying complexity where no single explanation method consistently outperforms others across tested tasks. Even after full model randomisation, no method approaches the theoretical limit to randomness [...]. [...] Interestingly, none of the explanation functions mirror the model function's complexity.”\end{origquote}
+\begin{tradquote}“Primeiro, os métodos de explicação começam com complexidades diferentes, e nenhum supera os demais de forma consistente entre as tarefas. Mesmo depois da randomização completa, nenhum método se aproxima do limite teórico de aleatoriedade [...]. [...] Curiosamente, nenhuma função de explicação acompanha a complexidade da função do modelo.”\end{tradquote}
+\explab{Explicação}
+Nas imagens, nenhum método chega perto da entropia máxima com o modelo aleatório. O artigo não fixa um valor de $q$ que separe “passa” de “falha”; a métrica serve para comparar métodos ou, no TCC, classes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 7} §5 Conclusão}
+\begin{origquote}“eMPRT, on the other hand, may possibly vary between different tasks, e.g., data-specific factors such as the size of the objects in a vision dataset. Each metric of evaluation has its own advantages and drawbacks, and we therefore emphasise the need for a broader evaluation, encompassing several properties to evaluate explanation quality.”\end{origquote}
+\begin{tradquote}“O eMPRT, por sua vez, pode variar entre tarefas, por exemplo, com fatores dos dados como o tamanho dos objetos numa base de imagens. Cada métrica de avaliação tem vantagens e desvantagens, e por isso enfatizamos a necessidade de uma avaliação mais ampla, que cubra várias propriedades da qualidade da explicação.”\end{tradquote}
+\explab{Explicação}
+O “tamanho do objeto” tem um equivalente no ECG: a fração do sinal ocupada pelo QRS, onde está a maior amplitude. É mais um motivo para medir, além de $q$, a relação do mapa com a amplitude do sinal.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Hedström p. 12--13} §6.1 Configuração}
+\begin{origquote}“[...] GradientSHAP [47] with 5 samples [...]. In our experiments, for Equation 4, we empirically set the bin count B = 100, which demonstrated robust performance across diverse experiments and explanation methods.”\end{origquote}
+\begin{tradquote}“[...] GradientSHAP [47] com 5 sorteios [...]. Nos experimentos, para a Equação 4, fixamos empiricamente o número de faixas em $B = 100$, que teve desempenho robusto em diferentes experimentos e métodos de explicação.”\end{tradquote}
+\explab{Explicação}
+O artigo avalia o GradientSHAP com só 5 sorteios, o que deixa muito ruído no mapa (o TCC usa 200). A verificação com o histograma usa as mesmas 100 faixas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Adebayo p. 5} §3.1 O perigo da inspeção visual}
+\begin{origquote}“However, re-initialization disrupts the sign of the map, so that the spearman rank correlation without absolute values goes to zero [...] almost as soon as the top layers are randomized.”\end{origquote}
+\begin{tradquote}“No entanto, a reinicialização desfaz o sinal do mapa, de modo que a correlação de postos de Spearman sem valor absoluto vai a zero [...] quase assim que as camadas finais são sorteadas.”\end{tradquote}
+\explab{Explicação}
+A randomização pode mudar o sinal das importâncias e manter a magnitude. Por isso a versão do TCC compara os mapas de duas formas: com sinal e só com as magnitudes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Adebayo p. 9} §5.2 Produto entrada $\times$ gradiente}
+\begin{origquote}“This experiment indicates that methods that approximate the ‘input-times-gradient’ mostly return the input, in cases where the gradients look visually noisy as they tend to do.”\end{origquote}
+\begin{tradquote}“Este experimento indica que métodos que aproximam o ‘entrada vezes gradiente’ devolvem principalmente a entrada, nos casos em que os gradientes são visualmente ruidosos, como costumam ser.”\end{tradquote}
+\explab{Explicação}
+É o ponto mais relevante para o ECG. O GradientSHAP multiplica o gradiente por $x - x'$. Com o modelo aleatório, o gradiente perde a estrutura, e o mapa tende a seguir a amplitude do sinal, que é maior no QRS.
+\end{citacard}
+
+\partbar{Parte III · Aplicação ao TCC}
+
+\section{Versão implementada no TCC}\label{sec:versao}
+Código: \texttt{src/emprt.py} (commits \texttt{d37af97} e \texttt{d5d552d}). Para cada um dos 622 mapas do modelo B (ECG × classe explicada $c$, predições corretas do teste):
+\begin{enumerate}
+\item \textbf{Mapa do modelo treinado ($e$):} o mapa salvo da versão 2 (referência balanceada de 36 ECGs, 200 sorteios, \texttt{src/gshap.py}).
+\item \textbf{Modelo aleatório ($\hat{f}$):} cópia da ResNet34 com os pesos de \textbf{todas} as camadas sorteados de novo pela inicialização padrão do PyTorch (\texttt{reset\_parameters}, como no Quantus). Repetido com 3 sementes de randomização.
+\item \textbf{Mapa do modelo aleatório ($\hat{e}$):} o mesmo ECG e a mesma classe, com a \textbf{mesma semente} do mapa salvo e a mesma referência: os sorteios internos do GradientSHAP são idênticos, e a diferença vem só do modelo.
+\item \textbf{eMPRT:} $q = (\xi(\hat{e}) - \xi(e))/\xi(e)$, com $\xi$ = entropia da fração de $|$importância$|$ nas 36 regiões (a da complexidade), e o teto do mapa, $(\ln n - \xi(e))/\xi(e)$.
+\item \textbf{Complementos:}
+\begin{itemize}
+\item distância $\ell_2$ entre $e$ e $\hat{e}$ normalizados para norma 1, \textbf{com sinal} (o MPRT original na randomização completa) e \textbf{só com as magnitudes}, ambas comparadas com o piso do GradientSHAP do mapa;
+\item correlação de postos (Spearman), entre as regiões, da $|$importância$|$ com a amplitude do sinal em relação à referência (média, entre os 36 ECGs da referência, de $\sum |x - x'|$ na região), para $e$ e para $\hat{e}$;
+\item fração de mapas cujas 2 regiões principais são QRS, para $e$ e para $\hat{e}$, e se a região principal coincide;
+\item verificação de aderência: $q$ com a entropia do artigo (histograma de 100 faixas dos valores do mapa no trecho real do ECG).
+\end{itemize}
+\item \textbf{Por mapa:} média das 3 sementes. \textbf{Por classe:} média sobre os mapas.
+\end{enumerate}
+Os vetores das 36 regiões de $e$, de cada $\hat{e}$ e da amplitude ficam salvos, para refazer qualquer análise sem GPU.
+
+\section{Aderência ao artigo}\label{sec:aderencia}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXXl}
+\toprule
+\textbf{Aspecto} & \textbf{Artigo} & \textbf{Versão do TCC} & \textbf{Aderente?} \\
+\midrule
+Ideia & Aumento relativo da complexidade com o modelo totalmente randomizado (p.~4--5) & Igual & Sim \\ \addlinespace
+Randomização & Todas as camadas & Todas as camadas, 3 sementes & Sim, ampliado \\ \addlinespace
+Complexidade $\xi$ & Entropia do histograma de 100 faixas dos valores (p.~5 e 13) & Entropia espacial nas 36 regiões & Adaptado \\ \addlinespace
+Verificação & --- & Histograma de 100 faixas no trecho real do ECG & Igual ao artigo \\ \addlinespace
+Referência de ruído & Nenhuma & Piso do GradientSHAP & Acréscimo do TCC \\ \addlinespace
+Semente & Não discutida & A mesma nos dois mapas & Escolha do TCC \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Por que a entropia espacial.} A pergunta do teste é se o mapa aponta para \textbf{onde} o modelo olha ou para onde o sinal é grande. O histograma dos valores não sabe onde cada valor está: dois mapas com as mesmas importâncias em regiões trocadas têm a mesma entropia. Além disso, a entropia nas 36 regiões é a da complexidade, já estudada, e evita o preenchimento, que a \texttt{quantus.EfficientMPRT} incluiria.
+
+\section{Resultados}\label{sec:resultados}
+\textbf{Execução.} Kaggle, versão 25 do \texttt{shap-ecg-arrhythmia-runner} (27/10/2026, T4, 77 min, dataset \texttt{arthurso/shap-ecg-modelob-v2}); resultados em \texttt{results/modeloB\_v2/emprt/}. Não houve erro nem valor indefinido. Duas verificações da execução:
+\begin{itemize}
+\item \textbf{Os mapas salvos foram reproduzidos.} O primeiro mapa de cada classe, refeito no modelo treinado, coincidiu com o salvo (distância 0,0000 nas 9 classes): a única diferença entre $e$ e $\hat{e}$ é o modelo.
+\item \textbf{Os modelos aleatórios não guardam nada do treino.} Nos 64 primeiros ECGs do teste, o logit médio em valor absoluto cai de 9,2 (modelo treinado) para cerca de 0,1, quase não varia de um ECG para outro, e uma mesma classe (ou duas) fica com o maior logit em quase todos os ECGs.
+\end{itemize}
+
+\subsection{O eMPRT por classe}
+Classes ordenadas pelo F1. “N.º efetivo” é o número efetivo de regiões ($e^{\xi}$, de 1 a 36; quanto maior, mais espalhado o mapa), com o modelo treinado ($e$) e com o aleatório ($\hat{e}$). “Teto” é o maior $q$ possível, em média. “$q > 0$” é a fração dos mapas em que o mapa do modelo aleatório ficou mais espalhado.
+\begin{center}\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Classe} & \textbf{Mapas} & \textbf{F1} & \textbf{N.º efet. $e$} & \textbf{N.º efet. $\hat{e}$} & \textbf{$q$} & \textbf{Teto} & \textbf{$q > 0$} \\
+\midrule
+AF   & 108 & 0,931 & 22,9 & 22,3 & $-0{,}007$ & 0,147 & 45\% \\
+BRD  & 172 & 0,927 & 22,2 & 23,5 & $+0{,}020$ & 0,160 & 67\% \\
+IAVB &  61 & 0,884 & 23,0 & 20,5 & $-0{,}039$ & 0,145 & 21\% \\
+BRE  &  20 & 0,870 & 26,2 & 25,1 & $-0{,}012$ & 0,099 & 30\% \\
+CVP  &  59 & 0,837 & 25,0 & 23,6 & $-0{,}017$ & 0,116 & 27\% \\
+SNR  &  78 & 0,796 & 26,2 & 22,4 & $-0{,}049$ & 0,098 &  9\% \\
+STD  &  65 & 0,778 & 26,9 & 22,8 & $-0{,}051$ & 0,090 & 11\% \\
+CAP  &  45 & 0,750 & 25,4 & 23,8 & $-0{,}022$ & 0,109 & 29\% \\
+STE  &  14 & 0,596 & 25,5 & 24,2 & $-0{,}016$ & 0,108 & 36\% \\
+\midrule
+Global & 622 & 0,819 & 24,1 & 22,9 & $-0{,}015$ & 0,130 & 37\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{infobox}[warn]{Resultado do eMPRT}
+\textbf{Pelo critério do artigo, o GradientSHAP não passa.} Com o modelo aleatório, os mapas \textbf{não} ficam mais espalhados: o número efetivo de regiões fica praticamente igual (24,1 → 22,9), $q$ médio é $-0{,}015$, e só 37\% dos mapas têm $q > 0$, muito longe do teto (0,13). O resultado se repete nas 3 sementes de randomização ($q$ de $-0{,}007$ a $-0{,}020$; $q > 0$ em 36\% a 49\% dos mapas). Só BRD tem $q$ médio positivo.
+\end{infobox}
+
+Os complementos mostram, porém, que esse resultado não significa que o mapa ignore o modelo.
+
+\subsection{Os mapas do modelo aleatório são outros mapas}
+\begin{center}\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrr}
+\toprule
+& & \multicolumn{2}{c}{\textbf{Com sinal}} & \multicolumn{2}{c}{\textbf{Magnitudes}} & \textbf{Mesma} & \textbf{Top 2 no QRS} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+\textbf{Classe} & \textbf{Piso} & \textbf{Dist.} & \textbf{Razão} & \textbf{Dist.} & \textbf{Razão} & \textbf{região 1.ª} & \textbf{$e$ / $\hat{e}$} \\
+\midrule
+AF   & 0,19 & 1,36 &  7,7 & 0,87 & 4,9 & 7\% & 56\% / 91\% \\
+BRD  & 0,13 & 1,42 & 11,5 & 0,94 & 7,6 & 7\% & 71\% / 89\% \\
+IAVB & 0,18 & 1,39 &  8,4 & 1,08 & 6,6 & 0\% &  2\% / 92\% \\
+BRE  & 0,13 & 1,48 & 11,7 & 0,85 & 6,7 & 5\% & 95\% / 77\% \\
+CVP  & 0,17 & 1,39 &  9,3 & 0,88 & 5,8 & 8\% & 63\% / 76\% \\
+SNR  & 0,23 & 1,39 &  6,4 & 0,97 & 4,5 & 2\% &  8\% / 91\% \\
+STD  & 0,23 & 1,38 &  6,5 & 0,97 & 4,6 & 2\% &  6\% / 89\% \\
+CAP  & 0,25 & 1,39 &  5,9 & 0,92 & 3,9 & 6\% & 24\% / 85\% \\
+STE  & 0,18 & 1,42 &  8,5 & 0,96 & 5,8 & 0\% &  7\% / 76\% \\
+\midrule
+Global & 0,18 & 1,40 & 8,7 & 0,94 & 5,8 & 5\% & 42\% / 88\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Com sinal}, a distância entre $e$ e $\hat{e}$ é 1,40, praticamente $\sqrt{2}$: os dois mapas não têm relação (cosseno perto de 0). Ela fica 8,7 vezes acima do piso, e \textbf{todos} os 622 mapas ficam acima do piso do próprio mapa.
+\item \textbf{Só com as magnitudes}, o ponto levantado por Adebayo et al.\ (a randomização pode trocar o sinal e manter as regiões de maior magnitude), a distância é 0,94, 5,8 vezes o piso, de novo com todos os mapas acima dele. A região principal coincide em só 5\% dos mapas.
+\end{itemize}
+Os mapas do modelo aleatório, portanto, apontam para \textbf{outras} regiões. Pelo MPRT original na randomização completa, com o piso como referência, o GradientSHAP passa com folga.
+
+\subsection{Por que o mapa do modelo aleatório não fica mais espalhado}
+A última coluna da tabela anterior explica o resultado do eMPRT. Com o modelo aleatório, as 2 regiões mais importantes são QRS em 88\% dos mapas, contra 42\% com o modelo treinado; a fração da importância total no QRS sobe de 43\% para 60\%. A correlação de postos, entre as regiões, da importância com a amplitude média do sinal em relação à referência (por ponto da região) sobe de 0,15 para 0,36.\footnote{A amplitude é a média de $|x - x'|$ por ponto da região. Com a soma na região (colunas \texttt{rho\_amp} de \texttt{emprt.csv}), as correlações ficam em 0,24 e 0,23, porque a soma cresce com a duração da região, e as regiões pré-QRS e ST-T são mais longas que a QRS.} É o efeito descrito por Adebayo et al.: sem um gradiente com estrutura, o fator $x - x'$ concentra o mapa onde o sinal é grande, nos picos do QRS. O mapa do modelo aleatório fica \textbf{tão concentrado quanto} o do modelo treinado, só que em outro lugar, e a entropia, que mede quanto o mapa se concentra mas não onde, não distingue os dois casos.
+
+Os mapas dos 3 modelos aleatórios também diferem entre si (distância média com sinal 1,40; só magnitudes, 0,82): a concentração no QRS é uma tendência comum, não um mapa fixo determinado pela entrada.
+
+\textbf{O modelo treinado olha onde a classe tem a sua evidência.} Com o modelo treinado, a fração de mapas com as 2 regiões principais no QRS depende da classe: 95\% em BRE, 71\% em BRD e 63\% em CVP, classes que se reconhecem pela forma do QRS; 2\% em IAVB, 6\% em STD, 7\% em STE e 8\% em SNR, classes cuja evidência está fora do QRS (intervalo PR, segmento ST, onda P). Com o modelo aleatório, essa diferença desaparece (76\% a 92\% em todas as classes). A distribuição da importância entre as regiões é, portanto, aprendida, e não herdada da amplitude do sinal. Que essas regiões coincidam com as usadas pelo cardiologista é uma leitura que o TCC não avalia.
+
+\subsection{O que o $q$ por classe mede}
+Mapa a mapa, a entropia do mapa do modelo aleatório não tem relação com a do modelo treinado (correlação de postos 0,05), e $q$ acompanha a entropia de $e$ (correlação de postos $-0{,}65$, diagnóstico): mapas do modelo treinado mais concentrados dão $q$ maior. Por isso, a ordem das classes por $q$ (BRD, AF, BRE, STE, CVP, CAP, IAVB, SNR, STD) segue em boa parte a da complexidade: BRD e AF, as de mapas mais concentrados, ficam no topo, e SNR e STD, as de mapas mais espalhados, embaixo. A exceção é IAVB, 3.ª na complexidade e 7.ª em $q$, porque o seu mapa do modelo aleatório é o mais concentrado (20,5 regiões efetivas). As pontas coincidem com as do F1, mas pelo mesmo motivo da complexidade, sem informação nova.
+
+\subsection{Verificação: a entropia do artigo}
+A versão do artigo (entropia do histograma de 100 faixas dos valores do mapa, no trecho real do ECG) foi calculada numa execução curta: 20 mapas por classe (174 no total; STE tem 14), uma semente de randomização (Kaggle, versão 26, 27/10/2026; \texttt{results/modeloB\_v2/emprt/histograma/}). Nesses mesmos mapas, o $q$ por regiões é $-0{,}009$ (49\% positivos), próximo do da execução completa.
+\begin{itemize}
+\item \textbf{Com o histograma, o resultado é ainda mais claro:} a entropia cai de 1,56 para 0,96 (o máximo é $\ln 100 \approx 4{,}61$), $q$ médio é $-0{,}31$, e só 14\% dos mapas têm $q > 0$. Todas as classes têm $q$ médio negativo, de $-0{,}05$ (CAP) a $-0{,}52$ (SNR).
+\item \textbf{Leitura:} com o modelo aleatório, alguns valores muito grandes, nos picos do QRS, esticam a faixa do histograma, e quase todos os outros pontos caem nas poucas faixas centrais. É o mesmo efeito visto nas regiões: o mapa do modelo aleatório se concentra onde o sinal é grande.
+\end{itemize}
+A conclusão não depende, portanto, da adaptação para as 36 regiões: pela entropia do próprio artigo, o GradientSHAP também não passa no critério do eMPRT.
+
+\subsection{O que se conclui}
+\begin{enumerate}
+\item \textbf{O critério do eMPRT não serve para o GradientSHAP neste problema.} O pressuposto do artigo (modelo aleatório, mapa mais espalhado) falha: o fator $x - x'$ concentra o mapa do modelo aleatório no QRS, e $q$ fica perto de zero. O valor de $q$ por classe repete a complexidade.
+\item \textbf{As explicações dependem do modelo.} Na randomização completa, o mapa muda muito mais que o piso, com sinal e só nas magnitudes, e a região principal quase nunca se mantém. A distribuição da importância entre QRS e o restante do batimento varia por classe com o modelo treinado e desaparece com o modelo aleatório.
+\item \textbf{O fator $x - x'$ não domina os mapas do modelo treinado.} Ele aparece quando o modelo não aprendeu nada, e não nos mapas avaliados no TCC. Isso completa a verificação que o Random Logit não pôde fazer com valores absolutos.
+\item \textbf{Para o TCC}, o eMPRT funciona como teste de sanidade do método, que o GradientSHAP passa pelas distâncias, e não como métrica de qualidade por classe a comparar com o F1.
+\end{enumerate}
+
+\section{Versão do Quantus e por que não foi usada}
+A \texttt{quantus.EfficientMPRT} calcula a entropia do histograma dos valores do mapa achatado, com os 180\,000 pontos, incluindo o preenchimento, e compara o mapa salvo com um mapa do modelo aleatório gerado com outros sorteios do GradientSHAP. A versão própria usa a mesma semente nos dois mapas, a entropia nas 36 regiões e a do histograma só no trecho real do ECG, como verificação, e acrescenta as distâncias comparadas com o piso.
+
+\end{document}

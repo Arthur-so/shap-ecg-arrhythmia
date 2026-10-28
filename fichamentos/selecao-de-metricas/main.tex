@@ -105,6 +105,7 @@
 \item \textbf{Critério.} Priorizar métricas que respondam a uma \textbf{pergunta nova} sobre as explicações, de preferência \textbf{por classe} (para comparar com o F1).
 \item \textbf{Recomendação.} (1) \textbf{Random Logit}: a explicação é específica da classe? (2) \textbf{eMPRT}: a explicação depende do modelo ou só da forma do ECG? (3) \textbf{Localização com máscaras clínicas}: a explicação aponta onde o cardiologista olharia? Esta depende de uma decisão do orientador. O \textbf{ROAD} fica de fora, por medir de novo a fidelidade.
 \item \textbf{Decisão (22/10).} Seguir com \textbf{Random Logit}, \textbf{eMPRT} e a \textbf{complexidade} de Bhatt et al.\ por regiões. A localização clínica fica de fora: o TCC não vai avaliar se a explicação é clinicamente compatível, e sim compará-las entre si. Ver o quadro no fim do documento.
+\item \textbf{Atualização (27/10).} O eMPRT foi executado. O GradientSHAP não passa pelo critério do artigo (o mapa do modelo aleatório não fica mais espalhado), mas passa pelas distâncias comparadas com o piso: as explicações dependem do modelo. Ver o quadro no fim do documento.
 \item \textbf{Quantus.} Nenhuma das quatro implementações serve sem adaptação; as versões próprias são de complexidade baixa a média.
 \end{itemize}
 \end{infobox}
@@ -459,6 +460,15 @@ ROAD & A remoção ordenada derruba a predição? & Não & Sim & Não & Médio \
 \item \textbf{Entram:} Random Logit, eMPRT e a complexidade de Bhatt et al.\ (entropia nas 36 regiões). A complexidade não exige leitura nova: já foi analisada (\url{fichamentos/bhatt-2020-complexity/main.pdf}) e fornece a entropia do eMPRT.
 \item \textbf{Fica de fora:} a localização com máscaras clínicas. O TCC não vai avaliar se a explicação é clinicamente compatível; a complexidade permite comparar se uma explicação é mais concentrada ou mais espalhada que outra, o que basta para a discussão.
 \item \textbf{Ordem de implementação:} complexidade (CPU, segundos), Random Logit e eMPRT.
+\end{enumerate}
+\end{infobox}
+
+\begin{infobox}[warn]{Atualização (27/10/2026): resultado do eMPRT}
+O eMPRT chegou a ser retirado depois do Random Logit, com o argumento de que este já mostrava que o fator (ECG $-$ referência) não domina os mapas. A retirada foi revista no mesmo dia: Adebayo et al.\ (2018, p.~9) apontam justamente os métodos do tipo entrada $\times$ gradiente, como o GradientSHAP, e o Random Logit compara mapas com sinal, o que não exclui que a magnitude siga a amplitude do sinal. A métrica foi executada (Kaggle, versão 25; \url{fichamentos/hedstrom-2023-emprt/main.pdf}; \url{results/modeloB_v2/emprt/}):
+\begin{enumerate}
+\item \textbf{Critério do artigo:} com o modelo de pesos sorteados, o mapa \textbf{não} fica mais espalhado ($q$ médio $-0{,}015$; $q > 0$ em 37\% dos mapas). O fator $x - x'$ concentra o mapa do modelo aleatório nos picos do QRS (2 regiões principais no QRS em 88\% dos mapas, contra 42\% com o modelo treinado), e a entropia não distingue “concentrado onde o modelo olha” de “concentrado onde o sinal é grande”.
+\item \textbf{Distâncias comparadas com o piso:} o mapa do modelo aleatório é outro mapa (8,7 vezes o piso com sinal e 5,8 vezes só nas magnitudes; todos os 622 mapas acima do piso; mesma região principal em só 5\%). Com o modelo treinado, a fração de mapas centrados no QRS varia por classe (95\% em BRE, 2\% em IAVB); com o aleatório, não.
+\item \textbf{Para o TCC:} o eMPRT entra como teste de sanidade do método, que o GradientSHAP passa pelas distâncias, e não como métrica por classe a comparar com o F1, pois o $q$ por classe repete a complexidade.
 \end{enumerate}
 \end{infobox}
 
