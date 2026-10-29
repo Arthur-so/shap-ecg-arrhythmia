@@ -1,0 +1,182 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: AMEE}} \\[0.35em]
+    {\large NGUYEN, T. T.; LE NGUYEN, T.; IFRIM, G. \textit{Robust Explainer Recommendation for Time Series Classification}. Data Mining and Knowledge Discovery, 2024 (arXiv:2306.05501v4)} \\[0.3em]
+    \textbf{Tema:} avaliação por perturbação guiada pela explicação, com vários classificadores ``árbitros'' e várias perturbações \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2306.05501} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v4, 30/05/2024, 42 páginas com apêndice) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v4). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação do que significa para o TCC.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} propor o AMEE (\textit{Model-Agnostic Explanation Evaluation}), um procedimento para comparar e ordenar métodos de explicação em classificação de séries temporais e recomendar o melhor para cada base de dados.
+\item \textbf{Dados e modelos:} 10 bases sintéticas univariadas (derivadas do benchmark de Ismail et al., 2020) e 15 bases reais do arquivo UCR, quatro delas de ECG (ECG200, ECG5000, ECGFiveDays, TwoLeadECG); classificadores 1NN-DTW, MrSEQL, ROCKET, ResNet e WEASEL 2.0.
+\item \textbf{Métodos de explicação:} GradientSHAP, Integrated Gradients, LIME e SHAP sobre MrSEQL e ROCKET, mapas intrínsecos do MrSEQL e da RidgeCV, além de uma explicação aleatória (piso) e de uma ``oráculo'' (verdade conhecida, só nas sintéticas).
+\item \textbf{Avaliação:} perturba-se a fração $k$\% de pontos mais importantes, mede-se a queda de acurácia de vários classificadores ``árbitros'' e resume-se a curva numa área (EAUC), padronizada e agregada no \textit{Explanation Power} (0 a 1).
+\item \textbf{Conclusão principal:} usar várias perturbações e vários árbitros aproxima a ordenação da verdade conhecida; explicações SHAP sobre classificadores precisos tendem a ser as mais informativas, e o GradientSHAP fica no meio (média 0,56 nas bases UCR).
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Mapas de saliência de métodos diferentes costumam discordar, e o artigo propõe um critério para escolher entre eles. Um \textbf{mapa de saliência} é um vetor com um peso por instante da série; o AMEE o reescala para $[0,1]$ [p.~8]. Se o mapa aponta as partes que distinguem as classes, apagá-las deve derrubar a acurácia; a novidade é tornar essa medida robusta ao tipo de perturbação e ao classificador que mede a queda, usando vários de cada.
+
+\section{Como avalia as explicações}
+\begin{itemize}
+\item \textbf{Perturbação guiada pela explicação} [p.~9]: com um limiar $k$ ($0 \le k \le 100$), substituem-se os $k \cdot l/100$ instantes de maior peso (série de comprimento $l$). Em $k=0$ a série é a original; em $k=100$, toda ela é perturbada.
+\item \textbf{Quatro valores de substituição} [p.~10]: média local (a média do instante $t$ no conjunto), gaussiana local $N(\mu_t,\sigma_t^2)$, média global (de todos os pontos de todas as séries) e gaussiana global.
+\item \textbf{Árbitros} [p.~9, 14--15]: classificadores treinados na base original e testados na base perturbada. Entra no comitê o candidato com acurácia ao menos igual à média dos candidatos (com teto de 90\% para essa exigência).
+\item \textbf{Resumo da curva} [p.~11--12]: a acurácia em cada $k$ vira uma área pela regra do trapézio (EAUC); área menor indica explicação mais informativa.
+\item \textbf{Padronização} [p.~13--14]: a EAUC é reescalada para $[0,1]$ em cada par (árbitro, perturbação), tirada a média, reescalada de novo e invertida: \textit{Explanation Power} $= 1 -$ posto médio reescalado. Os experimentos foram repetidos 5 vezes [p.~14].
+\item \textbf{Validação}: F1 contra a verdade conhecida (sintéticas) e regiões indicadas por especialistas (Coffee, GunPoint, CMJ) [p.~20--30].
+\end{itemize}
+Granularidade: ponto a ponto, em bases univariadas, sem agregação em janelas ou batimentos.
+
+\section{Resultados e conclusões}
+Nas bases sintéticas, a ordenação pelo \textit{Explanation Power} concorda com a ordenação pelo F1 contra a verdade conhecida, e a concordância melhora quando se acrescentam perturbações e árbitros (na base mais difícil, com uma única perturbação local, a explicação oráculo ficaria só em 6.º lugar) [p.~17--21]. Nas 15 bases UCR (Tabela 8, p.~25):
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Método} & \textbf{ECG200} & \textbf{ECG5000} & \textbf{ECGFiveDays} & \textbf{TwoLeadECG} & \textbf{Média (15 bases)} \\
+\midrule
+Aleatória & 0,00 & 0,00 & 0,54 & 0,39 & 0,37 \\
+GradientSHAP & 0,13 & 1,00 & 0,77 & 0,17 & 0,56 \\
+Integrated Gradients & 0,17 & 0,99 & 0,71 & 0,18 & 0,56 \\
+ROCKET-SHAP & 1,00 & 0,82 & 1,00 & 1,00 & 0,84 \\
+MrSEQL-SHAP & 0,84 & 0,61 & 0,91 & 0,92 & 0,73 \\
+\bottomrule
+\end{tabular}
+\end{center}
+O ROCKET-SHAP foi o mais informativo em 7 das 15 bases e o GradientSHAP em 2. Na TwoLeadECG, o GradientSHAP (0,17) ficou abaixo da explicação aleatória (0,39); na Coffee, foi apontado entre as piores explicações [p.~25]. Os autores concluem que explicações SHAP por perturbação superam, em geral, as baseadas em gradiente quando os classificadores de base têm desempenho parecido, mas custam mais [p.~33].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 12--13} §4.6 Robustez do AMEE}
+\begin{origquote}“Unlike image data that is standardized in RGB, time series data is more dynamic: it can belong to many different domains, collected from various sources, or preprocessed in different ways. This characteristics of time series data make it harder to use one single method to mask out a specific part of the data.”\end{origquote}
+\begin{tradquote}“Diferentemente das imagens, padronizadas em RGB, as séries temporais são mais variáveis: podem pertencer a muitos domínios, vir de fontes diversas ou ser pré-processadas de formas diferentes. Essas características tornam mais difícil usar um único método para mascarar uma parte específica dos dados.”\end{tradquote}
+\explab{Explicação}
+É o argumento central do artigo: não existe um valor ``neutro'' óbvio para apagar um trecho de série temporal, como o cinza numa imagem. No TCC, a Faithfulness Correlation e a Faithfulness Estimate dependem desse valor de substituição; o artigo justifica tratá-lo como uma escolha a declarar e, se possível, variar.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 19} §5.3.4 Qualidade do classificador de base}
+\begin{origquote}“If the base classifier has low accuracy on the sample dataset, the explanation based on that classifier may not be as good as one based on a more accurate classifier.”\end{origquote}
+\begin{tradquote}“Se o classificador de base tem acurácia baixa na amostra, a explicação baseada nele pode não ser tão boa quanto uma baseada num classificador mais preciso.”\end{tradquote}
+\explab{Explicação}
+O artigo verifica isso comparando LIME e SHAP sobre o ROCKET (mais preciso) e sobre o MrSEQL: o primeiro dá explicações com mais \textit{Explanation Power} (Figura 13). É a mesma intuição da pergunta do TCC, mas no nível do \textbf{modelo inteiro}; o TCC a examina no nível das \textbf{classes} de um mesmo modelo, comparando ordens de qualidade e de F1.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 30} §5.6 Discussão}
+\begin{origquote}“In addition, adding a random explanation while carrying out the evaluation with AMEE is helpful in identifying unreliable explanations. A worse-than-random explanation means that the explanation fails to trigger a change in referee classifiers when compared even to a random explanation, either not identifying the important areas, or not focusing on any important areas at all.”\end{origquote}
+\begin{tradquote}“Além disso, incluir uma explicação aleatória na avaliação com o AMEE ajuda a identificar explicações pouco confiáveis. Uma explicação pior que a aleatória é aquela que não consegue provocar mudança nos árbitros nem quando comparada a uma explicação aleatória, seja por não identificar as áreas importantes, seja por não se concentrar em nenhuma área importante.”\end{tradquote}
+\explab{Explicação}
+Uma métrica sem referência não diz se o valor obtido é bom. O AMEE usa a explicação aleatória como piso; o TCC usa referências do mesmo espírito (o piso entre sementes do GradientSHAP e o modelo com pesos sorteados no eMPRT). O caso da TwoLeadECG, em que o GradientSHAP ficou abaixo do aleatório, mostra que esse controle não é formalidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 32--33} §6 e §7 Recomendações e conclusão}
+\begin{origquote}“We also find that perturbation-based explainers based on SHAP generally perform better than gradient-based explainers for time series classification (given similar performance of the base models), but are computationally expensive.”\end{origquote}
+\begin{tradquote}“Também observamos que explicadores por perturbação baseados em SHAP em geral têm desempenho melhor que os baseados em gradiente na classificação de séries temporais (com classificadores de base de desempenho semelhante), mas são computacionalmente caros.”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP, usado no TCC, é um método de gradiente da família SHAP e fica, no artigo, abaixo dos SHAP por perturbação. O resultado vale para séries univariadas curtas, mas é uma ressalva a registrar ao justificar a escolha do método pelo custo.
+\end{citacard}
+
+\section{Relação com o TCC}
+O AMEE apoia três decisões do TCC: medir a fidelidade pela resposta do modelo à remoção das regiões apontadas pelo mapa; acompanhar as métricas de uma referência de ``acaso'' (piso); e declarar o valor de perturbação, que o artigo mostra mudar a ordenação dos métodos. Há duas diferenças importantes. Primeiro, o AMEE mede a queda de acurácia em \textbf{outros} classificadores (árbitros), e não no modelo explicado; é, portanto, uma medida de quão informativo é o trecho apontado para a tarefa, e não de fidelidade ao modelo. O TCC mede a resposta do próprio ResNet34-1D, como nas métricas de Bhatt (2020) e Alvarez-Melis (2018). Segundo, o AMEE ordena \textbf{métodos de explicação} numa base inteira, enquanto o TCC usa um só método e compara \textbf{classes}. A granularidade também difere: pontos de séries univariadas no artigo, 36 regiões no TCC. Por fim, o GradientSHAP variou de 0,13 a 1,00 entre as bases de ECG do UCR, o que reforça a necessidade de avaliá-lo no CPSC2018 em vez de assumi-lo bom.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Nguyen, Le Nguyen e Ifrim (2024) mostram que, em séries temporais, a ordenação de métodos de explicação por perturbação depende do valor usado para substituir os trechos removidos e do classificador que mede a queda de desempenho, e recomendam combinar várias perturbações e incluir uma explicação aleatória como referência.''
+\item ``No mesmo estudo, o GradientSHAP teve desempenho intermediário nas bases do arquivo UCR, inclusive abaixo da explicação aleatória numa base de ECG (TwoLeadECG).''
+\end{itemize}
+
+\end{document}

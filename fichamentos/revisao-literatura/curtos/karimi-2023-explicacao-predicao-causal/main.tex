@@ -1,0 +1,166 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: relação entre explicação e predição (visão causal)}} \\[0.35em]
+    {\large KARIMI, A.-H.; MUANDET, K.; KORNBLITH, S.; SCHÖLKOPF, B.; KIM, B. \textit{On the Relationship Between Explanation and Prediction: A Causal View}. International Conference on Machine Learning (ICML), PMLR 202, 2023} \\[0.3em]
+    \textbf{Tema:} quanto a explicação reflete a predição, em função do desempenho do modelo \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2212.06925} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v4, versão dos anais do ICML 2023, 23 páginas); figuras do Apêndice B lidas pelas legendas \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v4). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} quantificar a relação entre a explicação ($E$) e a predição ($Y$) de um modelo, e ver como ela muda com o desempenho do modelo.
+  \item \textbf{Dados e modelos:} \textit{model zoo} de Unterthiner et al.\ (2020): 30.000 CNNs de 3 camadas (4.970 parâmetros) por conjunto de dados (CIFAR10, SVHN, MNIST, Fashion-MNIST), treinadas com hiperparâmetros sorteados.
+  \item \textbf{Métodos de explicação:} gradiente, SmoothGrad, Integrated Gradients e Grad-CAM; mais uma referência ideal, \textit{Identity} ($E = Y$).
+  \item \textbf{Avaliação:} efeito de tratamento (inferência causal) dos hiperparâmetros sobre $Y$ e sobre $E$, comparado por correlação, em 8 faixas de acurácia; separação entre efeito direto e efeito mediado por $Y$.
+  \item \textbf{Conclusão:} a relação entre $E$ e $Y$ está longe do ideal, e a distância ao ideal aumenta nos modelos de melhor desempenho.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O artigo trata hiperparâmetros (otimizador, inicialização, ativação, taxa de aprendizado, regularização $\ell_2$, \textit{dropout}, divisão dos dados) como \textbf{tratamentos}, no sentido da estrutura de resultados potenciais de Rubin: eles vêm antes do treino e determinam o modelo, a predição e a explicação. Se a explicação de fato explica a predição, a influência de um hiperparâmetro sobre $E$ deveria passar por $Y$. Os autores medem o \textbf{efeito individual de tratamento} (ITE, \textit{individual treatment effect}) de cada hiperparâmetro sobre $Y$ e sobre $E$ para uma mesma instância, usando uma distância em espaço de \textit{kernel} (KTE, \textit{kernelized treatment effect}, com \textit{kernel} RBF), já que $Y$ e $E$ são vetores ou mapas. Para separar o efeito direto de $H$ sobre $E$ do efeito mediado por $Y$, permutam as predições ao acaso e recalculam as explicações.
+
+\section{Como avalia as explicações}
+\begin{itemize}
+  \item \textbf{Pré-processamento dos mapas:} corte acima do percentil 99, normalização para $[0, 1]$ e zeragem das atribuições negativas (para comparar todos os métodos nas mesmas condições).
+  \item \textbf{Estratificação pelo desempenho:} os 30.000 modelos são divididos em 8 faixas de acurácia (percentis 0--20, 20--40, 40--60, 60--80, 80--90, 90--95, 95--99, 99--100), com grupos de controle dentro de cada faixa.
+  \item \textbf{Comparação:} correlações de Pearson e de Spearman entre ITE$_Y$ e ITE$_E$ em cada faixa; a explicação \textit{Identity} dá a correlação perfeita e serve de referência ideal.
+  \item \textbf{Robustez da análise:} os autores verificam que o resultado não depende da escolha do \textit{kernel} (linear, polinomial, RBF, cosseno).
+\end{itemize}
+
+\section{Resultados e conclusões}
+A maioria dos tipos de hiperparâmetro influencia $E$ e $Y$ de forma parecida quando se olham todos os modelos juntos. Separando por faixa de acurácia, porém, ITE$_Y$ e ITE$_E$ não seguem o mesmo padrão. A correlação entre eles cresce nas faixas de maior acurácia para gradiente e Integrated Gradients, mas fica moderada em comparação com a referência ideal (as legendas do apêndice falam em valores absolutos de no máximo cerca de 0,5). A distância entre o caso ideal e os métodos \textbf{aumenta} nos modelos de melhor desempenho: neles, uma parte maior da explicação vem de algo que não é a predição. Para SmoothGrad e Grad-CAM, a influência dos hiperparâmetros sobre $E$ vem sobretudo diretamente de $H$. Os autores limitam as conclusões ao domínio testado (arquitetura fixa, pequena) e advertem que a métrica proposta, sozinha, não basta para endossar um método.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 6} §3.2 Resultados}
+\begin{origquote}“How the relationship between E and Y changes as a function of the performance of the model is important for practitioners in deciding when E can or cannot be used.”\end{origquote}
+\begin{tradquote}“Como a relação entre E e Y muda em função do desempenho do modelo é importante para que os profissionais decidam quando E pode ou não ser usada.”\end{tradquote}
+\explab{Explicação}
+É a mesma pergunta do TCC em outra escala: o TCC pergunta se a qualidade da explicação acompanha o desempenho (F1) por classe de um modelo; o artigo pergunta o mesmo entre milhares de modelos com desempenhos diferentes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §3.2 Grupo de controle}
+\begin{origquote}“Therefore, we continue with within-accuracy-bucket control groups, and refrain from comparing absolute values of ITE (for Y or E) across buckets, but instead, look to relative ITE values of H on Y and E across buckets.”\end{origquote}
+\begin{tradquote}“Por isso, seguimos com grupos de controle dentro de cada faixa de acurácia e evitamos comparar valores absolutos de ITE (para Y ou E) entre faixas; em vez disso, olhamos para os valores relativos de ITE de H sobre Y e E entre as faixas.”\end{tradquote}
+\explab{Explicação}
+Cautela metodológica que o TCC também adota: os valores absolutos de uma métrica em grupos diferentes (classes, no TCC) dependem da referência de cada grupo, por isso a comparação se faz por posições relativas, e cada métrica é lida contra o seu piso.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §4 Discussão e conclusões}
+\begin{origquote}“Our results suggest that the relationships between E and Y is far from ideal. In fact, the gap between ‘ideal’ case only increases in higher-performing models–models that are likely to be deployed.”\end{origquote}
+\begin{tradquote}“Nossos resultados sugerem que a relação entre E e Y está longe do ideal. Na verdade, a distância ao caso ‘ideal’ só aumenta nos modelos de melhor desempenho, os que provavelmente serão colocados em uso.”\end{tradquote}
+\explab{Explicação}
+Desmonta a expectativa ingênua de que “modelo melhor $\Rightarrow$ explicação melhor”. Para o TCC, significa que não há razão teórica para esperar que as classes de F1 mais alto tenham explicações mais fiéis; um resultado nesse sentido, ou no oposto, precisa ser lido como observação, não como confirmação de uma regra.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 13} Apêndice A.3}
+\begin{origquote}“We also recognize that relying solely on the suggested metric may lead to misleading results and should not be considered adequate for endorsing an explanation approach.”\end{origquote}
+\begin{tradquote}“Também reconhecemos que confiar apenas na métrica sugerida pode levar a resultados enganosos e não deve ser considerado suficiente para endossar um método de explicação.”\end{tradquote}
+\explab{Explicação}
+A própria referência ideal (\textit{Identity}) tem correlação perfeita e não explica nada. Reforça a escolha do TCC de usar várias métricas, cada uma para uma propriedade, em vez de um único índice.
+\end{citacard}
+
+\section{Relação com o TCC}
+Entre os trabalhos desta seção, é o que trata mais diretamente da relação entre explicação e desempenho, e a sua conclusão serve de alerta: em modelos de melhor desempenho, as explicações por gradiente refletem a predição \textbf{menos} do que o ideal, e a distância cresce com a acurácia. Há diferenças de desenho importantes. O artigo varia o desempenho entre modelos (30.000 CNNs pequenas) e mede quanto a explicação acompanha mudanças da predição; o TCC tem um único modelo e varia o desempenho entre classes (9 valores de F1). Com tantos modelos, o artigo pode usar correlações; com nove classes, uma correlação entre métricas e F1 seria frágil, o que sustenta a opção do TCC por uma comparação descritiva, por ordens e posições. O cuidado dos autores em não comparar valores absolutos entre faixas, só relativos, é o mesmo que o TCC aplica ao comparar classes.
+
+A ressalva para a discussão: o artigo não estuda SHAP (cita os valores de Shapley como extensão futura) e usa CNNs de imagem muito menores que a ResNet34-1D; as conclusões servem como indício, não como resultado transferível.
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Karimi et al.\ (2023) mostraram, em 30.000 redes treinadas com hiperparâmetros diferentes, que a relação entre explicação e predição está longe do ideal e se afasta ainda mais dele nos modelos de maior acurácia; por isso, este trabalho não parte do pressuposto de que classes com F1 mais alto tenham explicações de melhor qualidade e compara as duas grandezas de forma descritiva.
+\end{itemize}
+
+\end{document}

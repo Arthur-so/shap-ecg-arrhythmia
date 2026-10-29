@@ -1,0 +1,178 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: atribuição com verdade de referência induzida}} \\[0.35em]
+    {\large ZHOU, Y.; BOOTH, S.; RIBEIRO, M. T.; SHAH, J. \textit{Do Feature Attribution Methods Correctly Attribute Features?}. AAAI Conference on Artificial Intelligence, 2022} \\[0.3em]
+    \textbf{Tema:} avaliação de métodos de atribuição em conjuntos semi-naturais com verdade de referência \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2104.14403} \\[0.2em]
+    \textbf{Leitura:} íntegra do texto principal (arXiv v2, pp. 1--10); apêndices B--D consultados de forma parcial (B.2, configuração dos métodos) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2, com apêndices). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} verificar se métodos de atribuição destacam as características que o modelo comprovadamente usa.
+  \item \textbf{Dados e modelos:} conjunto próprio de pássaros (4 pares de espécies parecidas do CUB-200-2011, 1.200 imagens por classe do Flickr) com ResNet-34 treinada do zero; avaliações de textos do BeerAdvocate com Bi-LSTM com atenção e modelos de \textit{rationale}.
+  \item \textbf{Métodos de explicação:} gradiente, SmoothGrad, GradCAM, LIME e SHAP (na forma GradientSHAP, \texttt{shap.GradientExplainer}); atenção; \textit{rationales}.
+  \item \textbf{Avaliação:} os rótulos são sorteados de novo e um artefato (marca d'água, desfoque, brilho, matiz, ruído) é aplicado a uma classe, de modo que um modelo com acurácia alta é obrigado a usar o artefato; mede-se a fração da atribuição que cai na região do artefato (Attr\%).
+  \item \textbf{Conclusão:} nenhum método atinge o esperado; o SHAP é o melhor nas imagens, mas depende muito do tipo de artefato.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O problema de partida é a falta de verdade de referência: em dados reais não se sabe quais características o modelo usa. Os autores constroem conjuntos \textit{semi-naturais}. Primeiro, os rótulos são reatribuídos: o rótulo original é mantido com probabilidade $r$ e trocado nos outros casos; com $r = 0{,}5$ a imagem original não informa nada sobre o rótulo. Depois, um artefato local é aplicado conforme o novo rótulo. Se o modelo passa de uma acurácia que só o artefato permite, ele necessariamente usa o artefato, cuja região (\textit{effective region}, ER) é conhecida. O artigo propõe então \textbf{desideratos} (condições necessárias): a atribuição deve se concentrar na união das regiões de todos os artefatos possíveis, inclusive para a classe sem artefato, porque o modelo pode decidir pela \textbf{ausência} do artefato.
+
+\section{Como avalia as explicações}
+\begin{itemize}
+  \item \textbf{Attr\%}: soma dos valores absolutos da atribuição dentro da região dividida pela soma total. Para um modelo quase perfeito espera-se Attr\% $\approx 1$; para características não informativas, Attr\% deve tender a 0.
+  \item \textbf{\%ER}: tamanho da região como fração da imagem; uma atribuição aleatória daria Attr\% $\approx$ \%ER.
+  \item \textbf{Precisão e revocação} para métodos que selecionam $k$ características (\textit{rationales}).
+  \item \textbf{Experimentos com imagens:} (5.1) Attr\% em 100 modelos, cada um com um par de espécies e um artefato sorteados; (5.2) Attr\% ao longo do treino, à medida que a acurácia de teste sobe; (5.3) Attr\% contra a visibilidade do artefato; (5.4) Attr\% contra $r$, comparada à faixa permitida pelos axiomas de Shapley ($\geq 1{,}5 - r$ para modelo quase perfeito). Attr\% é relatado separadamente para as duas classes (com e sem o artefato).
+\end{itemize}
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+Achado & Valor relatado \\
+\midrule
+Modelos (de 100) com acurácia de teste acima de 95\% (§5.1) & 70\% \\
+SHAP, melhor método nas imagens & Attr\% = 69\% com \%ER = 40\%, em média \\
+Atenção, palavras-artefato (artigos) & Attr\% = 8,6\% para 7,9\% das palavras (acurácia acima de 97\%) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Nenhum mapa chega de forma consistente a Attr\% $\approx 1$. A \textbf{presença} do artefato é detectada melhor que a \textbf{ausência}. Ao longo do treino, só SHAP com marca d'água mostra o aumento esperado de Attr\% com a acurácia; nos demais casos a tendência é fraca ou ruidosa. Artefatos menos visíveis, justamente os mais importantes de descobrir, não são bem detectados. Muitos mapas, inclusive o SHAP fora da marca d'água, ficam fora da faixa dos axiomas de Shapley. A atenção mal supera o acaso; os \textit{rationales} selecionam palavras não correlacionadas que confundem. Os autores recomendam testar os métodos em modelos que sabidamente usam características conhecidas antes de aplicá-los ao modelo real.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 2} §2.2 Avaliação de atribuições}
+\begin{origquote}“One metric is prediction change (e.g. Samek et al. 2017; Arras et al. 2019; Ismail et al. 2020), but it fails to account for nonlinear interactions: for an OR function of two active inputs, the evaluation will (incorrectly) deem whichever feature removed first to be useless as its removal does not affect the prediction.”\end{origquote}
+\begin{tradquote}“Uma métrica é a mudança da predição (p.~ex., Samek et al. 2017; Arras et al. 2019; Ismail et al. 2020), mas ela não leva em conta interações não lineares: para uma função OU de duas entradas ativas, a avaliação considerará (incorretamente) inútil a característica removida primeiro, porque a sua remoção não afeta a predição.”\end{tradquote}
+\explab{Explicação}
+Limitação direta das métricas de fidelidade por perturbação do TCC. No ECG de 12 derivações, a mesma alteração (por exemplo, um bloqueio de ramo) aparece em várias derivações; retirar uma região pode não mudar o \textit{logit} porque outra derivação carrega a mesma informação, e a métrica subestima a fidelidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §5.1 Attr\% por atribuição e artefato}
+\begin{origquote}“Thus, saliency maps may mislead people about the true reason for a negative prediction, and better methods to convey the absence of signals are needed.”\end{origquote}
+\begin{tradquote}“Assim, os mapas de saliência podem enganar as pessoas sobre o verdadeiro motivo de uma predição negativa, e são necessários métodos melhores para transmitir a ausência de sinais.”\end{tradquote}
+\explab{Explicação}
+Mostra que a qualidade da explicação pode diferir entre classes conforme a classe seja definida pela presença ou pela ausência de algo. No ECG, a fibrilação atrial se define em parte pela ausência da onda P (região pré-QRS); é razoável esperar que as métricas por classe variem também por esse motivo, e não só pelo F1.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §5.2 Atribuição e acurácia de teste}
+\begin{origquote}“SHAP with watermark shows the most consistent and expected increase in \%Attr with test accuracy. For other saliency maps and feature types, the trend is very mild or noisy, suggesting that the attribution method fails to recognize model’s increasing reliance on the manipulation in making increasingly accurate predictions.”\end{origquote}
+\begin{tradquote}“O SHAP com marca d'água mostra o aumento de \%Attr com a acurácia de teste mais consistente e esperado. Para os outros mapas e tipos de característica, a tendência é muito fraca ou ruidosa, o que sugere que o método de atribuição não reconhece a dependência crescente do modelo em relação ao artefato para fazer predições cada vez mais acertadas.”\end{tradquote}
+\explab{Explicação}
+É o experimento mais próximo da pergunta do TCC: a qualidade da atribuição acompanha o desempenho do modelo? Aqui, mesmo com verdade de referência e um único fator controlado, a relação só aparece em um caso. Isso recomenda cautela ao esperar que métricas de explicação sigam o F1 por classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §5.5 Discussão}
+\begin{origquote}“We recommend that, before analyzing the actual model, developers should first train models that are guaranteed to use certain known features, and “dry run” the planned interpretability methods on them to make sure that these features are indeed highlighted.”\end{origquote}
+\begin{tradquote}“Recomendamos que, antes de analisar o modelo real, os desenvolvedores treinem primeiro modelos que com certeza usam certas características conhecidas e façam um “ensaio” dos métodos de interpretabilidade planejados neles, para confirmar que essas características são de fato destacadas.”\end{tradquote}
+\explab{Explicação}
+O TCC não faz esse ensaio com verdade de referência; os testes de randomização (Random Logit, eMPRT) e o piso cumprem um papel mais fraco, de verificação de sanidade. Vale citar como trabalho futuro (por exemplo, inserir um artefato sintético em uma derivação).
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo é relevante por três motivos. Primeiro, avalia o mesmo método do TCC (GradientSHAP) e o encontra como o melhor entre os mapas de imagem, mas com eficácia que depende do tipo de característica: um argumento de que a qualidade do GradientSHAP pode variar entre classes de arritmia, cujos sinais diagnósticos têm naturezas diferentes (ritmo, morfologia do QRS, segmento ST). Segundo, relata Attr\% \textbf{separado por classe} e encontra assimetria entre presença e ausência do sinal, o que apoia a comparação por classe feita no TCC. Terceiro, o experimento da §5.2 mostra que, mesmo em condições controladas, a qualidade da atribuição raramente cresce de forma limpa com a acurácia; a comparação descritiva entre as métricas e o F1 por classe deve, portanto, admitir que a ausência de relação não invalida nem as métricas nem o modelo.
+
+As diferenças de desenho são grandes: o artigo usa verdade de referência e compara o mesmo modelo em épocas de treino diferentes; o TCC não tem verdade de referência e compara classes de um único modelo treinado. A crítica às métricas de perturbação (interações do tipo OU) deve entrar como limitação da Faithfulness Correlation e da Faithfulness Estimate.
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Zhou et al.\ (2022) mostraram, em dados com verdade de referência induzida, que o GradientSHAP foi o mapa que melhor localizou o artefato usado pelo modelo, mas com eficácia dependente do tipo de artefato e pior quando a decisão se baseava na ausência de um sinal; esse resultado motiva a análise das métricas separada por classe.
+\end{itemize}
+
+\end{document}

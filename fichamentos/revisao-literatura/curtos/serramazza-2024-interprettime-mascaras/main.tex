@@ -1,0 +1,175 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: InterpretTime revisado e acionabilidade}} \\[0.35em]
+    {\large SERRAMAZZA, D. I.; LE NGUYEN, T.; IFRIM, G. \textit{Improving the Evaluation and Actionability of Explanation Methods for Multivariate Time Series Classification}. arXiv:2406.12507v2, 2024} \\[0.3em]
+    \textbf{Tema:} avaliação por perturbação (InterpretTime) com várias máscaras e agrupamento em trechos; seleção de canais guiada pela explicação \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2406.12507} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 12/08/2024, 25 páginas com apêndice) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} examinar o InterpretTime (Turbé et al., 2023), método de avaliação de atribuições em séries multivariadas, apontar suas fraquezas e propor melhorias; mostrar um uso prático das explicações (seleção de canais).
+\item \textbf{Dados e modelos:} base sintética do InterpretTime (8 canais, 500 instantes), CMJ (3 canais), Military Press (8 ou 50 canais) e uma base de ECG de 12 derivações para BRD (comprimento 450); classificadores ResNet, dResNet, MiniRocket e ConvTran.
+\item \textbf{Métodos de explicação:} SHAP (amostragem de Shapley), KernelSHAP, Feature Ablation, Feature Permutation, Integrated Gradients, DeepLift, DeepLiftSHAP, GradientSHAP, Saliency (Captum) e dCAM; mapa aleatório como referência.
+\item \textbf{Avaliação:} métrica $AUC\tilde{S}_{top}$ do InterpretTime (queda da saída ao substituir os pontos mais importantes), calculada com seis máscaras em vez de só $N(0,1)$, descartando as máscaras que não superam o aleatório em 15\%; agrupamento de pontos consecutivos por canal (5 a 20 trechos); verdade conhecida (AP, ROC) na base sintética.
+\item \textbf{Conclusão principal:} a máscara escolhida pode mudar o vencedor; agrupar em trechos melhora as métricas e reduz o tempo; métodos por perturbação (SHAP, Feature Ablation) superam os de gradiente, e o GradientSHAP fica entre os piores na base sintética.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O InterpretTime avalia uma atribuição substituindo, por valores de $N(0,1)$, a fração $k$ dos pontos de maior atribuição e medindo a variação relativa da saída do modelo; supõe treino com ruído gaussiano, uma única máscara e só atribuições positivas [p.~7]. Sem esse treino aumentado, os autores não reproduzem os resultados originais: a ordenação fica ``plana'', perto do aleatório, porque os modelos passam a prever a mesma classe para toda série corrompida [p.~11--12, 23]. Propõem então (i) várias máscaras: zeros, média e gaussiana locais (por instante e canal) e globais, além de $N(0,1)$; (ii) o agrupamento (\textit{chunking}) de pontos consecutivos de cada canal em trechos, cada um com um único valor de atribuição [p.~8--9]. Por fim, usam a média da atribuição por canal para selecionar canais [p.~9--10].
+
+\section{Como avalia as explicações}
+\begin{itemize}
+\item \textbf{Normalização}: mapas reescalados para $[0,1]$ [p.~6]; na comparação com a verdade, só os valores positivos ($\max(0,W)$), como no InterpretTime [p.~9].
+\item \textbf{Máscaras}: só entram na média as máscaras em que a $AUC\tilde{S}_{top}$ do método supera a do mapa aleatório em pelo menos 15\% (limiar empírico) [p.~9].
+\item \textbf{Granularidade}: ponto a ponto ou em 5, 10, 15 e 20 trechos iguais por canal, com média dos quatro; agrupar todos os canais juntos deu resultados ruins [p.~8].
+\item \textbf{Repetições}: cada classificador foi treinado 5 vezes e usado o mais preciso [p.~10].
+\end{itemize}
+
+\section{Resultados e conclusões}
+Na base sintética, as métricas contra a verdade são baixas para todos; o GradientSHAP é o penúltimo nos dois modelos em que foi testado (AP 0,10 no ConvTran e 0,074 no ResNet; aleatório 0,052) [p.~11]. Com trechos, AP e ROC sobem e o tempo cai; o SHAP é o que mais ganha [p.~12--13]. No Military Press com ConvTran, três máscaras dão três vencedores diferentes [p.~14--15, 21]. Na base de ECG (Tabela 9, p.~20), ponto a ponto:
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Modelo} & \textbf{SHAP} & \textbf{Int. Gradients} & \textbf{GradientSHAP} & \textbf{F. Ablation} & \textbf{Aleatório} \\
+\midrule
+ConvTran & 0,472 & 0,566 & 0,519 & 0,436 & 0,077 \\
+ResNet & 0,482 & 0,416 & 0,306 & 0,356 & 0,173 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Os autores, porém, consideram essa base fácil demais para comparar métodos, porque um classificador tabular chega perto dos melhores (0,949 contra 0,967 do ConvTran) [p.~10, 13]. Na seleção de canais do Military Press, 8 canais escolhidos pelo SHAP e pelo Feature Ablation dão acurácia comparável à da escolha do especialista e, em geral, maior que a dos 50 canais [p.~15].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 9} §4.3 Melhorando o InterpretTime}
+\begin{origquote}“We then discard the masks where $AUC\tilde{S}_{top}$ of that attribution method is not greater than the $AUC\tilde{S}_{top}$ of the random attribution by at least 15\% (we empirically found this threshold to separate between meaningless and meaningful).”\end{origquote}
+\begin{tradquote}“Descartamos então as máscaras em que a $AUC\tilde{S}_{top}$ do método de atribuição não supera em pelo menos 15\% a do mapa aleatório (verificamos empiricamente que esse limiar separa o que não tem significado do que tem).”\end{tradquote}
+\explab{Explicação}
+A ideia é só confiar numa perturbação quando ela distingue uma explicação real de uma aleatória. O TCC usa o mesmo princípio com outra referência: as distâncias (sensibilidade, Random Logit, eMPRT) são lidas contra o piso do GradientSHAP, e não em valor absoluto.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} §5.1 Validação do InterpretTime}
+\begin{origquote}“Different from the original work, we also found that SHAP has some of the poorest metrics using ConvTran, moreover GradientShap which is a competitive method in the original work, in our study is the second to last in both tested cases.”\end{origquote}
+\begin{tradquote}“Diferentemente do trabalho original, também observamos que o SHAP tem algumas das piores métricas com o ConvTran; além disso, o GradientShap, competitivo no trabalho original, foi o penúltimo nos dois casos testados.”\end{tradquote}
+\explab{Explicação}
+O desempenho do GradientSHAP muda de um estudo para outro conforme o treino do modelo e a base. Para o TCC, é mais um motivo para não tomar a qualidade do método como dada e medi-la no próprio modelo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} §5.3 Dados reais}
+\begin{origquote}“This suggests again that the distribution used to perturb time-series can have a huge impact on results and our strategy of averaging up to 6 different masks, unlike using only $N(0,1)$, can mitigate this problem.”\end{origquote}
+\begin{tradquote}“Isso sugere novamente que a distribuição usada para perturbar as séries pode ter enorme impacto nos resultados, e que a estratégia de fazer a média de até 6 máscaras, em vez de usar só $N(0,1)$, pode mitigar o problema.”\end{tradquote}
+\explab{Explicação}
+É a mesma conclusão do AMEE, agora no caso multivariado. Na Faithfulness Correlation e na Faithfulness Estimate do TCC, o valor de substituição das regiões é uma escolha que afeta o resultado e deve ser declarada; o artigo sugere checar mais de uma.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 16} §6 Conclusão}
+\begin{origquote}“We also improved the AUC scores of attribution methods, while reducing running time, by using chunking, i.e., grouping consecutive features in each channel. This is possible only for perturbation-based models as they can mask features together.”\end{origquote}
+\begin{tradquote}“Também melhoramos os escores AUC dos métodos de atribuição, reduzindo o tempo de execução, com o agrupamento em trechos, isto é, juntando atributos consecutivos em cada canal. Isso só é possível para os métodos por perturbação, que podem mascarar atributos em conjunto.”\end{tradquote}
+\explab{Explicação}
+No artigo, o trecho é a unidade do próprio cálculo da atribuição. No TCC, o GradientSHAP é calculado ponto a ponto e só depois somado nas 36 regiões; as métricas, porém, perturbam regiões inteiras. O artigo apoia a granularidade por trechos dentro de cada canal (e não juntando canais), que é a forma das regiões do TCC.
+\end{citacard}
+
+\section{Relação com o TCC}
+É o trabalho mais próximo do desenho de avaliação do TCC entre os de séries multivariadas: perturba regiões dentro de cada canal, compara com uma explicação aleatória e mostra que a máscara muda a ordenação. Inclui uma base de ECG de 12 derivações para BRD, mas com comprimento 450, tarefa binária e acurácia alta até para um classificador tabular, o que os próprios autores consideram fácil demais. O resultado ruim do GradientSHAP na base sintética e intermediário no ECG não contradiz o uso do método no TCC, mas obriga a justificá-lo (custo, compatibilidade com o modelo) e a mostrar que, no CPSC2018, os mapas superam as referências, como fazem o Random Logit e as distâncias do eMPRT. Duas diferenças: o artigo ordena \textbf{métodos}, o TCC compara \textbf{classes} com um método só; e o artigo agrupa trechos de tamanho igual, o TCC usa trechos fisiológicos (pré-QRS, QRS, ST-T).
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Serramazza, Le Nguyen e Ifrim (2024) mostram que, em séries temporais multivariadas, a distribuição usada para mascarar os pontos pode mudar o método vencedor e que agrupar pontos consecutivos de cada canal em trechos melhora a avaliação e reduz o custo.''
+\end{itemize}
+
+\end{document}

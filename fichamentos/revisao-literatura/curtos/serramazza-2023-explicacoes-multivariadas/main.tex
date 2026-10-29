@@ -1,0 +1,182 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: explicações para séries multivariadas (2023)}} \\[0.35em]
+    {\large SERRAMAZZA, D. I.; NGUYEN, T. T.; LE NGUYEN, T.; IFRIM, G. \textit{Evaluating Explanation Methods for Multivariate Time Series Classification}. AALTD (workshop), 2023 (arXiv:2308.15223v2)} \\[0.3em]
+    \textbf{Tema:} SHAP e dCAM em classificação de séries temporais multivariadas, avaliados com verdade sintética e com o AMEE \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2308.15223} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 07/09/2023, 21 páginas com material suplementar) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} analisar e avaliar métodos de explicação por saliência para classificação de séries temporais \textbf{multivariadas} (várias variáveis medidas ao mesmo tempo, chamadas canais), que devem indicar canal e instante relevantes.
+\item \textbf{Dados e modelos:} 3 bases sintéticas (benchmark de Ismail et al., 2020; 20 canais, 100 instantes) e 2 reais de movimento humano (CMJ, 3 canais; Military Press, 8 canais); classificadores ROCKET, dResNet e RidgeCV.
+\item \textbf{Métodos de explicação:} SHAP via \textit{timeXplain} (por segmentos), aplicado à série concatenada ou canal a canal; dCAM (CAM estendido a vários canais); pesos da RidgeCV; explicação aleatória como controle.
+\item \textbf{Avaliação:} nas sintéticas, comparação com a verdade conhecida (precisão, revocação, F1, PR-AUC, ROC-AUC); nas reais, o AMEE (perturbação guiada e queda de acurácia de classificadores árbitros) e conhecimento de especialistas sobre os canais.
+\item \textbf{Conclusão principal:} adaptações do SHAP funcionam bem e superam o dCAM, mas são muito caras; o benchmark sintético usado é inadequado, porque um classificador linear simples o resolve com perfeição.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Uma série multivariada é uma matriz $d \times L$ ($d$ canais, $L$ instantes), e a explicação é um mapa de saliência do mesmo formato [p.~4--5]. Como quase não havia métodos próprios para esse caso, os autores comparam o dCAM, feito para redes com \textit{global average pooling}, com o SHAP adaptado de duas formas: concatenando os canais numa série única (o mapa é depois remodelado em matriz) ou treinando e explicando um modelo por canal [p.~8--9]. O SHAP usa segmentos como atributos: 10 por canal, ou $d \times 10$ na série concatenada [p.~9].
+
+\section{Como avalia as explicações}
+\begin{itemize}
+\item \textbf{Sintéticas} [p.~10--11]: todos os mapas são levados a $20 \times 10$ (média de 10 instantes consecutivos para dCAM e Ridge), tomados em valor absoluto, reescalados para $[0,100]$ e comparados com a matriz binária da região informativa, com limiar 50 para precisão e revocação.
+\item \textbf{Reais} [p.~13--14]: aplica-se o AMEE às séries concatenadas, com as quatro perturbações padrão (média e gaussiana, locais e globais) e três árbitros (MrSEQL, WEASEL 2.0 e ROCKET). O dCAM é achatado em vetor para entrar na mesma avaliação.
+\item \textbf{Qualitativa} [p.~18--21]: importância média de cada canal comparada com a ordem dada por especialistas e pela acurácia de classificadores de um canal só.
+\end{itemize}
+
+\section{Resultados e conclusões}
+Nas sintéticas, a RidgeCV acerta 100\% da classificação e tem métricas de explicação perfeitas em quase tudo; o SHAP canal a canal costuma ser o segundo, e dCAM e SHAP concatenado não têm vencedor claro [p.~11--12]. O custo é alto mesmo em bases pequenas: cerca de 50 min para o dCAM, 3,5 h para o SHAP concatenado e 6,2 h para o SHAP canal a canal [p.~12]. Nas reais (Tabela 5, p.~15):
+\begin{center}\small
+\begin{tabular}{llcc}
+\toprule
+\textbf{Base} & \textbf{Método} & \textbf{Explanation Power} & \textbf{Posição} \\
+\midrule
+CMJ (concatenada) & SHAP concatenado & 1,00 & 1 \\
+ & Aleatória & 0,99 & 2 \\
+ & dCAM & 0,39 & 3 \\
+ & SHAP canal a canal & 0,05 & 4 \\
+ & Ridge & 0,00 & 5 \\
+\midrule
+Military Press (concatenada) & SHAP concatenado & 1,00 & 1 \\
+ & dCAM & 0,33 & 2 \\
+ & Aleatória & 0,07 & 3 \\
+ & Ridge & 0,00 & 4 \\
+\bottomrule
+\end{tabular}
+\end{center}
+No Military Press, a ordem dos canais dada pelo SHAP fica mais próxima da do conhecimento do domínio; o dCAM põe os quadris, os canais menos informativos, no topo [p.~14, 18].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“Firstly, images are usually represented using RGB encoding and all the 3 channels contain necessary information, while for time series it is common to have channels that do not contribute to, or even hinder, the classification decision. [...] Furthermore, the data magnitude and pre-processing, such as normalisation, are important factors for time series, but less so for images.”\end{origquote}
+\begin{tradquote}“Primeiro, as imagens costumam ser representadas em RGB e os 3 canais contêm informação necessária, enquanto nas séries temporais é comum haver canais que não contribuem para a decisão, ou até a atrapalham. [...] Além disso, a magnitude dos dados e o pré-processamento, como a normalização, são fatores importantes nas séries temporais, e menos nas imagens.”\end{tradquote}
+\explab{Explicação}
+No ECG de 12 derivações, os canais são as derivações, e nem todas carregam a evidência de cada classe (o BRD aparece sobretudo em V1--V2, por exemplo). Isso justifica, no TCC, manter a derivação como eixo das 36 regiões em vez de somar a importância de todas as derivações num só instante.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 12} §5.2 Dados sintéticos}
+\begin{origquote}“This means that a simple tabular classifier such as Ridge is enough to perfectly classify these datasets. In conclusion, we recommend against the use of these synthetic benchmarks for analysing time series classification or explanation methods.”\end{origquote}
+\begin{tradquote}“Isso significa que um classificador tabular simples, como a Ridge, basta para classificar essas bases com perfeição. Em conclusão, recomendamos não usar esses benchmarks sintéticos para analisar classificação de séries temporais ou métodos de explicação.”\end{tradquote}
+\explab{Explicação}
+Bases sintéticas com verdade conhecida parecem o caminho natural para validar explicações, mas, se a tarefa é trivial, o teste não diz nada sobre sinais reais. O TCC não usa verdade sintética; avalia o modelo treinado no CPSC2018 com métricas sem verdade conhecida (fidelidade, robustez, randomização), o que evita esse problema, mas exige referências como o piso.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 14} §5.3 Dados reais}
+\begin{origquote}“From the quantitative evaluation with AMEE, we note that for the CMJ dataset, SHAP concat is the best method, although it is close to a random explanation.”\end{origquote}
+\begin{tradquote}“Pela avaliação quantitativa com o AMEE, nota-se que, na base CMJ, o SHAP concatenado é o melhor método, embora fique próximo de uma explicação aleatória.”\end{tradquote}
+\explab{Explicação}
+Os autores atribuem o empate ao ruído das partes paradas depois do salto. É um exemplo de que a melhor explicação de uma lista pode estar muito perto do acaso, e de por que o TCC compara as métricas com uma referência (piso entre sementes, modelo aleatório) e não só entre classes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 14--15} §6 Conclusão}
+\begin{origquote}“We found that adaptations of SHAP for MTSC work quite well, and they outperform the recent bespoke MTSC explanation method dCAM. [...] Finally, while SHAP seems to work effectively to point out important time series channels and time points, we highlighted the time required to run SHAP and pointed out the open problem of excessive time requirements for this method.”\end{origquote}
+\begin{tradquote}“Observamos que as adaptações do SHAP para classificação multivariada funcionam bem e superam o dCAM, método recente feito especificamente para esse caso. [...] Por fim, embora o SHAP pareça eficaz para apontar canais e instantes importantes, destacamos o tempo necessário para executá-lo e apontamos o problema em aberto do custo excessivo do método.”\end{tradquote}
+\explab{Explicação}
+O SHAP do artigo é a versão por perturbação de segmentos (\textit{timeXplain}), não o GradientSHAP. O custo relatado (horas para poucas centenas de séries curtas) ajuda a justificar, no TCC, um estimador por gradiente para ECG de 12 derivações com milhares de pontos cada.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo apoia duas escolhas do TCC: tratar o ECG como série multivariada em que a importância deve ser localizada por canal (derivação) e por trecho, e usar segmentos como atributos em vez de pontos isolados (o \textit{timeXplain} usa 10 segmentos por canal; o TCC usa 3 trechos do batimento por derivação, definidos pela fisiologia e não por divisão uniforme). Ele também mostra, no caso CMJ, que o método ``vencedor'' pode empatar com o aleatório, o que reforça o uso de referências. As diferenças são grandes: os modelos são ROCKET e dResNet, a avaliação nas bases reais é feita sobre séries concatenadas e com classificadores árbitros (não sobre o modelo explicado), não há ECG e o GradientSHAP não é testado. A ordem de canais por média da importância [p.~18] é uma análise próxima da leitura por derivação que o TCC pode fazer nos mapas por regiões.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Em séries temporais multivariadas, Serramazza et al.\ (2023) observam que nem todos os canais contribuem para a decisão e que adaptações do SHAP baseadas em segmentos superam o dCAM, ao custo de horas de cálculo mesmo em bases pequenas.''
+\end{itemize}
+
+\end{document}

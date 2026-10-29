@@ -1,0 +1,181 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: ROAR (Remove And Retrain)}} \\[0.35em]
+    {\large HOOKER, S.; ERHAN, D.; KINDERMANS, P.-J.; KIM, B. \textit{A Benchmark for Interpretability Methods in Deep Neural Networks}. NeurIPS, 2019} \\[0.3em]
+    \textbf{Tema:} meta-avaliação de métodos de atribuição por remoção de características e retreino \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/1806.10758} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v3, 17 páginas, incluindo o material suplementar) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v3, 17 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} medir empiricamente se os mapas de importância de características (\textit{feature importance}) de redes profundas apontam de fato as entradas informativas.
+  \item \textbf{Dados e modelo:} ImageNet, Food~101 e Birdsnap; ResNet-50 usada tanto para gerar os mapas quanto para o retreino.
+  \item \textbf{Métodos de explicação:} gradiente (GRAD), Integrated Gradients (IG), Guided Backprop (GB) e os conjuntos SmoothGrad (SG), SmoothGrad-Squared (SG-SQ) e VarGrad (VAR) em torno de cada um; controles independentes do modelo: ordem aleatória e filtro de bordas de Sobel.
+  \item \textbf{Avaliação:} ROAR, que remove a fração $t$ dos pixels mais importantes (troca pela média do canal) em treino e teste, retreina o modelo do zero e mede a queda de acurácia; 5 retreinos por configuração.
+  \item \textbf{Conclusão:} GRAD, IG e GB não superam a ordem aleatória; só SG-SQ e VarGrad a superam com folga.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O artigo propõe um \textit{benchmark} para comparar métodos de atribuição sem verdade de referência. A ideia de partida é o teste de deleção clássico (Samek et al.): retirar as entradas que o mapa diz serem importantes e observar quanto o classificador piora. Os autores apontam o defeito desse teste: a imagem com pixels trocados por um valor constante sai da distribuição de treino (\textit{distribution shift}, mudança de distribuição), e a queda de acurácia pode vir do artefato e não da retirada de informação. Por isso o ROAR retreina o modelo, a partir de pesos aleatórios, no conjunto já modificado, de modo que treino e teste tenham a mesma distribuição. Um experimento com dados artificiais (16 dimensões, 4 informativas, modelo de mínimos quadrados) mostra que, sem retreino, até a pior ordenação possível parece funcionar.
+
+\section{Como avalia as explicações}
+\begin{itemize}
+  \item \textbf{Perturbação:} os pixels do topo da ordenação são substituídos pela média de cada canal; frações $t \in \{0, 10, 30, 50, 70, 90\}\%$.
+  \item \textbf{Escala:} 18 estimadores, 540 conjuntos de dados modificados (180 por conjunto original), 5 ResNet-50 treinadas de forma independente para cada um; acurácia de teste média dos 5 retreinos.
+  \item \textbf{Controles:} a ordem aleatória e o filtro de Sobel não dependem do modelo e funcionam como \textbf{limite inferior}: um método que usa os pesos do modelo deveria superá-los.
+  \item \textbf{Variante KAR} (\textit{Keep And Retrain}, no suplemento): mantém os pixels mais importantes em vez de removê-los; discrimina pior os métodos.
+  \item \textbf{Configuração dos métodos:} IG com imagem preta como referência e $k = 25$ passos; conjuntos (SG, SG-SQ, VAR) com 15 estimativas ruidosas.
+\end{itemize}
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+Situação & Valor relatado \\
+\midrule
+ResNet-50 no ImageNet sem modificação & 76,68\% de acurácia \\
+90\% das entradas trocadas ao acaso, com retreino & 63,53\% $\pm$ 0,13 (5 execuções) \\
+90\% trocadas ao acaso, sem retreino & 0,5\% \\
+Diferença entre o melhor e o pior método-base em $t = 90\%$ & Birdsnap 4,22\%; Food~101 5,17\%; ImageNet 3,62 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+GRAD, IG e GB ficam abaixo (ou no mesmo nível) da ordem aleatória e do filtro de Sobel em todos os conjuntos e frações. O SmoothGrad clássico não melhora e às vezes piora o método-base; SG-SQ e VarGrad superam com folga os controles. Elevar o mapa ao quadrado (usar só a magnitude) melhora um pouco todos os métodos, mas não explica o ganho dos conjuntos. A ordem dos melhores métodos muda com o conjunto de dados (no Birdsnap os conjuntos em torno de GB vão melhor; no ImageNet e no Food~101, em torno de GRAD). Limitação declarada: o modelo avaliado após o retreino não é o mesmo que gerou os mapas, e entradas redundantes podem adiar a queda de acurácia.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 1} §1 Introdução}
+\begin{origquote}“Without re-training,it is unclear whether the degradation in model performance comes from the distribution shift or because the features that were removed are truly informative [10, 12].”\end{origquote}
+\begin{tradquote}“Sem retreino, não fica claro se a queda de desempenho do modelo vem da mudança de distribuição ou de as características removidas serem de fato informativas [10, 12].”\end{tradquote}
+\explab{Explicação}
+É a crítica central às métricas de perturbação sem retreino, categoria em que estão a Faithfulness Correlation e a Faithfulness Estimate do TCC. No ECG, trocar uma região (por exemplo, o QRS de uma derivação) pela referência também produz um sinal que o modelo nunca viu; a queda do \textit{logit} mistura informação retirada e artefato.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“Given that these methods do not depend upon the model, the performance of these variants respresent a lower bound of accuracy that a interpretability method could be expected to achieve.”\end{origquote}
+\begin{tradquote}“Como esses métodos não dependem do modelo, o desempenho dessas variantes representa um limite inferior de acurácia que se espera que um método de interpretabilidade atinja.”\end{tradquote}
+\explab{Explicação}
+Controle independente do modelo como régua: um número de qualidade só tem sentido comparado a um nível de referência. O TCC segue a mesma lógica com o piso (distância entre dois mapas GradientSHAP do mesmo ECG com sementes diferentes) e com o modelo de pesos sorteados do eMPRT.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} §4.3.3 Conjuntos}
+\begin{origquote}“This suggests that while the VAR and SG-SQ consistently improve performance, the choice of the best underlying estimator may vary by task.”\end{origquote}
+\begin{tradquote}“Isso sugere que, embora VAR e SG-SQ melhorem o desempenho de forma consistente, a escolha do melhor estimador de base pode variar conforme a tarefa.”\end{tradquote}
+\explab{Explicação}
+A qualidade medida de um método não é uma propriedade fixa dele: depende dos dados. É um argumento a favor de relatar as métricas separadas por classe no TCC, em vez de apenas uma média global.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} §6.4 Elevar ao quadrado}
+\begin{origquote}“The magnitude may be far more telling of feature importance than direction; a negative signal may be just as important as positive contributions towards a model’s prediction.”\end{origquote}
+\begin{tradquote}“A magnitude pode ser muito mais reveladora da importância de uma característica do que a direção; um sinal negativo pode ser tão importante quanto contribuições positivas para a predição do modelo.”\end{tradquote}
+\explab{Explicação}
+Apoia a decisão do TCC de calcular algumas medidas também sobre a magnitude (valor absoluto) dos mapas agregados por região, como nas distâncias “com sinal e só magnitude” do eMPRT.
+\end{citacard}
+
+\section{Relação com o TCC}
+O ROAR mede a qualidade de um método pelo efeito sobre o desempenho de um modelo retreinado, e não pela comparação entre qualidade da explicação e desempenho do modelo original; também não separa os resultados por classe (relata a acurácia média de teste). Portanto, o artigo não responde à pergunta do TCC (se a qualidade da explicação acompanha o F1 por classe), mas oferece dois pontos de apoio. Primeiro, a exigência de comparar cada método a controles que não dependem do modelo, que no TCC corresponde ao piso e ao modelo aleatório: só a distância em relação a esses controles indica que a explicação carrega informação do modelo. Segundo, a observação de que a ordem dos métodos muda com o conjunto de dados, o que justifica olhar as métricas por classe.
+
+O artigo também levanta a ressalva mais importante para as métricas de fidelidade do TCC: sem retreino, perturbar uma região cria sinais fora da distribuição. O retreino não é viável no TCC (seriam 36 regiões $\times$ frações $\times$ repetições de uma ResNet34-1D), o que deve ser declarado como limitação; a Faithfulness Correlation e a Faithfulness Estimate medem a resposta do modelo treinado ao sinal perturbado, não a informação contida na região.
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Hooker et al.\ (2019) mostraram que, sem retreinar o modelo, não é possível separar a queda de desempenho causada pela retirada de informação daquela causada pela mudança de distribuição introduzida pela perturbação; as métricas de fidelidade usadas neste trabalho não retreinam o modelo e estão sujeitas a essa limitação.
+  \item Seguindo a lógica de comparar cada método a controles independentes do modelo (Hooker et al., 2019), os valores das métricas foram interpretados em relação a um piso de variação do próprio GradientSHAP.
+\end{itemize}
+
+\end{document}

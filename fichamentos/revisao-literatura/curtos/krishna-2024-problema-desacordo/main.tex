@@ -1,0 +1,182 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: o problema do desacordo entre explicações}} \\[0.35em]
+    {\large KRISHNA, S.; HAN, T.; GU, A.; WU, S.; JABBARI, S.; LAKKARAJU, H. \textit{The Disagreement Problem in Explainable Machine Learning: A Practitioner's Perspective}. Transactions on Machine Learning Research (TMLR), 2024} \\[0.3em]
+    \textbf{Tema:} desacordo entre métodos de explicação e como profissionais o resolvem \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2202.01602} \\[0.2em]
+    \textbf{Leitura:} íntegra do texto principal e do Apêndice A (arXiv v6, pp. 1--20); Apêndices B--E (resultados adicionais e estudo com usuários) consultados de forma parcial \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v6, versão publicada na TMLR em 06/2024). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} definir e medir o \textit{problema do desacordo}: explicações de métodos diferentes, para a mesma predição do mesmo modelo, que apontam coisas diferentes; e investigar como profissionais resolvem esse conflito.
+  \item \textbf{Dados e modelos:} COMPAS e German Credit (tabulares; regressão logística, rede densa, floresta aleatória, \textit{gradient boosting}), AG\_News (texto; LSTM) e ImageNet (imagem; ResNet-18 pré-treinada).
+  \item \textbf{Métodos de explicação:} LIME, KernelSHAP, gradiente, gradiente $\times$ entrada, Integrated Gradients e SmoothGrad.
+  \item \textbf{Avaliação:} entrevistas com 25 cientistas de dados, seis métricas de concordância entre pares de explicações e um estudo \textit{online} com outros 25 participantes.
+  \item \textbf{Conclusão:} os métodos discordam com frequência, e os profissionais resolvem o conflito com heurísticas \textit{ad hoc}.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O artigo não pergunta qual explicação é correta, mas quanto explicações diferentes concordam entre si. As entrevistas mostram que os profissionais consideram que há desacordo quando mudam as $k$ características mais importantes (\textit{top-k}), a ordem entre elas, o sinal da contribuição ou a ordem relativa de características de interesse, e não quando mudam os valores numéricos: 96\% dos entrevistados disseram que os valores de métodos diferentes não são diretamente comparáveis. A partir disso, os autores formalizam seis métricas e as aplicam a quatro conjuntos de dados de três modalidades.
+
+\section{Como avalia as explicações}
+Não há medida de fidelidade ao modelo; o que se mede é a \textbf{concordância entre pares de métodos}, com valores entre 0 e 1 (quanto menor, maior o desacordo):
+\begin{itemize}
+  \item \textbf{Feature agreement:} fração de características comuns aos dois conjuntos \textit{top-k} (escolhidos pela magnitude da atribuição).
+  \item \textbf{Rank agreement:} fração das comuns que também ocupam a mesma posição; \textbf{sign agreement}: que também têm o mesmo sinal; \textbf{signed rank agreement}: mesma posição e mesmo sinal.
+  \item \textbf{Rank correlation} (correlação de Spearman) e \textbf{pairwise rank agreement} (fração de pares com a mesma ordem relativa), sobre um conjunto de características escolhido pelo usuário.
+\end{itemize}
+O desacordo é considerado não trivial quando menos de 75\% das características concordam (métricas abaixo de 0,75) ou quando a correlação de postos fica abaixo de 0,50. Em imagens, as seis métricas são calculadas entre LIME e KernelSHAP (superpixels); entre os métodos de gradiente, só a correlação de postos sobre todos os pixels.
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+Achado & Valor relatado \\
+\midrule
+Entrevistados que usam vários métodos para a mesma predição & 22 de 25 (88\%) \\
+Entrevistados que já encontraram desacordo & 21 de 25 (84\%) \\
+Texto (AG\_News, $k = 11$): rank e signed rank agreement & abaixo de 0,1 na maioria dos pares \\
+ImageNet, LIME $\times$ KernelSHAP: correlação de postos & 0,8977 \\
+ImageNet, Integrated Gradients $\times$ SmoothGrad (pixels) & 0,001 \\
+Participantes do estudo \textit{online} com heurística \textit{ad hoc} ou sem saber resolver & 86\% \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Outros padrões: a concordância cai à medida que $k$ cresce; o desacordo é maior no German Credit (mais características) do que no COMPAS; é igual ou maior para a rede neural do que para a regressão logística, o que os autores leem como indício de que o desacordo cresce com a complexidade do modelo; e o grau de desacordo depende da métrica usada para medi-lo. Os autores declaram que estudaram a prevalência do desacordo, não suas causas.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 5} §3.1.2 Resultados das entrevistas}
+\begin{origquote}“24 out of 25 participants (96\%) opine that feature importance values output by different explanation methods are not directly comparable.”\end{origquote}
+\begin{tradquote}“24 de 25 participantes (96\%) consideram que os valores de importância de características produzidos por métodos de explicação diferentes não são diretamente comparáveis.”\end{tradquote}
+\explab{Explicação}
+O que importa é a ordem e o sinal, não a escala. O TCC usa um único método, mas a mesma cautela vale para comparar classes: as métricas são comparadas por ordens e posições, e não pelos valores brutos de uma classe contra os de outra.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §4.3.1 Dados tabulares}
+\begin{origquote}“These trends suggest that disagreement among explanation methods may increase with model complexity.”\end{origquote}
+\begin{tradquote}“Essas tendências sugerem que o desacordo entre métodos de explicação pode aumentar com a complexidade do modelo.”\end{tradquote}
+\explab{Explicação}
+A ResNet34-1D do TCC está no extremo complexo da escala do artigo. É um motivo a mais para não aceitar um mapa GradientSHAP sem verificação e para medir a sua variabilidade (o piso entre sementes).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} §4.3.3 Imagens}
+\begin{origquote}“This suggests that disagreement could potentially vary significantly based on the granularity of image representation.”\end{origquote}
+\begin{tradquote}“Isso sugere que o desacordo pode variar de forma significativa conforme a granularidade da representação da imagem.”\end{tradquote}
+\explab{Explicação}
+Superpixels concordam (0,8977); pixels quase não concordam (0,001). Apoia a agregação do TCC em 36 regiões (derivação $\times$ segmento do batimento): em granularidade grossa, as comparações ficam mais estáveis e interpretáveis.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} §6 Discussão}
+\begin{origquote}“Finally, the extent of explanation disagreement would also depend on the specific metric being used to measure the disagreement.”\end{origquote}
+\begin{tradquote}“Por fim, o grau de desacordo entre explicações também depende da métrica específica usada para medi-lo.”\end{tradquote}
+\explab{Explicação}
+A conclusão depende do instrumento. No TCC, cada propriedade (fidelidade, robustez, randomização, complexidade) é lida com a sua própria métrica e não se resume tudo em um único número.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo não compara a qualidade da explicação entre classes nem com o desempenho do modelo; mede concordância entre métodos. Mesmo assim, oferece três pontos para o TCC. Primeiro, a recomendação de comparar explicações por \textbf{ordem, sinal e conjunto de regiões mais importantes}, e não por valores, que reforça a decisão de fazer a comparação com o F1 por classe de forma descritiva (ordens e posições). Segundo, a constatação de que a concordância depende da granularidade, o que sustenta as 36 regiões. Terceiro, a observação de que modelos mais complexos geram mais desacordo, o que justifica medir a variabilidade do próprio GradientSHAP (piso entre sementes). As métricas \textit{top-k} do artigo (\textit{feature} e \textit{sign agreement}) poderiam servir para comparar os mapas de duas sementes ou de duas classes, caso se queira uma leitura complementar à distância usada no piso.
+
+A ressalva é que o TCC usa um só método de explicação; o desacordo entre métodos fica fora do escopo e deve ser citado como limitação (outro método poderia indicar outras regiões).
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Krishna et al.\ (2024) mostraram que métodos de explicação populares discordam com frequência sobre as características mais importantes de uma mesma predição, e que o grau de desacordo depende da granularidade e da métrica usada; por isso, este trabalho restringe-se a um método e mede a variabilidade dele entre sementes.
+\end{itemize}
+
+\end{document}

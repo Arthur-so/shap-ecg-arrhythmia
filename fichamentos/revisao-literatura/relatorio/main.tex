@@ -1,0 +1,747 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\usepackage{xltabular}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{κ}{\ensuremath{\kappa}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+\newunicodechar{×}{\ensuremath{\times}}
+\renewcommand{\arraystretch}{1.15}
+\sloppy
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Revisão da literatura: avaliação de explicações SHAP em séries temporais e ECG}} \\[0.35em]
+    {\large Nenhum estudo de sinais liga explicação ao F1} \\[0.3em]
+    \textbf{Tema:} como trabalhos com SHAP e métodos de atribuição em séries temporais, ECG, EEG e outros sinais avaliaram a qualidade das explicações \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+{\raggedright\textbf{Como ler.} Este documento é a versão em PDF do relatório \texttt{reports/Avaliação de SHAP em séries temporais.md}. Os fichamentos de cada artigo estão em \texttt{fichamentos/revisao-literatura/completos/} (os mais ligados ao TCC) e \texttt{fichamentos/revisao-literatura/curtos/}; o índice está em \texttt{fichamentos/revisao-literatura/README.md}. Citações literais estão no original em inglês.\par}
+
+
+Nenhum trabalho encontrado em ECG, EEG, outros sinais fisiológicos ou séries temporais em geral testou se a qualidade das explicações acompanha o desempenho do classificador por classe (F1). Também não se encontrou nenhum trabalho de ECG que reúna as sete métricas do TCC. A avaliação quantitativa de atribuições em ECG ainda é rara: uma revisão de cardiologia relata que 43\% dos estudos não avaliam a explicação. Quando há avaliação, ela usa métricas próprias, como deleção ordenada, randomização em cascata, autoconsistência entre sementes e cobertura de regiões clínicas, e não o Quantus. Das métricas do TCC, só Faithfulness Correlation, Max/Avg-Sensitivity, Complexity e MPRT têm precedente em séries temporais, quase sempre em dados sintéticos ou bases UCR. A exceção em ECG real é a Faithfulness Correlation, usada por Suh et al. (2024) ponto a ponto, com substituição por zero, em classificação de batimentos. Para Faithfulness Estimate, Consistency de Dasgupta, Random Logit e eMPRT não se encontrou nenhuma aplicação em sinais. O GradientSHAP aparece na literatura com fidelidade intermediária, sensibilidade alta e mapas que seguem a amplitude do ECG. Esse último ponto explica bem o resultado do eMPRT no TCC, em que o mapa do modelo aleatório se concentra no QRS. A evidência indireta mais próxima da pergunta do TCC indica que as métricas variam entre classes por causa da morfologia, da amplitude, do valor de perturbação, da confiança e da prevalência, mais do que por causa da acurácia. A pergunta ``a qualidade da explicação acompanha o F1 por classe?'' é, portanto, uma lacuna real. A comparação descritiva de ordens adotada no TCC é a forma mais honesta de abordá-la com nove classes, desde que esses fatores de confusão sejam discutidos lado a lado com as métricas.
+
+
+
+\section{Vocabulário mínimo para ler as avaliações}
+
+Um \textbf{mapa de atribuição} (ou explicação) dá a cada ponto do sinal, ou a cada região, um número que indica quanto aquele trecho contribuiu para o escore de uma classe. Os métodos citados neste relatório se dividem em duas famílias. Os \textbf{métodos de gradiente} usam derivadas da saída em relação à entrada:
+
+\begin{itemize}
+\item \textbf{Saliency}: o gradiente puro.
+\item \textbf{Gradient×Input (G×I, IxG)}: o gradiente multiplicado pela entrada.
+\item \textbf{Integrated Gradients (IG)}: integra o gradiente ao longo de um caminho que vai de uma referência até a entrada.
+\item \textbf{GradientSHAP}: média de gradiente × (entrada − referência) sobre referências sorteadas e pontos intermediários com ruído. Por isso é estocástico.
+\item \textbf{DeepLIFT/DeepSHAP (DeepLiftSHAP)}: propaga diferenças em relação a uma ou várias referências.
+\item \textbf{LRP}: redistribui a relevância camada a camada.
+\item \textbf{Grad-CAM}: usa mapas de ativação da última convolução.
+\end{itemize}
+
+Os \textbf{métodos de perturbação}, por sua vez, alteram a entrada e observam a saída. Entram aqui KernelSHAP, Shapley Value Sampling, LIME, Occlusion e Feature Ablation. A \textbf{referência} (ou baseline de atribuição) é o sinal ``neutro'' contra o qual o método compara a entrada. O \textbf{valor de substituição} (ou baseline de perturbação) é o que se coloca no lugar de um trecho quando se quer ``removê-lo'' para testar a explicação. Pode ser zero, média, ruído, interpolação etc. São coisas diferentes, e as duas aparecem ao longo do texto.
+
+As métricas se agrupam pelo que medem. A \textbf{fidelidade} (\textit{faithfulness}) pergunta se o mapa reflete o que o modelo realmente usa. A forma clássica é a \textbf{deleção}: retirar primeiro os trechos mais relevantes (\textbf{MoRF}, \textit{most relevant first}) ou os menos relevantes (\textbf{LeRF}) e observar a queda da saída, resumida pela área sob a curva (AUC ou \textbf{AOPC}). O \textbf{ROAR} remove e retreina o modelo, e o \textbf{ROAD} imputa os valores retirados para reduzir o deslocamento de distribuição. A \textbf{Faithfulness Correlation} (Bhatt et al. 2020) sorteia subconjuntos de features, perturba cada um e calcula a correlação entre a soma das atribuições do subconjunto e a mudança da saída (\href{https://arxiv.org/abs/2005.00631}{Bhatt et al.}). A \textbf{Faithfulness Estimate} (Alvarez-Melis \& Jaakkola 2018) correlaciona a atribuição de cada feature com a queda de probabilidade quando só ela é removida (\href{https://arxiv.org/abs/1806.07538}{Alvarez-Melis \& Jaakkola}).
+
+A \textbf{robustez} é medida pela \textbf{Max-Sensitivity} e pela \textbf{Avg-Sensitivity} (Yeh et al. 2019). Elas medem quanto o mapa muda, no pior caso ou em média, quando a entrada recebe um ruído pequeno dentro de um raio \textit{r} (\href{https://arxiv.org/abs/1901.09392}{Yeh et al.}). A \textbf{Complexity} (Bhatt et al.) é a entropia das contribuições fracionárias |a\_i|/Σ|a|: quanto maior a entropia, mais espalhado e menos interpretável é o mapa. A \textbf{Consistency} de Dasgupta, Frost \& Moshkovitz (2022), na formulação do Quantus, verifica se entradas cujas explicações caem na mesma ``classe'' discretizada recebem a mesma predição. Não se confunde com a ``autoconsistência entre sementes'' usada em ECG, que compara mapas de modelos treinados com sementes diferentes.
+
+Os testes de \textbf{randomização} completam o quadro:
+
+\begin{itemize}
+\item \textbf{MPRT} (Adebayo et al. 2018): sorteia os pesos do modelo e exige que o mapa mude (\href{https://arxiv.org/abs/1810.03292}{Adebayo et al.}).
+\item \textbf{eMPRT} (Hedström et al. 2023): reinterpreta esse teste exigindo que a complexidade (entropia) do mapa aumente depois da randomização completa (\href{https://arxiv.org/abs/2401.06465}{Hedström et al.}).
+\item \textbf{Random Logit} (Sixt et al. 2020): compara o mapa da classe correta com o de uma classe sorteada e exige que sejam diferentes (\href{https://arxiv.org/abs/1912.09818}{Sixt et al.}).
+\end{itemize}
+
+A \textbf{plausibilidade} (ou localização) mede se o mapa coincide com regiões que um especialista apontaria. Não é a mesma coisa que fidelidade. O \textbf{Quantus} é a biblioteca que implementa essas métricas em seis grupos: fidelidade, robustez, localização, complexidade, randomização e axiomáticas (\href{https://github.com/understandable-machine-intelligence-lab/Quantus}{Quantus}). Por fim, o \textbf{piso} do TCC é a distância entre dois mapas GradientSHAP do mesmo modelo e da mesma entrada calculados com sementes diferentes. Ele mede quanto do ``sinal'' de uma métrica é só variância do próprio explicador.
+
+Legenda de leitura usada nas tabelas:
+
+\begin{itemize}
+\item \textbf{sim}: texto completo lido. Às vezes foi uma leitura dirigida por seções do PDF ou HTML completo.
+\item \textbf{parcial}: só parte do texto foi lida, ou o texto foi processado por ferramenta automática de resumo, e as citações precisam ser conferidas.
+\item \textbf{não}: só resumo, README ou trecho de buscador.
+\end{itemize}
+
+Quando as notas de pesquisa divergiram sobre o mesmo trabalho, as tabelas registram as duas leituras.
+
+
+
+\section{Em ECG, a avaliação quantitativa é rara e usa métricas próprias}
+
+O ponto de partida é negativo. Uma revisão sobre avaliação de XAI em cardiologia relata que \textbf{43\% dos estudos não avaliam a explicação, 37\% só comparam com a literatura, 11\% usam clínicos e 11\% usam proxies ou análise estatística}. Só o resumo dessa revisão foi lido, e o número total de estudos revisados não foi confirmado (\href{https://pmc.ncbi.nlm.nih.gov/articles/pmid/39132011}{Salih et al. 2024}). Buscas por ``Quantus'' combinado com ECG, PTB-XL e eletrocardiograma não retornaram nenhum estudo de ECG (\href{https://github.com/understandable-machine-intelligence-lab/Quantus}{Quantus}). O retrato que emerge é o de uma área em que cada grupo constrói sua própria bateria, quase sempre de deleção ordenada, randomização e localização.
+
+\subsection{Os quatro trabalhos mais próximos do desenho do TCC}
+
+\textbf{Arends et al. (2026)} é a avaliação mais ampla e recente. São 873.710 ECGs de 12 derivações (batimento mediano) do UMC Utrecht e nove classes diagnósticas. O modelo é uma ResNet-1D de 22 camadas com um classificador binário por classe e 10 sementes cada, 90 modelos ao todo, todos com AUROC acima de 0,95. Foram comparados doze métodos do Captum, entre eles \textbf{GradientSHAP}. A bateria é toda própria: similaridade entre métodos, autoconsistência entre sementes, randomização em cascata a partir da saída (só no modelo de FA) e uma perturbação no estilo ROAD, que substitui 1\% dos pontos por passo, até 30\%, por interpolação linear com ruído gaussiano (σ = 0,25). A unidade de perturbação é o ponto amostral, sem segmentação por onda.
+
+Os resultados são pouco animadores. A correlação entre métodos baseados em referência vai de 0,34 (DeepLiftSHAP) a \textbf{0,96 (IG+SmoothGrad × GradientSHAP)}. A \textbf{autoconsistência média é 0,52 ± 0,14}. Na randomização, a maioria dos métodos cai para correlação próxima de zero, mas Saliency, SmoothGrad e Guided Backprop não chegam lá. Na perturbação, a AUROC final vai de ≈ 0,50 com SmoothGrad a 0,92 com GradCAM. A conclusão é literal: ``Despite extensive testing, these methods fail to meet key XAI criteria'', e as atribuições devem ser ``treated as exploratory tools rather than definitive explanations'' (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12980500/}{Arends et al. 2026}). Os autores também descrevem o efeito da amplitude no G×I: ponderar os gradientes pela amplitude do ECG ``shifted its relevance towards prominent morphological deflections'' (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12980500/}{Arends et al. 2026}).
+
+\textbf{Turbé et al. (2023)} é o precedente com a mesma fonte de dados. O estudo usa o subconjunto CPSC da PhysioNet/CinC 2020 numa tarefa binária de bloqueio de ramo direito (6.877 ECGs, 1.857 positivos), com cada derivação reduzida a batimento médio. Foram avaliados Bi-LSTM, CNN e Transformer, e os métodos DeepLift, \textbf{GradShap}, IG, KernelShap, DeepLiftShap e Shapley Value Sampling. Um detalhe aproxima o estudo do TCC: o GradShap (e o DeepLiftShap) usa como referência \textbf{50 amostras aleatórias do teste}; os demais métodos usam a média de cada instante de tempo. O batimento médio de cada derivação é extraído de 0,35 s antes a 0,55 s depois do pico R. As métricas medem a queda do escore ao corromper primeiro os pontos mais relevantes (AUC $\tilde{S}$top) e combinam as estratégias top-k e bottom-k (F1$\tilde{S}$). A corrupção é por ruído N(0,1), e os modelos são treinados com a mesma corrupção para que a queda não se deva a deslocamento de distribuição. Na CNN com ECG, a Tabela 2 da versão publicada (conferida) dá AUC $\tilde{S}$top de 0,465 para DeepLiftShap, 0,357 para GradShap, 0,341 para Shapley, 0,313 para IG e \textbf{0,025 para KernelShap, abaixo do aleatório (0,047)}. Fora desse caso, o Shapley Value Sampling lidera, e no Transformer o GradShap fica perto do IG. O artigo faz dois alertas úteis para o TCC: a relevância ``acts more as a ranking of the most important time steps'' e não como fração da predição, e o modelo de BRD ``relies almost entirely on a single lead'' (\href{https://doi.org/10.1038/s42256-023-00620-w}{Turbé et al. 2023}). Os autores também concluem que nenhum método segue a estimativa teórica da relevância de cada instante: ``The attributed relevance instead acts more as a ranking of the most important time steps among themselves'' (Discussão).
+
+\textbf{Gumpfer et al. (2026, preprint)} é o análogo mais direto da agregação por regiões do TCC. São quatro CNNs binárias no PTB-XL (BAV, isquemia, BRD e BRE, com AUROC de 0,93 a 0,99) e 13 métodos de gradiente, entre eles \textbf{GradSHAP}, DeepSHAP, IG e variantes de LRP. Só verdadeiros positivos foram explicados, com relevância agregada por batimento centrado no R. A métrica principal é a fração da relevância positiva dentro de máscaras derivadas das diretrizes clínicas (intervalo PR para BAV, ST nas precordiais para isquemia, QRS para os bloqueios de ramo), normalizada pelo acaso (NCov).
+
+O achado central é que \textbf{IG, DeepSHAP, GradSHAP e LRP-ε ``tie relevance to input magnitude through input multiplication or baseline subtraction''}. A correlação de Spearman média entre |relevância| e |amplitude| é 0,69 no IG e \textbf{0,33 no GradSHAP}. A NCov do GradSHAP é de 32,6\% no BAV, \textbf{−5,5\% na isquemia}, 80,9\% no BRD e 75,8\% no BRE. \textbf{Nove dos 13 métodos ficam abaixo do acaso em pelo menos uma patologia.} Os próprios autores avisam que medem plausibilidade e não fidelidade: ``A high coverage value nevertheless does not certify faithfulness'' (\href{https://arxiv.org/abs/2607.24035}{Gumpfer et al. 2026}).
+
+\textbf{Suh et al.} tem duas versões que precisam ser separadas. O preprint (arXiv 2211.12702) usa o Icentia11K (uma derivação, classes normal/PAC/PVC) com ResNet-18 1D e 11 métodos. As métricas são IoU com os batimentos anômalos, pointing game e um escore de degradação (área entre MoRF e LeRF, com janelas de 16 amostras substituídas pela média da janela). O Grad-CAM vence (0,485 / 0,705 / 0,888), seguido de IG (0,224 / 0,684 / 0,885) e DeepSHAP (0,213 / 0,556 / 0,883). O KernelSHAP fica perto do aleatório nas duas primeiras métricas (0,116 / 0,398 / 0,237, contra 0,109 / 0,186 / 0,004 do aleatório) (\href{https://arxiv.org/html/2211.12702}{Suh et al., preprint}). A versão publicada na \textit{Computers in Biology and Medicine} (2024), \textbf{lida na íntegra}, amplia o estudo para cinco bases (MITDB, SVDB, INCARTDB, Icentia11K e PTB-XL) e 11 métodos (DeepLIFT, DeepSHAP, Grad-CAM, Guided Backprop, Guided Grad-CAM, Input × Gradient, IG, KernelSHAP, LIME, LRP e Saliency; \textbf{sem GradientSHAP}), numa ResNet-18 1D. A avaliação automática tem sete métricas: quatro de localização (Attribution Localization, Relevance Rank Accuracy, Pointing Game e AUC contra as anotações de batimento) e três de perturbação, \textbf{Region Perturbation MoRF, Region Perturbation LeRF e Faithfulness Correlation (Bhatt)}, que os autores classificam como métricas de fidelidade seguindo o Quantus. A configuração da Faithfulness Correlation (Apêndice E): 10\% dos pontos de cada amostra sorteados e perturbados 100 vezes, \textbf{substituição por zero} (os sinais são padronizados para média zero), correlação de Pearson com a queda do logit. As unidades de perturbação têm cerca de 0,06 s. A avaliação automática usa só batimentos S e V previstos com probabilidade acima de 0,9 (0,75 no SVDB), ou seja, só predições corretas e confiantes, e é resumida por base, não por classe. No Icentia11K (Tabela 4), a Faithfulness Correlation vai de −0,001 (aleatório) e 0,028 (Saliency) a \textbf{0,409 (DeepSHAP)}, com DeepLIFT 0,367, IG 0,250 e KernelSHAP 0,183. Os métodos que vencem na localização (Guided Grad-CAM com valores absolutos) não são os que vencem na perturbação (LIME e DeepSHAP), e os autores atribuem parte disso à semelhança de mecanismo entre métodos de perturbação e métricas de perturbação. Na discussão, recomendam métricas de localização quando houver anotação, porque a perturbação gera entradas fora da distribuição: ''inserting significant noise or an unnatural signal into an ECG signal creates an anomaly, which makes the model's decision unpredictable''. A avaliação humana (três cardiologistas, Guided Grad-CAM × LIME em 17 diagnósticos do PTB-XL) mostra utilidade que varia por diagnóstico (\href{https://doi.org/10.1016/j.compbiomed.2024.109088}{Suh et al. 2024}). \textbf{Consequência para o TCC:} a Faithfulness Correlation \textbf{já foi aplicada a ECG real}, e a afirmação de originalidade precisa ser restringida (ver Implicações).
+
+\subsection{O resto do campo: sanity checks, valores de substituição e muita avaliação qualitativa}
+
+\textbf{Wagner et al. (2024)} propõem um sanity check específico de ECG. Modelos de regressão preveem as amplitudes de P, R e T em cada derivação, e verifica-se se a relevância cai na derivação e na janela-alvo. Só o Saliency passa nos seis experimentos. IG, LRP e GradCAM marcam o pico R mesmo quando ele não é o alvo, e ``GradCAM, the most widely used attribution method in the field of ECG analysis, fails to satisfy the sanity check'' (\href{https://arxiv.org/html/2305.17043v2}{Wagner et al. 2024}).
+
+\textbf{Goettling et al. (2024)} mostram que o valor de substituição muda o vencedor. Com interpolação linear, DTD e LRP-αβ lideram. Com zeros, o G×I passa a ser o melhor (0,529 e 0,712). Os autores argumentam que o zero ``introduces noise'' porque o modelo nunca viu saltos abruptos para zero (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC11161651/}{Goettling et al. 2024}). \textbf{Hicks et al. (2021)} fazem um ``wave blanking'' por interpolação de ondas inteiras, uma perturbação por segmento fisiológico: na classificação de sexo, retirar o QRS leva a acurácia a 62,4\% (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC8154909/}{Hicks et al. 2021}).
+
+\textbf{Storås et al. (2025, JAMIA)}, \textbf{lido na íntegra}, comparam nove métodos do Captum, entre eles \textbf{Gradient SHAP} (com referência zero, como IG e DeepLIFT), em ResNets que regridem seis medidas (intervalos PR, QRS e QT; amplitudes R, ponto J e T em V5) em 150 mil ECGs sintéticos de 12 derivações gerados por GAN. A avaliação objetiva perturba \textbf{um ponto por iteração}, na ordem decrescente de importância, somando ruído normal com desvio de 20\% da amplitude do ECG; são 200 iterações (pouco menos de 3\% dos pontos) em 5.000 ECGs, e a métrica é a área sob a curva de erro nas primeiras 15 iterações, com um mapa aleatório como referência. Nessa avaliação, ``DeepLIFT, Gradient SHAP, Saliency, and SmoothGrad performed consistently well'', e Deconvolution ficou no nível do aleatório. Já os três especialistas quase não escolheram o Gradient SHAP (preferiram SmoothGrad, Guided Backprop, DeepLIFT e Input × Gradient, conforme a medida), e a concordância entre eles foi baixa nos mapas de 12 derivações (κ total 0,39). A conclusão: ``No single explanation method consistently outperformed the other methods'', com ``considerable disagreement between the human expert evaluation and the objective evaluation by perturbation'' (\href{https://doi.org/10.1093/jamia/ocae280}{Storås et al. 2025}). Por ser regressão, não há análise por classe.
+
+Os demais trabalhos de ECG avaliam de forma quantitativa, mas com desenhos bem diferentes:
+
+\begin{itemize}
+\item \textbf{Abdullah et al. (2026)}, com Grad-CAM e IG no MIT-BIH: inserção 0,89 e deleção 0,21, contra 0,51 e 0,48 do aleatório. A randomização de parâmetros leva a correlação de Spearman de 1,00 a 0,18 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13296925/}{Abdullah et al. 2026}).
+\item \textbf{Kelly \& Blake (2026)} propõem a entropia espectral do mapa como medida de ``ruído'' introduzido pelo método. O \textbf{GradientShap fica em 9,16 ± 0,33}, perto do KernelShap (10,21) e do DeepLIFT (9,04), contra ≈ 1 do Grad-CAM (\href{https://arxiv.org/html/2606.24974}{Kelly \& Blake 2026}).
+\item \textbf{Lopes et al. (2026)}: o IG teve ``positive mean faithfulness gains across all classes'', enquanto Grad-CAM e atenção foram mais dependentes da classe. Só o resumo foi lido (\href{https://recima21.com.br/recima21/en/article/view/9152}{Lopes et al. 2026}).
+\item \textbf{UTS-XAI (Bragança \& Souto 2026)}, grupo brasileiro: relata que retirar os 10\% de features mais relevantes segundo o SHAP derruba a taxa de verdadeiros positivos de mais de 85\% para menos de 27\%. As métricas são próprias e a variante de SHAP não está clara (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13369486/}{UTS-XAI}).
+\item \textbf{Knof et al.} e um preprint no bioRxiv (2025) aparecem só em trechos de busca. O primeiro relata SHAP ``slightly more truthful'' e LRP mais estável (\href{https://publica.fraunhofer.de/handle/publica/472815}{Fraunhofer Publica}). O segundo diz que DeepLift, DeepLiftShap e Occlusion destacaram traços clinicamente relevantes, ao contrário de LIME, KernelShap e LRP (\href{https://doi.org/10.1101/2025.02.14.638219}{bioRxiv}).
+\end{itemize}
+
+Um grupo de trabalhos muito citados \textbf{não faz avaliação quantitativa da explicação}:
+
+\begin{itemize}
+\item \textbf{Zhang et al. (2021, iScience)} usa exatamente o CPSC2018 com nove classes e SHAP por derivação e classe, mas valida só de forma qualitativa. Admite que ``the SHAP method could learn wrong interpretations'' (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC8082080}{Zhang et al. 2021}).
+\item \textbf{Bender et al. (2023)} chama de ``quantitative methods'' o que são agregações de relevância por classe e derivação (\href{https://arxiv.org/pdf/2211.01738}{Bender et al.}).
+\item \textbf{Strodthoff et al. (2021)} traz só exemplos visuais de LRP (\href{https://arxiv.org/pdf/2004.13701}{Strodthoff et al.}).
+\item \textbf{Storås et al. (2023)} relata que os médicos não acharam úteis os mapas Grad-CAM (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10378376/}{Storås et al. 2023}).
+\item \textbf{Beck \& John (2025)} avaliam GradientSHAP e outros só visualmente e com cinco clínicos (\href{https://arxiv.org/html/2508.17294v1}{Beck \& John}).
+\end{itemize}
+
+Por fim, a revisão de frameworks de \textbf{Peter et al. (2026)} traz um alerta que pesa sobre qualquer comparação numérica. Num ECG do PTB-XL, o \textit{mesmo} IG implementado no Captum e no Zennit, com parâmetros idênticos, teve \textbf{correlação de Spearman média de −0,14} entre as duas implementações (\href{https://arxiv.org/abs/2608.21449}{Peter et al. 2026}).
+
+O saldo para a família SHAP em ECG é misto. O KernelSHAP vai mal de forma consistente (Turbé, Suh, Beck \& John, Kelly \& Blake). GradientSHAP e DeepSHAP ficam no meio: bons na degradação, mas ruidosos e guiados pela amplitude.
+
+\subsection{Tabela 1 — Trabalhos de ECG}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Trabalho} & \textbf{Dados / modelo} & \textbf{Métodos} & \textbf{Métricas} & \textbf{Adaptação a séries temporais} & \textbf{Conclusão-chave} & \textbf{Lido} \\
+\midrule
+\endhead
+Arends et al. 2026 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12980500/}{PMC}) & 873.710 ECGs, 9 classes; ResNet-1D, 90 modelos binários & 12 do Captum, incl. \textbf{GradientSHAP}, IG, DeepLiftSHAP & Similaridade entre métodos, autoconsistência entre sementes, randomização em cascata, perturbação tipo ROAD & Ponto a ponto; interpolação linear + ruído σ = 0,25; até 30\% & Métodos ``fail to meet key XAI criteria''; usar como exploratórios & parcial (\textasciitilde{}86\%, OUP) / sim (PMC); suplemento não lido \\ \addlinespace[1pt]
+Turbé et al. 2023 (\href{https://arxiv.org/html/2202.05656v2}{arXiv}) & CPSC (PhysioNet 2020), BRD binário; CNN, Bi-LSTM, Transformer & DeepLift, \textbf{GradShap}, IG, KernelShap, DeepLiftShap, Shapley & AUC $\tilde{S}$top, F1$\tilde{S}$, TIC & N(0,1) no teste e no treino; GradShap com 50 referências do teste; batimento médio & Shapley lidera (exceto CNN-ECG, onde DeepLiftShap 0,465 e GradShap 0,357); KernelShap abaixo do aleatório & sim (versão publicada) \\ \addlinespace[1pt]
+Gumpfer et al. 2026, preprint (\href{https://arxiv.org/abs/2607.24035}{arXiv}) & PTB-XL, 4 CNNs binárias & 13 de gradiente, incl. \textbf{GradSHAP}, DeepSHAP, IG, LRP & Spearman relevância × amplitude; cobertura de máscaras clínicas (NCov) & Batimentos centrados no R; máscaras PR/ST/QRS & Métodos com referência seguem a amplitude; 9/13 abaixo do acaso em ≥ 1 patologia & sim (dirigida) \\ \addlinespace[1pt]
+Suh et al., preprint 2022/2024 (\href{https://arxiv.org/html/2211.12702}{arXiv}) & Icentia11K; ResNet-18 1D & 11, incl. \textbf{DeepSHAP}, KernelSHAP, IG, LRP & IoU, pointing game, degradação MoRF−LeRF & Janelas de 16 amostras trocadas pela média da janela & Grad-CAM melhor; KernelSHAP fraco & sim (HTML) \\ \addlinespace[1pt]
+Suh et al. 2024, CBM (\href{https://doi.org/10.1016/j.compbiomed.2024.109088}{DOI}) & 5 bases (batimentos S/V; PTB-XL na avaliação humana); ResNet-18 1D & 11, incl. \textbf{DeepSHAP}, KernelSHAP, IG (sem GradientSHAP) & 4 de localização; Region Perturbation MoRF/LeRF; \textbf{Faithfulness Correlation} & Zero; unidades de \textasciitilde{}0,06 s; FaithCorr com 10\% dos pontos × 100, Pearson; só predições com p > 0,9 & Localização e perturbação discordam; DeepSHAP melhor na FaithCorr (0,409 no Icentia11K); Guided Grad-CAM melhor na localização e para os cardiologistas & sim \\ \addlinespace[1pt]
+Wagner et al. 2024 (\href{https://arxiv.org/html/2305.17043v2}{arXiv}) & PTB-XL; LeNet-1D, xresnet1d50 & GradCAM, Saliency, IG, LRP & Sanity check por regressão de amplitudes; especificidade espacial e temporal & 24 segmentos de onda via U-Net & Só Saliency passa; GradCAM falha & parcial (\textasciitilde{}70\%) \\ \addlinespace[1pt]
+Goettling et al. 2024 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC11161651/}{PMC}) & FA, derivação II; PTB-XL, Georgia, CPSC2018, Chapman & 13, incl. SHAP, IG, LRP, DTD & AUC relativa de perda × fração perturbada & Interpolação linear × zero & Baseline muda o vencedor; DTD melhor com interpolação & sim \\ \addlinespace[1pt]
+Storås et al. 2025 (\href{https://doi.org/10.1093/jamia/ocae280}{DOI}) & 150 mil ECGs sintéticos; ResNet de regressão de 6 medidas & 9, incl. \textbf{Gradient SHAP} (referência zero), IG & Especialistas + perturbação ordenada (área sob a curva de erro) & 1 ponto por iteração; ruído N(0; 20\% da amplitude); 200 iterações & Gradient SHAP bom na perturbação, rejeitado pelos especialistas; nenhum método domina & sim \\ \addlinespace[1pt]
+Abdullah et al. 2026 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13296925/}{PMC}) & MIT-BIH, 5 classes; CNN & Grad-CAM, IG & Inserção/deleção, randomização, ruído & Substituição não descrita & Acima do aleatório; F1 por classe com inconsistências & parcial (\textasciitilde{}63\%) \\ \addlinespace[1pt]
+Kelly \& Blake 2026 (\href{https://arxiv.org/html/2606.24974}{arXiv}) & MIT-BIH, 17 classes; CNN-1D & Grad-CAM, LIME, DeepLIFT, \textbf{GradientShap}, KernelShap, ReX & Entropia espectral do mapa & Domínio da frequência, só positivos & GradientShap ≈ ruído (9,16) & sim (HTML) / não (só resumo), conforme a nota \\ \addlinespace[1pt]
+Lopes et al. 2026 (\href{https://recima21.com.br/recima21/en/article/view/9152}{RECIMA21}) & MIT-BIH, 5 classes; 1D-CNN, CNN-BiLSTM & Grad-CAM-1D, IG, atenção & ``Faithfulness gains'' por classe & Não verificado & IG positivo em todas as classes & \textbf{não} \\ \addlinespace[1pt]
+Neves et al. 2021 (\href{https://boa.unimib.it/handle/10281/324847}{BOA}) & MIT-BIH & LIME/SHAP agnósticos & Queda de desempenho, Jaccard 1-D, usuários & Sinal + derivada & Não verificado & \textbf{não} \\ \addlinespace[1pt]
+UTS-XAI 2026 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13369486/}{PMC}) & MIT-BIH, SVDB, INCART; DeepConvLSTM etc. & SHAP, LIME, Saliency & Sanity (rótulos aleatórios), ablação 10\% com zero, robustez SSIM/DTW & Métricas ``reinterpreted for temporal data'' & SHAP melhor & parcial \\ \addlinespace[1pt]
+Beck \& John 2025 (\href{https://arxiv.org/html/2508.17294v1}{arXiv}) & MIT-BIH + 12 derivações; CNN-1D & KernelSHAP, \textbf{GradientSHAP}, DeepSHAP & Nenhuma quantitativa & — & Classe mais fraca com explicações desalinhadas & sim \\ \addlinespace[1pt]
+Zhang et al. 2021 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC8082080}{PMC}) & \textbf{CPSC2018, 9 classes}; CNN-1D & SHAP & Nenhuma (qualitativa) & Contribuição por derivação & F1 por classe disponível; sem avaliação & sim \\ \addlinespace[1pt]
+Peter et al. 2026 (\href{https://arxiv.org/abs/2608.21449}{arXiv}) & PTB-XL BRD; CNN & IG (Captum × Zennit) & Spearman, Jaccard top-5\% & — & Mesma métrica, implementações divergentes (ρ = −0,14) & sim (dirigida) / parcial \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+
+
+\section{Benchmarks de séries temporais mostram que perturbação e baseline decidem o vencedor}
+
+Fora do ECG, a literatura de classificação de séries temporais converge em quatro pontos. Não há método vencedor universal. Métodos de imagem confundem tempo e canal. Os métodos de Shapley por amostragem ou perturbação costumam liderar a fidelidade, com IG e GradientSHAP em posição intermediária. E a própria avaliação por perturbação é frágil.
+
+\textbf{Ismail et al. (2020, NeurIPS)} montaram dados sintéticos com posições informativas conhecidas e concluíram que ``network architectures and saliency methods fail to reliably and accurately identify feature importance over time'', sobretudo pela ``conflation of time and feature domains''. Em muitos casos o desempenho foi ``similar to random saliency'', e ``Model architecture has the largest effect on precision and recall''. O estudo traz ainda um alerta valioso: ``A steep drop in model accuracy does not indicate that a saliency method is correctly identifying features used by the model'' (\href{https://arxiv.org/abs/2010.13924}{Ismail et al. 2020}).
+
+\textbf{Schlegel et al. (2019)} já haviam rejeitado o zero como valor de substituição em séries temporais, porque ``a zero could be an indicator for an anomaly'', e acharam o SHAP ``robust for all models'' (\href{https://arxiv.org/abs/1909.07082}{Schlegel et al. 2019}). \textbf{Schlegel \& Keim (2023)} testam 16 estratégias de perturbação e mostram que ``depending on the perturbation strategy, the best working attribution technique changes quite drastically''. A recomendação é usar várias estratégias e agregar os resultados (\href{https://arxiv.org/abs/2307.05104}{Schlegel \& Keim 2023}).
+
+\textbf{Šimić et al. (2025)} é o catálogo mais amplo, lido só por ferramenta de resumo. Inclui cinco conjuntos UCR (dois de ECG fetal), cinco arquiteturas, 12 métodos de atribuição e 23 perturbações em regiões de 2,5\% e 10\% do comprimento. O artigo propõe o Decaying Degradation Score (DDS), que compara MoRF e LeRF, e recomenda SampleMean, Zero e Laplace como padrão, regiões pequenas e várias perturbações. Feature Ablation foi o mais fiel, seguido de IG, e KernelSHAP e LIME ficaram no grupo ``ruim''. Com modelo não treinado, todos os métodos tiveram CMI perto de zero (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12284047/}{Šimić et al. 2025}). \textbf{Serramazza et al. (2024)} mostram que, sem o aumento de dados no treino do Turbé, a máscara N(0,1) pode gerar um ranking plano, e que ``Selecting one single distribution for masking is not enough'' (\href{https://arxiv.org/abs/2406.12507}{Serramazza et al. 2024}).
+
+Dois trabalhos usam o \textbf{mesmo núcleo de métricas do TCC}. O \textbf{XTSC-Bench (Höllig et al. 2023)} usa ``a wrapper build around Quantus'' com ``some time-specific tweaks'' e implementa \textbf{Faithfulness Correlation, Max-Sensitivity, Avg-Sensitivity e Complexity}. Os dados são 120 conjuntos sintéticos, os modelos são RNN e TCN, e entre os métodos está o \textbf{GradientShap}. A adaptação principal está na referência da Faithfulness Correlation: como ``0 might be an informative anomaly'', a referência é amostrada do processo gerador. Para dados reais, os autores recomendam uma referência uniforme. O resultado é que ``no clear indication can be given on which explanation approaches should be preferred'', e a robustez dos métodos de gradiente sofre porque eles dependem do funcionamento interno do modelo, ``that possibly change with varying the input'' (\href{https://arxiv.org/abs/2310.14957}{XTSC-Bench}).
+
+\textbf{Mercier et al. (2022)} aplicam Sensitivity e Infidelity de Yeh a seis bases UCR/UEA, \textbf{incluindo o ECG5000}, com referência de zeros em dados padronizados. O \textbf{GradientShap teve Sensitivity alta em todas as bases (0,66 a 1,04; 0,91 no ECG5000)}, contra 0,04 a 0,21 do IG (0,05 no ECG5000), mas teve a menor Infidelity no ECG5000 (0,79). Uma única camada randomizada bastou para descorrelacionar os mapas de todos os métodos. A conclusão é que ``Neither category of attribution methods nor a single approach has shown outstanding performance across all aspects'' (\href{https://arxiv.org/abs/2202.03759}{Mercier et al. 2022}).
+
+\textbf{Löffler et al. (2022/2025)} criam versões próprias de fidelidade por ponto e por subsequência, Max-Sensitivity, sanity em cascata e uma ``inter-class sensitivity'' parecida com o Random Logit. Mostram que as métricas são quase independentes entre si: as correlações entre os escores vão de −0,24 a 0,35. Mostram também que a Max-Sensitivity pode ficar inviável: uma combinação ``timed out after 12 days'' (\href{https://arxiv.org/abs/2203.07861}{Löffler et al.}).
+
+O \textbf{AMEE} mede a queda de acurácia de um comitê de classificadores ``árbitros'' sob quatro perturbações e conclui que ``perturbation-based explainers based on SHAP generally perform better than gradient-based explainers''. Num único exemplo ilustrativo, a ResNet com GradientSHAP teve Explanation Power de 0,06 (\href{https://arxiv.org/abs/2306.05501}{AMEE}). Em dados clínicos tabulares-temporais (MIMIC-III), Crabbé \& van der Schaar e Enguehard substituem pela média temporal da própria feature. Enguehard critica esse expediente porque média ou desfoque ``changes the input significantly'' (\href{https://arxiv.org/abs/2106.05303}{Crabbé \& van der Schaar}; \href{https://arxiv.org/abs/2305.18840}{Enguehard}). O TimeX resume o problema: séries perturbadas podem sair da distribuição, ``akin to adversarial perturbation'' (\href{https://arxiv.org/abs/2306.02109}{TimeX}).
+
+As revisões confirmam que o campo é imaturo. Rojat et al. escrevem que ``There is not a metric globally recognized that can assess the quality of explanations'' (\href{https://arxiv.org/abs/2104.00950}{Rojat et al.}). Theissler et al. listam a avaliação como lacuna (\href{https://kops.uni-konstanz.de/handle/123456789/59034}{Theissler et al.}). Peter et al. contam apenas \textbf{duas métricas criadas especificamente para séries temporais} (Mask Information e Mask Entropy, do time\_interpret) entre as 52 dos frameworks. Observam ainda que o Quantus não tem nenhuma métrica específica para o domínio e que ``the independence of feature relevance … is violated by temporal and cross-channel dependencies'' (\href{https://arxiv.org/abs/2608.21449}{Peter et al. 2026}).
+
+\subsection{Tabela 2 — Benchmarks e métodos de avaliação em séries temporais}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Trabalho} & \textbf{Dados / modelo} & \textbf{Métodos} & \textbf{Métricas} & \textbf{Adaptação a séries temporais} & \textbf{Conclusão-chave} & \textbf{Lido} \\
+\midrule
+\endhead
+Schlegel et al. 2019 (\href{https://arxiv.org/abs/1909.07082}{arXiv}) & UCR; CNN, RNN, ResNet & LIME, LRP, DeepLIFT, Saliency, SHAP & Perturbação acima de limiar vs. aleatório & Zero/inverso; Swap e Mean Time Points & SHAP robusto; LIME pior & sim \\ \addlinespace[1pt]
+Ismail et al. 2020 (\href{https://arxiv.org/abs/2010.13924}{arXiv}) & Sintético multivariado; LSTM, TCN, Transformer & Grad, IG, SmoothGrad, DeepLIFT, \textbf{GradientSHAP}, DeepSHAP, oclusão, Shapley & Queda de acurácia por d\% da saliência; AUP/AUR & Substituição pela distribuição original; TSR & Falham em tempo × feature; muitas vezes ≈ aleatório & sim \\ \addlinespace[1pt]
+Mercier et al. 2022 (\href{https://arxiv.org/abs/2202.03759}{arXiv}) & 6 UCR/UEA (\textbf{ECG5000}); AlexNet-1D & 12, incl. \textbf{GradientShap}, IG, KernelShap & Infidelity, Sensitivity (Yeh), inserção/remoção, randomização & Referência zero (dados padronizados) & GradientShap: Sensitivity alta, Infidelity baixa; nenhum domina & sim \\ \addlinespace[1pt]
+Löffler et al. 2022/2025 (\href{https://arxiv.org/abs/2203.07861}{arXiv}) & 6 UCR + Tool Tracking; FCN, TCN & 9, incl. KernelSHAP, IG, LRP & Fidelidade TI/TS, Max-Sens, estabilidade, inter-class sensitivity, sanity & Pontos e subsequências & Métricas independentes entre si; custo alto & parcial \\ \addlinespace[1pt]
+XTSC-Bench 2023 (\href{https://arxiv.org/abs/2310.14957}{arXiv}) & 120 sintéticos; RNN, TCN & 11, incl. \textbf{GradientShap} & \textbf{FaithCorr, Max/Avg-Sens, Complexity} (Quantus), RRA, RMA & Referência amostrada ou uniforme & Sem vencedor claro & sim \\ \addlinespace[1pt]
+Schlegel \& Keim 2023 (\href{https://arxiv.org/abs/2307.05104}{arXiv}) & FordA/B, ElectricDevices; CNN & 7, incl. \textbf{GradientSHAP}, KernelSHAP & Perturbação & 16 estratégias, subsequências de 10\% & Vencedor muda com a perturbação & sim \\ \addlinespace[1pt]
+AMEE 2024 (\href{https://arxiv.org/abs/2306.05501}{arXiv}) & UCR; comitê de árbitros & SHAP, LIME, GradientSHAP etc. & Explanation Power & 4 perturbações locais/globais & SHAP por perturbação > gradiente & sim \\ \addlinespace[1pt]
+Serramazza et al. 2023 (\href{https://arxiv.org/abs/2308.15223}{arXiv}) & Sintéticos + CMJ, MP & ROCKET+SHAP, dCAM & AMEE, InterpretTime & Concatenação de canais & SHAP bom; custo de horas & sim \\ \addlinespace[1pt]
+Serramazza et al. 2024 (\href{https://arxiv.org/abs/2406.12507}{arXiv}) & Multivariado & SHAP, Feature Ablation, gradientes & InterpretTime revisto & Várias máscaras; chunking & SHAP melhor; uma máscara não basta & sim \\ \addlinespace[1pt]
+Šimić et al. 2025 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12284047/}{PMC}) & 5 UCR (2 ECG fetal); 5 arquiteturas & 12, incl. IG, KernelSHAP & DDS, PES, CMI & 23 perturbações; regiões de 2,5\% e 10\% & Feature Ablation > IG; regiões pequenas & parcial (ferramenta) \\ \addlinespace[1pt]
+Baer et al. 2025a (\href{https://arxiv.org/abs/2502.17022}{arXiv}) & FordA/B, Wafer, ElectricDevices; ResNet, InceptionTime & GR, IG, SG, \textbf{GS}, FO & Degradação por perturbação, por classe & Penalidade sensível à classe & Efeitos dependentes da classe & sim (dirigida) / parcial \\ \addlinespace[1pt]
+Baer et al. 2025b (\href{https://arxiv.org/abs/2506.11790}{arXiv}) & Sintético; ResNet, InceptionTime & Gradient, IG, FO & Degradação vs. verdade de referência & Zero e gaussiana & Amplitude/extensão geram efeito de classe & sim (dirigida) / parcial \\ \addlinespace[1pt]
+Peter et al. 2026 (\href{https://arxiv.org/abs/2608.21449}{arXiv}) & Revisão de 6 frameworks + caso ECG & — & — & — & Implementações divergem; só 2 métricas específicas de TS & sim (dirigida) / parcial \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+
+
+\section{EEG, PPG, HAR e fala repetem os mesmos alertas}
+
+Nos campos vizinhos a fidelidade é medida por deleção, ROAR, testes de queda em UTI e, num caso, por algo muito parecido com a Faithfulness Correlation por regiões. \textbf{Cui et al. (2023)} compararam sete métodos em EEGNet e InterpretableCNN, em três bases de BCI. O ``sensitivity test'' deles calcula a correlação de Pearson entre a soma das contribuições de \textit{patches} de comprimento fixo e a mudança da saída quando o patch é perturbado. É, na prática, a \textbf{Faithfulness Correlation aplicada a regiões contíguas}, um precedente direto para a escolha do TCC. G×I, DeepLIFT, IG e LRP superaram um mapa aleatório. Saliency, deconvolution e guided backprop ficaram ``mostly around 0''. Houve grande variação entre amostras: numa delas, remover o canal mais relevante \textit{aumentou} a probabilidade de 0,6 para 0,98. Os autores concluem que explicações individuais ``could be uninformative or even misleading for many samples'' (\href{https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2023.1232925/full}{Cui et al. 2023}).
+
+\textbf{Ravindran \& Contreras-Vidal (2023)} usaram EEG simulado com verdade conhecida (SEREEGA, 62 canais, cinco níveis de SNR) e 12 métodos. DeepLIFT foi ``consistently accurate as well as robust'', e o GradCAM piorou ``when the model confidence dropped''. \textbf{IG, DeepSHAP e GradientSHAP não foram avaliados} (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10584975/}{Ravindran \& Contreras-Vidal 2023}). \textbf{Mayor-Torres et al. (2023)} usaram ROAR em EEG de emoção no autismo e só acharam recuperação de features quando ``less than 50\% of the relevant features are removed'' (\href{https://arxiv.org/abs/2111.13208v6}{Mayor-Torres et al.}). Em UTI, \textbf{Tonekaboni et al. (2020)} observaram que os gradientes ``pick up on all spikes'' e que as perturbações geram ``out of domain counterfactuals'' (\href{https://proceedings.nips.cc/paper_files/paper/2020/file/08fa43588c2571ade19bc0fa5936e028-Paper.pdf}{Tonekaboni et al.}).
+
+Em reconhecimento de atividade, \textbf{Pellano et al. (2024)} acharam a fidelidade (PGI/PGU) pouco confiável e a estabilidade (RIS/ROS/RRS) mais confiável. Na classe mais fraca, ``the random method appears to outperform both in PGI''. A métrica relativa ROS chegou a valores da ordem de 10\textsuperscript{7} porque a saída quase não muda, e o denominador perto de zero distorce o resultado (\href{https://arxiv.org/pdf/2402.12790}{Pellano et al. 2024}). \textbf{Tempel et al. (2025)} validaram DeepSHAP perturbando as articulações mais importantes contra articulações aleatórias: a sensibilidade de 0,944 caiu para 0,372 contra 0,612 (\href{https://arxiv.org/html/2411.03714}{Tempel et al.}).
+
+Em PPG, \textbf{Zhang et al. (2021)} avaliaram DeepSHAP, IG e Guided Saliency em ResNet-34 1D e correlacionaram as métricas de explicação com a acurácia de teste. A Congruence teve r = 0,478 (p = 0,016), mas nenhuma correlação sobreviveu à correção para comparações múltiplas (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC7978398/}{Zhang et al. 2021, PPG}). Em fala (Parkinson), \textbf{Mancini et al. (2024/2025)} aplicaram \textbf{Sparseness e Complexity} a Gradient SHAP: SPS 0,69 e COMP 11,99, contra IG com SPS 0,77 e COMP 11,69. Os autores concluem que ``all the XAI approaches show comparable performance overall'' (\href{https://arxiv.org/abs/2411.08013}{Mancini et al.}). FreqRISE e o sucessor XACT usam a entropia de Shannon do mapa como Complexity, e no XACT ``no method performs best across all quantitative evaluation criteria'' (\href{https://arxiv.org/abs/2406.13584}{FreqRISE}; \href{https://arxiv.org/abs/2609.29270}{XACT}).
+
+\textbf{Fouladgar et al. (2022)}, \textbf{lido na íntegra}, adaptaram a sensitivity de Yeh em quatro variantes (máxima e média, de curto e de longo prazo) em sinais fisiológicos de afeto (WESAD e MAHNOB-HCI, reamostrados a 10 Hz, janelas de 30 instantes), explicando uma CNN (CN-Waterfall) com LIME, IG e SmoothGrad. A série é vetorizada e metade dos seus pontos (a primeira metade, ``longo prazo'', ou a segunda, ``curto prazo'') recebe ruído normal dentro de um raio r = 1; além das 20 perturbações, entram 20 vizinhos do treino dentro do mesmo raio. A sensibilidade é a distância euclidiana \textbf{não normalizada} entre as explicações. As sensibilidades são maiores em janelas menores e ``fluctuate when the network parameters and data properties change''; IG e LIME têm sensibilidade menor que SmoothGrad, o que os próprios autores atribuem à ``lower scale of important scores'' desses métodos (\href{https://doi.org/10.1109/ACCESS.2022.3155115}{Fouladgar et al.}). Esse último ponto mostra o problema de escala que o TCC evita ao normalizar os mapas para norma 1 e compará-los com o piso. Em fala, \textbf{Shen et al. (2025)} medem a confiabilidade como consistência entre modelos com inicializações diferentes, contra escores embaralhados. A conclusão é que as atribuições padrão são ``generally unreliable'' no domínio (\href{https://arxiv.org/abs/2505.16406}{Shen et al.}).
+
+O resultado mais relevante dos campos vizinhos para o TCC vem, porém, da visão computacional. Ele é o mecanismo que explica a concentração no QRS. \textbf{Adebayo et al. (2018)} mostram que métodos que aproximam entrada × gradiente (ε-LRP, DeepLift, IG) ``mostly return the input'' quando o gradiente fica ruidoso. A randomização ``disrupts the sign of the map'', e a correlação de Spearman \textit{com sinal} vai a zero, enquanto a semelhança em magnitude (SSIM, |·|) se mantém (\href{https://arxiv.org/abs/1810.03292}{Adebayo et al.}). No EEG simulado de Ravindran, IxG, DeepLIFT e LRP pareceram ``robustos'' à randomização. Isso é coerente com Adebayo, porque lá a similaridade foi medida com correlação com sinal e o EEG de ruído rosa não tem picos de energia tão concentrados quanto o QRS. Essa última parte é inferência das notas, sem fonte direta (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10584975/}{Ravindran \& Contreras-Vidal 2023}).
+
+\subsection{Tabela 3 — EEG, outros sinais fisiológicos e domínios com as mesmas métricas}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Trabalho} & \textbf{Dados / modelo} & \textbf{Métodos} & \textbf{Métricas} & \textbf{Adaptação} & \textbf{Conclusão-chave} & \textbf{Lido} \\
+\midrule
+\endhead
+Cui et al. 2023 (\href{https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2023.1232925/full}{Frontiers}) & EEG/BCI, 3 bases; EEGNet, InterpretableCNN & 7, incl. IG, LRP, DeepLIFT & Correlação por patches (≈ FaithCorr por regiões), deleção AUC & Patches de comprimento fixo; referência zero & G×I, IG, DeepLIFT, LRP > aleatório; grande variação entre amostras & quase (\textasciitilde{}85–93\%) \\ \addlinespace[1pt]
+Ravindran \& Contreras-Vidal 2023 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10584975/}{PMC}) & EEG simulado, 62 canais & 12 (sem IG/SHAP) & Relevance Mass Accuracy, cosseno; randomização com \textbackslash{} & Pearson\textbackslash{} & e SSIM & Verdade simulada temporal, espectral, espacial \\ \addlinespace[1pt]
+Mayor-Torres et al. 2023 (\href{https://arxiv.org/abs/2111.13208v6}{arXiv}) & EEG de emoção (autismo) & SmoothGrad, PatternNet, LRP-B & ROAR, KS entre mapas & Fatias de 47 pontos × 1 canal como controle & Só funciona com < 50\% removido & sim (arXiv v6) \\ \addlinespace[1pt]
+Tonekaboni et al. 2020 (\href{https://proceedings.nips.cc/paper_files/paper/2020/file/08fa43588c2571ade19bc0fa5936e028-Paper.pdf}{NeurIPS}) & MIMIC-III + simulados & FO, IG, DeepLIFT, \textbf{GradientSHAP} etc. & 95-percentile test, k-drop & Contrafactuais gerados & Perturbações fora do domínio & parcial \\ \addlinespace[1pt]
+Pellano et al. 2024 (\href{https://arxiv.org/pdf/2402.12790}{arXiv}) & HAR por esqueleto; GCN & CAM, Grad-CAM & PGI/PGU, RIS/ROS/RRS & Perturbação biomecânica & Estabilidade > fidelidade; aleatório vence na classe fraca & sim \\ \addlinespace[1pt]
+Tempel et al. 2025 (\href{https://arxiv.org/html/2411.03714}{arXiv}) & HAR (paralisia cerebral, NTU); GCN & DeepSHAP & Perturbação top-k vs. aleatória & Por articulação & SHAP validado, mas não generalizável & quase \\ \addlinespace[1pt]
+Zhang et al. 2021, PPG (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC7978398/}{PMC}) & PPG; ResNet-18 2D, ResNet-34 1D & DeepSHAP, IG, Guided Saliency & Congruence, AUROC de anotação; correlação com acurácia & Regiões anotadas & Correlação fraca a moderada com a acurácia & quase \\ \addlinespace[1pt]
+Mancini et al. 2025 (\href{https://arxiv.org/abs/2411.08013}{arXiv}) & Fala (PC-GITA); HuBERT, WavLM & 6, incl. \textbf{Gradient SHAP}, IG & AI, AD, AG, Fid-In, \textbf{Sparseness, Complexity} & Espectrogramas & Desempenho comparável entre métodos & parcial \\ \addlinespace[1pt]
+FreqRISE 2024/2025 (\href{https://arxiv.org/abs/2406.13584}{arXiv}) & Sintético, AudioMNIST & FreqRISE, IG, LRP & Deleção, localização, \textbf{Complexity} (entropia) & Domínio da frequência & — & parcial \\ \addlinespace[1pt]
+Fouladgar et al. 2022 (\href{https://doi.org/10.1109/ACCESS.2022.3155115}{IEEE Access}) & WESAD, MAHNOB-HCI & LIME, IG, SmoothGrad & \textbf{Sensitivity} máxima/média, curto e longo prazo & Ruído normal em metade da série (r = 1), 20 perturbações + 20 vizinhos do treino; distância euclidiana sem normalização & Sensibilidade maior em janelas menores e instável com hiperparâmetros; escala dos escores confunde a comparação & sim \\ \addlinespace[1pt]
+Kang et al. 2023 (\href{https://www.aminer.org/pub/63aa20f090e50fcafd47f41d/reduce-system-redundancy-and-optimize-sensor-disposition-for-emg-imu-multimodal-fusion}{resumo}) & EMG + IMU, 71 sujeitos & 4 métodos & ``Four quantitative evaluation algorithms'' (cita Yeh, Bhatt, Quantus) & Não verificado & Redução de 40\% dos sensores & \textbf{não} \\ \addlinespace[1pt]
+Shen et al. 2025 (\href{https://arxiv.org/abs/2505.16406}{arXiv}) & Fala & Vários & Consistência entre inicializações vs. embaralhado & Alinhamento por palavra & Atribuições pouco confiáveis & parcial \\ \addlinespace[1pt]
+Bommer et al. 2024 (\href{https://arxiv.org/abs/2303.00652}{arXiv}) & Clima (mapas, não séries); MLP, CNN & IG, LRP, DeepSHAP etc. & \textbf{FaithCorr, Avg-Sens, MPRT, Random Logit, Complexity} (Quantus) & Skill score contra explicação aleatória & Escolha da referência pesa; Random Logit pede classes bem separadas & parcial \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+
+
+\section{Sete métricas do TCC, sete graus de precedente}
+
+As métricas do TCC têm graus muito diferentes de apoio na literatura de sinais. \textbf{Faithfulness Correlation} tem três precedentes. O XTSC-Bench a usa via Quantus em dados sintéticos, com referência amostrada ou uniforme (\href{https://arxiv.org/abs/2310.14957}{XTSC-Bench}). Suh et al. (2024) a usam em ECG real (batimentos S e V de quatro bases), ponto a ponto, com 10\% dos pontos substituídos por zero, 100 repetições e Pearson; DeepSHAP fica no topo (0,409 no Icentia11K) e o aleatório em −0,001 (\href{https://doi.org/10.1016/j.compbiomed.2024.109088}{Suh et al. 2024}). Cui et al. fazem o equivalente funcional por patches em EEG (\href{https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2023.1232925/full}{Cui et al. 2023}). É também a métrica de ranking menos confiável segundo o \textbf{MetaQuantus}. Na meta-avaliação em ImageNet, ela teve a menor pontuação MC entre as métricas listadas (\textbf{0,480}, contra 0,698 do Pixel-Flipping), com ``lack of resilience to noise in the ranking … especially for Faithfulness Correlation'', atribuída à ``well-documented sensitivity to parameterisation'' (\href{https://arxiv.org/abs/2302.07265}{MetaQuantus}). Tomsett et al. acrescentam que essa métrica se correlaciona fracamente com o AOPC-MoRF (\href{https://arxiv.org/abs/1912.01451}{Tomsett et al.}).
+
+\textbf{Faithfulness Estimate} não tem nenhuma aplicação encontrada em séries temporais ou sinais. Os trabalhos de séries temporais que citam o artigo original usam outras ideias dele, como a robustez de Lipschitz (\href{https://api.semanticscholar.org/graph/v1/paper/arXiv:1806.07538/citations}{Semantic Scholar}).
+
+\textbf{Max/Avg-Sensitivity} é a métrica mais testada fora da imagem:
+
+\begin{itemize}
+\item Mercier et al. a usam com o ECG5000 e mostram o GradientShap muito acima do IG (\href{https://arxiv.org/abs/2202.03759}{Mercier et al.}).
+\item XTSC-Bench a implementa via Quantus (\href{https://arxiv.org/abs/2310.14957}{XTSC-Bench}).
+\item Löffler et al. alertam para o custo computacional (\href{https://arxiv.org/abs/2203.07861}{Löffler et al.}).
+\item Fouladgar et al. a adaptam a janelas curtas e longas em sinais fisiológicos (\href{https://doi.org/10.1109/ACCESS.2022.3155115}{Fouladgar et al.}).
+\item Bommer et al. usam Avg-Sensitivity com ruído N(0, 0,1) e 10 amostras (\href{https://arxiv.org/abs/2303.00652}{Bommer et al.}).
+\end{itemize}
+
+Nenhum desses trabalhos separa a sensibilidade real à entrada da variância de Monte Carlo do próprio GradientSHAP. Essa separação é exatamente o que o piso do TCC faz.
+
+\textbf{Complexity} aparece no XTSC-Bench, em fala (Mancini), em áudio (FreqRISE, XACT) e, como variante espectral, em ECG (Kelly \& Blake). No MetaQuantus, a categoria de complexidade teve ``the lowest overall MC scores'' (\href{https://arxiv.org/abs/2302.07265}{MetaQuantus}). Bommer et al. preferem a Sparseness para medir complexidade (\href{https://arxiv.org/abs/2303.00652}{Bommer et al.}).
+
+\textbf{Consistency (Dasgupta)} não tem aplicação encontrada: Peter et al. a listam apenas como métrica do Quantus ``compatível'' com séries temporais (\href{https://arxiv.org/abs/2608.21449}{Peter et al. 2026}).
+
+\textbf{Random Logit} também não tem aplicação direta em séries temporais. Os análogos mais próximos são três. A inter-class sensitivity de Löffler et al. mostra que IG e Guided Backprop ''yield similar saliency maps regardless of the sample's class`` (\href{https://arxiv.org/abs/2203.07861}{Löffler et al.}). A ''class-level sensitivity`` da UTS-XAI mede a variância dos mapas entre classes (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13369486/}{UTS-XAI}). E Bommer et al. usam a métrica via Quantus em clima e avisam que ela é ''favored for classification with pronounced class separations'' (\href{https://arxiv.org/abs/2303.00652}{Bommer et al.}).
+
+O \textbf{MPRT} tem precedentes em séries temporais e no próprio ECG:
+
+\begin{itemize}
+\item Mercier et al.: uma camada basta para descorrelacionar os mapas (\href{https://arxiv.org/abs/2202.03759}{Mercier et al.}).
+\item Löffler et al.: randomização em cascata medida por SSIM (\href{https://arxiv.org/abs/2203.07861}{Löffler et al.}).
+\item Arends et al., em ECG: o GradientSHAP chega a correlação ≈ 0 e passa (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12980500/}{Arends et al. 2026}).
+\item Abdullah et al.: Spearman de 1,00 para 0,18 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13296925/}{Abdullah et al.}).
+\item Šimić et al.: com modelo não treinado, CMI ≈ 0 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12284047/}{Šimić et al. 2025}).
+\end{itemize}
+
+O \textbf{eMPRT} não tem nenhuma aplicação encontrada em sinais. O único artigo de EEG identificado que o cita (decodificação de fala interna, IEEE THMS 2026) não teve o uso confirmado (\href{https://api.semanticscholar.org/graph/v1/paper/arXiv:2401.06465/citations}{citações do eMPRT}).
+
+Os criadores do eMPRT são os primeiros a relativizar o teste: ``Even after full model randomisation, no method approaches the theoretical limit to randomness'', e ``no variant showcases perfect reliability'' (\href{https://arxiv.org/abs/2401.06465}{Hedström et al.}). O MPRT original tem vieses conhecidos: tomar o valor absoluto ``significantly impact[s] MPRT results'', e as medidas de similaridade são ``noise-sensitive'' (\href{https://arxiv.org/abs/2401.06465}{Hedström et al.}). Toda essa meta-avaliação foi feita só em imagens. \textbf{Não há meta-avaliação dessas métricas em séries temporais ou ECG.}
+
+\subsection{Tabela 4 — As métricas do TCC na literatura de séries temporais e sinais}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Métrica do TCC} & \textbf{Quem usou em séries temporais / sinais} & \textbf{Como adaptou} & \textbf{Achados relevantes} \\
+\midrule
+\endhead
+Faithfulness Correlation (Bhatt) & XTSC-Bench (sintético, Quantus); Suh et al. 2024 (ECG real, batimentos; zero, 10\% dos pontos × 100, Pearson); Cui et al. 2023 (EEG, equivalente por patches); Bommer et al. (clima) & Referência amostrada do gerador ou uniforme (zero pode ser anomalia informativa); patches de comprimento fixo; subset 40, 50 execuções, U(0,1) em Bommer & Fidelidade parecida entre explicadores; menor MC no MetaQuantus (0,480); sensível à parametrização e à referência \\ \addlinespace[1pt]
+Faithfulness Estimate (Alvarez-Melis \& Jaakkola) & Nenhum encontrado & — & Sem comparador; apoiar-se no artigo original \\ \addlinespace[1pt]
+Max/Avg-Sensitivity (Yeh) & Mercier et al. (incl. ECG5000); XTSC-Bench; Löffler et al.; Fouladgar et al. (sinais fisiológicos); Bommer et al. & Raio r sobre a série; ruído em metade da série com r = 1 e distância sem normalização (Fouladgar); Monte Carlo com raio a (Löffler) & GradientShap com Sensitivity 0,66–1,04 vs. IG 0,04–0,21; gradientes menos robustos que perturbação; custo muito alto \\ \addlinespace[1pt]
+Complexity (entropia, Bhatt) & XTSC-Bench; Mancini et al. (fala, GradSHAP COMP 11,99); FreqRISE/XACT; Kelly \& Blake (variante espectral em ECG) & Entropia das contribuições fracionárias; entropia espectral só com positivos & GradientShap com entropia alta, perto de ruído; complexidade é a categoria de menor MC \\ \addlinespace[1pt]
+Consistency (Dasgupta 2022) & Nenhum encontrado & — & Não confundir com autoconsistência entre sementes (Arends: 0,52 ± 0,14) \\ \addlinespace[1pt]
+Random Logit (Sixt) & Nenhum direto; análogos: inter-class sensitivity (Löffler), class-level sensitivity (UTS-XAI); Bommer et al. (clima, Quantus) & Mapa da classe mais vs. menos provável; variância entre classes & IG e Guided Backprop insensíveis à classe; métrica favorece classes bem separadas \\ \addlinespace[1pt]
+MPRT & Mercier et al.; Löffler et al.; Arends et al. (ECG); Abdullah et al. (ECG); Ravindran et al. (EEG) & Camadas independentes ou em cascata; Spearman, SSIM, \textbackslash{} & Pearson\textbackslash{} \\ \addlinespace[1pt]
+eMPRT & Nenhum encontrado & — & Nenhum método atinge o limite teórico de aleatoriedade (Hedström); meta-avaliado só em imagem \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+
+
+\section{Ninguém testou se a qualidade da explicação acompanha o F1 por classe}
+
+\textbf{Nenhum estudo, em nenhum domínio, calculou a relação entre o F1 por classe e métricas de qualidade por classe do tipo Quantus.} As evidências próximas vêm de cinco tipos de trabalho, e quase todas apontam na mesma direção: as diferenças entre classes nas métricas refletem morfologia, amplitude, perturbação e confiança mais do que acurácia.
+
+A primeira linha \textbf{neutraliza o desempenho por desenho}. Ismail et al. reportam só modelos com acurácia acima de 95\%, e o XTSC-Bench só acima de 90\%, porque ``Classifiers with low accuracy cannot be expected to learn sufficient features to ensure an explainers reliability'' (\href{https://arxiv.org/abs/2310.14957}{XTSC-Bench}). Gumpfer et al. usam modelos com AUROC de 0,93 a 0,99 ``ensuring that subsequent analyses assessed explanation quality rather than model accuracy'' e explicam só verdadeiros positivos (\href{https://arxiv.org/abs/2607.24035}{Gumpfer et al. 2026}). Suh e Abdullah avaliam só predições corretas ou de alta confiança. Nesse desenho a pergunta do TCC não pode ser respondida.
+
+A segunda linha relata \textbf{métricas por classe ao lado de desempenho por classe, sem testar a relação}. Em ECG, Arends et al. dão a autoconsistência por classe, de 0,54 (baixa voltagem do QRS, HVE) a 0,62 (BAV de 1º grau). Concluem que ``we observed similar attribution behaviour in tasks with higher and lower AUPRC values'', o que indicaria que os achados ``predominantly reflect properties of the attribution methods rather than differences in classifier accuracy'' (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12980500/}{Arends et al. 2026}). O contraponto é que os classificadores deles são binários, com AUROC acima de 0,95 e pouca variação de desempenho. O TCC, ao contrário, tem um modelo multiclasse com F1 heterogêneo.
+
+Gumpfer et al. mostram a maior variação por patologia com desempenho parecido. A NCov do GradSHAP vai de −5,5\% na isquemia a 80,9\% no BRD, e os métodos vão bem nos bloqueios de ramo, cujas regiões diagnósticas são de alta amplitude, e mal em isquemia e BAV, de baixa amplitude (\href{https://arxiv.org/abs/2607.24035}{Gumpfer et al. 2026}). Kelly \& Blake encontram entropia espectral quase constante entre as 17 classes, que leem como um ``self-noise'' do método (\href{https://arxiv.org/html/2606.24974}{Kelly \& Blake}). Beck \& John notam, de forma qualitativa, que a classe de pior desempenho (batimento atrial prematuro) tem explicações desalinhadas da clínica (\href{https://arxiv.org/html/2508.17294v1}{Beck \& John}).
+
+Löffler et al. são os únicos em séries temporais a pôr fidelidade e F1 por classe lado a lado (Tool Tracking, TCN). A classe majoritária e de maior F1, Tightening (F1 0,90), teve a \textbf{pior} fidelidade TI com Gradients (0,41) e LIME (0,25), enquanto o GradCAM teve 0,91 nela. A minoritária CCW (F1 0,71) teve 0,82 com Gradients. Os autores afirmam em geral que ``higher accuracy implies higher Faithfulness scores'', mas a evidência vem de comparações entre modelos e bases, não entre classes. No próprio Apêndice D eles admitem que ``Similar test accuracy does not automatically imply similar faithfulness of saliency'' (\href{https://arxiv.org/abs/2203.07861}{Löffler et al.}).
+
+A terceira linha, a de \textbf{Saporta et al. (2022)}, é o caso mais parecido em desenho, embora em raio X de tórax. São dez patologias, cada uma com AUROC e qualidade de localização. A localização \textbf{não acompanhou} o AUROC: ``support devices'' teve um dos maiores AUROCs (0,969) e uma das piores localizações (mIoU 0,163). A variação entre classes foi explicada pela morfologia: o coeficiente do tamanho da patologia sobre o IoU foi +0,566. Dentro de cada patologia, porém, a \textbf{confiança} do modelo se correlacionou positivamente com a qualidade (Spearman 0,285 no conjunto) (\href{https://asaporta.github.io/assets/pdf/chexlocalize.pdf}{Saporta et al.}).
+
+A quarta linha mostra que \textbf{as métricas variam por classe por motivos alheios à qualidade da explicação}. Baer et al. (2025a) mostram que métricas de perturbação ``show varying effectiveness across classes'', que ``the most effective perturbation strategies often demonstrate the most pronounced class differences'' e que isso pode refletir ``specific model behaviors rather than intrinsic attribution quality''. O mecanismo é concreto: se o classificador associou um valor de perturbação (zero, por exemplo) a uma classe, substituir os trechos ``importantes'' por esse valor ``might paradoxically reinforce rather than disrupt the prediction'' (\href{https://arxiv.org/abs/2502.17022}{Baer et al. 2025a}). Baer et al. (2025b) mostram que diferenças simples de \textbf{amplitude ou extensão temporal} entre classes bastam para gerar o efeito, e que as métricas de perturbação e as de verdade de referência dão avaliações contraditórias por classe, com Spearman por classe de −0,18 a 0,291 (\href{https://arxiv.org/abs/2506.11790}{Baer et al. 2025b}). Tomsett et al. acharam que ``all metric scores were dependent on image class'' num único modelo CIFAR-10 (\href{https://arxiv.org/abs/1912.01451}{Tomsett et al.}). Pellano et al. viram o aleatório superar os métodos na classe mais fraca (\href{https://arxiv.org/pdf/2402.12790}{Pellano et al.}).
+
+A quinta linha trata da relação \textbf{entre modelos}, não entre classes, e dá uma base para a expectativa. Karimi et al. mostram que a relação entre explicação e predição melhora com a acurácia, mas só de forma ``moderate'' (\href{https://arxiv.org/abs/2212.06925}{Karimi et al.}). O resultado de Zhang et al. em PPG vai no mesmo sentido: correlação fraca a moderada, sem sobreviver à correção para comparações múltiplas (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC7978398/}{Zhang et al., PPG}). Samek et al. afirmam que ``A random classifier will provide random heatmaps'', uma afirmação conceitual que sustenta os testes de randomização, não uma relação monotônica com o F1 (\href{https://arxiv.org/abs/1509.06321}{Samek et al.}). Fresz et al. lembram que um escore baixo pode indicar tanto um bom modelo com explicador ruim quanto o inverso, e que ``the saliency scores and the model performance must always be considered in combination'' (\href{https://arxiv.org/abs/2406.05068}{Fresz et al.}). Nauta et al. registram que a correção da explicação e a acurácia do modelo ``may be orthogonal'' (\href{https://arxiv.org/abs/2201.08164}{Nauta et al.}).
+
+\subsection{Tabela 5 — Trabalhos que tocam a relação entre qualidade da explicação e desempenho}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Trabalho} & \textbf{Dados / modelo} & \textbf{Unidade de comparação} & \textbf{O que relaciona} & \textbf{Resultado} & \textbf{Lido} \\
+\midrule
+\endhead
+Löffler et al. (\href{https://arxiv.org/abs/2203.07861}{arXiv}) & Tool Tracking; TCN & 4 classes; entre modelos & Fidelidade TI × F1 por classe (lado a lado) & Classe de maior F1 com pior TI em Gradients/LIME; afirmação geral vem de comparações entre modelos & parcial \\ \addlinespace[1pt]
+Saporta et al. 2022 (\href{https://asaporta.github.io/assets/pdf/chexlocalize.pdf}{PDF}) & CheXpert, 10 patologias; DenseNet121 & Patologia; amostra & Localização × AUROC; × confiança; × morfologia & Não acompanha o AUROC; acompanha a confiança e o tamanho & parcial \\ \addlinespace[1pt]
+Arends et al. 2026 (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12980500/}{PMC}) & ECG, 9 classes binárias & Classe & Autoconsistência × AUPRC & Comportamento semelhante com AUPRC alto e baixo & parcial / sim \\ \addlinespace[1pt]
+Gumpfer et al. 2026 (\href{https://arxiv.org/abs/2607.24035}{arXiv}) & PTB-XL, 4 patologias & Patologia & Cobertura clínica com AUROC parecido & Varia com a amplitude do critério, não com o desempenho & sim (dirigida) \\ \addlinespace[1pt]
+Baer et al. 2025a (\href{https://arxiv.org/abs/2502.17022}{arXiv}) & 4 bases UCR & Classe & Degradação por perturbação & Efeitos de classe vindos dos vieses do modelo & sim (dirigida) / parcial \\ \addlinespace[1pt]
+Baer et al. 2025b (\href{https://arxiv.org/abs/2506.11790}{arXiv}) & Sintético & Classe & Perturbação × verdade de referência & Amplitude e extensão geram efeito; métricas se contradizem & sim (dirigida) / parcial \\ \addlinespace[1pt]
+Tomsett et al. 2020 (\href{https://arxiv.org/abs/1912.01451}{arXiv}) & CIFAR-10; CNN & Classe; confiança & AOPC MoRF/LeRF, FaithCorr & Todas dependem da classe; confiança ≥ 0,99 distorce o LeRF & parcial \\ \addlinespace[1pt]
+Karimi et al. 2023 (\href{https://arxiv.org/abs/2212.06925}{arXiv}) & Model zoo (CIFAR10 etc.) & Faixa de acurácia & Efeito causal em explicação × predição & Melhora com a acurácia, mas só moderada & parcial \\ \addlinespace[1pt]
+Zhou et al. 2022 (\href{https://arxiv.org/abs/2104.14403}{arXiv}) & Imagens com marca d'água & Classe; épocas & \%Attr × acurácia & Presença do atributo é detectada melhor que a ausência & parcial \\ \addlinespace[1pt]
+Pellano et al. 2024 (\href{https://arxiv.org/pdf/2402.12790}{arXiv}) & HAR & Classe mais forte × mais fraca & PGI/PGU & Aleatório vence na classe fraca & sim \\ \addlinespace[1pt]
+Zhang et al. 2021, PPG (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC7978398/}{PMC}) & PPG; ResNets & Modelo & Congruence × acurácia & r = 0,478, não sobrevive à correção & quase \\ \addlinespace[1pt]
+Dai et al. 2022 (\href{https://arxiv.org/abs/2205.07277}{arXiv}) & Tabulares & Grupo demográfico & Fidelidade, estabilidade, consistência, esparsidade & 18,5\% de 162 combinações com disparidade; variância alta & sim \\ \addlinespace[1pt]
+Balagopalan et al. 2022 (\href{https://arxiv.org/abs/2205.03295}{arXiv}) & Tabulares/clínicos & Subgrupo & Fidelidade × AUROC & Lacuna de fidelidade (8,1\%) maior que a de AUROC (3,6\%) & parcial \\ \addlinespace[1pt]
+Fresz et al. 2024 (\href{https://arxiv.org/abs/2406.05068}{arXiv}) & Imagens & Modelo & Ranking de explicadores × separabilidade & Ranking mais confiável quando as classes se separam fácil & parcial \\ \addlinespace[1pt]
+Lopes et al. 2026 (\href{https://recima21.com.br/recima21/en/article/view/9152}{RECIMA21}) & MIT-BIH & Classe & Ganho de fidelidade por classe & IG positivo em todas; Grad-CAM depende da classe & \textbf{não} \\ \addlinespace[1pt]
+Beck \& John 2025 (\href{https://arxiv.org/html/2508.17294v1}{arXiv}) & MIT-BIH & Classe & Qualitativo & Classe mais fraca, explicação pior & sim \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+
+
+\section{Implicações para o TCC}
+
+\textbf{Posicionamento.} A Faithfulness Correlation \textbf{não é inédita em ECG}: Suh et al. (2024) a aplicaram ponto a ponto, com substituição por zero, a batimentos S e V previstos com alta confiança, com resultados resumidos por base e por método. O que não se encontrou foi: (i) o conjunto das sete métricas do TCC em ECG de 12 derivações; (ii) a aplicação delas sobre regiões fisiológicas (derivação × pré-QRS/QRS/ST-T), e não sobre pontos ou janelas fixas; (iii) a calibração pelo piso de variância do explicador; e (iv) a comparação por classe com o F1 de um classificador multirrótulo. A redação deve ser ``não se encontrou'', nunca ``não existe'', e deve citar Suh et al. (2024) como o precedente da Faithfulness Correlation em ECG. Suh et al. também servem de contraponto: avaliam só predições corretas e confiantes, como o TCC (que usa predições corretas), e recomendam métricas de localização quando houver anotação, por causa do deslocamento de distribuição causado pela perturbação. Há três comparadores naturais. Turbé et al. usam o mesmo CPSC e GradShap com 50 referências do teste, análogas às 36 referências balanceadas do TCC. Arends et al. usam ResNet-1D, nove classes, GradientSHAP e randomização. Gumpfer et al. agregam por segmentos clínicos. Zhang et al. (2021) dão o F1 por classe no mesmo CPSC2018 (média 0,813) e servem de referência para situar o modelo B (F1 macro 0,819) (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC8082080}{Zhang et al. 2021}). Como as implementações por regiões são próprias, o TCC deve declarar com precisão onde difere das definições do Quantus. Peter et al. mostram que implementações diferentes da mesma coisa podem divergir até no sinal da correlação (\href{https://arxiv.org/abs/2608.21449}{Peter et al. 2026}).
+
+\textbf{O eMPRT que não passa tem explicação na literatura.} O mapa do modelo aleatório concentrado no QRS (q ≈ −0,015) é o que Adebayo et al. preveem para métodos do tipo entrada × gradiente. Quando o gradiente vira ruído, o mapa ``mostly return[s] the input'', e no ECG |x| tem pico no QRS (\href{https://arxiv.org/abs/1810.03292}{Adebayo et al.}). Gumpfer et al. medem esse acoplamento com a amplitude para o próprio GradSHAP (Spearman 0,33) (\href{https://arxiv.org/abs/2607.24035}{Gumpfer et al.}). Arends et al. o descrevem no G×I (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12980500/}{Arends et al.}). Hedström et al. reconhecem que nenhum método atinge o limite de aleatoriedade (\href{https://arxiv.org/abs/2401.06465}{Hedström et al.}). O critério de ``entropia sobe após randomizar'' pode, portanto, falhar num sinal de energia concentrada mesmo quando o método depende do modelo. Essa é uma inferência das notas, sem fonte direta em sinais fisiológicos.
+
+A separação do TCC entre distâncias com sinal (8,7× o piso) e só de magnitude (5,8× o piso) reproduz a lógica de Adebayo: a randomização apaga o sinal, mas preserva a magnitude. A Seção 4 de Adebayo pode ser citada como justificativa. Como as duas distâncias ficam bem acima do piso, o resultado indica dependência do modelo, mesmo com o critério do artigo não atendido.
+
+\textbf{Random Logit e piso.} A distância de 1,60 no Random Logit (10× o piso) não tem comparador em sinais. A discussão deve se apoiar em Sixt et al. e na ressalva de Bommer et al.: a métrica favorece classes bem separadas, e no CPSC2018 algumas classes compartilham morfologia ou região diagnóstica (\href{https://arxiv.org/abs/2303.00652}{Bommer et al.}). O piso entre sementes tem precedentes só conceituais:
+
+\begin{itemize}
+\item o skill score contra explicação aleatória de Bommer et al.;
+\item o baseline de escores embaralhados de Shen et al. (\href{https://arxiv.org/abs/2505.16406}{Shen et al.});
+\item a autoconsistência entre sementes de Arends et al.
+\end{itemize}
+
+Nenhum desses trabalhos calibra a Sensitivity ou o MPRT pela variância estocástica do próprio explicador. A Sensitivity alta do GradientShap em Mercier et al. provavelmente mistura sensibilidade real e variância de Monte Carlo (\href{https://arxiv.org/abs/2202.03759}{Mercier et al.}). O piso é o que permite separar as duas, e pode ser apresentado como contribuição metodológica.
+
+\textbf{Regiões e referência de perturbação.} As 36 regiões ficam entre a granularidade de Wagner (24 segmentos de onda) e a de Gumpfer (três tipos de máscara). Funcionam como um ``chunking'' fisiologicamente informado. A região ST-T, porém, é bem maior que os 2–5\% do comprimento recomendados por Šimić et al. (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12284047/}{Šimić et al. 2025}), e isso merece menção como limitação ou justificativa fisiológica. Ismail e Tonekaboni mostram que os métodos acertam o instante, mas espalham a relevância por todos os canais (\href{https://arxiv.org/abs/2010.13924}{Ismail et al.}). Vale verificar, de forma descritiva, se o GradientSHAP separa derivações dentro da mesma onda.
+
+Para Faithfulness Correlation e Faithfulness Estimate, o valor de substituição muda o vencedor (Goettling, Schlegel \& Keim, Šimić). O zero pode ser informativo (Schlegel, XTSC-Bench), e no ECG normalizado ele equivale à linha isoelétrica, o que é plausível no ST e implausível no QRS. O MetaQuantus aponta a FaithCorr como a métrica de ranking menos estável. Convém ao menos discutir a sensibilidade à referência e buscar convergência entre categorias de métricas, em vez de apoiar conclusões numa só (\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC11161651/}{Goettling et al.}; \href{https://arxiv.org/abs/2310.14957}{XTSC-Bench}; \href{https://arxiv.org/abs/2302.07265}{MetaQuantus}). As notas acrescentam uma inferência sem achado publicado: trechos de padding com zero, nos registros do CPSC de duração variável, deveriam ficar fora das regiões avaliadas.
+
+\textbf{Ressalvas a discutir ao comparar classes.} A literatura aponta quatro fatores de confusão concretos para as nove classes do CPSC2018.
+
+O primeiro é a \textbf{amplitude e a morfologia}. As classes de QRS largo e alto (BRD, BRE, PVC) tendem a receber mapas mais concentrados e mais ``plausíveis'' do que as de baixa amplitude, que vivem no ST (STD, STE), no PR (I-AVB) ou na onda P (PAC). A FA, por ser um padrão de ritmo, fica num caso à parte. Gumpfer, Baer 2025b e Saporta indicam que isso pode acontecer independentemente do F1 (\href{https://arxiv.org/abs/2607.24035}{Gumpfer et al.}; \href{https://arxiv.org/abs/2506.11790}{Baer et al. 2025b}; \href{https://asaporta.github.io/assets/pdf/chexlocalize.pdf}{Saporta et al.}).
+
+O segundo é a \textbf{interação entre o valor de referência da perturbação e a classe}. Uma linha isoelétrica pode ``parecer'' uma classe específica e reforçar a predição em vez de destruí-la (\href{https://arxiv.org/abs/2502.17022}{Baer et al. 2025a}).
+
+O terceiro é a \textbf{confiança}. Logits saturados distorcem as métricas de remoção, e atribuições com sinal, como as do GradientSHAP, saem pior que o aleatório sob LeRF (\href{https://arxiv.org/abs/1912.01451}{Tomsett et al.}). Já a confiança se associa positivamente à qualidade da localização (\href{https://asaporta.github.io/assets/pdf/chexlocalize.pdf}{Saporta et al.}).
+
+O quarto é a \textbf{prevalência}. Lacunas de fidelidade persistem mesmo com reamostragem (\href{https://arxiv.org/abs/2205.03295}{Balagopalan et al.}), e a relação pode até se inverter, com a classe minoritária explicada melhor (\href{https://arxiv.org/abs/2203.07861}{Löffler et al.}). Convém confirmar no código se o TCC explica a classe verdadeira ou a predita, porque incluir erros mistura qualidade da explicação com erro do modelo.
+
+\textbf{Por que a comparação descritiva é a escolha certa.} Com nove classes, um Spearman entre F1 e métrica só seria significativo a 5\% com |ρ| ≥ 0,70 (cálculo das notas por permutação exata). Só uma relação muito forte seria detectável, e a ausência de significância não seria evidência de ausência de relação. A literatura que trabalha com poucos grupos, como Löffler com quatro classes e Dai com grupos demográficos, relata as diferenças de forma descritiva (\href{https://arxiv.org/abs/2205.07277}{Dai et al.}). A abordagem do TCC, de comparar ordens e posições, fica mais forte se cada métrica por classe for apresentada lado a lado com três coisas: os descritores de confusão (amplitude média da região relevante, suporte da classe, confiança média), a posição da classe no F1 e a distância ao piso calculada por classe, como recomendam Baer et al. ao pedir ``class-stratified analysis'' (\href{https://arxiv.org/abs/2502.17022}{Baer et al. 2025a}).
+
+Quanto à expectativa, Arends, Karimi, o Apêndice D de Löffler e Saporta sugerem que a ordem das métricas não deve seguir de perto a ordem do F1 na faixa de modelos razoáveis, e todas as classes do TCC estão bem acima do acaso. Se a ordem não acompanhar o F1, o resultado é coerente com a literatura. Se acompanhar, será um achado novo, que precisa ser confrontado primeiro com a ordem de amplitude e de prevalência das classes.
+
+
+
+\section{Conclusão}
+
+O levantamento muda o enquadramento da pergunta do TCC. A questão deixa de ser ``se a explicação piora quando o F1 cai'' e passa a ser ``o que, além do F1, ordena as classes nas métricas''. A literatura de sinais oferece candidatos fortes e mensuráveis: amplitude da região diagnóstica, interação com o valor de perturbação, confiança e prevalência. Quase nenhum trabalho os controla. Ao mesmo tempo, o resultado do eMPRT deixa de ser um tropeço e vira um achado interpretável. O GradientSHAP sobre ECG carrega uma componente de amplitude independente do modelo, e o piso entre sementes é o instrumento que separa essa componente da dependência real do modelo.
+
+A contribuição mais defensável do TCC é metodológica e dupla: métricas do Quantus reimplementadas sobre regiões fisiológicas e calibradas por um piso de variância do explicador, aplicadas a um classificador multiclasse com F1 heterogêneo. Nenhum dos trabalhos encontrados combina esses três elementos. A comparação descritiva por classe é a forma de explorar a lacuna sem prometer uma inferência que nove pontos não sustentam.
+
+
+
+\section{Itens procurados e não localizados (não citar)}
+
+Os trabalhos abaixo foram procurados pelos pesquisadores e \textbf{não foram encontrados} com o título ou a autoria indicados. Não devem ser citados sem confirmação de título e DOI.
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Item procurado} & \textbf{Situação} \\
+\midrule
+\endhead
+Pfeffer et al. 2023, ``Evaluating the fidelity of explanations for convolutional neural networks in alcohol use disorder classification with EEG'' & Não localizado; a busca só devolveu trabalhos de classificação de alcoolismo sem avaliação de explicações \\ \addlinespace[1pt]
+Wang et al. 2023, avaliação de XAI em EEG com o Quantus & Não confirmado por nenhuma busca \\ \addlinespace[1pt]
+Mortensen et al., avaliação de XAI em ECG & Não localizado \\ \addlinespace[1pt]
+Anand et al. 2022 & Não localizado \\ \addlinespace[1pt]
+Ganeshkumar et al. 2021 & Não localizado \\ \addlinespace[1pt]
+Trecho ``TransLRP … COBRE'' (Quantus em EEG) & Sem fonte identificável; COBRE parece ser base de fMRI \\ \addlinespace[1pt]
+Dobiczek et al., ICCS 2026 (CineECG; Dice 0,56 vs. 0,47) & Visto só em snippet, não verificado (\href{https://www.iccs-meeting.org/archive/iccs2026/papers/167860449.pdf}{PDF ICCS}) \\ \addlinespace[1pt]
+Farahat et al. 2019, Hammer et al. 2022, Lawhern et al. 2018 (EEGNet), Jeyakumar et al. (X-CHAR), Bragança 2022, Arrotta 2022 (DeXAR) & Não verificados nesta rodada \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+
+
+\section{Referências completas}
+
+\subsection{ECG}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Referência} & \textbf{Link} & \textbf{Lido na íntegra} \\
+\midrule
+\endhead
+Arends BKO, van Amsterdam WAC, van der Harst P, van Smeden M, van Es R, van de Leur RR. Signal or noise? Evaluating commonly used attribution methods for explaining deep neural networks in electrocardiogram classification. \textit{Eur Heart J – Digital Health} 2026;7(3):ztag038. DOI 10.1093/ehjdh/ztag038 & \href{https://academic.oup.com/ehjdh/article/7/3/ztag038/8512917}{OUP} · \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12980500/}{PMC12980500} & parcial (\textasciitilde{}86\%) / sim (PMC), conforme a nota; suplemento não lido \\ \addlinespace[1pt]
+Turbé H, Bjelogrlic M, Lovis C, Mengaldo G. Evaluation of post-hoc interpretability methods in time-series classification. \textit{Nature Machine Intelligence} 2023;5(3):250–260. DOI 10.1038/s42256-023-00620-w; arXiv 2202.05656 & \href{https://arxiv.org/html/2202.05656v2}{arXiv v2} · \href{https://doi.org/10.1038/s42256-023-00620-w}{DOI} & sim (versão publicada, PDF fornecido pelo aluno) \\ \addlinespace[1pt]
+Gumpfer N, Guckert M, Sossalla S, Aßmus B, Hannig J. Beyond Local Inspection: Global, Guideline-Grounded Evaluation of Post-hoc XAI Methods for ECG Classification. arXiv 2607.24035, 2026 (preprint) & \href{https://arxiv.org/abs/2607.24035}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Suh J, Kim J, Jung E, Rhee W. Evaluating Feature Attribution Methods for Electrocardiogram. arXiv 2211.12702 (v1 2022, v2 2024) & \href{https://arxiv.org/html/2211.12702}{arXiv} & sim (HTML) \\ \addlinespace[1pt]
+Suh J, Kim J, Kwon, Jung E, Ahn, Lee, Choi, Rhee W. Visual interpretation of deep learning model in ECG classification: A comprehensive evaluation of feature attribution methods. \textit{Comput Biol Med} 2024;182:109088. DOI 10.1016/j.compbiomed.2024.109088 & \href{https://doi.org/10.1016/j.compbiomed.2024.109088}{DOI} · \href{https://github.com/SNU-DRL/Attribution-ECG}{GitHub} & sim (PDF fornecido pelo aluno) \\ \addlinespace[1pt]
+Wagner P, Mehari T, Haverkamp W, Strodthoff N. Explaining deep learning for ECG analysis: Building blocks for auditing and knowledge discovery. \textit{Comput Biol Med} 2024;176:108525. arXiv 2305.17043 & \href{https://arxiv.org/html/2305.17043v2}{arXiv} & parcial (\textasciitilde{}70\%) \\ \addlinespace[1pt]
+Goettling M, Hammer A, Malberg H, Schmidt M. xECGArch: a trustworthy deep learning architecture for interpretable ECG analysis considering short-term and long-term features. \textit{Sci Rep} 2024;14. DOI 10.1038/s41598-024-63656-x & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC11161651/}{PMC11161651} & sim \\ \addlinespace[1pt]
+Storås AM, Mæland S, Isaksen JL, Hicks SA, Thambawita V, Graff C, Hammer HL, Halvorsen P, Riegler MA, Kanters JK. Evaluating gradient-based explanation methods for neural network ECG analysis using heatmaps. \textit{JAMIA} 2025;32(1):79–88. DOI 10.1093/jamia/ocae280 & \href{https://academic.oup.com/jamia/article/32/1/79/7876016}{OUP} & sim (PDF fornecido pelo aluno) \\ \addlinespace[1pt]
+Abdullah, Fatima Z, Abadian A, Sánchez Mejorada CG, Torres Ruiz MJ, Quintero Téllez R. Integration of Machine Learning Techniques in ECG-Based Multiclass Arrhythmia Classification with Explainability Analysis. \textit{Biosensors} 2026;16(6):326. DOI 10.3390/bios16060326 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13296925/}{PMC13296925} & parcial (\textasciitilde{}63\%) \\ \addlinespace[1pt]
+Kelly DA, Blake N. Quantifying Explainable AI-introduced signal noise on ECG data with Spectral Entropy. arXiv 2606.24974, 2026 (EUSIPCO 2026) & \href{https://arxiv.org/html/2606.24974}{arXiv} & sim (HTML) / não (só resumo), conforme a nota \\ \addlinespace[1pt]
+Lopes JF, Bressan FT, Bressan RS, Sanches DS. Comparative Evaluation of Deep Learning Models and Explainability Methods for ECG Heartbeat Classification. \textit{RECIMA21} 2026;7(10). DOI 10.47820/recima21.v7i10.9152 & \href{https://recima21.com.br/recima21/en/article/view/9152}{RECIMA21} & \textbf{não} \\ \addlinespace[1pt]
+Neves I, Folgado D, Santos S, Barandas M, Campagner A, Ronzio L, Cabitza F, Gamboa H. Interpretable heartbeat classification using local model-agnostic explanations on ECGs. \textit{Comput Biol Med} 2021;133:104393. DOI 10.1016/j.compbiomed.2021.104393 & \href{https://boa.unimib.it/handle/10281/324847}{BOA Unimib} & \textbf{não} \\ \addlinespace[1pt]
+Beck J, John A. Explainable AI (XAI) for Arrhythmia detection from electrocardiograms. arXiv 2508.17294, 2025 (preprint) & \href{https://arxiv.org/html/2508.17294v1}{arXiv} & sim \\ \addlinespace[1pt]
+Bragança, Souto. Unified time series classification framework for explainable artificial intelligence (UTS-XAI). \textit{Sci Rep} 2026. DOI 10.1038/s41598-026-49467-2 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13369486/}{PMC13369486} & parcial \\ \addlinespace[1pt]
+Knof et al. Quantitative Evaluation of xAI Methods for Multivariate Time Series (referência completa não obtida) & \href{https://publica.fraunhofer.de/handle/publica/472815}{Fraunhofer Publica} & \textbf{não} \\ \addlinespace[1pt]
+Avaliação de 16 métodos em 1D-ResNet (CODE → PTB-XL), bioRxiv 2025 (autores não registrados nas notas). DOI 10.1101/2025.02.14.638219 & \href{https://doi.org/10.1101/2025.02.14.638219}{bioRxiv} & \textbf{não} \\ \addlinespace[1pt]
+Zhang D, Yang S, Yuan X, Zhang P. Interpretable deep learning for automatic diagnosis of 12-lead electrocardiogram. \textit{iScience} 2021;24(4):102373. DOI 10.1016/j.isci.2021.102373; arXiv 2010.10328 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC8082080}{PMC8082080} & sim (PMC, sem suplemento) \\ \addlinespace[1pt]
+Bender T, Beinecke JM, …, Spicher N, et al. Analysis of a Deep Learning Model for 12-Lead ECG Classification Reveals Learned Features Similar to Diagnostic Criteria. \textit{IEEE JBHI} 2023. DOI 10.1109/JBHI.2023.3271858 & \href{https://arxiv.org/pdf/2211.01738}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Strodthoff N, Wagner P, Schaeffter T, Samek W. Deep Learning for ECG Analysis: Benchmarks and Insights from PTB-XL. \textit{IEEE JBHI} 2021. DOI 10.1109/JBHI.2020.3022989 & \href{https://arxiv.org/pdf/2004.13701}{arXiv} & sim (seção de interpretabilidade) \\ \addlinespace[1pt]
+Hicks SA, Isaksen JL, Thambawita V, …, Riegler MA, Kanters JK. Explaining deep neural networks for knowledge discovery in electrocardiogram analysis. \textit{Sci Rep} 2021;11:10949. DOI 10.1038/s41598-021-90285-5 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC8154909/}{PMC8154909} & sim \\ \addlinespace[1pt]
+Storås AM et al. Usefulness of Heat Map Explanations for Deep-Learning-Based Electrocardiogram Analysis. \textit{Diagnostics} 2023;13(14):2345. DOI 10.3390/diagnostics13142345 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10378376/}{PMC10378376} & sim \\ \addlinespace[1pt]
+Jo YY, Kwon JM, et al. (autoria não confirmada). Explainable artificial intelligence to detect atrial fibrillation using electrocardiogram. \textit{Int J Cardiol} 2021;328:104–110. DOI 10.1016/j.ijcard.2020.11.053 & \href{https://www.aminer.org/pub/5fcb5b25d4150a363cc9762f/explainable-artificial-intelligence-to-detect-atrial-fibrillation-using-electrocardiogram}{AMiner} & \textbf{não} \\ \addlinespace[1pt]
+Jang JH, Jo YY. ExECG: An Explainable AI Framework for ECG models. arXiv 2605.19258, 2026 & \href{https://arxiv.org/pdf/2605.19258}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Salih A et al. (revisão de avaliação de XAI em cardiologia). \textit{Artificial Intelligence Review} 2024;57(9). DOI 10.1007/s10462-024-10852-w & \href{https://pmc.ncbi.nlm.nih.gov/articles/pmid/39132011}{PMC/PubMed} · \href{https://link.springer.com/article/10.1007/s10462-024-10852-w}{Springer} & \textbf{não} \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+\subsection{Séries temporais (benchmarks, revisões, métodos de avaliação)}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Referência} & \textbf{Link} & \textbf{Lido na íntegra} \\
+\midrule
+\endhead
+Schlegel U, Arnout H, El-Assady M, Oelke D, Keim D. Towards a Rigorous Evaluation of XAI Methods on Time Series. ICCVW 2019, pp. 4197–4201. DOI 10.1109/ICCVW.2019.00516 & \href{https://arxiv.org/abs/1909.07082}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Ismail AA, Gunady M, Corrada Bravo H, Feizi S. Benchmarking Deep Learning Interpretability in Time Series Predictions. NeurIPS 2020. arXiv 2010.13924 & \href{https://arxiv.org/abs/2010.13924}{arXiv} · \href{https://proceedings.neurips.cc/paper/2020/file/47a3893cc405396a5c30d91320572d6d-Paper.pdf}{PDF} & sim \\ \addlinespace[1pt]
+Rojat T, Puget R, Filliat D, Del Ser J, Gelin R, Díaz-Rodríguez N. Explainable Artificial Intelligence (XAI) on Time Series Data: A Survey. arXiv 2104.00950 (preprint) & \href{https://arxiv.org/abs/2104.00950}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Šimić I, Sabol V, Veas E. XAI Methods for Neural Time Series Classification: A Brief Review. arXiv 2108.08009 (ICML WHI) & \href{https://arxiv.org/abs/2108.08009}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Crabbé J, van der Schaar M. Explaining Time Series Predictions with Dynamic Masks. ICML 2021, PMLR 139:2166–2177 & \href{https://arxiv.org/abs/2106.05303}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Mercier D, Bhatt J, Dengel A, Ahmed S. Time to Focus: A Comprehensive Benchmark Using Time Series Attribution Methods. ICAART 2022. DOI 10.5220/0010904400003116 & \href{https://arxiv.org/abs/2202.03759}{arXiv} & sim \\ \addlinespace[1pt]
+Theissler A, Spinnato F, Schlegel U, Guidotti R. Explainable AI for Time Series Classification: A Review, Taxonomy and Research Directions. \textit{IEEE Access} 2022;10:100700–100724. DOI 10.1109/ACCESS.2022.3207765 & \href{https://kops.uni-konstanz.de/handle/123456789/59034}{KOPS} & sim (dirigida) \\ \addlinespace[1pt]
+Schlegel U, Keim D. A Deep Dive into Perturbations as Evaluation Technique for Time Series XAI. xAI 2023, CCIS 1903, pp. 165–180. DOI 10.1007/978-3-031-44070-0\_9 & \href{https://arxiv.org/abs/2307.05104}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Enguehard J. Learning Perturbations to Explain Time Series Predictions. ICML 2023 & \href{https://arxiv.org/abs/2305.18840}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Nguyen TT, Le Nguyen T, Ifrim G. Robust Explainer Recommendation for Time Series Classification (AMEE). \textit{Data Min Knowl Disc} 2024 & \href{https://arxiv.org/abs/2306.05501}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Serramazza DI, Nguyen TT, Le Nguyen T, Ifrim G. Evaluating Explanation Methods for Multivariate Time Series Classification. arXiv 2308.15223 (AALTD 2023; não confirmado) & \href{https://arxiv.org/abs/2308.15223}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Serramazza DI, Le Nguyen T, Ifrim G. Improving the Evaluation and Actionability of Explanation Methods for Multivariate Time Series Classification. arXiv 2406.12507 & \href{https://arxiv.org/abs/2406.12507}{arXiv} & sim (dirigida) \\ \addlinespace[1pt]
+Höllig J, Kulbach C, Thoma S. TSInterpret: A unified framework for time series interpretability. arXiv 2208.05280 & \href{https://arxiv.org/abs/2208.05280}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Höllig J, Thoma S, Grimm F. XTSC-Bench: Quantitative Benchmarking for Explainers on Time Series Classification. ICMLA 2023. DOI 10.1109/ICMLA58977.2023.00168 & \href{https://arxiv.org/abs/2310.14957}{arXiv} & sim \\ \addlinespace[1pt]
+Queen O et al. Encoding Time-Series Explanations through Self-Supervised Model Behavior Consistency (TimeX). arXiv 2306.02109 (NeurIPS 2023, não confirmado) & \href{https://arxiv.org/abs/2306.02109}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Šimić I, Sabol V, Veas E. Perturbation Effect: A Metric to Counter Misleading Validation of Feature Attribution. CIKM 2022, pp. 1798–1807. DOI 10.1145/3511808.3557418 & \href{https://graz.elsevierpure.com/en/publications/perturbation-effect-a-metric-to-counter-misleading-validation-of-}{Graz Pure} & \textbf{não} \\ \addlinespace[1pt]
+Šimić I, Veas E, Sabol V. A comprehensive analysis of perturbation methods in explainable AI feature attribution validation for neural time series classifiers. \textit{Sci Rep} 2025;15:26607. DOI 10.1038/s41598-025-09538-2 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12284047/}{PMC12284047} & parcial (ferramenta) \\ \addlinespace[1pt]
+Baer G, Grau I, Zhang C, Van Gorp P. Class-Dependent Perturbation Effects in Evaluating Time Series Attributions. xAI 2025, CCIS 2579 & \href{https://arxiv.org/abs/2502.17022}{arXiv} & sim (dirigida) / parcial \\ \addlinespace[1pt]
+Baer G, Grau I, Zhang C, Van Gorp P. Why Do Class-Dependent Evaluation Effects Occur with Time Series Feature Attributions? A Synthetic Data Investigation. arXiv 2506.11790 & \href{https://arxiv.org/abs/2506.11790}{arXiv} & sim (dirigida) / parcial \\ \addlinespace[1pt]
+Löffler C, Lai W-C, Zanca D, Schmidt L, Eskofier BM, Mutschler C. Don't Get Me Wrong: How to Apply Deep Visual Interpretations to Time Series. \textit{Applied Intelligence} 2025. DOI 10.1007/s10489-025-06798-3 & \href{https://arxiv.org/abs/2203.07861}{arXiv} & parcial \\ \addlinespace[1pt]
+Peter, Gumpfer N, Fischer, Seifert, Hannig J. Software Frameworks for Explainable AI in Time Series Classification: A Systematic Review. arXiv 2608.21449, 2026 (preprint) & \href{https://arxiv.org/abs/2608.21449}{arXiv} & sim (dirigida) / parcial \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+\subsection{EEG, outros sinais e domínios com as mesmas métricas}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Referência} & \textbf{Link} & \textbf{Lido na íntegra} \\
+\midrule
+\endhead
+Sujatha Ravindran A, Contreras-Vidal J. An empirical comparison of deep learning explainability approaches for EEG using simulated ground truth. \textit{Sci Rep} 2023;13:17709. DOI 10.1038/s41598-023-43871-8 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10584975/}{PMC10584975} & quase (\textasciitilde{}85–93\%) \\ \addlinespace[1pt]
+Cui J, Yuan L, Wang Z, Li R, Jiang T. Towards best practice of interpreting deep learning models for EEG-based brain computer interfaces. \textit{Front Comput Neurosci} 2023;17. DOI 10.3389/fncom.2023.1232925 & \href{https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2023.1232925/full}{Frontiers} & quase \\ \addlinespace[1pt]
+Mayor-Torres JM, Medina-DeVilliers S, Clarkson T, Lerner MD, Riccardi G. Evaluation of Interpretability for Deep Learning algorithms in EEG Emotion Recognition: A case study in Autism. \textit{Artif Intell Med} 2023;143:102545; arXiv 2111.13208 v6 & \href{https://arxiv.org/abs/2111.13208v6}{arXiv} & sim (arXiv v6); versão de periódico não lida \\ \addlinespace[1pt]
+Tonekaboni S, Joshi S, Campbell K, Duvenaud D, Goldenberg A. What went wrong and when? Instance-wise feature importance for time-series black-box models. NeurIPS 2020 & \href{https://proceedings.nips.cc/paper_files/paper/2020/file/08fa43588c2571ade19bc0fa5936e028-Paper.pdf}{PDF} & parcial \\ \addlinespace[1pt]
+Pellano KN, Strümke I, Ihlen EAF. From Movements to Metrics: Evaluating Explainable AI Methods in Skeleton-Based Human Activity Recognition. arXiv 2402.12790, 2024 & \href{https://arxiv.org/pdf/2402.12790}{arXiv} · \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10975804/}{PMC10975804} & sim \\ \addlinespace[1pt]
+Tempel F, Ihlen EAF, Adde L, Strümke I. Explaining Human Activity Recognition with SHAP: Validating Insights with Perturbation and Quantitative Measures. arXiv 2411.03714 v2, 2025 & \href{https://arxiv.org/html/2411.03714}{arXiv} & quase \\ \addlinespace[1pt]
+Zhang O, Ding C, Pereira T, Xiao R, Gadhoumi K, Meisel K, Lee RJ, Chen Y, Hu X. Explainability Metrics of Deep Convolutional Networks for Photoplethysmography Quality Assessment. \textit{IEEE Access} 2021;9:29736–29745. DOI 10.1109/access.2021.3054613 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC7978398/}{PMC7978398} & quase \\ \addlinespace[1pt]
+Mancini E, Paissan F, Torroni P, Ravanelli M, Subakan C. Investigating the Effectiveness of Explainability Methods in Parkinson's Detection from Speech. ICASSP 2025 Workshops. DOI 10.1109/ICASSPW65056.2025.11011035 & \href{https://arxiv.org/abs/2411.08013}{arXiv} & parcial \\ \addlinespace[1pt]
+Brüsch T, Wickstrøm KK, Schmidt MN, Alstrøm TS, Jenssen R. FreqRISE: Explaining time series using frequency masking. NLDL 2025 & \href{https://arxiv.org/abs/2406.13584}{arXiv} & parcial \\ \addlinespace[1pt]
+XACT: Learnable Time-Frequency Masks… arXiv 2609.29270, 2026 & \href{https://arxiv.org/abs/2609.29270}{arXiv} & não (citado via FreqRISE) \\ \addlinespace[1pt]
+Fouladgar N, Alirezaie M, Främling K. Metrics and Evaluations of Time Series Explanations: An Application in Affect Computing. \textit{IEEE Access} 2022. DOI 10.1109/ACCESS.2022.3155115 & \href{https://doi.org/10.1109/ACCESS.2022.3155115}{IEEE} & sim (PDF fornecido pelo aluno) \\ \addlinespace[1pt]
+Kang P, Li J, Jiang S, Shull PB. Reduce System Redundancy and Optimize Sensor Disposition for EMG–IMU Multimodal Fusion Human–Machine Interfaces With XAI. \textit{IEEE Trans Instrum Meas} 2023;72. DOI 10.1109/TIM.2022.3232159 & \href{https://www.aminer.org/pub/63aa20f090e50fcafd47f41d/reduce-system-redundancy-and-optimize-sensor-disposition-for-emg-imu-multimodal-fusion}{AMiner} & \textbf{não} \\ \addlinespace[1pt]
+Shen et al. On the reliability of feature attribution methods for speech classification. arXiv 2505.16406, 2025 & \href{https://arxiv.org/abs/2505.16406}{arXiv} & parcial \\ \addlinespace[1pt]
+Bommer P, Kretschmer M, Hedström A, Bareeva D, Höhne MM-C. Finding the right XAI method — A Guide for the Evaluation and Ranking of Explainable AI Methods in Climate Science. \textit{Artif Intell Earth Syst} 2024;3(3) & \href{https://arxiv.org/abs/2303.00652}{arXiv} · \href{https://journals.ametsoc.org/view/journals/aies/3/3/AIES-D-23-0074.1.pdf}{AMS PDF} & parcial \\ \addlinespace[1pt]
+Sturm I, Lapuschkin S, Samek W, Müller K-R. Interpretable deep neural networks for single-trial EEG classification. \textit{J Neurosci Methods} 2016;274:141–145. DOI 10.1016/j.jneumeth.2016.10.008 & \href{https://arxiv.org/abs/1604.08201}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Ellis CA, Sendi MSE, Miller RL, Calhoun VD. A Gradient-based Spectral Explainability Method for EEG Deep Learning Classifiers. bioRxiv 2021.07.14.452360 (versão 2022 na \textit{Front Neuroinform}) & \href{https://www.biorxiv.org/content/10.1101/2021.07.14.452360v2}{bioRxiv} & \textbf{não} \\ \addlinespace[1pt]
+Lapera Sancho, Ellis, Miller, Calhoun. Identifying Reproducibly Important EEG Markers of Schizophrenia with an Explainable Multi-Model Deep Learning Approach. EMBC 2024 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10888920/}{PMC10888920} & \textbf{não} \\ \addlinespace[1pt]
+Wilming R, Budding C, Müller K-R, Haufe S. Scrutinizing XAI using linear ground-truth data with suppressor variables. \textit{Machine Learning} 2022. DOI 10.1007/s10994-022-06167-y & \href{https://arxiv.org/abs/2111.07473v2}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Concept-based explainability for an EEG transformer model. arXiv 2307.12745, 2023 (autores não conferidos) & \href{https://arxiv.org/pdf/2307.12745}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+SomnoNet: A Lightweight and Interpretable Framework for Sleep Staging Using Single-Channel EEG. arXiv 2406.19246 & \href{https://arxiv.org/pdf/2406.19246}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+A somnologist's guide to explainable deep neural networks for sleep scoring. \textit{Somnologie} 2025 & \href{https://link.springer.com/article/10.1007/s11818-025-00504-8}{Springer} & \textbf{não} \\ \addlinespace[1pt]
+Yuan H et al. Self-supervised learning for human activity recognition using 700,000 person-days of wearable data. \textit{npj Digit Med} 2024 & \href{https://www.nature.com/articles/s41746-024-01062-3}{Nature} & \textbf{não} \\ \addlinespace[1pt]
+Explainable Artificial Intelligence (XAI) for EEG Analysis: A Survey on Recent Trends and Advancements. MDPI \textit{AI} 7(3):95 & \href{https://www.mdpi.com/2673-2688/7/3/95}{MDPI} & \textbf{não} \\ \addlinespace[1pt]
+EEG-PRISM: Physiologically-Grounded Interpretability of Predictions by EEG Foundation Models. arXiv 2608.13676 (preprint) & \href{https://arxiv.org/pdf/2608.13676}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+EEG-Xplain. arXiv 2609.15687, 2026 & \href{https://arxiv.org/abs/2609.15687}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Cortical-SSM (imagética motora). arXiv 2510.15371 & \href{https://arxiv.org/abs/2510.15371}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Artigo de decodificação de fala interna por EEG que cita o eMPRT. \textit{IEEE THMS} 2026. DOI 10.1109/THMS.2026.3690175 & \href{https://api.semanticscholar.org/graph/v1/paper/arXiv:2401.06465/citations}{citações do eMPRT} & \textbf{não} \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+\subsection{Métricas originais, meta-avaliação e qualidade × desempenho}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Referência} & \textbf{Link} & \textbf{Lido na íntegra} \\
+\midrule
+\endhead
+Hedström A et al. Quantus: An Explainable AI Toolkit for Responsible Evaluation of Neural Network Explanations and Beyond. \textit{JMLR} 2023;24 & \href{https://www.jmlr.org/papers/volume24/22-0142/22-0142.pdf}{JMLR} · \href{https://github.com/understandable-machine-intelligence-lab/Quantus}{GitHub} & não (consulta ao README e às categorias) \\ \addlinespace[1pt]
+Adebayo J et al. Sanity Checks for Saliency Maps. NeurIPS 2018. arXiv 1810.03292 & \href{https://arxiv.org/abs/1810.03292}{arXiv} & parcial (Seções 4, 5.1, 5.2) \\ \addlinespace[1pt]
+Hedström A, Weber L, Lapuschkin S, Höhne MM-C. Sanity Checks Revisited: An Exploration to Repair the Model Parameter Randomisation Test (sMPRT, eMPRT). NeurIPS 2023 XAIA Workshop. arXiv 2401.06465 & \href{https://arxiv.org/abs/2401.06465}{arXiv} & parcial / não (só resumo), conforme a nota \\ \addlinespace[1pt]
+Sixt L, Granz M, Landgraf T. When Explanations Lie: Why Many Modified BP Attributions Fail. ICML 2020. arXiv 1912.09818 & \href{https://arxiv.org/abs/1912.09818}{arXiv} & parcial / não, conforme a nota \\ \addlinespace[1pt]
+Hedström A, Bommer P, Wickstrøm KK, Samek W, Lapuschkin S, Höhne MM-C. The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus. \textit{TMLR} 2023 & \href{https://arxiv.org/abs/2302.07265}{arXiv} & parcial \\ \addlinespace[1pt]
+Tomsett R, Harborne D, Chakraborty S, Gurram P, Preece A. Sanity Checks for Saliency Metrics. AAAI 2020 (DOI 10.1609/aaai.v34i04.6064, não conferido) & \href{https://arxiv.org/abs/1912.01451}{arXiv} & parcial \\ \addlinespace[1pt]
+Rong Y, Leemann T, Borisov V, Kasneci G, Kasneci E. A Consistent and Efficient Evaluation Strategy for Attribution Methods (ROAD). ICML 2022 & \href{https://arxiv.org/abs/2202.00449}{arXiv} & parcial (resumo e introdução) \\ \addlinespace[1pt]
+Hooker S, Erhan D, Kindermans P-J, Kim B. A Benchmark for Interpretability Methods in Deep Neural Networks (ROAR). NeurIPS 2019 & \href{https://arxiv.org/abs/1806.10758}{arXiv} & parcial \\ \addlinespace[1pt]
+Krishna S, Han T, Gu A, Wu S, Jabbari S, Lakkaraju H. The Disagreement Problem in Explainable Machine Learning: A Practitioner's Perspective. \textit{TMLR} 2024 & \href{https://arxiv.org/abs/2202.01602}{arXiv} & parcial / não, conforme a nota \\ \addlinespace[1pt]
+The Disagreement Problem in Faithfulness Metrics. arXiv 2311.07763, 2023 & \href{https://arxiv.org/abs/2311.07763}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Bilodeau B, Jaques N, Koh PW, Kim B. Impossibility Theorems for Feature Attribution. \textit{PNAS} 2024;121(2) (DOI 10.1073/pnas.2304406120, não conferido) & \href{https://arxiv.org/abs/2212.11870}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Kindermans P-J, Hooker S, Adebayo J et al. The (Un)reliability of Saliency Methods. LNCS 11700, Springer, 2019 (não conferido) & \href{https://arxiv.org/abs/1711.00867}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Saporta A et al. Benchmarking saliency methods for chest X-ray interpretation. \textit{Nat Mach Intell} 2022;4:867–878. DOI 10.1038/s42256-022-00536-x & \href{https://asaporta.github.io/assets/pdf/chexlocalize.pdf}{PDF aberto} & parcial (sem suplementos) \\ \addlinespace[1pt]
+Zhou Y, Booth S, Ribeiro MT, Shah J. Do Feature Attribution Methods Correctly Attribute Features? AAAI 2022 & \href{https://arxiv.org/abs/2104.14403}{arXiv} & parcial \\ \addlinespace[1pt]
+Karimi A-H, Muandet K, Kornblith S, Schölkopf B, Kim B. On the Relationship Between Explanation and Prediction: A Causal View. ICML 2023 & \href{https://arxiv.org/abs/2212.06925}{arXiv} & parcial \\ \addlinespace[1pt]
+Crothers E, Viktor H, Japkowicz N. Robust Infidelity: When Faithfulness Measures on Masked Language Models Are Misleading. arXiv 2308.06795 & \href{https://arxiv.org/abs/2308.06795}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Madsen A, Meade N, Adlakha V, Reddy S. Evaluating the Faithfulness of Importance Measures in NLP by Recursively Masking Allegedly Important Tokens and Retraining. Findings of EMNLP 2022 (não conferido) & \href{https://arxiv.org/abs/2110.08412}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Etmann C et al. On the Connection Between Adversarial Robustness and Saliency Map Interpretability. ICML 2019 & \href{https://arxiv.org/abs/1905.04172}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Shah H, Jain P, Netrapalli P. Do Input Gradients Highlight Discriminative Features? NeurIPS 2021 & \href{https://arxiv.org/abs/2102.12781}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Samek W et al. Evaluating the Visualization of What a Deep Neural Network Has Learned. \textit{IEEE TNNLS} 2017 & \href{https://arxiv.org/abs/1509.06321}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Atanasova P, Simonsen JG, Lioma C, Augenstein I. A Diagnostic Study of Explainability Techniques for Text Classification. EMNLP 2020 (não conferido) & \href{https://arxiv.org/abs/2009.13295}{arXiv} & parcial \\ \addlinespace[1pt]
+Balagopalan A et al. The Road to Explainability is Paved with Bias: Measuring the Fairness of Explanations. FAccT 2022 & \href{https://arxiv.org/abs/2205.03295}{arXiv} · \href{https://facctconference.org/static/pdfs_2022/facct22-3533179.pdf}{PDF FAccT} & parcial \\ \addlinespace[1pt]
+Fresz B, Loercher L, Huber MF. Classification Metrics for Image Explanations: Towards Building Reliable XAI-Evaluations. FAccT 2024. DOI 10.1145/3630106.3658537 & \href{https://arxiv.org/abs/2406.05068}{arXiv} & parcial \\ \addlinespace[1pt]
+Dai J, Upadhyay S, Aïvodji U, Bach SH, Lakkaraju H. Fairness via Explanation Quality: Evaluating Disparities in the Quality of Post hoc Explanations. AIES 2022. DOI 10.1145/3514094.3534159 & \href{https://arxiv.org/abs/2205.07277}{arXiv} & sim (exceto apêndices) \\ \addlinespace[1pt]
+Nauta M et al. From Anecdotal Evidence to Quantitative Evaluation Methods: A Systematic Review on Evaluating Explainable AI. \textit{ACM Comput Surv} 2023;55(13s) (DOI 10.1145/3583558, não conferido) & \href{https://arxiv.org/abs/2201.08164}{arXiv} & parcial \\ \addlinespace[1pt]
+Agarwal C et al. OpenXAI: Towards a Transparent Evaluation of Post hoc Model Explanations. NeurIPS 2022 Datasets \& Benchmarks & \href{https://arxiv.org/abs/2206.11104}{arXiv} & parcial \\ \addlinespace[1pt]
+Biased Binary Attribute Classifiers Ignore the Majority Classes. arXiv 2403.14435 & \href{https://arxiv.org/html/2403.14435}{arXiv} & \textbf{não} \\ \addlinespace[1pt]
+Zhang et al. Towards Fine-Grained Interpretability: Counterfactual Explanations for Misclassification with Saliency Partition. CVPR 2025 & \href{https://openaccess.thecvf.com/content/CVPR2025/papers/Zhang_Towards_Fine-Grained_Interpretability_Counterfactual_Explanations_for_Misclassification_with_Saliency_Partition_CVPR_2025_paper.pdf}{CVF} & \textbf{não} \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+
+
+\section{Artigos para baixar (não lidos na íntegra)}
+
+\textbf{Já lidos (28/10/2026), a partir dos PDFs fornecidos pelo aluno:} Suh et al. 2024 (\textit{Comput Biol Med}), Storås et al. 2025 (\textit{JAMIA}), Turbé et al. 2023 (versão publicada na \textit{Nat Mach Intell}) e Fouladgar et al. 2022 (\textit{IEEE Access}). \textbf{Já disponíveis no projeto} (\texttt{\textasciitilde{}/Documentos/tcc artigos/}, com fichamento ou leitura para o documento de seleção de métricas): Hedström et al. 2023 (eMPRT), Sixt et al. 2020 (Random Logit) e Adebayo et al. 2018 (MPRT).
+
+A lista está ordenada pelo impacto sobre afirmações do TCC. A coluna ``acesso'' indica se o texto já está aberto (arXiv, PMC, bioRxiv), caso em que a leitura completa só não foi feita, ou se provavelmente exige acesso institucional (Periódicos CAPES / Unifesp).
+
+\subsection{Prioridade 1 — afetam afirmações diretas do TCC}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Artigo} & \textbf{DOI / link} & \textbf{Por que ler} & \textbf{Acesso} \\
+\midrule
+\endhead
+Arends et al. 2026, material suplementar (Tabela S3) & \href{https://academic.oup.com/ehjdh/article/7/3/ztag038/8512917}{10.1093/ehjdh/ztag038} & Autoconsistência do GradientSHAP por método e por classe & aberto \\ \addlinespace[1pt]
+Šimić et al. 2025, \textit{Sci Rep} 15:26607 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC12284047/}{10.1038/s41598-025-09538-2} & Lido só por ferramenta; conferir recomendações de perturbação e tamanho de região & aberto \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+\subsection{Prioridade 2 — comparadores e ressalvas}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Artigo} & \textbf{DOI / link} & \textbf{Por que ler} & \textbf{Acesso} \\
+\midrule
+\endhead
+Salih et al. 2024, \textit{Artif Intell Rev} 57(9) & \href{https://link.springer.com/article/10.1007/s10462-024-10852-w}{10.1007/s10462-024-10852-w} & Número de estudos e percentuais da revisão de cardiologia & aberto (PMC) / CAPES \\ \addlinespace[1pt]
+Neves et al. 2021, \textit{Comput Biol Med} 133:104393 & \href{https://boa.unimib.it/handle/10281/324847}{10.1016/j.compbiomed.2021.104393} & Valores de Jaccard, queda de desempenho e baseline zero × média & CAPES \\ \addlinespace[1pt]
+Jo et al. 2021, \textit{Int J Cardiol} 328:104–110 & \href{https://www.aminer.org/pub/5fcb5b25d4150a363cc9762f/explainable-artificial-intelligence-to-detect-atrial-fibrillation-using-electrocardiogram}{10.1016/j.ijcard.2020.11.053} & Como foi calculado o ``explainability AUC''; confirmar autoria & CAPES \\ \addlinespace[1pt]
+Lopes et al. 2026, \textit{RECIMA21} 7(10) & \href{https://recima21.com.br/recima21/en/article/view/9152}{10.47820/recima21.v7i10.9152} & Fidelidade por classe em ECG (definição e números) & aberto (provável) \\ \addlinespace[1pt]
+Wagner et al. 2024, \textit{Comput Biol Med} 176:108525 & \href{https://arxiv.org/html/2305.17043v2}{arXiv 2305.17043} & Completar a leitura (\textasciitilde{}70\% lido) & aberto / CAPES \\ \addlinespace[1pt]
+Abdullah et al. 2026, \textit{Biosensors} 16(6):326 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC13296925/}{10.3390/bios16060326} & Conclusão não lida; baseline da deleção & aberto \\ \addlinespace[1pt]
+Löffler et al. 2025, \textit{Applied Intelligence} & \href{https://arxiv.org/abs/2203.07861}{10.1007/s10489-025-06798-3} & Fidelidade × F1 por classe; inter-class sensitivity & aberto / CAPES \\ \addlinespace[1pt]
+Saporta et al. 2022, \textit{Nat Mach Intell} 4:867–878 (suplemento) & \href{https://asaporta.github.io/assets/pdf/chexlocalize.pdf}{10.1038/s42256-022-00536-x} & mIoU por patologia ao lado do AUROC & aberto (PDF) / CAPES \\ \addlinespace[1pt]
+Kang et al. 2023, \textit{IEEE Trans Instrum Meas} 72 & \href{https://www.aminer.org/pub/63aa20f090e50fcafd47f41d/reduce-system-redundancy-and-optimize-sensor-disposition-for-emg-imu-multimodal-fusion}{10.1109/TIM.2022.3232159} & Quais métricas (Yeh, Bhatt, Quantus?) em EMG–IMU & CAPES \\ \addlinespace[1pt]
+Šimić et al. 2022, CIKM & \href{https://graz.elsevierpure.com/en/publications/perturbation-effect-a-metric-to-counter-misleading-validation-of-}{10.1145/3511808.3557418} & Perturbation Effect Size (MoRF × LeRF) & CAPES \\ \addlinespace[1pt]
+Artigo de EEG que cita o eMPRT, \textit{IEEE THMS} 2026 & \href{https://api.semanticscholar.org/graph/v1/paper/arXiv:2401.06465/citations}{10.1109/THMS.2026.3690175} & Verificar se aplica o eMPRT em EEG & CAPES \\ \addlinespace[1pt]
+Knof et al. (Fraunhofer) & \href{https://publica.fraunhofer.de/handle/publica/472815}{Publica} & Truthfulness, estabilidade e consistência em ECG de infarto & aberto (provável) \\ \addlinespace[1pt]
+bioRxiv 2025, 16 métodos em ECG & \href{https://doi.org/10.1101/2025.02.14.638219}{10.1101/2025.02.14.638219} & DeepLiftShap e plausibilidade clínica & aberto \\ \addlinespace[1pt]
+Bommer et al. 2024, \textit{AIES} 3(3) & \href{https://journals.ametsoc.org/view/journals/aies/3/3/AIES-D-23-0074.1.pdf}{AMS PDF} & Configuração completa do Quantus com Random Logit e MPRT & aberto \\ \addlinespace[1pt]
+MetaQuantus (Hedström et al. 2023, \textit{TMLR}) & \href{https://arxiv.org/abs/2302.07265}{arXiv 2302.07265} & Confiabilidade de FaithCorr, Complexity e Random Logit & aberto \\ \addlinespace[1pt]
+Tomsett et al. 2020, AAAI & \href{https://arxiv.org/abs/1912.01451}{arXiv 1912.01451} & Dependência das métricas em relação à classe e à confiança & aberto \\ \addlinespace[1pt]
+Kelly \& Blake 2026 & \href{https://arxiv.org/html/2606.24974}{arXiv 2606.24974} & Leitura divergente entre as notas; conferir os valores do GradientShap & aberto \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+\subsection{Prioridade 3 — contexto e meta-avaliação}
+
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{xltabular}{\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Artigo} & \textbf{DOI / link} & \textbf{Acesso} \\
+\midrule
+\endhead
+Rong et al. 2022 (ROAD), ICML & \href{https://arxiv.org/abs/2202.00449}{arXiv 2202.00449} & aberto \\ \addlinespace[1pt]
+Krishna et al. 2024, \textit{TMLR} & \href{https://arxiv.org/abs/2202.01602}{arXiv 2202.01602} & aberto \\ \addlinespace[1pt]
+Bilodeau et al. 2024, \textit{PNAS} 121(2) & \href{https://arxiv.org/abs/2212.11870}{10.1073/pnas.2304406120} & aberto / CAPES \\ \addlinespace[1pt]
+Kindermans et al. 2019, LNCS 11700 & \href{https://arxiv.org/abs/1711.00867}{arXiv 1711.00867} & aberto / CAPES \\ \addlinespace[1pt]
+Hooker et al. 2019 (ROAR), NeurIPS & \href{https://arxiv.org/abs/1806.10758}{arXiv 1806.10758} & aberto \\ \addlinespace[1pt]
+Nauta et al. 2023, \textit{ACM Comput Surv} 55(13s) & \href{https://arxiv.org/abs/2201.08164}{10.1145/3583558} & aberto / CAPES \\ \addlinespace[1pt]
+The Disagreement Problem in Faithfulness Metrics, 2023 & \href{https://arxiv.org/abs/2311.07763}{arXiv 2311.07763} & aberto \\ \addlinespace[1pt]
+Karimi et al. 2023, ICML & \href{https://arxiv.org/abs/2212.06925}{arXiv 2212.06925} & aberto \\ \addlinespace[1pt]
+Zhou et al. 2022, AAAI & \href{https://arxiv.org/abs/2104.14403}{arXiv 2104.14403} & aberto \\ \addlinespace[1pt]
+Crothers et al. & \href{https://arxiv.org/abs/2308.06795}{arXiv 2308.06795} & aberto \\ \addlinespace[1pt]
+Madsen et al. 2022 & \href{https://arxiv.org/abs/2110.08412}{arXiv 2110.08412} & aberto \\ \addlinespace[1pt]
+Etmann et al. 2019 & \href{https://arxiv.org/abs/1905.04172}{arXiv 1905.04172} & aberto \\ \addlinespace[1pt]
+Shah et al. 2021 & \href{https://arxiv.org/abs/2102.12781}{arXiv 2102.12781} & aberto \\ \addlinespace[1pt]
+Samek et al. 2017, \textit{IEEE TNNLS} & \href{https://arxiv.org/abs/1509.06321}{arXiv 1509.06321} & aberto / CAPES \\ \addlinespace[1pt]
+Atanasova et al. 2020, EMNLP & \href{https://arxiv.org/abs/2009.13295}{arXiv 2009.13295} & aberto \\ \addlinespace[1pt]
+Balagopalan et al. 2022, FAccT & \href{https://arxiv.org/abs/2205.03295}{arXiv 2205.03295} & aberto \\ \addlinespace[1pt]
+Fresz et al. 2024, FAccT & \href{https://arxiv.org/abs/2406.05068}{10.1145/3630106.3658537} & aberto \\ \addlinespace[1pt]
+OpenXAI (Agarwal et al. 2022) & \href{https://arxiv.org/abs/2206.11104}{arXiv 2206.11104} & aberto \\ \addlinespace[1pt]
+Biased Binary Attribute Classifiers… & \href{https://arxiv.org/html/2403.14435}{arXiv 2403.14435} & aberto \\ \addlinespace[1pt]
+Zhang et al., CVPR 2025 & \href{https://openaccess.thecvf.com/content/CVPR2025/papers/Zhang_Towards_Fine-Grained_Interpretability_Counterfactual_Explanations_for_Misclassification_with_Saliency_Partition_CVPR_2025_paper.pdf}{CVF} & aberto \\ \addlinespace[1pt]
+Tonekaboni et al. 2020, NeurIPS & \href{https://proceedings.nips.cc/paper_files/paper/2020/file/08fa43588c2571ade19bc0fa5936e028-Paper.pdf}{PDF} & aberto \\ \addlinespace[1pt]
+Ravindran \& Contreras-Vidal 2023; Cui et al. 2023; Tempel et al. 2025; Zhang et al. 2021 (PPG) — leitura ``quase'' completa & ver Referências & aberto \\ \addlinespace[1pt]
+Mayor-Torres et al., \textit{Artif Intell Med} 143:102545 (versão de periódico) & \href{https://researchdiscovery.drexel.edu/esploro/outputs/journalArticle/Evaluation-of-interpretability-for-deep-learning/991021861849404721}{Drexel} & CAPES \\ \addlinespace[1pt]
+Mancini et al. 2025; FreqRISE; Shen et al. 2025; UTS-XAI 2026; Peter et al. 2026; Baer et al. 2025a/b — leitura parcial & ver Referências & aberto \\ \addlinespace[1pt]
+Sturm et al. 2016, \textit{J Neurosci Methods} 274:141–145 & \href{https://arxiv.org/abs/1604.08201}{10.1016/j.jneumeth.2016.10.008} & aberto / CAPES \\ \addlinespace[1pt]
+Ellis et al. 2022, \textit{Front Neuroinform} & \href{https://www.biorxiv.org/content/10.1101/2021.07.14.452360v2}{bioRxiv} & aberto \\ \addlinespace[1pt]
+Lapera Sancho et al., EMBC 2024 & \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10888920/}{PMC10888920} & aberto \\ \addlinespace[1pt]
+Wilming et al. 2022, \textit{Machine Learning} & \href{https://arxiv.org/abs/2111.07473v2}{10.1007/s10994-022-06167-y} & aberto / CAPES \\ \addlinespace[1pt]
+SomnoNet; guia de \textit{Somnologie} 2025; Yuan et al. 2024 (\textit{npj Digit Med}); survey MDPI \textit{AI}; EEG-PRISM; EEG-Xplain; Cortical-SSM; concept-based EEG transformer & ver Referências & aberto / CAPES (\textit{Somnologie}) \\ \addlinespace[1pt]
+Šimić et al. 2021 (brief review); TSInterpret; TimeX & ver Referências & aberto \\ \addlinespace[1pt]
+\bottomrule
+\end{xltabular}}
+
+
+
+\end{document}
