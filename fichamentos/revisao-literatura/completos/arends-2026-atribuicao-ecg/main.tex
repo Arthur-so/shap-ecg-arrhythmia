@@ -1,0 +1,393 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: atribuição em ECG (Arends et al.)}} \\[0.35em]
+    {\large ARENDS, B. K. O.; VAN AMSTERDAM, W. A. C.; VAN DER HARST, P.; VAN SMEDEN, M.; VAN ES, R.; VAN DE LEUR, R. R. \textit{Signal or noise? Evaluating commonly used attribution methods for explaining deep neural networks in electrocardiogram classification}. European Heart Journal -- Digital Health, v.~7, n.~3, ztag038, 2026} \\[0.3em]
+    \textbf{Tema:} avaliação de 12 métodos de atribuição (incluindo GradientSHAP) em ECG \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1093/ehjdh/ztag038} \\[0.2em]
+    \textbf{Leitura:} íntegra (versão publicada, texto completo do PMC12980500, sem paginação; material suplementar .docx com Tabelas S1--S3 e Figuras S1--S5) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} O PDF diagramado do periódico não pôde ser baixado (o PMC e a OUP bloqueiam o download automático); a leitura foi feita no texto completo da versão publicada, distribuído pelo PMC sem números de página. Por isso, o marcador de cada citação indica a \textbf{seção} do artigo (por exemplo, \pagechip{Métodos}) e, para o material suplementar, \pagechip{Supl.} com o nome da tabela ou seção. As figuras foram lidas nos arquivos de imagem do próprio artigo. As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica o trabalho; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} relaciona o artigo ao TCC.
+
+\begin{infobox}[note]{Por que este artigo}
+É o trabalho mais próximo do TCC em desenho: redes ResNet-1D treinadas em ECG de 12 derivações, \textbf{nove classes diagnósticas}, o \textbf{GradientSHAP} entre os métodos avaliados (com a implementação do Captum, a mesma do TCC) e três tipos de teste que o TCC também faz, de outra forma: estabilidade (aqui, entre modelos treinados com sementes diferentes), dependência dos pesos (randomização progressiva, como o MPRT/eMPRT) e fidelidade por perturbação no estilo do ROAD. Além disso, os autores comentam a relação entre a qualidade das explicações e o desempenho por classe (AUPRC), que é a pergunta do TCC, e o suplemento traz a autoconsistência \textbf{por classe e por método}, o que permite uma leitura descritiva dessa relação.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema}
+Mapas de atribuição (\textit{heatmaps}) são usados em pesquisa clínica para “mostrar” onde um modelo de ECG olha, mas quase sempre são julgados por poucos exemplos que “parecem certos”. Os autores perguntam se esses mapas são \textbf{claros} (apontam sempre para os mesmos traços) e \textbf{fiéis} ao modelo (refletem o que ele de fato usa), seguindo os critérios de Markus et al.\ (2021): interpretabilidade (clareza e parcimônia) e fidelidade (completude e correção, \textit{soundness}).
+
+\section{A ideia central}
+Aplicar 12 métodos de atribuição a 90 modelos (9 tarefas binárias $\times$ 10 sementes de inicialização) e medir, em grande escala (mais de 1,5 milhão de mapas), quatro propriedades:
+\begin{enumerate}
+\item \textbf{Similaridade entre métodos:} os métodos concordam entre si no mesmo ECG e modelo?
+\item \textbf{Autoconsistência:} o mesmo método dá mapas parecidos para modelos treinados com sementes diferentes nos mesmos dados?
+\item \textbf{Dependência dos pesos:} o mapa muda quando os pesos do modelo são sorteados camada a camada?
+\item \textbf{Perturbação da entrada:} remover (substituir) os pontos mais importantes segundo o mapa derruba o desempenho do modelo?
+\end{enumerate}
+
+\section{Dados e modelos}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} \\
+\midrule
+Base & Arquivo do UMC Utrecht, 1997--2020: 873\,710 ECGs de 192\,257 pacientes (16 anos ou mais) \\
+Entrada & \textbf{Batimento mediano} (\textit{median beat}) gerado pelo algoritmo Marquette 12SL, 500~Hz, \textbf{8 derivações} (I, II, V1--V6) \\
+Classes & 9: ritmo sinusal, fibrilação atrial, bradicardia sinusal, taquicardia sinusal, BAV de 1.º grau, BRD, BRE, baixa voltagem do QRS, hipertrofia ventricular esquerda \\
+Rótulos & Laudo do 12SL ou corrigido por médico, convertido por mineração de texto \\
+Divisão & Por paciente: validação 250 pacientes (1\,086 ECGs), teste 250 pacientes (1\,351 ECGs), o restante no treino \\
+Modelo & ResNet 1D com 22 camadas convolucionais (kernel 7), uma \textbf{rede binária por classe}, 10 inicializações aleatórias: 90 modelos \\
+Limiar & Estatística J de Youden na validação \\
+Desempenho & AUROC média $> 0{,}95$ em todas as classes; AUPRC média $> 0{,}85$ em 8 das 9 (bradicardia sinusal: 0,64) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Os conjuntos de validação e de teste foram mantidos pequenos de propósito: o custo do trabalho está em gerar os mapas, e não em treinar os modelos.
+
+\section{Métodos de explicação}
+Doze métodos do Captum, em quatro famílias:
+\begin{itemize}
+\item \textbf{Sensibilidade (gradiente local):} Saliency, SmoothGrad.
+\item \textbf{Gradiente $\times$ entrada:} Gradient*Input.
+\item \textbf{Ativação (CAM e retropropagação guiada):} Guided Backpropagation, GradCAM, Guided GradCAM.
+\item \textbf{Contribuição com referência (\textit{baseline}):} Shapley sampling, DeepLift, Integrated Gradients (IG), IG + SmoothGrad, \textbf{GradientSHAP}, DeepLiftSHAP.
+\end{itemize}
+\textbf{Configuração do GradientSHAP (suplemento).} Referência (\textit{baselines}) = \textbf{ECG médio do conjunto de validação}; \textbf{256 amostras}. O número de amostras de cada método com sorteio (SmoothGrad, Shapley sampling, IG + SmoothGrad e GradientSHAP) foi escolhido para que dois mapas do \textbf{mesmo} ECG e do \textbf{mesmo} modelo tivessem correlação de pelo menos 0,98. O DeepLiftSHAP usou 128 referências sorteadas da validação; o Shapley sampling, máscara de 240 segmentos (30 por derivação, 20 amostras cada).
+
+\section{Como os testes foram adaptados ao ECG}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{p{2.6cm}XX}
+\toprule
+\textbf{Teste} & \textbf{Como foi feito} & \textbf{Detalhes de ECG} \\
+\midrule
+Similaridade entre métodos & Correlação de Pearson ponto a ponto entre os mapas de dois métodos, por ECG, média sobre derivações; agregação sobre sementes e classes & Mapas suavizados antes com filtro de Savitzky--Golay (janela de 31 amostras, polinômio de grau 3); Spearman no suplemento \\ \addlinespace
+Autoconsistência & Pearson entre mapas do mesmo método para modelos de sementes diferentes, mesmo ECG; média sobre classes & Granularidade: ponto a ponto no batimento mediano \\ \addlinespace
+Dependência dos pesos & Randomização progressiva, camada a camada, da saída para a entrada; Pearson com o mapa original a cada passo & Feita só no modelo de \textbf{fibrilação atrial} (custo); 22 camadas \\ \addlinespace
+Perturbação & Versão modificada do ROAD (\textit{remove and debias}): 30 passos de 1\% dos pontos mais importantes (30\% no total), pelo valor absoluto da atribuição; mede-se a AUROC do modelo a cada passo & Valor de substituição: interpolação linear dos vizinhos com ruído gaussiano ($\sigma = 0{,}25$), para não deixar um padrão linear que o modelo reconheça \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Não há agregação por regiões do batimento nem por derivação: tudo é feito ponto a ponto no batimento mediano. A perturbação é medida no desempenho do conjunto (AUROC), e não na saída de cada exame.
+
+\section{Resultados principais}
+\subsection{Por método}
+Valores do suplemento (Tabela S3, autoconsistência, Pearson, média e desvio) e da Figura 3A do artigo (correlação com o GradientSHAP no mesmo modelo):
+\begin{center}\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Método} & \textbf{Autoconsistência (Tab. S3)} & \textbf{Correlação com GradientSHAP (Fig. 3A)} \\
+\midrule
+SmoothGrad & 0,80 (0,11) & $-0{,}08$ \\
+Shapley sampling & 0,61 (0,11) & 0,50 \\
+Saliency & 0,58 (0,11) & $-0{,}02$ \\
+IG SmoothGrad & 0,56 (0,11) & 0,96 \\
+DeepLiftSHAP & 0,56 (0,10) & 0,34 \\
+\textbf{GradientSHAP} & \textbf{0,55 (0,11)} & --- \\
+DeepLift & 0,53 (0,13) & 0,56 \\
+IG & 0,50 (0,13) & 0,63 \\
+Guided backpropagation & 0,48 (0,11) & 0,00 \\
+GradCAM & 0,47 (0,38) & 0,09 \\
+Gradient*Input & 0,35 (0,09) & 0,22 \\
+Guided GradCAM & 0,22 (0,15) & 0,01 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Dependência dos pesos (Fig. 4A):} a correlação com o mapa original cai em todos os métodos nos três primeiros passos, junto com a AUROC do modelo. A maioria, incluindo o GradientSHAP, vai para perto de zero; Saliency, SmoothGrad e Guided Backpropagation não chegam a zero.
+\item \textbf{Perturbação (Fig. 4B):} SmoothGrad derruba a AUROC até cerca de 0,50; DeepLiftSHAP, Gradient*Input e Saliency, até cerca de 0,65; a maioria dos demais, entre eles o GradientSHAP (leitura do gráfico), termina perto de 0,75; o GradCAM só leva a AUROC a 0,92.
+\end{itemize}
+
+\subsection{Por classe: autoconsistência e desempenho}
+A tabela junta o desempenho (Tabela S2, médias sobre as sementes) e a autoconsistência (Tabela S3). A coluna “média dos 12” foi calculada \textbf{neste fichamento} a partir da Tabela S3; o artigo não a apresenta nessa forma.
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Classe} & \textbf{AUPRC} & \textbf{F1 (micro)} & \textbf{GradientSHAP} & \textbf{Média dos 12} \\
+\midrule
+Ritmo sinusal & 0,986 & 0,935 & 0,56 & 0,58 \\
+BRD & 0,982 & 0,859 & 0,60 & 0,57 \\
+Taquicardia sinusal & 0,960 & 0,863 & 0,56 & 0,55 \\
+BAV 1.º grau & 0,928 & 0,737 & 0,52 & 0,60 \\
+BRE & 0,923 & 0,755 & \textbf{0,69} & 0,55 \\
+HVE & 0,876 & 0,756 & 0,54 & 0,52 \\
+Baixa voltagem QRS & 0,865 & 0,667 & \textbf{0,48} & 0,53 \\
+Fibrilação atrial & 0,851 & 0,654 & 0,62 & 0,54 \\
+Bradicardia sinusal & 0,640 & 0,634 & 0,56 & 0,55 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Leitura descritiva (deste fichamento): a autoconsistência do GradientSHAP não acompanha a ordem do desempenho. A classe de pior AUPRC (bradicardia sinusal) fica no meio (0,56); a maior autoconsistência é a de BRE (0,69), 5.ª em AUPRC; a menor, a de baixa voltagem do QRS (0,48), 7.ª. Na média dos 12 métodos, as classes também ficam numa faixa estreita (0,52 a 0,60).
+
+\begin{infobox}[warn]{Divergências numéricas entre texto e suplemento}
+O texto diz que a autoconsistência média por classe vai de 0,54 (baixa voltagem, HVE) a 0,62 (BAV 1.º grau); a média dos 12 métodos calculada da Tabela S3 vai de 0,52 a 0,60, com a mesma ordem nas pontas. O texto dá SmoothGrad $\rho = 0{,}82 \pm 0{,}12$ e Guided GradCAM $\rho = 0{,}29 \pm 0{,}28$; a Tabela S3 e a Figura 3B mostram 0,80 e 0,22. A Discussão cita $\rho = 0{,}52 \pm 0{,}14$ como média geral, compatível com a Tabela S3 (0,52). Os números do TCC devem citar a Tabela S3, indicando a fonte.
+\end{infobox}
+
+\section{Conclusões e limitações declaradas}
+\begin{itemize}
+\item Os métodos não são intercambiáveis: produzem padrões distintos, agrupados pela matemática de cada família.
+\item A autoconsistência entre sementes é moderada ($\rho = 0{,}52 \pm 0{,}14$), mesmo com todos os modelos tendo AUPRC alta.
+\item Saliency, SmoothGrad e Guided Backpropagation não dependem totalmente dos pesos aprendidos; o GradCAM quase não afeta o desempenho quando seus pontos são perturbados.
+\item Os mapas dizem só \textit{onde} algo importa (nível 1 de uma hierarquia de seis níveis proposta pelos autores), sem dizer \textit{o quê}.
+\item Recomendação: usar atribuição como ferramenta exploratória, com testes de sanidade e validação específicos da tarefa; considerar contrafactuais, protótipos e modelos interpretáveis.
+\item Limitações: nem todos os métodos e hiperparâmetros foram testados; contrafactuais generativos não foram implementados; a randomização foi feita só em um modelo (FA).
+\end{itemize}
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+O artigo é curto e empírico. A motivação está na Introdução; a configuração está em Métodos e no suplemento (hiperparâmetros e Tabelas S1--S3); os resultados estão em quatro subseções; a Discussão traz a leitura dos autores, a hierarquia de explicabilidade (Tabela 2) e as limitações. As citações abaixo seguem essa ordem.
+
+\begin{citacard}{\pagechip{Introdução} motivação}
+\begin{origquote}“Although attribution methods are routinely used in clinical AI research, they are rarely evaluated beyond small sets of illustrative examples. This practice assumes that explanations that ‘look right’ are also trustworthy, an assumption that is increasingly being challenged.”\end{origquote}
+\begin{tradquote}“Embora os métodos de atribuição sejam usados rotineiramente na pesquisa em IA clínica, raramente são avaliados além de pequenos conjuntos de exemplos ilustrativos. Essa prática supõe que explicações que ‘parecem certas’ também são confiáveis, uma suposição cada vez mais contestada.”\end{tradquote}
+\explab{Explicação}
+É a mesma justificativa do TCC: em ECG, os mapas SHAP costumam ser mostrados em poucos exames escolhidos. O TCC mede a qualidade de todos os 622 mapas com métricas quantitativas, em vez de julgar exemplos.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Introdução} critérios}
+\begin{origquote}“Interpretability, meaning that the explanation is clear (pointing to consistent features) and parsimonious (not overly complex); and fidelity, meaning that the explanation truthfully reflects how the model arrives at its prediction, encompassing completeness (sufficiently providing information to compute the output for a given input) and soundness (accurately reflecting the model’s decision-making process).”\end{origquote}
+\begin{tradquote}“Interpretabilidade, significando que a explicação é clara (aponta para características consistentes) e parcimoniosa (não excessivamente complexa); e fidelidade, significando que a explicação reflete verdadeiramente como o modelo chega à predição, abrangendo completude (dar informação suficiente para calcular a saída de uma entrada) e correção (refletir com exatidão o processo de decisão do modelo).”\end{tradquote}
+\explab{Explicação}
+Os critérios de Markus et al.\ organizam as métricas do TCC: “parcimoniosa” corresponde à complexidade (entropia por regiões); “clara/consistente”, à Consistency e à sensibilidade; “correção”, à Faithfulness Correlation/Estimate e aos testes de randomização. Serve como referência de vocabulário na fundamentação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Métodos} processamento do ECG}
+\begin{origquote}“The median beat ECG was generated at the time of acquisition by the contemporaneous Marquette 12SL algorithm (MUSE; GE Healthcare), which aligns beats within the 10-s recording and computes a representative, noise-reduced cycle. This approach avoided the beat-to-beat variability present in full-length recordings that would introduce unwanted heterogeneity into the attribution analyses.”\end{origquote}
+\begin{tradquote}“O ECG de batimento mediano foi gerado na aquisição pelo algoritmo Marquette 12SL da época (MUSE; GE Healthcare), que alinha os batimentos do registro de 10 s e calcula um ciclo representativo e com menos ruído. Isso evitou a variabilidade entre batimentos dos registros completos, que introduziria heterogeneidade indesejada nas análises de atribuição.”\end{tradquote}
+\explab{Explicação}
+Diferença importante em relação ao TCC: o modelo do artigo vê \textbf{um} batimento, e as atribuições são comparadas ponto a ponto nesse batimento. O TCC usa o registro de até 30 s, com vários batimentos, e resolve a heterogeneidade agregando o mapa em 36 regiões (derivação $\times$ pré-QRS/QRS/ST-T). Classes de ritmo que dependem da relação entre batimentos (AF, CAP, CVP no CPSC2018) não poderiam ser tratadas com um batimento mediano.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Supl.} hiperparâmetros}
+\begin{origquote}“For each method that involves a sampling operation (SmoothGrad, Shapley Sampling, IG + SmoothGrad and GradientSHAP), the number of samples was set to ensure a minimum correlation of 0.98 between the attribution maps produced when using the same input sample and model. We take this approach to correct for the natural decrease in correlation caused by the sampling operations.”\end{origquote}
+\begin{tradquote}“Para cada método que envolve sorteio (SmoothGrad, Shapley Sampling, IG + SmoothGrad e GradientSHAP), o número de amostras foi fixado para garantir correlação mínima de 0,98 entre os mapas produzidos com a mesma entrada e o mesmo modelo. Adotamos essa abordagem para corrigir a queda natural da correlação causada pelos sorteios.”\end{tradquote}
+\explab{Explicação}
+É a mesma preocupação do \textbf{piso} do TCC: dois mapas GradientSHAP do mesmo ECG e do mesmo modelo, com sementes diferentes, já diferem. O artigo resolve fixando um teto para essa variação (correlação $\geq 0{,}98$, alcançada com 256 amostras); o TCC a mede e a usa como régua (200 sorteios). Para comparação aproximada: o piso do TCC nas 36 regiões é uma distância $\ell_2$ de cerca de 0,18 entre mapas de norma 1, o que corresponde a cosseno de cerca de $1 - 0{,}18^2/2 \approx 0{,}98$. As medidas não são iguais (cosseno em regiões contra Pearson ponto a ponto), mas mostram que o nível de ruído do método é parecido.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Métodos} similaridade entre métodos}
+\begin{origquote}“Because the aim of this analysis was to describe how attribution methods relate to one another rather than to evaluate their correctness, correlation was interpreted as an index of methodological similarity rather than a measure of faithfulness.”\end{origquote}
+\begin{tradquote}“Como o objetivo desta análise era descrever como os métodos se relacionam entre si, e não avaliar se estão corretos, a correlação foi interpretada como índice de similaridade metodológica, e não como medida de fidelidade.”\end{tradquote}
+\explab{Explicação}
+Concordância entre métodos não é critério de qualidade. O TCC usa um único método (GradientSHAP) e não compara métodos; o cuidado vale para a discussão: o GradientSHAP do TCC ser parecido com outro método não provaria nada sobre a fidelidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Métodos} randomização progressiva}
+\begin{origquote}“To test this, model weights were progressively randomized layer by layer, starting from the output layer and moving towards the input layer. After each randomization step, new attribution maps were generated and their Pearson correlation with the original maps was computed. To reduce computational burden, the progressive randomization was performed on a single model trained to detect atrial fibrillation.”\end{origquote}
+\begin{tradquote}“Para testar isso, os pesos do modelo foram randomizados progressivamente, camada a camada, começando pela camada de saída e indo em direção à entrada. Após cada passo, novos mapas foram gerados e calculou-se sua correlação de Pearson com os mapas originais. Para reduzir o custo, a randomização progressiva foi feita em um único modelo, treinado para detectar fibrilação atrial.”\end{tradquote}
+\explab{Explicação}
+É o teste de Adebayo et al.\ (2018) em cascata, do qual o eMPRT do TCC é uma versão revisada. Duas diferenças: o TCC sorteia o modelo inteiro (3 sementes) e mede distâncias contra o piso nas 36 regiões, para as 9 classes; o artigo faz a cascata ponto a ponto num só modelo (FA). A queda da correlação no artigo não diz para onde o mapa aleatório aponta; no TCC, o mapa do modelo aleatório se concentra no QRS, um efeito que a correlação com o mapa original não revelaria.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Métodos} perturbação}
+\begin{origquote}“Instead of completely removing data points, the top 1\% of most highly attributed data points were iteratively replaced in 30 steps, resulting in a total of 30\% of the input data being perturbed. Perturbed values were generated using linearly interpolated neighbouring data points while introducing a small amount of Gaussian noise ( σ = 0.25) to prevent the model from learning a simple linear relationship.”\end{origquote}
+\begin{tradquote}“Em vez de remover completamente os pontos, o 1\% dos pontos mais atribuídos foi substituído iterativamente em 30 passos, num total de 30\% da entrada perturbada. Os valores substitutos foram gerados por interpolação linear dos pontos vizinhos, com um pouco de ruído gaussiano ($\sigma = 0{,}25$), para evitar que o modelo aprendesse uma relação linear simples.”\end{tradquote}
+\explab{Explicação}
+É a adaptação ao ECG do ROAD (Rong et al., 2022): o valor de substituição vem do próprio sinal (vizinhos), e não de zero, o que reduz a saída da distribuição (\textit{out-of-distribution}). O TCC substitui regiões inteiras por uma referência (zero ou média do treino) na Faithfulness Correlation e na Faithfulness Estimate; o artigo mostra uma alternativa e é argumento para discutir esse ponto como limitação. A seleção dos pontos é pelo valor absoluto da atribuição (legenda da Figura 4), ou seja, o sinal da atribuição é ignorado.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Resultados} similaridade entre métodos}
+\begin{origquote}“Within this baseline-dependent group, correlations ranged from 0.34 for DeepLiftSHAP to 0.96 for the closely related IG SmoothGrad and GradientSHAP, indicating a generally coherent set of attribution behaviours.”\end{origquote}
+\begin{tradquote}“Dentro desse grupo dependente de referência, as correlações foram de 0,34 para o DeepLiftSHAP a 0,96 para os muito próximos IG SmoothGrad e GradientSHAP, indicando um conjunto de comportamentos de atribuição em geral coerente.”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP é quase idêntico ao IG com ruído (0,96), o que é esperado: o GradientSHAP é, em essência, o IG com pontos e referências sorteados. Resultados sobre IG em ECG podem, com cautela, ser usados como indício para o GradientSHAP.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Resultados} autoconsistência}
+\begin{origquote}“If attribution methods provide stable and reliable explanations, they should produce similar attribution maps across models trained on the same data but with different random initializations. However, we observed substantial variation in self-consistency, with mean correlation between attribution maps across different model initializations ranging from 0.41 to 0.65.”\end{origquote}
+\begin{tradquote}“Se os métodos de atribuição dão explicações estáveis e confiáveis, deveriam produzir mapas parecidos para modelos treinados nos mesmos dados com inicializações aleatórias diferentes. Observamos, porém, variação considerável na autoconsistência, com correlação média entre mapas de inicializações diferentes indo de 0,41 a 0,65.”\end{tradquote}
+\explab{Explicação}
+A faixa 0,41--0,65 vale para “a maioria dos métodos” (resumo); os extremos são o Guided GradCAM e o SmoothGrad. O GradientSHAP fica em 0,55. Essa variação mistura duas fontes: o modelo (sementes de treino) e o método (sorteios), esta última limitada pelo critério de 0,98. O TCC treina um único modelo, então não mede a primeira fonte; mede só a segunda (o piso). É uma limitação a declarar: os mapas do TCC descrevem o modelo B, e outro treino poderia gerar mapas diferentes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Resultados} dependência dos pesos}
+\begin{origquote}“As anticipated, correlation between original attribution maps and those generated after randomizing model weights declined for all methods within the first three randomization steps, at the same rate as model AUROC. Most methods converged to near-zero correlation, except for Saliency, SmoothGrad, and Guided Backpropagation, which exhibited a slower decline and did not fully reach zero correlation after complete model randomization.”\end{origquote}
+\begin{tradquote}“Como previsto, a correlação entre os mapas originais e os gerados após randomizar os pesos caiu em todos os métodos nos três primeiros passos, no mesmo ritmo que a AUROC do modelo. A maioria convergiu para correlação perto de zero, exceto Saliency, SmoothGrad e Guided Backpropagation, que caíram mais devagar e não chegaram a zero após a randomização completa.”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP passa no teste do artigo, o que concorda com o TCC: as distâncias entre os mapas do modelo treinado e do aleatório ficam muito acima do piso. A diferença de critério explica por que o eMPRT do TCC “falha”: lá se exige que o mapa do modelo aleatório fique \textit{mais espalhado} (mais entropia), e ele se concentra no QRS; aqui só se exige que ele fique \textit{diferente}.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Discussão} gradiente $\times$ entrada}
+\begin{origquote}“Gradient*Input altered this pattern by weighting gradients by the amplitude of the ECG signal, which shifted its relevance towards prominent morphological deflections and resulted in moderate similarity to baseline-dependent feature contribution methods.”\end{origquote}
+\begin{tradquote}“O Gradient*Input alterou esse padrão ao ponderar os gradientes pela amplitude do sinal de ECG, o que deslocou sua relevância para as deflexões morfológicas proeminentes e resultou em similaridade moderada com os métodos de contribuição dependentes de referência.”\end{tradquote}
+\explab{Explicação}
+É o mecanismo que o TCC discute para o GradientSHAP: o fator (ECG $-$ referência) puxa o mapa para os trechos de maior amplitude, como o QRS. O artigo registra o efeito, mas não o mede por classe nem por região; o TCC o observa no eMPRT (mapa do modelo aleatório no QRS) e no Random Logit (o efeito não domina o modelo treinado).
+\end{citacard}
+
+\begin{citacard}{\pagechip{Discussão} consistência e desempenho}
+\begin{origquote}“According to the implementation invariance axiom, functionally equivalent models should yield similar attributions. The models in our study all achieved high AUPRC values, yet attribution maps varied considerably. This likely stems from the non-convexity of neural network optimization, where different initializations can lead to different, but equally valid, internal representations.”\end{origquote}
+\begin{tradquote}“Pelo axioma de invariância de implementação, modelos funcionalmente equivalentes deveriam dar atribuições semelhantes. Todos os modelos do estudo tiveram AUPRC alta, mas os mapas variaram bastante. Isso provavelmente decorre da não convexidade da otimização de redes neurais, em que inicializações diferentes podem levar a representações internas diferentes, mas igualmente válidas.”\end{tradquote}
+\explab{Explicação}
+Ponto delicado: desempenho igual não garante explicações iguais. Para o TCC, isso significa que a ordem das classes pela qualidade da explicação pode depender do treino específico, e não só da dificuldade da classe. A citação foi transcrita sem o número da referência (24) que aparece no meio do trecho.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Discussão} limite dos mapas}
+\begin{origquote}“Heatmaps show that ‘something important’ lies in a highlighted region but offer no specificity. For instance, highlighting the T-wave could point to the QT interval, T-wave height, or morphology.”\end{origquote}
+\begin{tradquote}“Os mapas mostram que ‘algo importante’ está numa região destacada, mas não dão especificidade. Por exemplo, destacar a onda T pode indicar o intervalo QT, a altura da onda T ou sua morfologia.”\end{tradquote}
+\explab{Explicação}
+Vale também para as 36 regiões do TCC: uma região ST-T relevante não diz se o modelo usa o desnível do ST ou a forma da onda T. O TCC não pretende dar significado clínico às regiões, só medir propriedades dos mapas; convém deixar isso explícito.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Discussão} limitações}
+\begin{origquote}“Model performance could theoretically influence attribution reliability, particularly for rare classes, but we observed similar attribution behaviour in tasks with higher and lower AUPRC values. This indicates that the conclusions predominantly reflect properties of the attribution methods rather than differences in classifier accuracy.”\end{origquote}
+\begin{tradquote}“O desempenho do modelo poderia, em tese, influenciar a confiabilidade da atribuição, sobretudo em classes raras, mas observamos comportamento de atribuição semelhante em tarefas de AUPRC mais alta e mais baixa. Isso indica que as conclusões refletem sobretudo propriedades dos métodos, e não diferenças de acurácia dos classificadores.”\end{tradquote}
+\explab{Explicação}
+É a única passagem sobre qualidade $\times$ desempenho por classe, e é uma observação qualitativa, sem análise própria. A tabela por classe da Parte I confirma a leitura: não há ordem comum entre AUPRC e autoconsistência. O cenário do artigo, porém, é de desempenho alto em quase todas as classes (AUPRC de 0,64 a 0,99), o que estreita a comparação; o TCC tem F1 de 0,60 (STE) a 0,93 (AF).
+\end{citacard}
+
+\begin{citacard}{\pagechip{Conclusão} recomendação}
+\begin{origquote}“If attribution methods are still used, they should be treated as exploratory tools rather than definitive explanations. Sanity checks, task-specific validation, and transparent justification of method choice are essential to ensure their responsible use in clinical AI research.”\end{origquote}
+\begin{tradquote}“Se os métodos de atribuição continuarem a ser usados, devem ser tratados como ferramentas exploratórias, e não como explicações definitivas. Testes de sanidade, validação específica da tarefa e justificativa transparente da escolha do método são essenciais para seu uso responsável na pesquisa em IA clínica.”\end{tradquote}
+\explab{Explicação}
+Apoia diretamente o desenho do TCC, que aplica testes de sanidade (Random Logit, eMPRT) e métricas adaptadas ao ECG antes de interpretar os mapas.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{itemize}
+\item \textbf{Escolha do GradientSHAP e do Captum.} O artigo usa a mesma implementação e mostra que, entre os 12 métodos, o GradientSHAP fica no grupo coerente dos métodos com referência (0,96 com IG SmoothGrad), com autoconsistência intermediária (0,55) e sem falha no teste de randomização.
+\item \textbf{Controle do ruído do método.} O critério de correlação $\geq 0{,}98$ entre mapas repetidos é um precedente direto para o piso do TCC; o TCC vai além ao usar o piso como régua das distâncias.
+\item \textbf{Testes de sanidade.} A recomendação final apoia a inclusão do Random Logit e do eMPRT.
+\item \textbf{Perturbação adaptada ao ECG.} A substituição por interpolação com ruído é uma referência para discutir a escolha de baseline (zero/média) da Faithfulness Correlation e da Faithfulness Estimate do TCC.
+\item \textbf{Qualidade $\times$ desempenho por classe.} O artigo afirma, sem análise formal, que o comportamento das atribuições não muda entre classes de AUPRC alta e baixa, e os dados do suplemento mostram ordens diferentes. É um resultado prévio que o TCC pode confrontar com a sua leitura descritiva por classe.
+\end{itemize}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{p{3cm}XX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Dados & Base privada (UMC Utrecht), 873\,710 ECGs & CPSC2018 público, 6\,877 ECGs \\
+Entrada & Batimento mediano, 8 derivações & Registro de até 30 s (15\,000 amostras), 12 derivações \\
+Tarefa & 9 redes binárias $\times$ 10 sementes & 1 rede multirrótulo (ResNet34-1D), 9 saídas \\
+Desempenho & AUROC, AUPRC, F1 micro por classe & F1 por classe (macro 0,819) \\
+Métodos & 12 & Só GradientSHAP \\
+Referência do GradientSHAP & ECG médio da validação & 36 ECGs do treino, balanceados por classe \\
+Amostras & 256 (correlação $\geq 0{,}98$) & 200 sorteios; piso medido \\
+Granularidade & Ponto a ponto, mapas suavizados & 36 regiões (derivação $\times$ pré-QRS/QRS/ST-T) \\
+Estabilidade & Entre sementes de treino (Pearson) & Entre sementes do método (piso) e Max/Avg-Sensitivity \\
+Randomização & Cascata, 1 modelo (FA), Pearson & eMPRT, modelo inteiro, 3 sementes, entropia e distâncias contra o piso \\
+Fidelidade & Perturbação estilo ROAD, AUROC do conjunto & Faithfulness Correlation e Estimate por regiões, por mapa \\
+Especificidade de classe & Não avaliada & Random Logit \\
+Comparação com o desempenho & Comentário qualitativo & Leitura descritiva das posições por classe \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item As correlações do artigo são ponto a ponto num batimento mediano suavizado; não são comparáveis em valor às distâncias por regiões do TCC.
+\item A randomização foi feita só no modelo de FA; o resultado do GradientSHAP vem de uma classe.
+\item A leitura do GradientSHAP na perturbação (AUROC final perto de 0,75) foi feita no gráfico, sem valor numérico no texto.
+\item Há divergências entre texto e suplemento em alguns valores de autoconsistência (quadro na Parte I).
+\item O artigo usa AUPRC e F1 micro de redes binárias; o F1 por classe do TCC vem de uma rede multirrótulo com limiar por classe. A comparação deve ficar no nível das conclusões, não dos números.
+\item A coluna “média dos 12” da tabela por classe foi calculada neste fichamento; ao citá-la, indicar que é derivada da Tabela S3.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “Arends et al.\ (2026) avaliaram 12 métodos de atribuição, entre eles o GradientSHAP, em redes ResNet-1D treinadas para nove classes diagnósticas de ECG e observaram autoconsistência apenas moderada entre modelos treinados com sementes diferentes (correlação média de 0,55 para o GradientSHAP), além de queda da correlação para perto de zero quando os pesos foram randomizados camada a camada.”
+\item “Para controlar a variação própria dos métodos com sorteio, Arends et al.\ (2026) fixaram o número de amostras de modo que dois mapas do mesmo ECG e do mesmo modelo tivessem correlação de pelo menos 0,98; no presente trabalho, essa variação é medida explicitamente (piso) e usada como referência.”
+\item “Os mesmos autores relatam comportamento semelhante das atribuições em classes de AUPRC alta e baixa, sem análise formal dessa relação, o que motiva a comparação descritiva, por classe, entre a qualidade das explicações e o F1 feita neste trabalho.”
+\end{itemize}
+
+\end{document}

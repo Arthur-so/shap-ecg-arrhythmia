@@ -1,0 +1,352 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\newunicodechar{◦}{\ensuremath{^{\circ}}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{κ}{\ensuremath{\kappa}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{∼}{\ensuremath{\sim}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: mapas de calor em ECG (Storås et al., 2025)}} \\[0.35em]
+    {\large STORÅS, A. M.; MÆLAND, S.; ISAKSEN, J. L.; HICKS, S. A.; THAMBAWITA, V.; GRAFF, C.; HAMMER, H. L.; HALVORSEN, P.; RIEGLER, M. A.; KANTERS, J. K. \textit{Evaluating gradient-based explanation methods for neural network ECG analysis using heatmaps}. Journal of the American Medical Informatics Association, v.~32, n.~1, p.~79--88, 2025} \\[0.3em]
+    \textbf{Tema:} comparação de nove métodos de explicação baseados no gradiente em ECG, por especialistas e por perturbação ponto a ponto \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1093/jamia/ocae280} \\[0.2em]
+    \textbf{Leitura:} íntegra do artigo (versão publicada, 10 páginas); os apêndices A.1 a A.4, publicados como material suplementar, não foram acessados \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (10 páginas); a página N do PDF corresponde à página $78+N$ do periódico (p.~1 = p.~79). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação. A \textbf{Parte I} explica o trabalho; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} relaciona o artigo com o TCC.
+
+\begin{infobox}[note]{Por que este artigo}
+É um dos poucos estudos em ECG de 12 derivações que avalia o \textbf{Gradient SHAP} ao lado de outros métodos baseados no gradiente, com dois critérios: a preferência de especialistas e uma avaliação objetiva por perturbação. Os dois critérios discordam, e o Gradient SHAP é o caso mais claro: foi dos melhores na perturbação e quase não recebeu votos dos especialistas. O artigo também discute um efeito que interessa à leitura das métricas do TCC: a forma da perturbação (ruído somado) penaliza mapas que destacam trechos de grande amplitude, como o pico R.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema}
+Os métodos de explicação baseados no gradiente produzem \textbf{mapas de calor} (\textit{heatmaps}) que indicam quais trechos do ECG mais influenciam a predição. O \textbf{gradiente} mede quanto a saída muda quando cada ponto da entrada muda um pouco; os métodos diferem nas operações aplicadas antes ou depois desse cálculo (p.~1). Não há orientação sobre qual método escolher, e os estudos aplicam métodos diferentes sem justificar a escolha para o caso médico em questão (p.~1).
+
+\section{A ideia central}
+Comparar nove métodos de explicação em modelos que \textbf{medem} grandezas do ECG, porque nesse caso se sabe onde a informação está: a amplitude da onda R está no pico R; o intervalo PR, entre o início da onda P e o início do QRS. Dois critérios são usados (p.~2--4):
+\begin{enumerate}
+\item \textbf{Avaliação por especialistas}: três especialistas escolhem, entre os nove mapas de um mesmo ECG, o que melhor explica a medida.
+\item \textbf{Avaliação objetiva por perturbação}: o sinal é alterado nos pontos de maior importância, em ordem decrescente, e mede-se quanto o erro de predição cresce.
+\end{enumerate}
+
+\section{Dados e modelos}
+\begin{itemize}
+\item \textbf{ECGs sintéticos.} 150\,000 ECGs de 10~s, 12 derivações, a 500~Hz, gerados por uma rede adversária generativa (Pulse2pulse) treinada com dados reais de dois estudos dinamarqueses (GESUS e Inter99) (p.~2). Os autores afirmam que os sintéticos reproduzem a distribuição e as propriedades dos reais.
+\item \textbf{Medidas-alvo.} Seis medidas extraídas pelo algoritmo Marquette 12SL: três intervalos (PR, QRS, QT) e três amplitudes em V5 (onda R, ponto J, onda T) (p.~2).
+\item \textbf{Modelos.} Seis redes convolucionais inspiradas na ResNet, uma por medida, treinadas por \textbf{regressão} (erro quadrático médio, Adam, 100 épocas, divisão 60/20/20), “no ECG mediano e no ECG de 10~s, respectivamente” (p.~2). O texto não detalha quais medidas usam cada tipo de entrada. O desempenho está no apêndice A.2, não acessado.
+\end{itemize}
+Não há classificação de arritmias: os modelos predizem números contínuos, e a qualidade da explicação é medida pelo aumento do erro.
+
+\section{Métodos de explicação}
+Nove métodos do Captum (p.~2): Saliency, Deconvolution, Guided Backpropagation, SmoothGrad, Input×Gradient, DeepLIFT, Integrated Gradients, \textbf{Gradient SHAP} e Guided Grad-CAM. Para DeepLIFT, Integrated Gradients e Gradient SHAP, a \textbf{referência} (\textit{baseline}) é o \textbf{vetor zero}; o Gradient SHAP é descrito como parecido com o Integrated Gradients, com ruído aleatório somado à entrada. O número de amostras e o desvio do ruído do Gradient SHAP não são informados.
+
+Os mapas foram mostrados de duas formas: \textbf{completos} (12 derivações) e \textbf{médios} (média dos valores absolutos nas 12 derivações, desenhada sobre a derivação V5). O valor absoluto evita que importâncias positivas e negativas se cancelem na média (p.~2).
+
+\section{Métricas de avaliação e adaptação ao ECG}
+\textbf{Especialistas} (p.~2--4). Três especialistas com mais de cinco anos de experiência em ECG e aprendizado profundo viram os mapas de 51 ECGs: 9 métodos × 6 medidas × 2 formas (completo e médio), cada conjunto mostrado duas vezes para medir a concordância de cada um consigo mesmo, em ordem aleatória e sem saber o método. Cada um escolheu, entre os nove mapas, o que melhor explicava a medida. A concordância foi medida pelo \textbf{$\kappa$ de Cohen}, uma medida de acordo entre avaliadores corrigida pelo acaso (1 = acordo perfeito; 0 ou menos = não melhor que o acaso).
+
+\textbf{Perturbação} (p.~3--4). É uma variante da Region Perturbation de Samek et al.\ (ordem MoRF, do mais ao menos importante):
+\begin{itemize}
+\item \textbf{Unidade:} \textbf{um único ponto} por iteração (uma derivação, um instante), escolhido em ordem decrescente de importância no mapa completo; os autores justificam pela alta resolução das medidas.
+\item \textbf{Valor da perturbação:} não é substituição; \textbf{soma-se} ao ponto um valor sorteado de uma normal de média 0 e desvio igual a \textbf{20\% da amplitude total} (máximo menos mínimo) daquele ECG.
+\item \textbf{Repetições:} 200 iterações por ECG (“um pouco menos de 3\%” dos dados), em 5\,000 ECGs sorteados; as curvas de erro são médias sobre os ECGs.
+\item \textbf{Nota:} área sob a curva de erro nas \textbf{15 primeiras iterações} (a subida, antes do platô); os autores verificaram que a ordem dos métodos não muda entre 10 e 25 iterações. A Tabela 4 identifica o erro como erro percentual absoluto médio. Área maior indica mapa melhor.
+\item \textbf{Referência:} mapas aleatórios, independentes do modelo.
+\end{itemize}
+
+\begin{infobox}[warn]{Ponto a conferir}
+Duzentos pontos de um ECG de 10~s com 12 derivações (12 × 5\,000 = 60\,000 pontos) seriam cerca de 0,33\% do sinal, e não “um pouco menos de 3\%”. A fração declarada é compatível com uma entrada menor, como o batimento mediano. O texto não esclarece em que entrada cada avaliação foi feita; o cálculo é uma inferência deste fichamento.
+\end{infobox}
+
+\section{Resultados principais}
+\textbf{Votos dos especialistas} (Tabela 2, p.~5). Cada medida recebeu 306 votos por forma de mapa (51 ECGs × 3 especialistas × 2 apresentações).
+\begin{center}\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrr|rrrrrr}
+\toprule
+& \multicolumn{6}{c|}{\textbf{Mapas completos (12 derivações)}} & \multicolumn{6}{c}{\textbf{Mapas médios}} \\
+\textbf{Método} & PR & QRS & QT & R & J & T & PR & QRS & QT & R & J & T \\
+\midrule
+Deconvolution & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+DeepLIFT & 33 & 0 & 2 & 0 & \textbf{117} & 0 & 81 & 9 & 24 & 0 & \textbf{137} & 0 \\
+Gradient SHAP & 2 & 41 & 2 & 0 & 7 & 1 & 7 & 37 & 3 & 0 & 26 & 0 \\
+Guided backprop. & 33 & 19 & 52 & 0 & 1 & 24 & \textbf{125} & \textbf{122} & \textbf{98} & 0 & 5 & 3 \\
+Guided Grad-CAM & 1 & 6 & 2 & 0 & 2 & 7 & 1 & 34 & 0 & 0 & 0 & 0 \\
+Input×gradient & 1 & 0 & 2 & \textbf{306} & 8 & \textbf{272} & 3 & 1 & 8 & \textbf{306} & 14 & \textbf{302} \\
+Integrated grad. & 15 & 68 & 0 & 0 & 35 & 0 & 22 & 23 & 5 & 0 & 61 & 1 \\
+Saliency & 105 & 42 & 65 & 0 & 34 & 0 & 22 & 35 & 71 & 0 & 62 & 0 \\
+SmoothGrad & \textbf{116} & \textbf{130} & \textbf{181} & 0 & 102 & 2 & 45 & 45 & 97 & 0 & 1 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+R, J e T são as amplitudes em V5 (pico R, ponto J e pico T). Em negrito, o mais votado em cada coluna.
+
+\textbf{Concordância entre especialistas} ($\kappa$ de Cohen; Tabela 3, p.~7): mapas completos 0,39 no total (de 0,07 no ponto J a 1,00 na onda R); mapas médios 0,59 no total (de 0,23 no QT a 1,00 na onda R). A concordância de cada especialista consigo mesmo ficou entre 0,6 e 0,9.
+
+\textbf{Perturbação} (área nas 15 primeiras iterações; Tabela 4, p.~9):
+\begin{center}\small
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Método} & \textbf{PR} & \textbf{QRS} & \textbf{QT} & \textbf{R V5} & \textbf{J V5} & \textbf{T V5} \\
+\midrule
+Deconvolution & 0,53 & 0,47 & 0,14 & 2,06 & 3,58 & 0,22 \\
+DeepLIFT & 0,94 & 1,44 & 0,39 & \textbf{8,04} & 8,47 & 2,49 \\
+Gradient SHAP & 0,79 & 1,62 & 0,28 & 6,90 & 8,25 & 2,45 \\
+Guided backprop. & 0,86 & \textbf{1,91} & 0,33 & 3,34 & 7,18 & 2,49 \\
+Guided Grad-CAM & 0,74 & 1,59 & 0,21 & 1,61 & 3,28 & 2,22 \\
+Input×gradient & 1,07 & 1,21 & 0,24 & 3,60 & 7,54 & \textbf{2,50} \\
+Integrated grad. & 0,94 & 1,64 & 0,27 & 5,71 & 8,32 & 2,34 \\
+Saliency & 1,27 & 1,65 & 0,32 & 5,32 & 8,87 & 2,49 \\
+SmoothGrad & \textbf{1,50} & 1,54 & \textbf{0,35} & 7,48 & \textbf{9,81} & \textbf{2,50} \\
+Aleatório & 0,57 & 0,58 & 0,14 & 2,09 & 2,01 & 0,24 \\
+\bottomrule
+\end{tabular}
+\end{center}
+O Gradient SHAP ficou em 3.º lugar na amplitude R, 4.º no QRS e 5.º no ponto J, mas recebeu, em todas as medidas, menos de 15\% dos votos dos especialistas. O Deconvolution ficou no nível dos mapas aleatórios e nunca foi escolhido.
+
+\section{Conclusões e limitações declaradas}
+\textbf{Conclusões} (p.~5 e 9): nenhum método foi o melhor em todas as medidas; alguns foram claramente inferiores; houve discordância considerável entre especialistas e perturbação. As recomendações são testar vários métodos com avaliação de especialistas, preferir DeepLIFT, Guided Backpropagation, Input×Gradient, Saliency ou SmoothGrad, não usar Deconvolution e usar um conjunto de exemplos representativos. \textbf{Limitações} (p.~9): só ECG, poucos especialistas e ECGs, e ECGs totalmente sintéticos.
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+Introdução (p.~1--2), materiais e métodos (p.~2--4: dados, modelos, mapas, avaliação por especialistas e por perturbação), resultados (p.~5), discussão, limitações e recomendações (p.~5--9). Para o TCC, os trechos centrais são a configuração do Gradient SHAP (p.~2), a perturbação (p.~3--4) e a discussão sobre a onda R (p.~9).
+
+\begin{citacard}{\pagechip{p. 1} Introdução}
+\begin{origquote}“Unfortunately, there are no clear guidelines about how to pick the most appropriate method, and currently, studies apply different explanation methods. Moreover, there is a tendency to generate explanations without critically considering which methods, if any, are optimal for the specific medical use case.”\end{origquote}
+\begin{tradquote}“Infelizmente, não há orientações claras sobre como escolher o método mais adequado, e os estudos atuais aplicam métodos de explicação diferentes. Além disso, há uma tendência a gerar explicações sem considerar criticamente quais métodos, se algum, são os mais adequados para o caso médico específico.”\end{tradquote}
+\explab{Explicação}
+É a mesma motivação de Suh et al.\ (2024) e do TCC: usar um método de explicação em ECG exige avaliá-lo no próprio problema.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Materiais e métodos, população}
+\begin{origquote}“The study was performed on realistic digital ECGs, produced by a generative adversarial network. [...] Afterwards, the model was used to synthesize 150 000 10-s 12-lead ECGs, “sampled” at 500 Hz.”\end{origquote}
+\begin{tradquote}“O estudo foi feito com ECGs digitais realistas, produzidos por uma rede adversária generativa. [...] Depois, o modelo foi usado para sintetizar 150\,000 ECGs de 10~s e 12 derivações, “amostrados” a 500 Hz.”\end{tradquote}
+\explab{Explicação}
+Os ECGs não são de pacientes; isso facilita o acesso a muitos dados com medidas exatas, mas limita a generalização (os próprios autores registram isso como limitação). O TCC usa ECGs reais do CPSC2018.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Materiais e métodos, mapas}
+\begin{origquote}“The average heatmaps were created by averaging over all 12 leads, and then presented on an overlay of ECG lead V5 to give a clean simple presentation. To avoid canceling out positive and negative attributions, we took the absolute values of the importance before averaging.”\end{origquote}
+\begin{tradquote}“Os mapas médios foram criados pela média das 12 derivações e mostrados sobre a derivação V5, para uma apresentação limpa e simples. Para não cancelar atribuições positivas e negativas, tomamos os valores absolutos da importância antes da média.”\end{tradquote}
+\explab{Explicação}
+Agregar o mapa exige decidir o que fazer com o sinal. No TCC, a agregação em 36 regiões \textbf{soma} as atribuições com sinal dentro de cada região, porque as métricas de fidelidade comparam essa soma com a queda do \textit{logit}; positivos e negativos podem, portanto, se compensar dentro de uma região. A escolha do artigo é feita para leitura humana, não para uma métrica.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Materiais e métodos, mapas}
+\begin{origquote}“Gradient SHAP has similarities to Integrated gradients, but adds random noise to the input. The baseline for Gradient SHAP is a zero vector, as for the other methods.”\end{origquote}
+\begin{tradquote}“O Gradient SHAP é parecido com o Integrated Gradients, mas soma ruído aleatório à entrada. A referência do Gradient SHAP é um vetor zero, como nos outros métodos.”\end{tradquote}
+\explab{Explicação}
+Com uma única referência zero, o Gradient SHAP fica próximo de um Integrated Gradients com ruído: perde-se a média sobre várias referências, que é o que o aproxima dos valores de Shapley. No TCC, a referência é um conjunto balanceado de 36 ECGs do treino, com 200 sorteios por mapa. Os resultados do artigo para o Gradient SHAP não se transferem diretamente ao TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} Avaliação objetiva}
+\begin{origquote}“For objective evaluation, we applied a perturbation procedure consisting of iteratively randomizing data at the location of highest heatmap importance in the full heatmaps and run a new prediction on the perturbed data.”\end{origquote}
+\begin{tradquote}“Na avaliação objetiva, aplicamos um procedimento de perturbação que consiste em aleatorizar, iterativamente, os dados na posição de maior importância dos mapas completos e refazer a predição nos dados perturbados.”\end{tradquote}
+\explab{Explicação}
+É a ideia da Region Perturbation (MoRF): perturbar primeiro o que o mapa diz ser mais importante e ver o efeito crescer. Diferente da Faithfulness Correlation do TCC, que sorteia subconjuntos e correlaciona soma e queda, aqui só a \textbf{ordem} do mapa importa, não os valores.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} Avaliação objetiva}
+\begin{origquote}“Since our prediction targets are defined with very high resolution (both in amplitude and time), we followed the example of reference22 and perturbed only a single data point per iteration. To perturb the data point, we added a random value which was drawn from a normal distribution with a mean of 0 and standard deviation equal to 20\% of the difference between the largest and the smallest value in the ECG data sample under study. By performing region perturbation 200 times, a little <3\% of the data was randomized.”\end{origquote}
+\begin{tradquote}“Como os alvos de predição são definidos com resolução muito alta (em amplitude e em tempo), seguimos o exemplo da referência 22 e perturbamos um único ponto por iteração. Para perturbar o ponto, somamos um valor sorteado de uma normal de média 0 e desvio igual a 20\% da diferença entre o maior e o menor valor do ECG em estudo. Com 200 perturbações, um pouco menos de 3\% dos dados foi aleatorizado.”\end{tradquote}
+\explab{Explicação}
+Três escolhas diferem do TCC: a unidade é o ponto (no TCC, a região do batimento); a perturbação é \textbf{aditiva} (no TCC, a região é substituída por zero ou pela média do treino); e o tamanho do ruído é proporcional à amplitude do ECG. A última escolha tem consequência importante, discutida na p.~9 (citação adiante).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Avaliação objetiva}
+\begin{origquote}“We chose 15 iterations to capture only the rise of the curve (not the plateau), and verified that the ranking of the different methods stayed the same for any choice between 10 and 25 iterations. A large area under the curve indicates large effects of the perturbations and therefore accurate heatmaps.”\end{origquote}
+\begin{tradquote}“Escolhemos 15 iterações para capturar só a subida da curva (não o platô) e verificamos que a ordem dos métodos se mantinha para qualquer escolha entre 10 e 25 iterações. Uma área grande sob a curva indica efeitos grandes das perturbações e, portanto, mapas acurados.”\end{tradquote}
+\explab{Explicação}
+É um exemplo de verificação de robustez de um parâmetro arbitrário da métrica, como o TCC fez ao calcular a Faithfulness Correlation com três tamanhos de subconjunto (4, 9 e 18 regiões) e duas referências.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Resultados, especialistas}
+\begin{origquote}“Across all markers, DeepLIFT, Guided backpropagation, Input × gradient, Saliency, and SmoothGrad received many votes whereas Deconvolution, Gradient SHAP, guided Grad-CAM, and Integrated Gradients received few to no votes.”\end{origquote}
+\begin{tradquote}“Considerando todas as medidas, DeepLIFT, Guided Backpropagation, Input×Gradient, Saliency e SmoothGrad receberam muitos votos, enquanto Deconvolution, Gradient SHAP, Guided Grad-CAM e Integrated Gradients receberam poucos ou nenhum.”\end{tradquote}
+\explab{Explicação}
+Na preferência visual dos especialistas, o Gradient SHAP (com referência zero) ficou entre os menos escolhidos. É uma avaliação de plausibilidade para leitura humana, e não de fidelidade ao modelo; o TCC não faz esse tipo de avaliação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Resultados, perturbação}
+\begin{origquote}“DeepLIFT, Gradient SHAP, Saliency, and SmoothGrad performed consistently well with steep error curve slopes.”\end{origquote}
+\begin{tradquote}“DeepLIFT, Gradient SHAP, Saliency e SmoothGrad tiveram bom desempenho de forma consistente, com curvas de erro de subida acentuada.”\end{tradquote}
+\explab{Explicação}
+O mesmo Gradient SHAP que os especialistas quase não escolheram está entre os melhores na perturbação. É a discordância central do artigo, a mesma que Suh et al.\ (2024) encontraram entre localização e perturbação. Para o TCC, reforça que fidelidade ao modelo e plausibilidade clínica são propriedades diferentes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Discussão}
+\begin{origquote}“In general, experts exhibited greater reproducibility when analyzing averaged heatmaps as opposed to full heatmaps encompassing all 12 leads. This is likely due to the dispersion of information over all leads, making it more challenging for the expert to assess and comprehend.”\end{origquote}
+\begin{tradquote}“Em geral, os especialistas foram mais reprodutíveis ao analisar mapas médios do que mapas completos com as 12 derivações. Isso provavelmente se deve à dispersão da informação por todas as derivações, o que torna mais difícil avaliar e compreender o mapa.”\end{tradquote}
+\explab{Explicação}
+Um mapa ponto a ponto em 12 derivações é difícil de ler. O TCC resume cada mapa em 36 regiões e mede a sua concentração (complexidade, cerca de 24 regiões efetivas de 36); a dificuldade relatada aqui é uma motivação adicional para esse resumo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Discussão}
+\begin{origquote}“Differences between objective measurements and experts’ assessments may in part owe to differences in how experts would analyze the ECG and how ML models analyze the ECG.”\end{origquote}
+\begin{tradquote}“As diferenças entre as medidas objetivas e as avaliações dos especialistas podem se dever em parte a diferenças entre a forma como os especialistas analisariam o ECG e a forma como os modelos de aprendizado de máquina o analisam.”\end{tradquote}
+\explab{Explicação}
+Uma explicação fiel mostra o que o modelo usa, que pode não ser o que o cardiologista usaria. É o argumento que sustenta a escolha do TCC de avaliar a fidelidade ao modelo, e não a concordância com critérios clínicos.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Discussão, amplitude R}
+\begin{origquote}“Given that the amplitude of the R-wave in lead V5 is the highest, the impact of adding a random value to the ECG will be relatively little compared to adding the same value to a low amplitude section of the ECG. [...] Consequently, the objective evaluation approach shows a preference for explanation methods that do not emphasize the R-peak.”\end{origquote}
+\begin{tradquote}“Como a amplitude da onda R em V5 é a maior, o impacto de somar um valor aleatório ao ECG é relativamente pequeno comparado ao de somar o mesmo valor a um trecho de baixa amplitude. [...] Por isso, a avaliação objetiva favorece métodos que não enfatizam o pico R.”\end{tradquote}
+\explab{Explicação}
+É o ponto mais útil do artigo para o TCC: \textbf{a forma da perturbação interage com a amplitude do sinal} e pode favorecer ou penalizar mapas que destacam o QRS. No artigo, o ruído somado mexe pouco num pico alto, e mapas que apontam o pico R parecem piores. No TCC ocorre o contrário: substituir o QRS por zero é uma mudança grande, e mapas concentrados no QRS podem parecer mais fiéis. Como os mapas do TCC e o mapa do modelo aleatório no eMPRT se concentram no QRS, a fidelidade de classes com mapas no QRS deve ser lida com essa ressalva.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Discussão, intervalos}
+\begin{origquote}“This outcome is anticipated, as the relevant information within intervals is distributed across numerous ECG channels, resulting in redundancy. Put simply, interval models include multiple leads to make predictions and changing a single data point is unable to eliminate all the necessary information for accurate predictions.”\end{origquote}
+\begin{tradquote}“Esse resultado era esperado, pois a informação relevante para os intervalos está distribuída por muitos canais do ECG, o que gera redundância. Em outras palavras, os modelos de intervalo usam várias derivações para predizer, e alterar um único ponto não elimina toda a informação necessária para uma predição acurada.”\end{tradquote}
+\explab{Explicação}
+A redundância entre derivações limita as métricas de retirada: se a mesma informação está em várias derivações, retirar uma delas quase não muda a saída, mesmo que o mapa a aponte corretamente. No TCC, cada região é uma derivação num trecho do batimento; subconjuntos de várias regiões (4, 9 ou 18) atenuam o problema, mas não o eliminam.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Limitações}
+\begin{origquote}“Due to the substantial work involved, the analysis was limited to a small number of annotators and ECGs. Furthermore, the ECGs that were used to conduct this study were fully synthetic.”\end{origquote}
+\begin{tradquote}“Pelo trabalho envolvido, a análise se limitou a poucos avaliadores e ECGs. Além disso, os ECGs usados no estudo eram totalmente sintéticos.”\end{tradquote}
+\explab{Explicação}
+Limitações declaradas pelos autores. Somam-se a elas, do ponto de vista do TCC, a tarefa de regressão (e não de classificação) e a referência zero em todos os métodos que usam referência.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{Fidelidade e plausibilidade discordam.} O Gradient SHAP foi bem avaliado pela perturbação e mal avaliado pelos especialistas. O resultado apoia separar as duas noções e justificar por que o TCC mede só a fidelidade ao modelo.
+\item \textbf{A perturbação depende da amplitude.} A discussão da onda R (p.~9) mostra que o tipo de perturbação favorece ou penaliza trechos de grande amplitude. É uma ressalva concreta para a Faithfulness Correlation e a Faithfulness Estimate do TCC, cujos mapas se concentram no QRS.
+\item \textbf{Redundância entre derivações.} A explicação dos autores para a subida lenta do erro nos intervalos (p.~9) vale para qualquer métrica de retirada em ECG de 12 derivações.
+\item \textbf{Verificação de parâmetros arbitrários.} A checagem de 10 a 25 iterações é análoga às variações de tamanho de subconjunto e de referência feitas no TCC.
+\end{enumerate}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Dados & 150\,000 ECGs sintéticos (GAN), 10~s, 12 derivações & CPSC2018, ECGs reais, 12 derivações \\ \addlinespace
+Tarefa & Regressão de 6 medidas (intervalos e amplitudes) & Classificação multirrótulo de 9 classes \\ \addlinespace
+Modelo & Seis CNNs tipo ResNet, uma por medida & Uma ResNet34-1D \\ \addlinespace
+Gradient SHAP & Referência zero; amostras e ruído não informados & Referência balanceada de 36 ECGs do treino, 200 sorteios, desvio do ruído 0,09 \\ \addlinespace
+Unidade da perturbação & Um ponto por iteração & 36 regiões do batimento \\ \addlinespace
+Tipo de perturbação & Ruído normal somado (desvio de 20\% da amplitude) & Substituição por zero ou pela média do treino \\ \addlinespace
+Métrica & Área sob a curva de erro (15 iterações, ordem MoRF) & Correlação soma × queda (Faithfulness Correlation) e outras \\ \addlinespace
+Referência & Mapas aleatórios & Piso entre sementes do GradientSHAP \\ \addlinespace
+Avaliação humana & Três especialistas, preferência entre 9 mapas & Não há \\ \addlinespace
+Resumo & Por medida e por método & Por classe, comparado de forma descritiva com o F1 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão}
+\begin{itemize}
+\item \textbf{Gradient SHAP diferente.} Com referência zero, o método avaliado no artigo é outro na prática; o desempenho dele não diz nada direto sobre o GradientSHAP com referências do treino.
+\item \textbf{Regressão, não classificação.} A métrica mede o aumento do erro de uma medida contínua; num classificador, mede-se a queda do \textit{logit} da classe.
+\item \textbf{Fração perturbada.} A fração de “menos de 3\%” não fecha com um ECG de 10~s de 12 derivações (seria 0,33\%); pode indicar que a avaliação foi feita no batimento mediano. É uma inferência, a citar com cautela ou não citar.
+\item \textbf{Número pequeno de avaliadores e ECGs} (3 e 51), reconhecido pelos autores.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestões}
+\begin{itemize}
+\item “Storås et al.\ (2025) compararam nove métodos baseados no gradiente em modelos que medem intervalos e amplitudes do ECG e encontraram discordância considerável entre a preferência de especialistas e uma avaliação por perturbação; o Gradient SHAP, com referência zero, esteve entre os melhores na perturbação e entre os menos escolhidos pelos especialistas.”
+\item “Os mesmos autores observaram que a perturbação por ruído somado tem pouco efeito sobre trechos de grande amplitude, como o pico R, e por isso desfavorece mapas que os destacam; o efeito da amplitude do sinal sobre as métricas de retirada deve, portanto, ser considerado na leitura da fidelidade.”
+\end{itemize}
+\end{infobox}
+
+\end{document}

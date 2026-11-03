@@ -1,0 +1,174 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Explicações na detecção de Parkinson pela fala}} \\[0.35em]
+    {\large MANCINI, E.; PAISSAN, F.; TORRONI, P.; RAVANELLI, M.; SUBAKAN, C. \textit{Investigating the Effectiveness of Explainability Methods in Parkinson's Detection from Speech}. arXiv:2411.08013, 2024} \\[0.3em]
+    \textbf{Tema:} métricas de fidelidade e complexidade para atribuições em sinal de fala \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2411.08013} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 13/11/2024, 5 páginas) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2). As citações estão no original em inglês, seguidas de tradução livre.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} avaliar de forma sistemática se métodos de explicação destacam traços da fala ligados à doença de Parkinson (DP).
+\item \textbf{Dados e modelo:} s-PC-GITA (100 falantes, 50 com DP e 50 controles), 10 dobras; HuBERT Base ajustado (acurácia 81,32\% $\pm$ 8,06; F1 81,03 $\pm$ 8,33).
+\item \textbf{Explicação:} Saliency, SmoothGrad, Integrated Gradients, Guided GradCAM, Guided Backprop e GradientSHAP, calculados no espectrograma (STFT) e devolvidos ao modelo por ISTFT.
+\item \textbf{Avaliação:} AI, AD, AG, Faithfulness (FF), Fid-In, Sparseness e Complexity (Bhatt); sobreposição entre métodos (IoU); classificador treinado só com os mapas e “métricas seletivas”.
+\item \textbf{Conclusão:} as explicações são fiéis ao classificador, mas não são compreensíveis para especialistas.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O modelo recebe a forma de onda bruta, mas mapas sobre a forma de onda são difíceis de ler. Os autores convertem o áudio em espectrograma, calculam as atribuições nele e reconstroem o áudio (com a fase original) antes de passá-lo ao modelo. Em seguida, comparam seis métodos por métricas quantitativas, combinam pares de mapas (interseção e união) e testam se os mapas contêm informação suficiente para um segundo classificador (CNN14) separar DP de controles.
+
+\section{Como avalia as explicações}
+\begin{itemize}
+\item \textbf{Fidelidade por mascaramento:} AI (porcentagem de exemplos em que a confiança do classificador é maior para a interpretação do que para a entrada), AD (queda média de confiança), AG, FF (do trabalho L2I) e Fid-In; definições remetidas a trabalhos anteriores (L-MAC e outros), sem detalhes de perturbação no texto.
+\item \textbf{Concisão:} Sparseness (Chalasani) e Complexity (entropia, Bhatt et al., 2020).
+\item \textbf{Métricas seletivas:} $SM = \frac{1}{N}\sum M\,(1 - \mathrm{Av}(A))$, desempenho do classificador treinado nos mapas penalizado pela média do mapa normalizado em [0, 1].
+\end{itemize}
+Resultados em média e desvio padrão nas 10 dobras. Não há teste de randomização nem de robustez.
+
+\section{Resultados e conclusões}
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Método} & \textbf{AD} ($\downarrow$) & \textbf{FF} ($\uparrow$) & \textbf{SPS} ($\uparrow$) & \textbf{COMP} ($\downarrow$) \\
+\midrule
+Integrated Gradients & 1,22 $\pm$ 1,72 & 0,013 $\pm$ 0,008 & 0,77 & 11,69 \\
+Gradient SHAP & 2,26 $\pm$ 3,65 & 0,004 $\pm$ 0,003 & 0,69 & 11,99 \\
+Guided GradCAM & 5,24 $\pm$ 6,74 & 0,001 $\pm$ 0,001 & 0,83 & 10,69 \\
+Saliency & 1,80 $\pm$ 2,22 & 0,004 $\pm$ 0,003 & 0,69 & 11,98 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textit{Fonte: Tabela I [p. 3], recorte de 4 dos 6 métodos.} O IG é o melhor em AI, AD, AG e FF; o Guided GradCAM, em Fid-In, Sparseness e Complexity. Classificando a partir dos mapas, o IG chega a 0,89 de acurácia e o GradientSHAP a 0,84, contra 0,82 com os espectrogramas originais (Tabela III). Combinar métodos ajuda mais quando os mapas já se sobrepõem. Os autores concluem que as explicações são fiéis, mas pouco interpretáveis por humanos, e sugerem discretizar o espectrograma em fonemas.
+
+\begin{citacard}{\pagechip{p. 2} §III-D Métricas seletivas}
+\begin{origquote}“These metrics penalize explanations replicating the input audio without selectively highlighting the portions of the input relevant to the classification.”\end{origquote}
+\begin{tradquote}“Essas métricas penalizam explicações que reproduzem o áudio de entrada sem destacar seletivamente as partes relevantes para a classificação.”\end{tradquote}
+\explab{Explicação}
+O risco de um mapa “repetir a entrada” é o mesmo que Adebayo et al.\ (2018) apontam para métodos do tipo entrada $\times$ gradiente, família do GradientSHAP. No TCC, esse risco aparece no eMPRT: o mapa do modelo com pesos aleatórios se concentra no QRS, onde a amplitude é maior.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §V-A Métricas de fidelidade}
+\begin{origquote}“The variability in the metrics can be attributed to the high sensitivity of classifier representations to individual subjects, as evidenced by the high standard deviations in Table II. This subject-specific variability leads to fluctuations in faithfulness metrics across folds comparable to those observed on the classification performance.”\end{origquote}
+\begin{tradquote}“A variabilidade das métricas pode ser atribuída à alta sensibilidade das representações do classificador a cada indivíduo, como mostram os grandes desvios padrão da Tabela II. Essa variabilidade por indivíduo leva a flutuações das métricas de fidelidade entre dobras comparáveis às do desempenho de classificação.”\end{tradquote}
+\explab{Explicação}
+As métricas de explicação variam junto com o desempenho do modelo. Os desvios padrão da tabela (por exemplo, AD 2,26 $\pm$ 3,65 no GradientSHAP) são maiores que a diferença entre vários métodos, o que obriga a ler rankings com cautela. No TCC, a dispersão das métricas dentro de cada classe deve acompanhar as médias.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §V-A}
+\begin{origquote}“We note that the small FF values is due to classifier’s uncertainty, since we observed small values in the predicted logit outputs.”\end{origquote}
+\begin{tradquote}“Notamos que os valores pequenos de FF se devem à incerteza do classificador, pois observamos valores pequenos nos logits preditos.”\end{tradquote}
+\explab{Explicação}
+A escala de uma métrica de fidelidade depende da escala da saída do modelo. Por isso o TCC usa correlações (adimensionais) na Faithfulness Correlation e na Faithfulness Estimate, e compara as distâncias da sensibilidade e da randomização com o piso, em vez de interpretar valores brutos.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §VI Conclusão}
+\begin{origquote}“In this paper, we show that popular post-hoc explanation methods can generate faithful explanations for PD detection. Nonetheless, they fail to generate explanations that domain experts can easily understand.”\end{origquote}
+\begin{tradquote}“Neste artigo, mostramos que métodos post-hoc populares podem gerar explicações fiéis para a detecção de DP. Ainda assim, eles não geram explicações que especialistas consigam entender facilmente.”\end{tradquote}
+\explab{Explicação}
+Separa fidelidade (o mapa acompanha o modelo) de utilidade clínica (o especialista entende o mapa). O TCC mede apenas a primeira; a agregação em 36 regiões com significado fisiológico (derivação $\times$ pré-QRS, QRS, ST-T) é a forma de tornar os mapas legíveis, papel que aqui os autores atribuem aos fonemas.
+\end{citacard}
+
+\section{Relação com o TCC}
+É um trabalho em sinal temporal biomédico que inclui o GradientSHAP e usa a Complexity de Bhatt et al.\ (2020), a mesma entropia adotada no TCC (lá sobre o espectrograma inteiro, valores em torno de 12; no TCC sobre 36 regiões, teto $\ln 36$). Diferenças: fidelidade medida por mascaramento do espectrograma, com métricas emprestadas de trabalhos de áudio; resultados por dobra, não por classe; tarefa binária. O artigo reforça duas ressalvas para a discussão: a variabilidade das métricas é grande diante das diferenças entre métodos, e fidelidade não garante interpretabilidade clínica. Uma inconsistência do texto: a metodologia lista “Guided SHAP” [33], mas as tabelas trazem “Gradient SHAP”.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “Mancini et al.\ (2024) avaliaram seis métodos de atribuição, entre eles o GradientSHAP, na detecção de Parkinson pela fala, com métricas de fidelidade e de complexidade, e concluíram que as explicações eram fiéis ao classificador, mas pouco compreensíveis para especialistas.”
+\end{itemize}
+
+\end{document}

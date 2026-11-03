@@ -1,0 +1,379 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\newunicodechar{◦}{\ensuremath{^{\circ}}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{κ}{\ensuremath{\kappa}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{∼}{\ensuremath{\sim}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: atribuição em ECG (Suh et al., 2024)}} \\[0.35em]
+    {\large SUH, J.; KIM, J.; KWON, S.; JUNG, E.; AHN, H.-J.; LEE, K.-Y.; CHOI, E.-K.; RHEE, W. \textit{Visual interpretation of deep learning model in ECG classification: A comprehensive evaluation of feature attribution methods}. Computers in Biology and Medicine, v.~182, 109088, 2024} \\[0.3em]
+    \textbf{Tema:} avaliação de métodos de atribuição em ECG por métricas de localização, de perturbação (incluindo a Faithfulness Correlation) e por cardiologistas \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1016/j.compbiomed.2024.109088} \\[0.2em]
+    \textbf{Leitura:} íntegra (versão publicada, 20 páginas, com os apêndices B a F; o material suplementar on-line não foi lido) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF da versão publicada (20 páginas, numeradas de 1 a 20 pelo próprio periódico). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação. A \textbf{Parte I} explica o trabalho sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento em ordem do texto; a \textbf{Parte III} relaciona o artigo com as decisões do TCC.
+
+\begin{infobox}[note]{Por que este artigo}
+É o precedente mais direto da \textbf{Faithfulness Correlation} (Bhatt et al., 2020) aplicada a \textbf{ECG real}: a métrica é usada com o \textit{logit}, correlação de Pearson por exemplo, substituição por zero, 10\% dos pontos retirados e 100 repetições, só em predições com probabilidade acima de 0,9 (Apêndices D e E). Os resultados também tocam o TCC em três pontos: o DeepSHAP, da família SHAP, tem a maior Faithfulness Correlation nos quatro conjuntos de dados; as métricas de localização e as de perturbação ordenam os métodos de formas diferentes; e os autores recomendam as de localização, quando houver anotação, por causa do deslocamento de distribuição causado pela perturbação. Essa recomendação precisa ser discutida, porque o TCC usa só métricas de perturbação e de propriedades do mapa.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema}
+Métodos de \textbf{atribuição de características} (\textit{feature attribution}) produzem, para uma entrada e uma classe, um valor de importância para cada ponto da entrada; no ECG, um valor por derivação e instante, desenhado como um mapa de calor sobre o traçado. O uso desses mapas em ECG cresceu, mas cada estudo escolhe um método sem justificar a escolha. Os poucos estudos que comparavam métodos em ECG eram pequenos (uma única base, poucas classes e poucas métricas) ou tratavam o ECG como uma série temporal qualquer, sem aproveitar a sua estrutura de batimentos (p.~1--2).
+
+\section{A ideia central}
+Os autores montam uma avaliação em duas fases (p.~2--5):
+\begin{enumerate}
+\item \textbf{Avaliação automática} de 11 métodos com 7 métricas, em quatro bases com anotação de cada batimento. As métricas são de dois tipos:
+  \begin{itemize}
+  \item \textbf{Localização}: comparam o mapa com a região que de fato contém a anormalidade (a \textit{verdade de referência}, ou \textit{ground truth}). Exigem saber onde está o batimento anormal.
+  \item \textbf{Perturbação}: alteram os trechos que o mapa diz serem importantes e medem quanto a saída do modelo cai. Exigem só o rótulo do exemplo.
+  \end{itemize}
+\item \textbf{Avaliação humana}: três cardiologistas dão notas de 1 a 5 à utilidade clínica dos mapas dos dois melhores métodos da fase 1 (o melhor em localização e o melhor em perturbação), em 17 diagnósticos do PTB-XL.
+\end{enumerate}
+A pergunta de fundo é qual tipo de métrica concorda com o julgamento dos especialistas.
+
+\section{Dados e modelo}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Base} & \textbf{Uso e configuração} & \textbf{Amostragem} \\
+\midrule
+MITDB & Avaliação automática; derivação II modificada & 360 Hz \\
+SVDB & Avaliação automática; primeiro canal & 128 Hz \\
+INCARTDB & Avaliação automática; derivação II & 257 Hz \\
+ICENTIA11K & Avaliação automática; derivação I modificada & 250 Hz \\
+PTB-XL & Avaliação humana; 12 derivações, 10 s, 17 rótulos & 500 Hz \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\begin{itemize}
+\item \textbf{Tarefa da fase 1.} Os registros longos são cortados em janelas de 8~s (8,196~s no ICENTIA11K), com \textbf{uma única derivação}. Cada janela recebe um rótulo pelos batimentos que contém: N (todos normais), ou o tipo de batimento anormal presente, S (supraventricular), V (ventricular) ou F (fusão), o mais frequente se houver mais de um (p.~6). A região de referência é o conjunto dos batimentos anormais, cada um delimitado pelos pontos médios entre picos R vizinhos. A divisão treino/teste é de 50:50 por paciente.
+\item \textbf{Modelo.} Uma ResNet-18 adaptada a sinais 1D, com núcleos 1×7, treinada com entropia cruzada (Adam, 20 épocas, lote 32) e cinco sementes; os resultados são médias das cinco execuções (p.~7 e 15). Acurácia de teste entre 0,763 (SVDB) e 0,926 (ICENTIA11K) (Tabela 2, p.~6). Cada janela é padronizada para média 0 e desvio 1 (p.~16).
+\item \textbf{Tarefa da fase 2.} A mesma arquitetura, treinada no PTB-XL como problema \textbf{multirrótulo} (entrada de 12 × 5\,000 pontos), com AUROC entre 0,852 e 0,999 nos 17 rótulos (Tabela 3, p.~7).
+\end{itemize}
+
+\section{Métodos de explicação}
+Onze métodos, todos do Captum (Apêndice B, p.~13): DeepLIFT, DeepSHAP, Grad-CAM, Guided Backpropagation, Guided Grad-CAM, Input×Gradient, Integrated Gradients, KernelSHAP, LIME, LRP e Saliency. Cada um foi avaliado também em \textbf{valor absoluto} (marcado com ◦ no artigo), porque valores negativos grandes também podem indicar trechos que distinguem a classe; isso dobra o número de variantes para 22 (p.~3). Configurações relevantes (Apêndice E, p.~16): DeepSHAP com \textbf{250 amostras de referência}; LIME e KernelSHAP com 500 amostras (5\,000 no PTB-XL) e segmentos de cerca de 0,06~s. \textbf{O GradientSHAP, usado no TCC, não está entre os métodos avaliados}; o parente mais próximo é o DeepSHAP.
+
+\section{Métricas e como foram adaptadas ao ECG (Apêndices C a E)}
+\textbf{Notação} (p.~13). O ECG é $X \in \mathbb{R}^{L\times T}$ ($L$ derivações, $T$ instantes); o mapa $A$ tem a mesma forma; $\mathcal{A}$ é o conjunto de todos os índices $(i,j)$ e $G$ o conjunto dos índices da região de referência.
+
+\subsection{Localização (Apêndice C, p.~13--14)}
+\begin{itemize}
+\item \textbf{Attribution Localization}: fração da atribuição positiva que cai dentro de $G$, corrigida pelo tamanho de $G$:
+\[ \frac{\sum_{(i,j)\in G}\max(0,A_{i,j})}{\sum_{(i,j)\in \mathcal{A}}\max(0,A_{i,j})}\cdot\frac{|\mathcal{A}|}{|G|}. \]
+\item \textbf{Relevance Rank Accuracy}: dos $|G|$ pontos de maior atribuição, que fração está em $G$.
+\item \textbf{Pointing Game}: 1 se o ponto de maior atribuição está em $G$, 0 caso contrário.
+\item \textbf{AUC}: área sob a curva ROC ao usar a atribuição como classificador “dentro/fora de $G$”.
+\end{itemize}
+Como janelas N não têm um trecho anormal a localizar, elas ficam fora de toda a avaliação automática (p.~7).
+
+\subsection{Perturbação (Apêndice D, p.~14--15, e Apêndice E, p.~16)}
+\begin{itemize}
+\item \textbf{Função de perturbação.} Os trechos escolhidos são substituídos por \textbf{zero}, considerado neutro porque cada janela foi padronizada para média zero. Os autores citam como alternativas uma constante, a média da região ou ruído aleatório.
+\item \textbf{Unidade.} Cerca de \textbf{0,06~s}: 24 pontos no MITDB, 8 no SVDB, 16 no INCARTDB e no ICENTIA11K, 32 no PTB-XL (p.~16).
+\item \textbf{Region Perturbation (MoRF e LeRF).} O sinal é dividido em $M$ segmentos sem sobreposição, ordenados pela soma da atribuição (decrescente no MoRF, crescente no LeRF), e retirados cumulativamente; a nota é a área (regra do trapézio, dividida por $M$) sob a curva da queda $f(X)-f(X'_{(k)})$ da saída \textit{softmax}, com no máximo 100 passos. MoRF: quanto maior, melhor; LeRF: quanto menor, melhor.
+\item \textbf{Faithfulness Correlation.} Para cada exemplo, sorteia-se um subconjunto $S$ de pontos, troca-se por zero e anota-se o par (queda do \textit{logit}, soma das atribuições em $S$); repete-se e calcula-se a correlação:
+\[ \text{FC}(X) = \operatorname{corr}_{S\subset\mathcal{A}}\Big(f_{\text{logit}}(X)-f_{\text{logit}}(X'_S),\ \sum_{(i,j)\in S}A_{i,j}\Big). \]
+Configuração (p.~16): \textbf{10\% dos pontos} de cada exemplo, \textbf{100 repetições}, \textbf{Pearson}. Diferente das outras métricas, usa o \textit{logit} (saída antes do \textit{softmax}).
+\item \textbf{Exemplos avaliados.} Só janelas S e V do teste \textbf{preditas corretamente com probabilidade acima de 0,9} (acima de 0,75 no SVDB, que tinha poucas acima de 0,9); F ficou fora por ser rara. Em média, de 1\,088 (MITDB) a 3\,456 (ICENTIA11K) janelas por base; no INCARTDB, quase todas V (Tabela E.1, p.~17).
+\end{itemize}
+
+\begin{infobox}[warn]{Ponto não esclarecido no texto}
+O Apêndice D define $S$ como um subconjunto de \textbf{pontos} da entrada, e o Apêndice E diz que “10\% dos pontos” são sorteados; o mesmo parágrafo fixa a unidade de 0,06~s “para as métricas de perturbação”, sem dizer se ela vale também para a Faithfulness Correlation. Pelo texto, a leitura mais direta é o sorteio ponto a ponto (cerca de 200 pontos numa janela de 2\,000). O código citado pelos autores (\url{https://github.com/SNU-DRL/Attribution-ECG}) resolveria a dúvida, mas não foi consultado neste fichamento.
+\end{infobox}
+
+\section{Resultados principais}
+\textbf{Faithfulness Correlation por base} (Tabelas 4, F.1, F.2 e F.3, p.~8 e 17--18). Para cada método, a variante (com ou sem valor absoluto) escolhida pelos autores para as métricas de perturbação; entre parênteses, a posição entre os 12 (11 métodos e o mapa aleatório).
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Método} & \textbf{ICENTIA11K} & \textbf{MITDB} & \textbf{SVDB} & \textbf{INCARTDB} \\
+\midrule
+DeepSHAP           & 0,409 (1)  & 0,591 (1)  & 0,634 (1)  & 0,532 (1) \\
+DeepLIFT           & 0,367 (2)  & 0,527 (2)  & 0,588 (2)  & 0,313 (7) \\
+Integrated Gradients◦ & 0,250 (5) & 0,508 (3) & 0,473 (3) & 0,328 (6) \\
+Guided Backprop◦   & 0,284 (3)  & 0,473 (5)  & 0,397 (4)  & 0,402 (3) \\
+Guided Grad-CAM◦   & 0,281 (4)  & 0,366 (7)  & 0,341 (7)  & 0,413 (2) \\
+LIME               & 0,249 (6)  & 0,432 (6)  & 0,384 (5)  & 0,373 (4) \\
+Input×Gradient◦    & 0,226 (7)  & 0,493 (4)  & 0,371 (6)  & 0,340 (5) \\
+KernelSHAP         & 0,183 (8)  & 0,337 (8)  & 0,297 (8)  & 0,219 (8) \\
+Grad-CAM           & 0,137 (9)  & 0,095 (11) & 0,157 (9)  & 0,138 (9) \\
+LRP◦               & 0,038 (10) & 0,203 (9)  & 0,115 (11) & 0,046 (10) \\
+Saliency◦          & 0,028 (11) & 0,198 (10) & 0,144 (10) & 0,019 (11) \\
+Mapa aleatório     & $-0{,}001$ (12) & $-0{,}003$ (12) & 0,000 (12) & $-0{,}000$ (12) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Posições médias nas quatro bases} (p.~9). Localização: Guided Grad-CAM◦ 1,8; Guided Backprop◦ 2,7; Grad-CAM 3,1. Perturbação: LIME 2,7; DeepSHAP 2,8; depois Integrated Gradients◦, DeepLIFT e Guided Backprop◦. KernelSHAP, Saliency◦ e LRP◦ ficam embaixo nos dois tipos.
+
+\textbf{Avaliação humana} (p.~8 e Tabela F.4, p.~18--19). Nota média de 3,796 para Guided Grad-CAM◦ e 2,021 para LIME; Guided Grad-CAM◦ foi significativamente mais útil em 15 dos 17 diagnósticos. LIME só foi melhor no desvio do eixo para a esquerda (4,000 contra 3,467; $p = 0{,}02$), e os dois empataram no bloqueio fascicular anterior esquerdo ($p = 0{,}565$). A concordância entre avaliadores (ICC) variou muito entre diagnósticos.
+
+\textbf{Leitura clínica} (p.~9--10). Em flutter atrial e bloqueio de ramo esquerdo, o mapa destacou as derivações e ondas esperadas; em bradicardia sinusal, destacou intervalos RR e ondas T, e não ondas P; em extrassístoles atriais, os destaques não se repetiram a cada batimento nem entre derivações.
+
+\section{Conclusões e limitações declaradas}
+\textbf{Conclusões} (p.~12): (i) usar o Guided Grad-CAM em valor absoluto como primeira opção; (ii) preferir métricas de localização quando houver anotação; (iii) a atribuição pode identificar características eletrofisiológicas, mas a eficácia \textbf{varia entre diagnósticos}. \textbf{Limitações} (p.~11--12): só arquiteturas convolucionais; só dois métodos na avaliação humana; avaliação automática restrita a anormalidades de batimento, por falta de bases com regiões anotadas para outros diagnósticos.
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+Introdução e trabalhos relacionados (p.~1--2), descrição das duas fases (p.~2--5), configuração experimental (p.~6--7), resultados (p.~7--10), discussão e conclusão (p.~10--12) e apêndices com as definições das métricas e os detalhes de implementação (p.~13--17). Para o TCC, os trechos centrais são o Apêndice D (definição da Faithfulness Correlation), o Apêndice E (configuração) e a discussão sobre o deslocamento de distribuição (p.~11).
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“However, a careful study to identify suitable methods for ECG datasets has been lacking, leading researchers to select methods without a thorough understanding of their appropriateness.”\end{origquote}
+\begin{tradquote}“No entanto, faltava um estudo cuidadoso para identificar os métodos adequados a dados de ECG, o que leva os pesquisadores a escolher métodos sem entender bem se são apropriados.”\end{tradquote}
+\explab{Explicação}
+É a motivação do artigo e também uma das justificativas do TCC: a escolha do GradientSHAP só se sustenta se as explicações forem avaliadas no próprio problema (ECG de 12 derivações, 9 classes), e não pela reputação do método.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §2 Trabalhos relacionados}
+\begin{origquote}“ECG was merely an example of time-series datasets, so the studies do not provide in-depth insight into which attribution method is most effective for ECG analysis. Furthermore, their evaluation frameworks were designed for general time-series analysis and did not utilize the unique characteristics of ECG datasets; an ECG is a type of signal with a distinct pseudo-periodic structure and its analysis primarily focuses on detecting abnormalities.”\end{origquote}
+\begin{tradquote}“O ECG era apenas um exemplo de série temporal, e esses estudos não mostram a fundo qual método de atribuição é mais eficaz na análise do ECG. Além disso, os seus protocolos de avaliação foram feitos para séries temporais em geral e não aproveitaram as características próprias do ECG: um sinal com estrutura pseudoperiódica marcada, cuja análise se concentra em detectar anormalidades.”\end{tradquote}
+\explab{Explicação}
+A “estrutura pseudoperiódica” é a repetição dos batimentos, cada um com onda P, QRS e onda T. É o mesmo argumento que levou o TCC a agregar os mapas em 36 regiões do batimento (12 derivações × pré-QRS, QRS e ST-T), em vez de tratar cada ponto como atributo independente.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §1 Contribuições}
+\begin{origquote}“By utilizing datasets with beat annotations, we implement localization-based metrics in our automatic evaluation. We discover that these metrics, less commonly used than perturbation-based metrics in previous studies, align more closely with human assessment criteria, making them preferable when available.”\end{origquote}
+\begin{tradquote}“Usando bases com anotação de batimentos, implementamos métricas de localização na avaliação automática. Descobrimos que essas métricas, menos usadas que as de perturbação nos estudos anteriores, se alinham melhor aos critérios da avaliação humana, o que as torna preferíveis quando disponíveis.”\end{tradquote}
+\explab{Explicação}
+É a tese principal do artigo. Ela se apoia em uma comparação específica: o melhor método em localização (Guided Grad-CAM◦) recebeu notas melhores dos cardiologistas que o melhor em perturbação (LIME). A preferência vale “quando disponíveis”, isto é, quando existe anotação da região anormal, o que não é o caso do CPSC2018 usado no TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §3.1 Métodos de atribuição}
+\begin{origquote}“Given that regions with high negative values might also contain information for distinguishing specific classes, we additionally investigated the effectiveness of utilizing absolute attribution values from each method (Fig. 2b).”\end{origquote}
+\begin{tradquote}“Como regiões com valores negativos altos também podem conter informação para distinguir classes específicas, investigamos também a eficácia de usar os valores absolutos das atribuições de cada método (Fig. 2b).”\end{tradquote}
+\explab{Explicação}
+O sinal da atribuição é tratado como opcional: a variante em valor absoluto venceu em vários métodos. No TCC, as métricas de fidelidade usam o mapa com sinal (a soma das atribuições é comparada com a queda do \textit{logit}), e a Max/Avg-Sensitivity e o Random Logit comparam mapas com sinal; só a verificação do eMPRT usou as magnitudes. A escolha do artigo mostra que o resultado de uma métrica pode mudar com essa decisão.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §3.2 Métricas de perturbação}
+\begin{origquote}“They are based on the assumption that the model output will drop significantly when the region of the important feature for a diagnosis is perturbed. In the case of ECGs, replacing segments displaying abnormal patterns with neutral signals should result in the model assigning a lower probability to that specific abnormality.”\end{origquote}
+\begin{tradquote}“Elas partem do pressuposto de que a saída do modelo cai bastante quando a região da característica importante para um diagnóstico é perturbada. No ECG, substituir trechos com padrões anormais por sinais neutros deveria fazer o modelo atribuir uma probabilidade menor àquela anormalidade.”\end{tradquote}
+\explab{Explicação}
+Resume a lógica comum à Faithfulness Correlation e à Faithfulness Estimate do TCC. O ponto delicado é o que conta como “sinal neutro”: o artigo usa zero; o TCC usa zero e a média do treino, com resultados praticamente iguais.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §3.2 Métricas de perturbação}
+\begin{origquote}“In previous studies assessing feature attribution methods for ECG datasets, perturbation-based metrics have been preferred and widely used due to their simplicity [11,16,21,22]. These metrics require only the label of an input.”\end{origquote}
+\begin{tradquote}“Nos estudos anteriores que avaliaram métodos de atribuição em ECG, as métricas de perturbação foram preferidas e muito usadas pela simplicidade [11,16,21,22]. Elas exigem apenas o rótulo da entrada.”\end{tradquote}
+\explab{Explicação}
+Explica por que o TCC, sem anotação de regiões no CPSC2018, depende de métricas de perturbação e de propriedades do mapa. Entre as referências estão Schlegel et al.\ (2019), Mercier et al.\ (2022) e Turbé et al.\ (2023), este último fichado em separado.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §4.2 Avaliação automática}
+\begin{origquote}“When computing evaluation metrics, we utilized only test examples that were accurately predicted with high probability. This approach ensures that any low performance in feature attribution is attributable to the methods themselves, rather than to poor model performance [59].”\end{origquote}
+\begin{tradquote}“No cálculo das métricas, usamos apenas exemplos de teste preditos corretamente e com probabilidade alta. Isso garante que um desempenho ruim da atribuição se deva aos próprios métodos, e não a um desempenho ruim do modelo [59].”\end{tradquote}
+\explab{Explicação}
+O TCC faz uma escolha parecida: os 622 mapas são de predições corretas do teste. O artigo vai além e exige confiança alta (probabilidade acima de 0,9). Isso reduz a variação, mas também retira justamente os casos difíceis; no TCC, em que a pergunta é se a qualidade da explicação acompanha o F1 por classe, um corte de confiança mudaria a composição de cada classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §5.1 Resultados da avaliação automática}
+\begin{origquote}“Fig. 4 reveals that attribution methods excelling in localization-based metrics (Fig. 4a) differ from those performing well in perturbation-based metrics (Fig. 4b). This difference in results can be explained by the findings from Tomsett et al. [63] and Gevaert et al. [5]: although all metrics aim to assess the accuracy of explanations, they actually evaluate different underlying properties of feature attribution maps.”\end{origquote}
+\begin{tradquote}“A Fig. 4 mostra que os métodos que se saem melhor nas métricas de localização (Fig. 4a) são diferentes dos que se saem bem nas de perturbação (Fig. 4b). Essa diferença pode ser explicada pelos achados de Tomsett et al.\ [63] e Gevaert et al.\ [5]: embora todas as métricas tentem avaliar a exatidão das explicações, na verdade elas avaliam propriedades diferentes dos mapas.”\end{tradquote}
+\explab{Explicação}
+Apoia a forma como o TCC lê as suas métricas: cada uma mede uma propriedade (fidelidade, robustez, consistência, especificidade de classe, concentração), e não se espera que as ordens das classes coincidam entre elas. O TCC não agrega as métricas num índice único, em parte por esse motivo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §5.1 Resultados da avaliação automática}
+\begin{origquote}“A notable finding from the results is that methods incorporating a perturbation process tend to perform better in perturbation-based metrics compared to localization-based metrics. [...] This observation suggests that the similarity between the mechanism of a feature attribution method and the characteristics of a metric might influence the evaluation outcomes.”\end{origquote}
+\begin{tradquote}“Um achado notável é que os métodos que incluem um processo de perturbação tendem a se sair melhor nas métricas de perturbação do que nas de localização. [...] Isso sugere que a semelhança entre o mecanismo do método de atribuição e as características da métrica pode influenciar o resultado da avaliação.”\end{tradquote}
+\explab{Explicação}
+Os autores incluem o DeepSHAP entre esses métodos, porque ele usa amostras de referência. O GradientSHAP também compara o ECG com referências e explica a diferença de saída em relação a elas; a Faithfulness Correlation, por sua vez, troca regiões por uma referência e mede a queda. Essa afinidade de mecanismo é uma ressalva para a leitura da fidelidade no TCC: um valor alto pode refletir em parte essa semelhança.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} §6 Interpretação clínica}
+\begin{origquote}“In principle, sinus bradycardia can be diagnosed only by analyzing PP and RR intervals and the 1:1 correlation between P-waves and QRS complexes. The feature attribution seems to focus on the duration between the cardiac beats or T-waves rather than on P-waves or QRS complexes.”\end{origquote}
+\begin{tradquote}“Em princípio, a bradicardia sinusal só pode ser diagnosticada analisando os intervalos PP e RR e a relação 1:1 entre ondas P e complexos QRS. A atribuição parece se concentrar na duração entre batimentos ou nas ondas T, e não nas ondas P ou nos complexos QRS.”\end{tradquote}
+\explab{Explicação}
+Mostra um limite de mapas pontuais para classes de ritmo: o diagnóstico depende de \textbf{intervalos}, que não são um trecho localizado do sinal. O TCC tem classes desse tipo (SNR, AF), e as regiões fixas do batimento também não representam diretamente um intervalo; é uma ressalva para interpretar as métricas dessas classes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} §7 Discussão}
+\begin{origquote}“Second, the perturbation process results in inputs that deviate from the original training data distribution. Such a shift in distribution may lead to artifacts and unreliable predictions from the model, complicating the assessment of whether a decrease in performance is due to the removal of relevant information or the shift itself [22,35,66]. In the context of ECG classification, inserting significant noise or an unnatural signal into an ECG signal creates an anomaly, which makes the model’s decision unpredictable. Thus, we highly recommend using localization-based metrics for evaluating feature attribution methods when available.”\end{origquote}
+\begin{tradquote}“Segundo, a perturbação gera entradas que se afastam da distribuição dos dados de treino. Esse deslocamento de distribuição pode causar artefatos e predições pouco confiáveis, o que dificulta saber se a queda de desempenho se deve à retirada de informação relevante ou ao próprio deslocamento [22,35,66]. Na classificação de ECG, inserir ruído significativo ou um sinal não natural cria uma anomalia, o que torna a decisão do modelo imprevisível. Por isso, recomendamos fortemente usar métricas de localização para avaliar métodos de atribuição, quando disponíveis.”\end{tradquote}
+\explab{Explicação}
+É a crítica mais forte do artigo às métricas que o TCC usa. No ECG o problema é concreto: um trecho trocado por zero pode parecer, para o modelo, uma pausa ou uma alteração de segmento. O TCC reduz o problema de três formas, sem eliminá-lo: retira regiões inteiras do batimento (sem pontos isolados que criem picos), compara duas referências (zero e média do treino, com resultados quase iguais) e lê os valores de forma comparativa entre classes, e não como medida absoluta. A recomendação do artigo não se aplica diretamente, porque o CPSC2018 não tem anotação de regiões.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 14} Apêndice D}
+\begin{origquote}“In our experiments, we replaced the perturbed regions with a constant signal of zeros, as the signals were initially standardized to have a mean of zero.”\end{origquote}
+\begin{tradquote}“Nos experimentos, substituímos as regiões perturbadas por um sinal constante de zeros, já que os sinais tinham sido padronizados para média zero.”\end{tradquote}
+\explab{Explicação}
+Define o valor de referência (\textit{baseline}) de todas as métricas de perturbação. A justificativa é a mesma que vale no TCC, em que cada derivação está em escala z-score: zero é a média do sinal. Ainda assim, um trecho plano em zero não é um ECG plausível, o que leva de volta à crítica da p.~11.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} Apêndice D, Faithfulness Correlation}
+\begin{origquote}“This metric is based on the principle that faithful attribution map should result in changes to the model’s output proportional to the sum of attribution scores in the perturbed region. For the model’s output, this metric uses the logit values from a classifier, denoted as flogit, which are obtained before applying the softmax function.”\end{origquote}
+\begin{tradquote}“A métrica se baseia no princípio de que um mapa fiel deve produzir mudanças na saída do modelo proporcionais à soma das atribuições na região perturbada. Como saída do modelo, a métrica usa os \textit{logits} do classificador, denotados por $f_{\text{logit}}$, obtidos antes de aplicar a função \textit{softmax}.”\end{tradquote}
+\explab{Explicação}
+Confirma a escolha do TCC: a Faithfulness Correlation compara a soma das atribuições com a queda do \textit{logit}, e não da probabilidade. No artigo, as outras métricas de perturbação usam a saída \textit{softmax}; só a Faithfulness Correlation usa o \textit{logit}, como em Bhatt et al.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 16} Apêndice E, Detalhes de implementação}
+\begin{origquote}“For perturbation-based metrics, the size of perturbation was set to approximately 0.06 s across all datasets. We employed zero replacement as the perturbation function, following previous studies [11,16]. For the Region Perturbation, we limited the number of steps to not exceed 100. For the Faithfulness Correlation, 10 percent of the input points for each sample were randomly selected and perturbed 100 times, with Person’s [sic] correlation coefficient serving as the correlation function.”\end{origquote}
+\begin{tradquote}“Nas métricas de perturbação, o tamanho da perturbação foi fixado em cerca de 0,06~s em todas as bases. Usamos a substituição por zero como função de perturbação, seguindo estudos anteriores [11,16]. Na Region Perturbation, limitamos o número de passos a no máximo 100. Na Faithfulness Correlation, 10\% dos pontos de entrada de cada exemplo foram sorteados e perturbados 100 vezes, com o coeficiente de correlação de Pearson como função de correlação.”\end{tradquote}
+\explab{Explicação}
+É a configuração completa da Faithfulness Correlation em ECG: 10\% da entrada por subconjunto, 100 subconjuntos, Pearson, zero. No TCC, os subconjuntos são de 4, 9 ou 18 das 36 regiões (cerca de 10\%, 25\% e 50\% do sinal), com 50 sorteios; o valor principal usa 9 regiões. A fração de 10\% do artigo corresponde à configuração de 4 regiões do TCC, que deu praticamente o mesmo valor global que a de 9 (0,61 e 0,60). O “Person’s” é erro de digitação do original.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 12} §8 Conclusão}
+\begin{origquote}“Third, feature attribution can identify regions with electrophysiological features related to certain diagnoses, but its effectiveness may vary among different diagnoses, highlighting the necessity of conducting investigations for specific use cases.”\end{origquote}
+\begin{tradquote}“Terceiro, a atribuição pode identificar regiões com características eletrofisiológicas ligadas a certos diagnósticos, mas a sua eficácia pode variar entre diagnósticos, o que mostra a necessidade de investigar cada caso de uso.”\end{tradquote}
+\explab{Explicação}
+Dá respaldo à pergunta do TCC, que é justamente por classe: se a qualidade das explicações varia entre diagnósticos, faz sentido examinar se essa variação acompanha o desempenho do modelo (F1) em cada classe. No artigo, a variação aparece na avaliação humana; as métricas automáticas são reportadas só por base, sem separar S e V.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{Precedente da Faithfulness Correlation em ECG.} O artigo aplica a métrica de Bhatt et al.\ a ECG real, com escolhas que o TCC também adota: saída em \textit{logit}, correlação de Pearson calculada por exemplo e depois resumida, substituição por zero em sinal padronizado e apenas predições corretas. É a referência a citar quando se justificar o uso da métrica em ECG.
+\item \textbf{Ordem de grandeza para a família SHAP.} O DeepSHAP teve a maior Faithfulness Correlation nas quatro bases (0,41 a 0,63), e o mapa aleatório ficou em zero. O valor global do TCC com o GradientSHAP (0,60 com 9 regiões) está nessa faixa. A comparação serve só como ordem de grandeza (ver a seção~\ref{sec:suh-ressalvas}).
+\item \textbf{Métricas medem propriedades diferentes.} A discordância entre localização e perturbação (p.~8) justifica apresentar as métricas do TCC lado a lado, sem índice agregado, e não esperar que as ordens das classes coincidam.
+\item \textbf{Variação entre diagnósticos.} A conclusão de que a utilidade dos mapas varia por diagnóstico (p.~12) sustenta a análise por classe do TCC.
+\end{enumerate}
+
+\section{O que o artigo contesta}
+\begin{itemize}
+\item \textbf{Preferência por localização.} Os autores recomendam métricas de localização sempre que houver anotação. O TCC não as usa por dois motivos: o CPSC2018 não tem regiões anotadas, e a pergunta do TCC é se a explicação é fiel ao \textbf{modelo}, e não se coincide com o raciocínio clínico (decisão registrada no documento de seleção de métricas). Essa diferença de objetivo deve ficar explícita no texto.
+\item \textbf{Deslocamento de distribuição.} A crítica da p.~11 vale para a Faithfulness Correlation e a Faithfulness Estimate do TCC. As mitigações adotadas (regiões inteiras, duas referências, leitura comparativa) reduzem, mas não eliminam, o problema.
+\item \textbf{Afinidade entre método e métrica.} Métodos com perturbação ou referência saem favorecidos em métricas de perturbação (p.~8). O GradientSHAP usa referências, então a fidelidade moderada observada no TCC deve ser lida com essa ressalva.
+\end{itemize}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Dados & MITDB, SVDB, INCARTDB, ICENTIA11K (uma derivação, janelas de 8~s); PTB-XL só na avaliação humana & CPSC2018, 12 derivações \\ \addlinespace
+Tarefa & 4 classes de batimento (N, S, V, F), rótulo único, \textit{softmax} & 9 classes, multirrótulo, uma saída por classe (BCE) \\ \addlinespace
+Modelo & ResNet-18 1D (núcleos 1×7), 5 sementes & ResNet34-1D, um modelo (F1 macro 0,819) \\ \addlinespace
+Método explicado & 11 métodos, sem GradientSHAP (DeepSHAP com 250 referências) & GradientSHAP, referência balanceada de 36 ECGs, 200 sorteios \\ \addlinespace
+Unidade de retirada & Pontos (10\% da entrada) & 36 regiões do batimento \\ \addlinespace
+Valor de substituição & Zero & Zero e média do treino \\ \addlinespace
+Saída & \textit{Logit} & \textit{Logit} \\ \addlinespace
+Repetições & 100 subconjuntos & 50 subconjuntos \\ \addlinespace
+Tamanho do subconjunto & 10\% dos pontos & 4, 9 ou 18 regiões (cerca de 10\%, 25\% e 50\%) \\ \addlinespace
+Exemplos & S e V corretos com probabilidade $> 0{,}9$ & 622 mapas de predições corretas do teste, todas as classes \\ \addlinespace
+Resumo & Média por base; posição entre métodos & Média por classe, comparada de forma descritiva com o F1 \\ \addlinespace
+Referência de comparação & Mapa aleatório (correlação $\approx 0$) & Piso entre sementes do GradientSHAP (nas métricas de robustez e randomização) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão}\label{sec:suh-ressalvas}
+\begin{itemize}
+\item \textbf{Comparação de valores.} Os 0,41 a 0,63 do DeepSHAP vêm de outro método, outra tarefa (batimentos em uma derivação), retirada ponto a ponto e outro tamanho de subconjunto. O valor do TCC pode ser comparado só como ordem de grandeza.
+\item \textbf{Sem resultado por classe.} O artigo reporta a Faithfulness Correlation por base, misturando S e V; não há como comparar classe a classe com o TCC.
+\item \textbf{Comparação de métodos, não de classes.} O artigo compara métodos entre si, com o mapa aleatório como piso. O TCC avalia um único método e compara classes; o mapa aleatório do artigo cumpre um papel parecido com o do piso entre sementes no TCC, mas não são a mesma referência.
+\item \textbf{Base da recomendação.} A conclusão “localização se alinha melhor aos especialistas” vem da comparação de \textbf{dois} métodos (Guided Grad-CAM◦ e LIME) na avaliação humana; as próprias limitações do artigo reconhecem isso (p.~12).
+\item \textbf{Unidade da Faithfulness Correlation.} O texto não deixa claro se os 10\% são sorteados ponto a ponto ou em blocos de 0,06~s (caixa da seção~5). Convém citar a configuração com essa cautela.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestões}
+\begin{itemize}
+\item “Suh et al.\ (2024) aplicaram a Faithfulness Correlation a ECG, substituindo por zero 10\% dos pontos de cada exemplo em 100 sorteios e calculando a correlação de Pearson com a queda do \textit{logit}; entre onze métodos de atribuição, o DeepSHAP obteve a maior correlação nas quatro bases avaliadas (de 0,41 a 0,63).”
+\item “No mesmo estudo, os métodos mais bem avaliados por métricas de localização diferiram dos mais bem avaliados por métricas de perturbação, o que indica que essas métricas medem propriedades distintas dos mapas.”
+\item “Os autores recomendam métricas de localização quando há anotação das regiões anormais, por causa do deslocamento de distribuição causado pela perturbação; como o CPSC2018 não tem essa anotação e o objetivo deste trabalho é a fidelidade ao modelo, adotaram-se métricas de perturbação por regiões do batimento, com duas referências de substituição.”
+\end{itemize}
+\end{infobox}
+
+\end{document}

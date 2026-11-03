@@ -1,0 +1,178 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: SHAP em reconhecimento de atividades}} \\[0.35em]
+    {\large TEMPEL, F.; IHLEN, E. A. F.; ADDE, L.; STRÜMKE, I. \textit{Explaining Human Activity Recognition with SHAP: Validating Insights with Perturbation and Quantitative Measures}. arXiv:2411.03714, 2024} \\[0.3em]
+    \textbf{Tema:} validação de explicações SHAP por perturbação guiada, com controle aleatório \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2411.03714} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 21/03/2025, 23 páginas com apêndices) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2). As citações estão no original em inglês, seguidas de tradução livre.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} explicar com SHAP redes convolucionais em grafo (GCN) que classificam movimentos a partir de esqueletos e verificar, de forma quantitativa, se os pontos do corpo apontados pelo SHAP são de fato os que o modelo usa.
+\item \textbf{Dados e modelo:} dois conjuntos reais: 557 vídeos de bebês com risco de paralisia cerebral (PC; 29 pontos do corpo, janelas de 5~s) e o NTU RGB+D 60 (ações, 25 pontos); GCNs de trabalhos anteriores dos autores.
+\item \textbf{Explicação:} DeepSHAP (\texttt{DeepExplainer}) com referência de 100 exemplos sorteados do treino.
+\item \textbf{Avaliação:} perturbação dos $K$ pontos mais (ou menos) importantes, feita nos pesos das arestas do grafo e não na entrada; métricas PGI e PGU, sensibilidade, especificidade e acurácia por classe; perturbação aleatória como controle.
+\item \textbf{Conclusão:} perturbar os pontos mais importantes segundo o SHAP derruba o desempenho mais do que perturbar pontos sorteados, o que os autores leem como evidência de fidelidade.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O reconhecimento de atividades humanas (HAR, \textit{human activity recognition}) por esqueleto usa, a cada quadro do vídeo, as coordenadas de pontos do corpo (articulações, mãos, pés). Os autores calculam o SHAP sobre quatro grupos de atributos (posição, velocidade, osso e aceleração) e somam os quatro mapas. Para explicar em nível de ponto do corpo, os valores SHAP são agregados no tempo (média dentro da janela) e nas coordenadas. O conjunto é chamado de ShapGCN.
+
+\section{Como avalia as explicações}
+A avaliação é por \textbf{perturbação guiada pela explicação}. Em vez de alterar as coordenadas (o que, segundo os autores, colapsaria o esqueleto na origem), altera-se a matriz de importância das arestas $E$ da GCN na posição de cada ponto: no conjunto de PC o elemento vira $10^{-5}$ (equivale a mascarar); no NTU ele é multiplicado por uma porcentagem (35\% na tabela principal), porque o mascaramento derrubava o modelo já com um ponto.
+\begin{itemize}
+\item \textbf{PGI} (\textit{prediction gap on important features}): variação média da saída ao perturbar os $K$ pontos de maior SHAP; quanto maior, melhor.
+\item \textbf{PGU} (\textit{prediction gap on unimportant features}): o mesmo para os $K$ de menor SHAP; quanto menor, melhor.
+\item \textbf{Controle aleatório:} os mesmos $K$ = 1 a 10 pontos são perturbados por sorteio.
+\end{itemize}
+Não há métrica de robustez, de randomização nem de complexidade.
+
+\section{Resultados e conclusões}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{Xrrr}
+\toprule
+\textbf{Medida} & \textbf{Sem perturbação} & \textbf{$K$ = 1} & \textbf{$K$ = 10} \\
+\midrule
+PC: sensibilidade, pontos mais importantes para PC & 0,944 & 0,638 & 0,372 \\
+PC: sensibilidade, pontos sorteados & 0,944 & 0,728 & 0,612 \\
+NTU classe 6 (pegar): acurácia, pontos importantes & 0,971 & 0,883 & 0,544 \\
+NTU classe 6 (pegar): acurácia, pontos sorteados & 0,971 & 0,956 & 0,294 \\
+NTU classe 16 (calçar sapato): acurácia, importantes & 0,845 & 0,533 & 0,416 \\
+NTU classe 16 (calçar sapato): acurácia, sorteados & 0,845 & 0,790 & 0,283 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\textit{Fonte: Tabelas 1--4 [p. 11, 12, 14, 15].} Nas três classes do NTU, o PGI fica acima do PGU para todo $K$ (Tabela 3). Com poucos pontos, a perturbação guiada é bem mais destrutiva que a aleatória. Com $K$ = 10, porém, a perturbação \textbf{aleatória} derruba \textbf{mais} a acurácia que a guiada nas classes 6 e 16 (0,294 contra 0,544; 0,283 contra 0,416), algo que o texto descreve apenas como “quase o mesmo efeito”. Limitações declaradas: a perturbação nas arestas pode não se generalizar a outras arquiteturas; o custo do SHAP é alto (16~h e 23~h de cálculo); a escolha da referência influencia as explicações; a média no tempo pode esconder dinâmicas curtas.
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“[...] commonly used methods often rely heavily on visual, qualitative validation methods, which is also the case for the few endeavors within the HAR domain. In many cases, researchers tend to cherry-pick results that support their stated claim, emphasizing the critical need for comprehensive and standardized evaluation frameworks for XAI methodologies [15, 16].”\end{origquote}
+\begin{tradquote}“[...] os métodos mais usados dependem muito de validação visual e qualitativa, o que também ocorre nas poucas iniciativas da área de HAR. Em muitos casos, pesquisadores tendem a escolher a dedo os resultados que apoiam sua afirmação, o que mostra a necessidade crítica de estruturas de avaliação abrangentes e padronizadas para as metodologias de XAI [15, 16].”\end{tradquote}
+\explab{Explicação}
+É a mesma motivação do TCC: um mapa SHAP bonito sobre o ECG não prova nada; é preciso medir, com métricas aplicadas a todo o conjunto avaliado, e não a exemplos escolhidos.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §2.2 XAI em HAR}
+\begin{origquote}“However, the metrics for the Prediction Gap of important (PGI) and the Prediction Gap of unimportant (PGU) features show the same trend as randomly perturbing body key points. This indicates that the perturbation method applied does not demonstrate any significant advantage over random perturbation, thereby questioning its effectiveness in distinguishing between important and unimportant body key points.”\end{origquote}
+\begin{tradquote}“No entanto, as métricas PGI e PGU mostram a mesma tendência que a perturbação aleatória dos pontos do corpo. Isso indica que o método de perturbação aplicado não mostra vantagem significativa sobre a perturbação aleatória, o que põe em dúvida sua eficácia em distinguir pontos importantes de não importantes.”\end{tradquote}
+\explab{Explicação}
+A crítica a um trabalho anterior resume a lógica do artigo: uma métrica de fidelidade só informa algo quando comparada a uma referência sem informação (aqui, o sorteio). No TCC, o mesmo papel é feito pelo piso (dois mapas do mesmo ECG com sementes diferentes) e pelas atribuições aleatórias usadas na validação das métricas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §3.2 Perturbação para GCNs}
+\begin{origquote}“In our novel perturbation approach, we extend this technique by perturbing the parts of the model architecture directly correlating with the skeleton body key points instead of perturbing the input features.”\end{origquote}
+\begin{tradquote}“Na nossa nova abordagem de perturbação, estendemos essa técnica perturbando as partes da arquitetura do modelo diretamente ligadas aos pontos do corpo do esqueleto, em vez de perturbar os atributos de entrada.”\end{tradquote}
+\explab{Explicação}
+É a principal diferença de desenho: a “retirada” de um ponto é feita dentro do modelo, para evitar entradas fisicamente impossíveis. No ECG do TCC, a retirada é feita na entrada (regiões trocadas por zero ou pela média do treino), e o risco de criar sinais fora da distribuição precisa ser discutido.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} §5 Discussão}
+\begin{origquote}“Selecting an appropriate reference dataset that reflects the dataset distribution is crucial to ensure reliable and meaningful explanations.”\end{origquote}
+\begin{tradquote}“Escolher um conjunto de referência adequado, que reflita a distribuição dos dados, é crucial para garantir explicações confiáveis e com sentido.”\end{tradquote}
+\explab{Explicação}
+Apoia a decisão do TCC de usar uma referência balanceada de 36 ECGs do treino para o GradientSHAP, em vez de uma referência arbitrária (zeros ou um único exemplo).
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo é um exemplo, fora do ECG mas com sinal temporal e contexto clínico (PC), de SHAP avaliado por perturbação com controle aleatório e com resultados \textbf{por classe} (sensibilidade e especificidade no PC; acurácia por ação no NTU). Ele reforça duas escolhas do TCC: comparar as métricas com uma referência sem informação e olhar as classes separadamente. Também mostra um cuidado de leitura: a vantagem da perturbação guiada sobre a aleatória depende de $K$ e chega a se inverter para $K$ grande; no TCC, os tamanhos de subconjunto ($|S|$ = 4, 9 e 18 regiões) devem ser lidos juntos pela mesma razão. Diferenças: DeepSHAP (e não GradientSHAP), perturbação nos pesos do modelo e não na entrada, e apenas fidelidade (sem robustez, randomização ou complexidade).
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “Tempel et al.\ (2024) avaliaram explicações SHAP de redes em grafo para reconhecimento de atividades perturbando os pontos do corpo mais importantes e comparando o efeito com o de pontos sorteados, e observaram queda maior com a perturbação guiada para poucos pontos perturbados.”
+\item “Assim como em Tempel et al.\ (2024), as métricas deste trabalho são lidas contra uma referência sem informação, e não isoladamente.”
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,160 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: survey de XAI em séries temporais}} \\[0.35em]
+    {\large ROJAT, T.; PUGET, R.; FILLIAT, D.; DEL SER, J.; GELIN, R.; DÍAZ-RODRÍGUEZ, N. \textit{Explainable Artificial Intelligence (XAI) on Time Series Data: A Survey}. arXiv:2104.00950, 2021} \\[0.3em]
+    \textbf{Tema:} panorama de métodos de XAI para séries temporais e de como suas explicações são avaliadas \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2104.00950} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v1, 14 páginas; manuscrito marcado “under review”, sem versão publicada localizada) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv (14 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} apresentar os métodos de XAI aplicados a séries temporais, o tipo de explicação que produzem, seu escopo, seu público e como são avaliados.
+\item \textbf{Organização:} métodos para CNNs (retropropagação, como CAM e gradiente $\times$ entrada; perturbação, como oclusão), para RNNs (atenção), de mineração de dados (SAX, lógica fuzzy) e por exemplos (shapelets, protótipos); explicações locais e globais; público desenvolvedor, usuário e tomador de decisão.
+\item \textbf{Dados e modelos:} não há experimentos próprios; a Tabela~I resume 31 trabalhos.
+\item \textbf{Avaliação (§VI):} qualitativa, por especialistas, e quantitativa, por perturbação e testes de sanidade.
+\item \textbf{Conclusão:} não existe métrica reconhecida para a qualidade das explicações, e a avaliação qualitativa rende menos em séries temporais do que em imagens.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+É um levantamento de literatura sem metodologia de busca declarada. Começa por definições: \textbf{explicabilidade} como característica ativa do modelo, \textbf{interpretabilidade} como característica passiva, e \textbf{estabilidade}, \textbf{robustez} e \textbf{confiança} como propriedades do modelo diante de ruído, ataques e exemplos fora da distribuição [p.~2--3]. Depois classifica os métodos pela metodologia (§III), pelo escopo local ou global (§IV) e pelo público-alvo (§V). Para o ECG, cita o trabalho de Strodthoff e Strodthoff, que detecta infarto no PTB com gradiente $\times$ entrada [p.~5]. A família SHAP aparece só de passagem, como método agnóstico usado para explicar um modelo recorrente [p.~6].
+
+\section{Como avalia as explicações}
+O artigo não avalia; descreve como os trabalhos revisados avaliam (§VI e Tabela~II, p.~12). Separa a avaliação \textbf{qualitativa}, por especialistas, da \textbf{quantitativa}, que inclui a análise de perturbação, os testes de sanidade (randomização de dados e modelo) e as comparações entre métodos de atribuição. Descreve os testes de Schlegel et al.\ (2019), aqui citados como “Arnout et al.” [101]: alterar os pontos mais relevantes, inverter a ordem de subsequências relevantes (\textit{Swap Time Points}) ou trocá-las pela média (\textit{Mean Time Points}) [p.~10--11]. Não discute métricas de robustez da explicação nem de complexidade, e trata os testes de randomização em uma única frase.
+
+\section{Resultados e conclusões}
+Os autores concluem que (i) os métodos para CNNs vieram da visão computacional, e faltam métodos pensados para séries temporais; (ii) a maioria só indica regiões importantes e não dá confiança no modelo; (iii) faltam ferramentas objetivas para demonstrar robustez e falta interação com o usuário [p.~11].
+
+\section{Citações comentadas}
+
+\begin{citacard}{\pagechip{p. 1} §I Introdução}
+\begin{origquote}“This may have an impact on the EXplainable Artificial Intelligence (XAI) applied to time series, especially for the evaluation of explanations, where qualitative assessments may have less potential than for the domains of computer vision or natural language explanation.”\end{origquote}
+\begin{tradquote}“Isso pode afetar a XAI aplicada a séries temporais, especialmente a avaliação das explicações, em que avaliações qualitativas podem ter menos potencial do que na visão computacional ou nas explicações em linguagem natural.”\end{tradquote}
+\explab{Explicação}
+“Isso” é a natureza pouco intuitiva das séries temporais: uma pessoa reconhece um gato numa imagem, mas não lê um sinal sem treino. O ECG está no meio do caminho: o cardiologista lê o traçado, mas não o mapa ponto a ponto. É um argumento para as métricas quantitativas do TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §II Terminologia}
+\begin{origquote}“Indeed there is little interest in providing an explanation if a small input noise can radically change the model behavior, making this explanation valid only for a very specific example.”\end{origquote}
+\begin{tradquote}“De fato, há pouco interesse em fornecer uma explicação se um pequeno ruído na entrada pode mudar radicalmente o comportamento do modelo, o que tornaria essa explicação válida apenas para um exemplo muito específico.”\end{tradquote}
+\explab{Explicação}
+O artigo fala da estabilidade do \textbf{modelo}, mas a mesma ideia vale para a \textbf{explicação}: um mapa que muda muito com ruído pequeno vale para um único exemplo. É o que a Max/Avg-Sensitivity mede no TCC, comparada com o piso do próprio GradientSHAP.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} §VI-A Avaliação qualitativa}
+\begin{origquote}“Indeed, the unintuitive nature of time series (see Section I) make it difficult even for domain experts to qualitatively assess the quality of the explanations generated. Therefore, according to Arnout et al. [101], we should prioritize quantitative evaluations for the time series field.”\end{origquote}
+\begin{tradquote}“De fato, a natureza pouco intuitiva das séries temporais (ver Seção I) torna difícil, até para especialistas do domínio, avaliar qualitativamente a qualidade das explicações geradas. Portanto, segundo Arnout et al.\ [101], devemos priorizar avaliações quantitativas no campo das séries temporais.”\end{tradquote}
+\explab{Explicação}
+A referência [101] é o artigo de Schlegel, Arnout, El-Assady, Oelke e Keim (ICCVW 2019), listado no survey sem o primeiro autor. Ao citar no TCC, convém usar “Schlegel et al.\ (2019)” para não confundir. A recomendação vai no sentido do TCC; Storås et al.\ (2023) dão um exemplo concreto de especialistas que não conseguiram ler mapas de ECG.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} §VII Discussão}
+\begin{origquote}“Most methods presented in this survey indicate which specific regions of the input data get attention from the model while classification is performed. They do not provide any confidence in the model, neither mitigates its vulnerabilities.”\end{origquote}
+\begin{tradquote}“A maioria dos métodos apresentados neste survey indica quais regiões dos dados de entrada recebem a atenção do modelo durante a classificação. Eles não dão nenhuma confiança no modelo nem mitigam suas vulnerabilidades.”\end{tradquote}
+\explab{Explicação}
+O ponto vale para o GradientSHAP: um mapa de regiões, sozinho, não garante nada sobre o modelo. Por isso o TCC pergunta se a qualidade das explicações acompanha o desempenho por classe, em vez de supor que um mapa plausível indica um bom classificador.
+\end{citacard}
+
+\section{Relação com o TCC}
+O survey serve como referência de contexto: registra, já em 2021, a falta de uma métrica aceita para avaliar explicações em séries temporais e recomenda priorizar avaliações quantitativas. Sua cobertura da avaliação, porém, é breve: trata da perturbação e dos testes de sanidade, mas não das famílias que o TCC usa (fidelidade por correlação, robustez, complexidade) e só menciona a randomização de passagem. O TCC deve citá-lo para a motivação, e buscar as definições das métricas nos artigos originais e em revisões posteriores, como Theissler et al.\ (2022).
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestão}
+Rojat et al.\ (2021) observam que não há métrica reconhecida para avaliar a qualidade das explicações em séries temporais e que a natureza pouco intuitiva desses dados limita a avaliação qualitativa, até por especialistas, recomendando priorizar avaliações quantitativas.
+\end{infobox}
+
+\end{document}

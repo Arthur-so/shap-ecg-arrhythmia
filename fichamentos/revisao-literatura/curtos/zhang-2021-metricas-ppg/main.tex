@@ -1,0 +1,173 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Métricas de explicabilidade para PPG}} \\[0.35em]
+    {\large ZHANG, O.; DING, C.; PEREIRA, T.; XIAO, R.; GADHOUMI, K.; MEISEL, K.; LEE, R. J.; CHEN, Y.; HU, X. \textit{Explainability Metrics of Deep Convolutional Networks for Photoplethysmography Quality Assessment}. IEEE Access, v. 9, p. 29736--29745, 2021} \\[0.3em]
+    \textbf{Tema:} concordância entre mapas de atribuição e anotações de especialistas em sinal fisiológico \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1109/ACCESS.2021.3054613} (PMC: \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC7978398/}) \\[0.2em]
+    \textbf{Leitura:} íntegra (manuscrito do autor no PMC, NIHMS1676349, texto completo e tabelas; figuras só pelas legendas) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} O manuscrito do PMC não tem paginação; por isso, em vez de página, cada citação indica a \textbf{seção} (\texttt{§ III.D} etc.). As citações estão no original em inglês, seguidas de tradução livre.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} propor métricas globais e quantitativas que comparem os mapas de atribuição de um modelo com as anotações de especialistas, e usá-las para comparar modelos.
+\item \textbf{Dados e modelos:} fotopletismografia (PPG) de UTI, segmentos de 30~s (7201 pontos); qualidade do sinal (com ou sem artefato); ResNet34 unidimensional (arquitetura de Dai et al.) e ResNet18 bidimensional sobre imagens do sinal; 78.278 segmentos de treino e 2683 de teste.
+\item \textbf{Explicação:} DeepSHAP, Integrated Gradients e Guided Saliency, sempre em \textbf{valor absoluto} (“atenção do modelo”).
+\item \textbf{Avaliação:} Congruence (fração da atenção dentro das regiões anotadas como artefato) e Annotation Classification (AUROC ao usar a atenção para prever as regiões anotadas, por ponto, por seção ou por intervalo de 5~s), em 825 segmentos com artefato.
+\item \textbf{Conclusão:} o modelo 1D é mais “explicável” que o 2D em todas as combinações; a relação entre explicabilidade e acurácia, medida em 25 modelos extras, é fraca a moderada e não significativa após correção.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+A tarefa é dizer se um trecho de PPG tem artefato. Um especialista marcou o início e o fim de cada artefato no teste. A ideia é que, se o modelo “olha” para os trechos marcados, a explicação concorda com o especialista; os autores chamam um modelo de \textit{explainable} quando suas explicações concordam com a análise do especialista. Os mapas locais são agregados em números globais, que permitem comparar o modelo 1D com o 2D.
+
+\section{Como avalia as explicações}
+São métricas de \textbf{localização} (concordância com uma região de interesse), não de fidelidade ao modelo:
+\begin{itemize}
+\item \textbf{Congruence:} $\sum_j z_{ij}\hat z_{ij} / \sum_j \hat z_{ij}$, em que $z$ é a anotação (0 ou 1) e $\hat z$ a atenção (valor absoluto do mapa); média sobre os segmentos.
+\item \textbf{Annotation Classification:} limiares sobre a atenção máxima de cada ponto, seção ou intervalo fixo de 5~s geram uma curva ROC; a métrica é a AUROC.
+\item \textbf{Relação com o desempenho:} 25 ResNets 1D (5 por tamanho de treino: 5\%, 10\%, 20\%, 40\% e 50\% dos dados) e correlação de Pearson entre métricas de explicação e de desempenho.
+\end{itemize}
+Não há teste de randomização, robustez, complexidade nem perturbação da entrada.
+
+\section{Resultados e conclusões}
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{DeepSHAP} & \textbf{Pixel} & \textbf{Seção} & \textbf{Intervalo} & \textbf{Congruence} \\
+\midrule
+ResNet 1D & 0,6526 & 0,7477 & 0,7934 & 0,4825 \\
+ResNet 2D & 0,5820 & 0,6010 & 0,6601 & 0,3737 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textit{Fonte: Tabela 2.} A acurácia dos dois modelos é parecida (0,9892 no 1D e 0,9851 no 2D; Tabela 1). Na média dos três métodos, 50,78\% da atenção do modelo 1D fica dentro das anotações, contra 36,03\% no 2D (resumo). Correlações com a acurácia de teste nos 25 modelos (Tabela 3): Congruence 0,478 ($p$ = 0,016), Pixel 0,460 ($p$ = 0,021), Intervalo 0,333 ($p$ = 0,104), Seção 0,060 ($p$ = 0,776); nenhuma passa na correção de Bonferroni ($p < 0{,}008$). Limitações declaradas: um único anotador; teste modesto (cerca de 2700 segmentos) e só fibrilação atrial como arritmia; os mapas podem não refletir a “atenção” real do modelo; a versão por seções favorece trechos longos; só segmentos com artefato são analisados.
+
+\begin{citacard}{\pagechip{§ III.D} Atenção em um segmento}
+\begin{origquote}“The absolute value of these saliency maps can be considered the model’s attention. This is because, as shown in Figure 1, both positive and negative contributions are usually within the human annotated regions.”\end{origquote}
+\begin{tradquote}“O valor absoluto desses mapas de saliência pode ser considerado a atenção do modelo. Isso porque, como mostra a Figura 1, as contribuições positivas e negativas ficam, em geral, dentro das regiões anotadas por humanos.”\end{tradquote}
+\explab{Explicação}
+Os autores descartam o sinal do DeepSHAP e do IG porque querem saber \textbf{onde} o modelo olha, não \textbf{em que direção}. No TCC, o sinal é mantido nas métricas de fidelidade e no Random Logit, e a magnitude é usada à parte (complexidade, distâncias só de magnitude no eMPRT); a escolha muda o que a métrica mede.
+\end{citacard}
+
+\begin{citacard}{\pagechip{§ III.F} Annotation Classification}
+\begin{origquote}“Importantly, congruence does not provide information about the coverage of the model’s attention. Congruence may be equal to one, even if all of the model’s attention is focused on only one pixel within the human annotations.”\end{origquote}
+\begin{tradquote}“É importante notar que a Congruence não informa sobre a cobertura da atenção do modelo. Ela pode ser igual a um mesmo que toda a atenção esteja concentrada em um único ponto dentro das anotações.”\end{tradquote}
+\explab{Explicação}
+Uma métrica isolada pode ser enganada por mapas muito concentrados. É o mesmo motivo pelo qual o TCC combina várias propriedades (fidelidade, robustez, complexidade, randomização) em vez de confiar em uma só.
+\end{citacard}
+
+\begin{citacard}{\pagechip{§ V.D} Explicabilidade × desempenho}
+\begin{origquote}“We observed weak to moderate correlation between the different explanatory metrics and performance metrics, although most of them don’t reach statistical significance (p > 0.05) and none after adjustment for multiple comparisons (p > 0.008).”\end{origquote}
+\begin{tradquote}“Observamos correlação fraca a moderada entre as diferentes métricas de explicação e as de desempenho, embora a maioria não alcance significância estatística (p > 0,05) e nenhuma a alcance após o ajuste para comparações múltiplas (p > 0,008).”\end{tradquote}
+\explab{Explicação}
+É o precedente mais próximo da pergunta do TCC (a qualidade da explicação acompanha o desempenho?), mas entre \textbf{modelos} treinados com mais ou menos dados, não entre \textbf{classes} do mesmo modelo. Mesmo com 25 pontos, a correlação não se sustentou; com 9 classes, o TCC faz a comparação de forma descritiva (ordens e posições), sem teste de correlação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{§ VI.D} Correlação fraca a moderada}
+\begin{origquote}“Some models have high accuracy but low explainability. These models often fall into two classes. Either their attention is scattered uniformly on the example, or their attention is concentrated on the non-artifactual sections of the example.”\end{origquote}
+\begin{tradquote}“Alguns modelos têm alta acurácia e baixa explicabilidade. Eles costumam cair em dois grupos: ou a atenção se espalha uniformemente pelo exemplo, ou se concentra nos trechos sem artefato.”\end{tradquote}
+\explab{Explicação}
+Acurácia e qualidade da explicação podem se separar, e os autores examinam os casos discordantes um a um. O TCC adota a mesma postura ao olhar as classes em que F1 e métricas de explicação não seguem a mesma ordem.
+\end{citacard}
+
+\section{Relação com o TCC}
+É um dos poucos trabalhos em sinal fisiológico 1D com ResNet34 unidimensional, DeepSHAP e IG que quantifica explicações em todo o teste e as compara com o desempenho. As métricas, porém, são de \textbf{localização} contra anotação de especialista, eixo que o TCC deixou de fora por decisão (o objetivo é comparar explicações com o modelo, não com o conhecimento clínico). O artigo é útil na discussão por dois pontos: (i) explicabilidade e desempenho se relacionam fracamente e não podem ser deduzidos um do outro; (ii) a escolha entre valor absoluto e sinal define o que se mede. A agregação em seções e intervalos fixos lembra as 36 regiões do TCC, inclusive no viés apontado pelos autores para trechos de tamanhos diferentes (no TCC, pré-QRS, QRS e ST-T têm durações diferentes).
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “Zhang et al.\ (2021) compararam mapas de DeepSHAP, Integrated Gradients e Guided Saliency com anotações de artefatos em PPG e encontraram relação fraca a moderada, não significativa após correção, entre essas métricas e a acurácia de 25 modelos, o que indica que a qualidade da explicação não se deduz do desempenho.”
+\end{itemize}
+
+\end{document}

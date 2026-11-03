@@ -1,0 +1,160 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: utilidade de mapas de calor no ECG}} \\[0.35em]
+    {\large STORÅS, A. M.; ANDERSEN, O. E.; LOCKHART, S.; THIELEMANN, R.; GNESIN, F.; THAMBAWITA, V.; HICKS, S. A.; KANTERS, J. K.; STRÜMKE, I.; HALVORSEN, P.; RIEGLER, M. A. \textit{Usefulness of Heat Map Explanations for Deep-Learning-Based Electrocardiogram Analysis}. Diagnostics, v. 13, n. 14, art. 2345, 2023} \\[0.3em]
+    \textbf{Tema:} avaliação qualitativa, por médicos, de mapas Grad-CAM em ECG \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.3390/diagnostics13142345} \\[0.2em]
+    \textbf{Leitura:} íntegra do texto (versão publicada, texto completo do PMC obtido em XML pelo Europe PMC); o PDF não pôde ser baixado, e as figuras foram lidas só pelas legendas \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} Como o texto foi lido sem a paginação do PDF, as citações são localizadas pela \textbf{seção} do artigo (por exemplo, \texttt{§3.3}), e não pela página. Estão no original em inglês, seguidas de tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} verificar se mapas de calor ajudam médicos a entender uma rede que prediz o sexo a partir do ECG, retomando a proposta de Hicks et al.\ (2021).
+\item \textbf{Dados e modelo:} PTB-XL (21\,837 ECGs de 18\,885 pacientes, 10~s, 500~Hz); discriminador da GAN Pulse2Pulse reaproveitado por transferência de aprendizado e ajustado com 5\,000 ECGs de treino e 200 de validação, usando oito derivações (I, II, V1--V6).
+\item \textbf{Método de explicação:} Grad-CAM extraído da penúltima camada convolucional; 919 mapas de ECGs normais e de infarto (IAM) classificados corretamente.
+\item \textbf{Avaliação:} somente qualitativa: entrevistas com dois médicos e avaliação cega de 15 mapas escolhidos (os de maior certeza do modelo), com decisão conjunta inspirada no método Delphi.
+\item \textbf{Conclusão:} os médicos não encontraram trechos do ECG que os mapas destacassem de forma consistente; a confiança no modelo caiu depois de ver os mapas.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O trabalho treina um classificador de sexo e mostra seus mapas Grad-CAM a médicos. O \textbf{Grad-CAM} pondera as ativações de uma camada convolucional pelo gradiente da saída e gera um mapa de importância ao longo do tempo. O modelo atinge 81\,\% de acurácia na validação e 74\,\% no teste, com 80\,\% nos ECGs normais e 71\,\% nos de IAM, e acerta mais em homens do que em mulheres (§3.1). Na inspeção dos mapas, 93,3\,\% dos mapas de mulheres eram escuros (baixa importância em todo o traçado), contra 60\,\% dos de homens (§3.2). Os médicos sugeriram que o modelo aprendeu padrões masculinos e classifica como feminino o que não os tem.
+
+\section{Como avalia as explicações}
+A avaliação é inteiramente \textbf{qualitativa e centrada no usuário}: não há medida de fidelidade, robustez ou randomização. Dois médicos, do Reino Unido e da Dinamarca, com experiência em clínica geral, medicina interna, diabetes e endocrinologia, comentaram os mapas em entrevistas gravadas. Depois, avaliaram de forma independente e cega para o sexo os 15 mapas de ECGs normais com maior certeza do modelo, e as impressões foram discutidas até um consenso (§2.4). A unidade de leitura é o traçado de 10~s, com o mapa sobreposto ao sinal; não há agregação por onda ou por batimento.
+
+\section{Resultados e conclusões}
+O consenso foi que a abordagem não serve para revelar diferenças de sexo no ECG (§3.3). Os autores atribuem parte do problema ao próprio método e ao formato da entrada: o traçado de 10~s espalha a atenção por vários batimentos, e a última camada convolucional tinha só cinco neurônios (posições no tempo), o que obrigou a usar a penúltima camada e deu mapas de baixa resolução (§4). Concluem que é preciso desenvolver explicações adequadas a dados médicos e às necessidades dos clínicos antes do uso diagnóstico (§5).
+
+\section{Citações comentadas}
+
+\begin{citacard}{\pagechip{§3.3} Retorno dos médicos}
+\begin{origquote}“Unfortunately, neither physician could identify features of the ECG waveform that consistently corresponded to the highlighted areas of the heat map, which the model utilized for discrimination.”\end{origquote}
+\begin{tradquote}“Infelizmente, nenhum dos médicos conseguiu identificar características da forma de onda do ECG que correspondessem de forma consistente às áreas destacadas pelo mapa de calor, usadas pelo modelo para discriminar.”\end{tradquote}
+\explab{Explicação}
+É o resultado central. Com o mesmo método de Hicks et al.\ (2021), que relataram a descida da onda R como evidência, o padrão não se repetiu em outra base, outro modelo e outro formato de entrada. Conclusões tiradas só da inspeção visual de mapas não se transferem com segurança.
+\end{citacard}
+
+\begin{citacard}{\pagechip{§3.3} Retorno dos médicos}
+\begin{origquote}“The physicians expected the model to react to the same part of each QRS complex, making a repeating pattern of red areas in the heat maps. Since this was typically not the case, it was difficult to link the high-attention areas to specific features of an ECG. Moreover, the physicians’ confidence in the deep neural network decreased after the heat map evaluation.”\end{origquote}
+\begin{tradquote}“Os médicos esperavam que o modelo reagisse à mesma parte de cada complexo QRS, formando um padrão repetido de áreas vermelhas nos mapas. Como em geral isso não acontecia, era difícil ligar as áreas de maior atenção a características específicas do ECG. Além disso, a confiança dos médicos na rede neural diminuiu depois da avaliação dos mapas.”\end{tradquote}
+\explab{Explicação}
+O médico lê o ECG por batimento e por onda. Um mapa que muda de batimento para batimento não conversa com essa leitura. O TCC responde a isso agregando a atribuição em trechos do batimento (pré-QRS, QRS e ST-T) em cada derivação, o que transforma o mapa ponto a ponto em unidades próximas das que o clínico usa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{§4} Discussão}
+\begin{origquote}“Because the model interpreted 10 s-long ECGs, the attention was distributed over a larger period of time, not focusing on one QRS complex, which may result in smearing the attention out. Training the model on the median ECGs instead might make the heat map evaluation easier for medical doctors.”\end{origquote}
+\begin{tradquote}“Como o modelo interpretava ECGs de 10~s, a atenção se distribuía por um período maior, sem se concentrar num único complexo QRS, o que pode espalhar a atenção. Treinar o modelo com ECGs medianos poderia facilitar a avaliação dos mapas pelos médicos.”\end{tradquote}
+\explab{Explicação}
+O TCC também trabalha com traçados de vários batimentos (CPSC2018), e não com o batimento mediano, porque arritmias como AF e CVP dependem da sequência de batimentos. A agregação por trechos do batimento é uma forma de concentrar a atribuição sem trocar a entrada do modelo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{§4} Discussão, limitações}
+\begin{origquote}“A limitation of the current work is that we qualitatively evaluated one heat map method, namely Grad-CAM, for explaining one deep neural network.”\end{origquote}
+\begin{tradquote}“Uma limitação deste trabalho é que avaliamos qualitativamente um único método de mapa de calor, o Grad-CAM, para explicar uma única rede neural profunda.”\end{tradquote}
+\explab{Explicação}
+Os próprios autores reconhecem que a conclusão negativa vale para um método e um modelo, avaliados sem métricas objetivas. Não se pode, a partir dele, concluir que o GradientSHAP teria o mesmo problema; é preciso medir.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo é um contraponto útil ao de Hicks et al.\ (2021): mostra que a plausibilidade clínica percebida por especialistas é frágil e depende do método, da resolução do mapa e do formato da entrada. Isso reforça a opção do TCC por avaliar as explicações com métricas quantitativas (fidelidade, robustez, complexidade e testes de randomização) em vez de só pela inspeção visual. Também justifica a agregação em 36 regiões, que aproxima o mapa das unidades de leitura do clínico. Em sentido inverso, o artigo indica uma lacuna do TCC: não há avaliação com médicos, e as métricas medem fidelidade ao modelo, não utilidade clínica; isso deve aparecer como limitação.
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestão}
+Storås et al.\ (2023) mostraram mapas Grad-CAM de um classificador de sexo treinado no PTB-XL a dois médicos, que não identificaram trechos do ECG destacados de forma consistente e passaram a confiar menos no modelo; os autores atribuem parte do problema ao espalhamento da atenção ao longo do traçado de 10~s e à baixa resolução dos mapas.
+\end{infobox}
+
+\end{document}

@@ -1,0 +1,160 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: ExECG, framework de XAI para modelos de ECG}} \\[0.35em]
+    {\large JANG, J.-H.; JO, Y.-Y. \textit{ExECG: An Explainable AI Framework for ECG models}. arXiv:2605.19258, 2026} \\[0.3em]
+    \textbf{Tema:} biblioteca em Python que padroniza a aplicação e a visualização de métodos de XAI em modelos de ECG \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2605.19258} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v1, 13 páginas, incluindo o Apêndice A) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv (13 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} oferecer uma ferramenta aberta que padronize e torne reprodutível a aplicação de XAI a modelos de ECG, já que cada estudo monta o seu próprio fluxo.
+\item \textbf{Estrutura:} três etapas. \textit{Wrapper} (entrada no formato (lote, derivações, amostras), saídas por tipo de tarefa e acesso a ativações e gradientes); \textit{Explainer} (atribuição: saliency, SmoothGrad, Integrated Gradients, Grad-CAM, Grad-CAM++ e Guided Grad-CAM; contrafactuais por StyleGAN; conceitos por TCAV); \textit{Visualizer} (mapas agregados em faixas de tempo e a grade clínica 4~$\times$~3).
+\item \textbf{Casos de uso:} ResNet-1D para detectar fibrilação atrial (AF), com 12 derivações de 10~s a 250~Hz, treinada com PTB-XL e MIMIC-IV-ECG; no apêndice, regressão do potássio sérico.
+\item \textbf{Avaliação:} não há métrica quantitativa da qualidade das explicações; há demonstração em exemplos e comparação visual entre métodos.
+\item \textbf{Conclusão:} as três famílias de explicação dão visões complementares; os autores reconhecem que a avaliação se limita a um caso de uso.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+É um artigo de ferramenta. Parte de quatro princípios: \textbf{padronização} (mesma interface para modelos com entradas e saídas diferentes), \textbf{reprodutibilidade} (controle de sementes, parâmetros e configurações), \textbf{integração} (vários métodos no mesmo fluxo) e \textbf{extensibilidade} (métodos novos acoplados com pouco esforço) [p.~3]. A família de \textbf{atribuição} dá um valor de importância a cada amostra do sinal; a de \textbf{contrafactuais} gera um ECG modificado que leva a saída para um valor-alvo; a de \textbf{conceitos} (TCAV) mede quanto um conceito clínico, como “fibrilação atrial”, influencia uma camada da rede. A biblioteca traz um gerador StyleGAN de ECG e um conjunto de conceitos montado a partir do desafio PhysioNet/CinC 2021. Entre os métodos de atribuição listados não há nenhum da família SHAP [p.~4].
+
+\section{Como avalia as explicações}
+Não avalia quantitativamente. Para a AF, aplica os seis métodos de atribuição a um mesmo ECG e observa quais regiões cada um destaca; para o contrafactual, relata a mudança da probabilidade de AF; para o TCAV, verifica se o escore do conceito fica acima de 0,5 (nível do acaso) com intervalos de confiança de 95\,\% [p.~7--8]. Na visualização, a atribuição pode ser agregada em faixas de tempo (\texttt{bin\_size=25} amostras, isto é, 0,1~s a 250~Hz) para reduzir o ruído [p.~6]. Não há referência de ruído, teste de randomização ou medida de fidelidade.
+
+\section{Resultados e conclusões}
+No caso da AF, Guided Grad-CAM, Grad-CAM, SmoothGrad e saliency destacam a região da onda P, enquanto Integrated Gradients e Grad-CAM++ destacam outras regiões [p.~7]. O contrafactual eleva a probabilidade de AF de 0,0005 para 0,7712, com atenuação da onda P e RR irregular, mas também com morfologia irregular que não é típica de AF [p.~7--8]. O conceito “fibrilação atrial” tem TCAV acima de 0,5 em todas as camadas. Duas inconsistências de leitura: o texto diz usar “one publicly available” base, mas cita duas [p.~1]; e, no apêndice, a predição do potássio vai “de 0,005 a 0,5395” no texto, mas de 0,33 a 0,60 na legenda da Figura~8 [p.~12--13].
+
+\section{Citações comentadas}
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“Although ECG XAI has been extensively investigated and steadily improved, practical pipelines and reporting conventions vary across studies, hindering reuse and reproducibility.”\end{origquote}
+\begin{tradquote}“Embora a XAI para ECG tenha sido amplamente investigada e aprimorada, os fluxos práticos e as convenções de relato variam entre os estudos, o que dificulta o reaproveitamento e a reprodutibilidade.”\end{tradquote}
+\explab{Explicação}
+É o diagnóstico que motiva o artigo e vale para a revisão do TCC: cada trabalho escolhe método, camada, referência e forma de exibir de um jeito, e os resultados ficam difíceis de comparar. O TCC registra essas escolhas (referência balanceada, número de sorteios, regiões) pelo mesmo motivo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §2.2 Princípios}
+\begin{origquote}“Reproducing explanation requires controlling random seeds, parameters, and execution configurations. To make this practical, ExECG systematically manages these factors so that explanations can be regenerated under identical conditions.”\end{origquote}
+\begin{tradquote}“Reproduzir uma explicação exige controlar sementes aleatórias, parâmetros e configurações de execução. Para tornar isso prático, o ExECG gerencia esses fatores de forma sistemática, de modo que as explicações possam ser geradas de novo em condições idênticas.”\end{tradquote}
+\explab{Explicação}
+Métodos com sorteio, como o GradientSHAP, mudam de uma execução para outra. O TCC fixa a semente de cada mapa e, além disso, \textbf{mede} essa variação: o piso é a distância entre dois mapas do mesmo ECG com sementes diferentes, e serve de régua para a sensibilidade, o Random Logit e o eMPRT.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §4.1 Caso de atribuição}
+\begin{origquote}“Guided Grad-CAM, Grad-CAM, SmoothGrad, and the vanilla saliency map consistently highlight the same region of the ECG waveform. This region corresponds to the P-wave segment, which is often absent or markedly attenuated in AF (Hindricks et al., 2021). The agreement across explainers therefore suggests that the classifier relies on P-wave.”\end{origquote}
+\begin{tradquote}“Guided Grad-CAM, Grad-CAM, SmoothGrad e o mapa de saliência simples destacam de forma consistente a mesma região do traçado. Essa região corresponde ao segmento da onda P, que costuma estar ausente ou muito atenuada na AF (Hindricks et al., 2021). A concordância entre os métodos sugere, portanto, que o classificador se apoia na onda P.”\end{tradquote}
+\explab{Explicação}
+O argumento usa \textbf{concordância entre métodos} e \textbf{plausibilidade clínica} como evidência. Nenhuma das duas mede fidelidade: métodos aparentados (dois derivam do Grad-CAM, e o SmoothGrad é uma média de mapas de saliência) podem errar juntos. O TCC usa a mesma expectativa clínica (AF na região pré-QRS) só como leitura, e mede a fidelidade com perturbações.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §5 Conclusão}
+\begin{origquote}“Finally, our current evaluation is limited to a single use case, and broader validation across tasks, datasets, and architectures remains future work.”\end{origquote}
+\begin{tradquote}“Por fim, nossa avaliação atual se limita a um único caso de uso, e uma validação mais ampla, com outras tarefas, bases e arquiteturas, fica para trabalhos futuros.”\end{tradquote}
+\explab{Explicação}
+A limitação é declarada pelos autores. O artigo deve ser citado como ferramenta e como sinal de que a área busca padronização, e não como evidência sobre a qualidade de algum método em ECG.
+\end{citacard}
+
+\section{Relação com o TCC}
+O ExECG converge com o TCC em dois pontos: a preocupação com reprodutibilidade (sementes e parâmetros fixados) e a agregação temporal da atribuição para torná-la legível. Diverge em três: (i) não inclui métodos SHAP, que são o objeto do TCC; (ii) agrega em faixas fixas de tempo, enquanto o TCC agrega em trechos fisiológicos do batimento (pré-QRS, QRS, ST-T) por derivação; (iii) não tem métricas de avaliação, que são o centro do TCC. A ferramenta mostra que, até 2026, o esforço de padronização em XAI para ECG se concentra em gerar e exibir explicações, e não em medi-las, o que reforça a contribuição do TCC.
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestão}
+Jang e Jo (2026) propuseram o ExECG, uma biblioteca que padroniza a aplicação de métodos de atribuição, contrafactuais e de conceitos a modelos de ECG, com controle de sementes para reprodutibilidade; a demonstração, em um classificador de fibrilação atrial, compara os métodos de forma visual e não inclui métricas quantitativas de qualidade das explicações.
+\end{infobox}
+
+\end{document}

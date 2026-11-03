@@ -1,0 +1,157 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: boas práticas de interpretação em EEG}} \\[0.35em]
+    {\large CUI, J.; YUAN, L.; WANG, Z.; LI, R.; JIANG, T. \textit{Towards best practice of interpreting deep learning models for EEG-based brain computer interfaces}. Frontiers in Computational Neuroscience, v.~17, 1232925, 2023} \\[0.3em]
+    \textbf{Tema:} avaliação quantitativa de sete métodos de atribuição em EEG multicanal (sensibilidade por janelas e teste de deleção) e avaliação amostra a amostra \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.3389/fncom.2023.1232925} \\[0.2em]
+    \textbf{Leitura:} íntegra (versão publicada, PDF da Frontiers, 16 páginas; figuras lidas pelas legendas) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF publicado (igual à numeração da revista). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} avaliar quantitativamente métodos de interpretação em modelos profundos para interfaces cérebro-computador baseadas em EEG e propor um procedimento para apresentar explicações individuais de forma confiável.
+\item \textbf{Dados e modelos:} três bases públicas de EEG multicanal (imagética motora, 22 canais; potencial de erro, 32 canais; sonolência ao volante, 30 canais), avaliadas entre sujeitos; modelos EEGNet e InterpretableCNN.
+\item \textbf{Métodos de explicação:} Saliency, Deconvolution, Guided Backprop, Gradient$\times$Input, Integrated Gradients, LRP e DeepLIFT; mapa aleatório como referência. Não inclui SHAP.
+\item \textbf{Avaliação:} teste de sensibilidade (correlação de Pearson entre a soma da atribuição numa janela zerada e a variação da saída, 100 janelas aleatórias por tamanho) e teste de deleção (zerar os pontos mais importantes e acompanhar a probabilidade); ambos também no nível do canal.
+\item \textbf{Conclusão principal:} os métodos se dividem em dois grupos (os que multiplicam pela entrada superam o aleatório; Saliency, Deconvolution e Guided Backprop não), e a qualidade varia muito de amostra para amostra mesmo no melhor método, o que pede avaliação de cada explicação apresentada.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Um mapa de contribuição atribui uma nota a cada ponto (canal $\times$ instante) do EEG; a média no tempo dá o mapa por canal [p.~4]. Os autores aplicam os sete métodos (todos determinísticos e sem parâmetros a ajustar), com baseline zero e 100 passos no Integrated Gradients [p.~4--5], medem a qualidade com dois testes e, a partir dos resultados, propõem: limiarizar e suavizar o mapa para visualização, e anexar a cada explicação um relatório com os resultados dos testes daquela amostra [p.~6--8]. Por fim, usam as explicações para achar ruído de sensor, atividade muscular e piscadas que o modelo usa como evidência [p.~9--13].
+
+\section{Como avalia as explicações}
+\begin{itemize}
+\item \textbf{Sensibilidade por janelas} [p.~5]: inspirada na Sensitivity-n de Ancona et al., mas zerando uma janela contígua de comprimento $n$ num canal sorteado, em vez de $n$ pontos espalhados, para ``introduzir menos ruído de alta frequência''. $n$ vai de 0,1 a 0,5 do comprimento da amostra (0,3\% a 2,3\% do total de pontos); 100 perturbações por $n$; a métrica é a correlação de Pearson entre a soma da atribuição e a variação da saída.
+\item \textbf{Deleção} [p.~5]: zera-se de 1\% a 100\% dos pontos em ordem decrescente de atribuição e registra-se a probabilidade da classe; área pequena indica bom mapa. No nível do canal, zera-se um canal por vez.
+\item \textbf{Amostras} [p.~5--6]: 900, 1\,000 e 1\,100 amostras nas três bases, equilibradas por classe e sujeito; um mapa aleatório por amostra como referência.
+\end{itemize}
+É o mesmo princípio da Faithfulness Correlation (correlação entre atribuição somada e queda da saída), com o subconjunto perturbado contíguo no tempo.
+
+\section{Resultados e conclusões}
+O primeiro grupo (Gradient$\times$Input, DeepLIFT, Integrated Gradients, LRP) tem medianas de correlação de 0,4 a 1 conforme a condição e derruba a probabilidade para menos de 0,2 removendo menos de 10\% dos dados; o segundo grupo (Saliency, Deconvolution, Guided Backprop) tem medianas perto de 0 e não supera o aleatório na maioria das condições [p.~6]. A explicação proposta: num modelo linear, os métodos do primeiro grupo dão $w_{ji}x_i$, que muda com a entrada, e os do segundo dão o peso $w_{ji}$, constante [p.~6]. Mesmo no primeiro grupo, a qualidade por amostra varia: na base de imagética motora, com janela de 0,5, as correlações vão de 0,6 a 1 no EEGNet e de 0,2 a 0,8 no InterpretableCNN, contra 0,8 a 1 na base de sonolência [p.~6]. Num exemplo, remover o canal mais ``importante'' fez a probabilidade \textbf{subir} de 0,6 para 0,98, o que permite rejeitar aquela explicação [p.~10].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 5} §4.2.1 Teste de sensibilidade}
+\begin{origquote}“Our test is different in the aspect that we perturbed the input sample locally in small patches with fixed length $n$ instead of $n$ random points from different parts of the sample. In this way, we can evaluate the local accuracy of the contribution map while introducing less high-frequency noise to EEG signals.”\end{origquote}
+\begin{tradquote}“Nosso teste difere por perturbar a amostra localmente, em pequenos trechos de comprimento fixo $n$, em vez de $n$ pontos aleatórios de partes diferentes da amostra. Assim, avalia-se a exatidão local do mapa de contribuição introduzindo menos ruído de alta frequência no EEG.”\end{tradquote}
+\explab{Explicação}
+É uma adaptação da fidelidade por correlação a sinais fisiológicos: perturbar pontos isolados cria picos artificiais; perturbar trechos contíguos é mais realista. O TCC vai além na mesma direção ao perturbar regiões inteiras do batimento em cada derivação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §4.4.2 Qualidade das interpretações individuais}
+\begin{origquote}“To summarize, both the dataset type and model structure have an impact on the quality of interpretation results, while this problem may not be perfectly solved by changing the interpretation technique. The individual interpretation results should therefore be cautiously treated since they could be uninformative or even misleading for many samples.”\end{origquote}
+\begin{tradquote}“Em resumo, tanto o tipo de base quanto a estrutura do modelo afetam a qualidade das interpretações, e o problema talvez não se resolva por completo trocando o método. As interpretações individuais devem, portanto, ser tratadas com cautela, pois podem ser pouco informativas ou até enganosas para muitas amostras.”\end{tradquote}
+\explab{Explicação}
+Apoia o desenho do TCC de calcular as métricas mapa a mapa e resumir por classe, e não só uma média global: a dispersão entre ECGs é parte do resultado. Também justifica que os exemplos visuais escolhidos para o texto do TCC venham acompanhados dos valores das métricas daquele mapa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §5.2 Avaliação amostra a amostra}
+\begin{origquote}“It is therefore important to conduct sample-wise evaluation and present the results along with the interpretation since the contribution maps themselves cannot reflect how accurately the model decisions are interpreted.”\end{origquote}
+\begin{tradquote}“É, portanto, importante fazer a avaliação amostra a amostra e apresentar os resultados junto com a interpretação, pois os mapas de contribuição, por si sós, não mostram com que exatidão as decisões do modelo foram interpretadas.”\end{tradquote}
+\explab{Explicação}
+O ``relatório de avaliação'' do artigo (correlação, queda após deletar o destacado, canais mais afetados) é um modelo simples para as figuras de casos do TCC: cada mapa SHAP mostrado pode trazer sua Faithfulness Correlation e a queda do logit ao remover as regiões mais relevantes.
+\end{citacard}
+
+\section{Relação com o TCC}
+É um paralelo próximo em outro sinal elétrico multicanal: avalia fidelidade por perturbação de trechos contíguos, no nível do ponto e do canal, com um mapa aleatório como referência, e conclui que a qualidade depende do modelo, da base e da amostra. A divisão em dois grupos de métodos reforça que métodos do tipo gradiente $\times$ (entrada $-$ referência), família à qual o GradientSHAP pertence, tendem a ser mais fiéis que o gradiente puro; o GradientSHAP, porém, não foi testado. Diferenças: o valor de perturbação é sempre zero (com sinais filtrados), os trechos têm tamanho fixo e posição sorteada, não há agregação por classe nem relação com o desempenho por classe, e a explicação dos dois grupos é feita só para o caso linear.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Em EEG multicanal, Cui et al.\ (2023) observaram que métodos que multiplicam o gradiente pela entrada superam mapas aleatórios em testes de sensibilidade e de deleção, enquanto o gradiente puro não, e que a qualidade da explicação varia muito entre amostras, o que motiva avaliar cada explicação apresentada.''
+\end{itemize}
+
+\end{document}

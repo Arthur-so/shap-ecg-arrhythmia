@@ -1,0 +1,169 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: métodos de perturbação na validação de atribuições}} \\[0.35em]
+    {\large ŠIMIĆ, I.; VEAS, E.; SABOL, V. \textit{A comprehensive analysis of perturbation methods in explainable AI feature attribution validation for neural time series classifiers}. Scientific Reports, v.~15, 26607, 2025} \\[0.3em]
+    \textbf{Tema:} escolha do valor de perturbação e do tamanho da região na avaliação de fidelidade em séries temporais; métrica CMI \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1038/s41598-025-09538-2} \\[0.2em]
+    \textbf{Leitura:} íntegra do artigo (versão publicada, PDF da Nature, 30 páginas); o apêndice suplementar (arquiteturas e figuras por modelo e base) não foi lido \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF publicado. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} medir quanto a escolha do método de perturbação (PM, o valor que substitui os trechos removidos) e do tamanho da região altera a avaliação de fidelidade de métodos de atribuição (AM) em séries temporais, e propor uma métrica e um procedimento mais robustos.
+\item \textbf{Dados e modelos:} 5 bases univariadas do UCR (FordA, FordB, NonInvasiveFetalECGThorax1 e 2, Wafer); ResNet, InceptionTime, MLP, LSTM e ViT, com 5 modelos por arquitetura e base; exemplo prático multivariado (Epilepsy, 3 canais).
+\item \textbf{Métodos de explicação:} 12 do Captum (GradCAM, Saliency, Integrated Gradients, DeepLIFT, Input$\times$Gradient, Guided GradCAM, KernelSHAP, LIME, Feature Ablation, Deconvolution, Guided Backprop) e uma atribuição aleatória. O GradientSHAP não está entre eles.
+\item \textbf{Avaliação:} perturbação de regiões nas ordens MoRF (mais relevante primeiro) e LeRF (menos relevante primeiro), com 23 PMs e regiões de 2,5\% e 10\% do comprimento; métricas DDS, PES e a nova CMI; ordenação final ponderada pela adequação de cada PM.
+\item \textbf{Conclusão principal:} não há PM nem AM ótimos para todos os casos; a adequação do PM depende da base, do modelo, do tamanho da região e até da classe. SampleMean, Zero e Laplace são escolhas padrão razoáveis; regiões menores dão avaliações mais discriminativas.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+É a extensão de um artigo de conferência (CIKM) dos mesmos autores [p.~2]. A base é a perturbação de regiões de Samek et al.: a série é dividida em subsequências de tamanho fixo, a relevância de cada região é a média das relevâncias dos seus pontos, e as regiões são substituídas uma a uma, registrando a probabilidade da classe predita [p.~3--4, 11]. Os autores argumentam que a área sob a curva MoRF ($AUPC_{MoRF}$), métrica usual, não basta: um PM ruim pode tirar a série da distribuição e derrubar a saída qualquer que seja a região removida; sem uma referência, não se sabe se o valor é bom; e a média esconde inconsistências entre amostras [p.~6--7].
+
+\section{Como avalia as explicações}
+\begin{itemize}
+\item \textbf{DDS} (\textit{Decaying Degradation Score}) [p.~7]: soma das diferenças entre as curvas LeRF e MoRF a cada passo, com peso cúbico decrescente (os primeiros passos pesam mais), normalizada para $[-1,1]$; valor negativo indica relevância invertida.
+\item \textbf{PES} (\textit{Perturbation Effect Size}) [p.~7]: fração de amostras com DDS $>0$ menos a fração com DDS $<0$; mede a consistência.
+\item \textbf{CMI} (\textit{Consistency-Magnitude-Index}) [p.~8]: média harmônica de $|$DDS$|$ e $|$PES$|$ quando têm o mesmo sinal, e 0 caso contrário.
+\item \textbf{Vários PMs} [p.~8--9]: calcula-se a ordenação dos AMs com cada PM e faz-se a média dos postos, ponderada pelo quadrado da maior CMI obtida com aquele PM ($CMI_{max}$), que mede a adequação do PM.
+\item \textbf{Configuração} [p.~11]: perturbação até 50\% dos pontos em cada ordem; regiões de 2,5\% e 10\% do comprimento; 5 modelos (os de maior F1 entre 30 treinados) por combinação [p.~11]. Teste de sanidade: num ResNet não treinado, a $CMI_{max}$ fica perto de 0 para todos os PMs [p.~11, 14].
+\end{itemize}
+
+\section{Resultados e conclusões}
+\textbf{Perturbação.} SampleMean (média da própria amostra), Zero e Laplace (convolução com o núcleo $[1,\,-2,\,1]$, Tabela~4) são os melhores na média e servem de padrão; suavizações (GaussianBlur, Savitzky-Golay) devem ser evitadas; ruído uniforme varia muito entre bases e modelos [p.~12--13, 28]. Os PMs mais adequados mudam com a arquitetura mesmo na mesma base, e com a classe: na FordA, a classe ``Symptom'' depende de menos pontos que ``No Symptom'' e tem $CMI_{max}$ maior [p.~13--16]. Na base de anomalias (Wafer), PMs fortes (Inverse, fora da distribuição) são os mais adequados [p.~17].
+
+\textbf{Tamanho da região.} Com o procedimento de vários PMs, o tamanho quase não muda a ordenação dos AMs (exceto o GradCAM, que melhora com regiões maiores), mas regiões grandes reduzem a CMI para quase todos os PMs; os autores recomendam regiões menores [p.~21--23]. O valor de partida, vindo do artigo anterior, é ``nem grande nem pequeno demais (por exemplo, 2--5\% do comprimento)'' [p.~9]. No caso multivariado, as regiões são formadas em cada canal separadamente e ordenadas entre todos os canais [p.~25].
+
+\textbf{Métodos de atribuição.} Feature Ablation é o mais fiel na média (posto médio 1,1 a 1,3 em Inception, ResNet, LSTM e ViT; 3,0 no MLP), seguido de Integrated Gradients; GradCAM equivale ao Feature Ablation nas CNNs; KernelSHAP e LIME ficam entre os piores; a atribuição aleatória fica sempre em último [p.~18--20].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 2} Introdução}
+\begin{origquote}“Perturbation Methods (PMs) in perturbation-based AM faithfulness evaluations are in previous literature often chosen arbitrarily. [...] This resulted in abrupt changes in a classifiers predicted class probability from 1 to 0 after minimal perturbations, regardless of the features’ actual relevance, due to shifts in the data distribution.”\end{origquote}
+\begin{tradquote}“Os métodos de perturbação (PMs) nas avaliações de fidelidade por perturbação são, na literatura anterior, frequentemente escolhidos de forma arbitrária. [...] Isso resultou em mudanças abruptas da probabilidade da classe predita de 1 para 0 após perturbações mínimas, independentemente da relevância real dos atributos, por causa de mudanças na distribuição dos dados.”\end{tradquote}
+\explab{Explicação}
+É o risco central da Faithfulness Correlation e da Faithfulness Estimate do TCC: se substituir uma região do ECG pela baseline já derruba o logit por estar fora da distribuição, a queda não mede a importância da região. O TCC usa duas baselines (``zero'', que em z-score é a média de cada derivação, e ``mean'', a média do treino por ponto), próximas das escolhas que o artigo recomenda como padrão.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Metodologia}
+\begin{origquote}“In addition to the set of PMs, a fixed region size has to be selected, which according to the results of our previous paper should neither be too large, nor too small (e.g., 2–5\% of input length).”\end{origquote}
+\begin{tradquote}“Além do conjunto de PMs, é preciso escolher um tamanho fixo de região, que, segundo os resultados do nosso artigo anterior, não deve ser nem grande nem pequeno demais (por exemplo, 2–5\% do comprimento da entrada).”\end{tradquote}
+\explab{Explicação}
+As regiões do TCC são trechos fisiológicos (pré-QRS, QRS, ST-T) de cada derivação, de tamanhos desiguais. A recomendação vale para regiões uniformes em séries univariadas; no TCC, serve para registrar que regiões grandes tendem a tornar a perturbação menos discriminativa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 13} Resultados, escolha do PM}
+\begin{origquote}“This finding is of considerable importance, since it implies that the data properties are not the exclusive driver that impact PM selection, instead the data properties the model actually learned to rely on.”\end{origquote}
+\begin{tradquote}“Esse achado é de considerável importância, pois implica que as propriedades dos dados não são o único fator que afeta a escolha do PM, e sim as propriedades dos dados nas quais o modelo de fato aprendeu a se apoiar.”\end{tradquote}
+\explab{Explicação}
+Dois modelos com acurácia parecida na mesma base (Inception e ResNet, cerca de 95\%) tiveram PMs adequados diferentes. Para o TCC, a baseline adequada depende do ResNet34-1D treinado, e não só do ECG; não há valor ``correto'' a importar de outro estudo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 16} Resultados, efeito por classe}
+\begin{origquote}“The differences in the mean $CMI_{max}$ value come from the number of time points that are important for the model to make a prediction. The model relies on a smaller set of time points to detect a time series as Symptom, than as No Symptom.”\end{origquote}
+\begin{tradquote}“As diferenças no valor médio de $CMI_{max}$ vêm do número de instantes importantes para o modelo fazer a predição. O modelo se apoia num conjunto menor de instantes para reconhecer uma série como Symptom do que como No Symptom.”\end{tradquote}
+\explab{Explicação}
+É a evidência mais direta, nesta leitura, de que métricas de fidelidade por perturbação variam entre classes por razões que não são a qualidade da explicação: classes cuja evidência é concentrada em poucos pontos produzem quedas mais rápidas. No TCC, diferenças de fidelidade entre classes do ECG (por exemplo, CVP, um batimento isolado, contra SNR, um ritmo difuso) precisam ser lidas com essa ressalva antes de compará-las às posições no F1.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo apoia as escolhas do TCC de perturbar regiões dentro de cada derivação (como no exemplo multivariado, p.~25), de usar baselines do tipo zero/média e de declarar a escolha como parte do método. Também alerta que o valor de perturbação adequado depende do modelo e da classe, e que a $AUPC_{MoRF}$ isolada engana; as métricas do TCC (Faithfulness Correlation e Estimate) não usam a curva MoRF, mas a correlação ou a soma ponderada de quedas por região,, mas herdam o problema da baseline fora da distribuição. Diferenças: o artigo não avalia GradientSHAP nem ECG de 12 derivações (as bases ``ECG'' são de ECG fetal, univariadas), ordena métodos e não classes, e usa regiões uniformes. O efeito por classe que encontra é um argumento para a comparação apenas descritiva entre métricas e F1 adotada no TCC.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Šimić, Veas e Sabol (2025) mostram que, em séries temporais, a avaliação de fidelidade por perturbação depende do valor de substituição, do tamanho da região, do modelo e até da classe; recomendam substituições pela média da amostra, por zero ou pelo filtro laplaciano como padrão, combinadas a um pequeno conjunto de alternativas, e regiões pequenas.''
+\end{itemize}
+
+\end{document}

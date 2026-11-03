@@ -1,0 +1,183 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{±}{\ensuremath{\pm}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: atribuição em ECG (preprint de Suh et al.)}} \\[0.35em]
+    {\large SUH, J.; KIM, J.; JUNG, E.; RHEE, W. \textit{Evaluating Feature Attribution Methods for Electrocardiogram}. Preprint arXiv:2211.12702 (v1 2022, v2 2024)} \\[0.3em]
+    \textbf{Tema:} três métricas adaptadas ao ECG (localização, \textit{pointing game} e degradação) para comparar onze métodos de atribuição \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2211.12702} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 22/10/2024, 5 páginas incluindo referências) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2, 5 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação. \textbf{Atenção:} este é o \textit{preprint} curto (formato de conferência). A versão publicada, muito mais extensa (Suh et al., \textit{Computers in Biology and Medicine}, 2024, 109088), tem fichamento completo próprio em \url{completos/suh-2024-atribuicao-ecg}; o próprio arXiv a indica como sucessora (“\textit{preliminary research related to}” o artigo publicado). Os números abaixo valem apenas para o \textit{preprint}.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} descobrir quais métodos de atribuição (\textit{feature attribution}) são adequados ao ECG, usando métricas ajustadas às características do sinal.
+  \item \textbf{Dados e modelo:} Icentia11K (uma derivação, 250 Hz, trechos de 2049 pontos $\approx$ 8 s); classes normal, PAC (extrassístole atrial) e PVC (extrassístole ventricular); ResNet-18 1D com núcleos 1$\times$7 (acurácia 0,90 $\pm$ 0,05).
+  \item \textbf{Métodos de explicação:} onze, todos pelo Captum: Saliency, Input$\times$Gradient, Guided Backprop, Integrated Gradients, DeepLIFT, DeepSHAP, LRP, LIME, KernelSHAP, Grad-CAM e Guided Grad-CAM, mais uma atribuição aleatória de referência.
+  \item \textbf{Avaliação:} \textit{localization score} (IoU com os batimentos anormais), \textit{pointing game} (o ponto máximo cai num batimento anormal?) e \textit{degradation score} (área entre as curvas MoRF e LeRF, janelas de 16 pontos trocadas pela própria média).
+  \item \textbf{Conclusão:} Grad-CAM vence nas três métricas; DeepSHAP, LIME e KernelSHAP vão mal fora da degradação.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O \textit{preprint} parte da constatação de que os métodos de atribuição vieram da visão computacional e de que não havia análise clara de quais servem ao ECG. Os autores usam o Icentia11K porque ele traz rótulo para cada batimento: um trecho com pelo menos um batimento PAC ou PVC recebe esse rótulo, e a posição dos batimentos anormais funciona como “caixa delimitadora” (a verdade de referência das métricas de localização). O modelo é treinado com 6000 trechos (2000 por classe) e avaliado em 6000; as métricas usam só os trechos de PAC e PVC classificados corretamente com probabilidade acima de 90\% (cerca de 3272 em média), para que um resultado ruim seja atribuível ao método, e não ao modelo. Tudo é repetido 5 vezes, com partições e inicializações diferentes.
+
+\section{Como avalia as explicações}
+\begin{itemize}
+  \item \textbf{Localization score:} se os batimentos anormais somam $n$ pontos, pegam-se os $n$ pontos de maior atribuição e calcula-se a interseção sobre a união (IoU) com os pontos dos batimentos anormais.
+  \item \textbf{Pointing game:} acerto quando o ponto de maior atribuição cai dentro de um batimento anormal; relata-se a acurácia (acertos sobre o total).
+  \item \textbf{Degradation score:} perturbação cumulativa em janelas de 16 pontos, na ordem decrescente (MoRF, \textit{most relevant first}) e crescente (LeRF, \textit{least relevant first}) da atribuição. A probabilidade da classe correta é reescalada para 1 no sinal original e 0 no sinal todo perturbado, e a métrica é a área entre as duas curvas. A perturbação troca a janela pela \textbf{média da própria janela}.
+  \item \textbf{Sinal da atribuição:} cada método foi avaliado com valores brutos e com valor absoluto, e só o melhor dos dois é relatado.
+\end{itemize}
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Método (Tabela 2, p.~4) & Localização & Pointing & Degradação & Média \\
+\midrule
+Aleatório (referência) & 0,1087 & 0,1857 & 0,0037 & 0,0094 \\
+Saliency & 0,1899 & 0,3646 & 0,3460 & 0,3002 \\
+Integrated Gradients & 0,2236 & 0,6837 & 0,8852 & 0,5825 \\
+DeepSHAP & 0,2134 & 0,5557 & 0,8827 & 0,5506 \\
+LIME & 0,1214 & 0,3398 & 0,4230 & 0,2497 \\
+KernelSHAP & 0,1155 & 0,3977 & 0,2367 & 0,2500 \\
+Grad-CAM & 0,4848 & 0,7048 & 0,8876 & 0,6924 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Grad-CAM fica em primeiro nas três métricas, e sua média é 18\% maior que a do segundo colocado (IG). Na localização, os dois métodos baseados em ativação (Grad-CAM e Guided Grad-CAM) superam todos os outros por larga margem; na degradação, quatro métodos de gradiente (IG, DeepLIFT, DeepSHAP, Input$\times$Gradient) empatam praticamente com o Grad-CAM. \textit{Observação de leitura:} a média da linha “aleatório” na tabela é 0,0094, mas a média das três colunas é 0,0994; parece erro de digitação no original. Limitação declarada: só PAC e PVC, só Icentia11K.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 3} §3 Métricas propostas}
+\begin{origquote}“As a perturbation, we use a mean operation; we fill a selected window with the mean value of the window. We select the mean operation since it can erase detailed wave information while preserving the typical shape of an ECG signal.”\end{origquote}
+\begin{tradquote}“Como perturbação, usamos a operação de média: preenchemos a janela selecionada com o valor médio da janela. Escolhemos a média porque ela apaga a informação detalhada da onda e preserva a forma típica de um sinal de ECG.”\end{tradquote}
+\explab{Explicação}
+É uma escolha de valor de perturbação feita pensando no ECG: em vez de zerar (o que cria degraus artificiais), achata a janela no seu nível médio. No TCC, a perturbação das métricas de fidelidade troca a região pela referência; esta citação mostra que a escolha do valor é uma decisão de projeto que precisa ser justificada, porque muda o que a métrica mede.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §4.1 Configuração}
+\begin{origquote}“[...] the reason for using only correctly predicted examples with high probability is to ensure that the low evaluation result of feature attribution methods is attributable to the attribution method and not the classification model’s poor performance [19].”\end{origquote}
+\begin{tradquote}“[...] o motivo de usar só exemplos preditos corretamente com alta probabilidade é garantir que um resultado ruim dos métodos de atribuição seja atribuível ao método, e não ao mau desempenho do modelo de classificação [19].”\end{tradquote}
+\explab{Explicação}
+O \textit{preprint} remove de propósito a influência do desempenho do modelo sobre a métrica. O TCC faz a pergunta oposta (se a qualidade da explicação acompanha o F1 por classe), e por isso não pode filtrar só os acertos de alta confiança sem declarar o efeito desse filtro: ele esconderia justamente a variação que se quer observar.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §4.2 Resultados e discussão}
+\begin{origquote}“For instance, the two perturbation-based methods, LIME and KernelSHAP, perform reasonably well in the image domain but poorly in the ECG domain. DeepSHAP, which is known to achieve a competitive performance to Grad-CAM on ImageNet [2], also performs poorly in the ECG domain except for the degradation score.”\end{origquote}
+\begin{tradquote}“Por exemplo, os dois métodos de perturbação, LIME e KernelSHAP, vão razoavelmente bem no domínio de imagens, mas mal no ECG. O DeepSHAP, conhecido por ter desempenho competitivo com o Grad-CAM no ImageNet [2], também vai mal no ECG, exceto no \textit{degradation score}.”\end{tradquote}
+\explab{Explicação}
+Mostra que a ordem dos métodos não se transfere da imagem para o ECG. Para o TCC, a família SHAP aparece aqui fraca em localização, mas forte em degradação (que é uma métrica de fidelidade): o que o mapa SHAP “acerta” depende do critério. O GradientSHAP, usado no TCC, não foi avaliado no \textit{preprint}.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §5 Conclusão}
+\begin{origquote}“A limitation of our work is that we have considered only PAC and PVC with Icentia11K dataset.”\end{origquote}
+\begin{tradquote}“Uma limitação do nosso trabalho é termos considerado só PAC e PVC no conjunto Icentia11K.”\end{tradquote}
+\explab{Explicação}
+As conclusões valem para batimentos ectópicos isolados numa derivação, em que a evidência é localizada no tempo. No TCC, com 12 derivações e classes de ritmo (AF), de condução (BRD, BRE, BAV1) e de repolarização (STD, STE), a evidência pode estar espalhada, e o resultado do \textit{preprint} não se estende automaticamente.
+\end{citacard}
+
+\section{Relação com o TCC}
+O \textit{preprint} é a primeira versão do trabalho de Suh et al.\ e deve ser citado, no máximo, como antecedente; a referência principal para o TCC é a versão publicada (2024), que amplia dados, métodos e métricas. Do \textit{preprint} aproveita-se a ideia de adaptar as métricas à estrutura do ECG (janelas, batimentos) em vez de aplicá-las ponto a ponto, que é a mesma motivação das 36 regiões do TCC, e a observação de que a escolha do valor de perturbação é parte da definição da métrica. O trabalho não compara a qualidade das explicações entre classes nem com o F1, e as métricas de localização exigem rótulos por batimento, que o CPSC2018 não tem; por isso o TCC deixou a localização fora (decisão de 22/10).
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Em versão preliminar, Suh et al.\ (2022, \textit{preprint}) adaptaram ao ECG de uma derivação métricas de localização e de degradação e concluíram que o Grad-CAM superava os demais métodos em batimentos PAC e PVC, enquanto o DeepSHAP só era competitivo na métrica de degradação.
+\end{itemize}
+
+\end{document}

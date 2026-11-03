@@ -1,0 +1,175 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: ECGradCAM e descoberta de conhecimento no ECG}} \\[0.35em]
+    {\large HICKS, S. A.; ISAKSEN, J. L.; THAMBAWITA, V.; GHOUSE, J.; AHLBERG, G.; LINNEBERG, A.; GRARUP, N.; STRÜMKE, I.; ELLERVIK, C.; OLESEN, M. S.; HANSEN, T.; GRAFF, C.; HOLSTEIN-RATHLOU, N.-H.; HALVORSEN, P.; MALECKAR, M. M.; RIEGLER, M. A.; KANTERS, J. K. \textit{Explaining deep neural networks for knowledge discovery in electrocardiogram analysis}. Scientific Reports, v. 11, art. 10949, 2021} \\[0.3em]
+    \textbf{Tema:} mapas de atenção (Grad-CAM adaptado) em ECG de 12 derivações e verificação por remoção de ondas \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1038/s41598-021-90285-5} \\[0.2em]
+    \textbf{Leitura:} íntegra (versão publicada, PDF de 11 páginas; material suplementar não lido) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF da versão publicada (11 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} mostrar que mapas de atenção explicam uma rede que mede intervalos e amplitudes do ECG e que podem revelar conhecimento novo, como as diferenças de sexo no ECG.
+\item \textbf{Dados e modelo:} ECGs de 12 derivações de dois estudos populacionais dinamarqueses, GESUS (8\,939 participantes, treino com validação cruzada em 5 partes) e Inter99 (6\,667, replicação); rede convolucional residual (oito módulos residuais, 1\,652\,993 parâmetros), com entrada de batimento mediano de 1,2~s ou de ritmo de 10~s.
+\item \textbf{Método de explicação:} ECGradCAM, um Grad-CAM calculado separadamente em cada derivação, na última camada do último módulo residual, com média final entre as derivações.
+\item \textbf{Avaliação:} inspeção visual dos mapas e um teste de remoção de ondas (\textit{wave blocking}): a onda P, o QRS ou a onda T do batimento mediano é substituída por interpolação linear e mede-se a piora da predição. Não há métrica quantitativa aplicada ao mapa em si.
+\item \textbf{Conclusão:} os mapas destacam as ondas esperadas para cada medida; na classificação de sexo, destacam o QRS (descida da onda R), e remover o QRS derruba a acurácia de 88,8\,\% para 62,4\,\%.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O artigo tem três partes. Primeiro, treina a mesma rede residual para 14 tarefas: sete medidas clínicas por regressão (intervalos PR, QRS e QT, frequência cardíaca, elevação do ponto J e amplitudes das ondas R e T em V5), cada uma a partir do batimento mediano e do ritmo de 10~s. A \textbf{regressão} prevê um número contínuo, e não uma classe. As referências vêm do algoritmo comercial Marquette 12SL. Os erros ficam em 3 a 4~ms nos intervalos, e a rede supera dois cardiologistas numa amostra de 20 ECGs. Segundo, propõe o \textbf{ECGradCAM}. O \textbf{Grad-CAM} pondera os mapas de ativação de uma camada convolucional pelo gradiente da saída e produz um mapa de importância ao longo do tempo. Aqui o mapa é calculado por derivação e depois promediado. Terceiro, usa os mapas para propor uma característica nova: a classificação de sexo (acurácia de 89\,\%) se apoiaria na descida da onda R, o que é conferido com uma regressão logística feita depois.
+
+\section{Como avalia as explicações}
+A avaliação é sobretudo \textbf{visual}: verifica-se se o mapa destaca a onda ligada à medida prevista (por exemplo, o QRS quando se prevê a duração do QRS). Como verificação independente, há o \textbf{bloqueio de ondas}. Com os pontos fiduciais do 12SL, cada onda (P, QRS ou T) do batimento mediano é trocada, do início ao fim, por uma interpolação linear própria de cada derivação, e a rede é reavaliada no conjunto de replicação (Inter99). A unidade de perturbação é, portanto, a \textbf{onda inteira} em todas as derivações, e a referência de substituição é a reta entre as bordas da onda, e não o zero. O teste é global, por tarefa: não compara, ECG a ECG, a ordem de importância do mapa com o efeito da remoção, nem compara métodos de explicação.
+
+\section{Resultados e conclusões}
+Recorte da Tabela~3 [p.~5] (MAE: erro absoluto médio, menor é melhor; ACC: acurácia, maior é melhor):
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Variável} & \textbf{Mediana} & \textbf{Sem P} & \textbf{Sem QRS} & \textbf{Sem T} \\
+\midrule
+Intervalo PR, MAE (ms) & 2,73 & 32,95 & 40,55 & 3,84 \\
+Duração do QRS, MAE (ms) & 2,58 & 3,99 & 40,55 & 3,50 \\
+Intervalo QT, MAE (ms) & 3,13 & 3,20 & 31,76 & 47,35 \\
+Amplitude da onda R, MAE ($\mu$V) & 8,35 & 8,64 & 927,38 & 10,48 \\
+Amplitude da onda T, MAE ($\mu$V) & 5,80 & 6,13 & 8,70 & 339,04 \\
+Sexo, ACC (\%) & 88,80 & 87,50 & 62,40 & 79,80 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Remover a onda ligada à medida aumenta muito o erro, o que os autores leem como confirmação dos mapas. Remover outras ondas também piora um pouco a predição. Duas observações de leitura: (i) a Tabela~3 traz o mesmo valor (40,55~$\pm$~5,88) para PR e QRS quando o QRS é removido, o que pode ser repetição tipográfica; (ii) a conclusão fala em acurácia “acima de 90\,\%” na classificação de sexo [p.~7], enquanto os resultados e a Tabela~3 dão 89\,\% e 88,8\,\%.
+
+\section{Citações comentadas}
+
+\begin{citacard}{\pagechip{p. 4} Resultados, \textit{Attention maps}}
+\begin{origquote}“To create meaningful and detailed visualizations, we modified the GradCAM approach so that visualizations are generated for each lead of the ECG, where the final attention maps are produced by averaging the importance values across all leads.”\end{origquote}
+\begin{tradquote}“Para criar visualizações significativas e detalhadas, modificamos o GradCAM de modo que as visualizações sejam geradas para cada derivação do ECG, e os mapas finais de atenção são obtidos pela média dos valores de importância entre todas as derivações.”\end{tradquote}
+\explab{Explicação}
+O mapa final tem só a dimensão do tempo: a informação de \textbf{qual derivação} importa se perde na média. No TCC, as 36 regiões mantêm as 12 derivações separadas, porque várias classes (BRD, BRE, STD, STE) se manifestam em derivações específicas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Resultados, \textit{Sex prediction}}
+\begin{origquote}“The attention maps (see Fig. 4) clearly show that the ECG sex classification is mainly based on the QRS complex and more specifically on the downslope of the R-wave, offering new insight into electrophysiology.”\end{origquote}
+\begin{tradquote}“Os mapas de atenção (ver Fig. 4) mostram claramente que a classificação de sexo pelo ECG se baseia principalmente no complexo QRS e, mais especificamente, na descida da onda R, o que traz uma nova compreensão da eletrofisiologia.”\end{tradquote}
+\explab{Explicação}
+É o uso dos mapas para \textbf{descoberta}: o mapa aponta um trecho, e o trecho vira hipótese clínica. Storås et al.\ (2023), do mesmo grupo, repetiram a ideia em ECGs de 10~s do PTB-XL e não encontraram padrão consistente (ver o fichamento correspondente), o que mostra o risco de tirar conclusões de mapas sem uma medida de fidelidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Métodos, \textit{Wave blocking}}
+\begin{origquote}“Using the MUSE 12SL fiducial points, we blank out a wave by replacing it from the start to the end with a lead-specific linear interpolation. This analysis represents an alternative measure of explainability for representative beats of an ECG by analyzing the decrease in performance when different waves of the ECG are blanked.”\end{origquote}
+\begin{tradquote}“Usando os pontos fiduciais do MUSE 12SL, apagamos uma onda substituindo-a, do início ao fim, por uma interpolação linear específica de cada derivação. Essa análise é uma medida alternativa de explicabilidade para batimentos representativos do ECG, que avalia a queda de desempenho quando diferentes ondas do ECG são apagadas.”\end{tradquote}
+\explab{Explicação}
+É uma perturbação por \textbf{regiões fisiológicas}, a mesma granularidade que o TCC adota (pré-QRS, QRS e ST-T, próximas de P, QRS e T). O valor de substituição evita o zero: troca-se a onda por uma reta entre as suas bordas, que se parece com a linha de base do ECG e não cria um degrau artificial no sinal.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Métodos, \textit{Wave blocking}}
+\begin{origquote}“However, we also find that removing non-involved waves typically decreases performance slightly, suggesting that the neural network also includes other parts of the ECG to stabilize the model to ensure that it is analyzing the correct part of the ECG.”\end{origquote}
+\begin{tradquote}“No entanto, também observamos que remover ondas não envolvidas costuma diminuir um pouco o desempenho, o que sugere que a rede também usa outras partes do ECG para se estabilizar e garantir que está analisando a parte correta do ECG.”\end{tradquote}
+\explab{Explicação}
+Mesmo numa tarefa em que a evidência “correta” é conhecida, a rede usa um pouco de contexto fora dela. Por isso, uma explicação fiel não precisa se concentrar só numa região, e um mapa espalhado não é, por si, um erro: é um ponto a lembrar ao ler a complexidade (cerca de 24 das 36 regiões) no TCC.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo apoia duas decisões do TCC: explicar o ECG em \textbf{unidades fisiológicas} (ondas ou trechos do batimento) e perturbar essas unidades com uma substituição que não destoe do sinal. Ao mesmo tempo, mostra o que o TCC faz além: Hicks et al.\ verificam os mapas só de forma visual e global, por tarefa, com um único método (Grad-CAM, que depende da camada escolhida) e com média entre derivações. O TCC mede a fidelidade mapa a mapa (Faithfulness Correlation e Estimate por regiões), separa as derivações e acrescenta testes de sanidade (Random Logit, eMPRT) que o artigo não tem. Há ainda uma diferença de tarefa: o artigo trata de regressão de medidas e da classificação binária de sexo, e não de classificação multirrótulo de arritmias.
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestão}
+Hicks et al.\ (2021) adaptaram o Grad-CAM ao ECG de 12 derivações (ECGradCAM) e verificaram os mapas removendo ondas inteiras do batimento mediano: a remoção da onda ligada a cada medida aumentou fortemente o erro, e a remoção do QRS reduziu a acurácia da classificação de sexo de 88,8\,\% para 62,4\,\%. A verificação, porém, é visual e global, sem métrica de fidelidade por explicação.
+\end{infobox}
+
+\end{document}

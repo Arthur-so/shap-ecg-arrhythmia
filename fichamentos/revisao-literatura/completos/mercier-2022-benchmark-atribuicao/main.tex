@@ -1,0 +1,358 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: benchmark de atribuição em séries temporais}} \\[0.35em]
+    {\large MERCIER, D.; BHATT, J.; DENGEL, A.; AHMED, S. \textit{Time to Focus: A Comprehensive Benchmark Using Time Series Attribution Methods}. In: International Conference on Agents and Artificial Intelligence (ICAART), 14., 2022, p.~562--573} \\[0.3em]
+    \textbf{Tema:} comparação de 12 métodos de atribuição em seis conjuntos de séries temporais (incluindo o ECG5000) por Infidelity, Sensitivity, retirada de pontos, randomização e continuidade \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.5220/0010904400003116} (arXiv: \url{https://arxiv.org/abs/2202.03759}) \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv:2202.03759v1, 12 páginas) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v1, 12 páginas, incluindo as referências; a paginação difere da dos anais). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica o trabalho sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} relaciona o artigo com o desenho do TCC.
+
+\begin{infobox}[note]{Por que este artigo}
+É um dos poucos \textit{benchmarks} de séries temporais que mede a \textbf{Sensitivity} (robustez, a família da Max/Avg-Sensitivity do TCC) e a \textbf{Infidelity} de Yeh et al.\ (2019) com o \textbf{GradientShap} entre os métodos e com um conjunto de \textbf{ECG} (ECG5000) entre os dados. O resultado mais útil para o TCC é que o GradientShap tem a maior Sensitivity entre os métodos baseados no gradiente em todos os seis conjuntos, o que dialoga com o achado do TCC de que a variação própria do estimador (o piso) domina a sensibilidade. O artigo também testa a dependência dos mapas em relação aos parâmetros do modelo e aos rótulos, a mesma pergunta do eMPRT.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema que o artigo ataca}
+Um \textbf{método de atribuição} atribui a cada ponto da entrada um valor de importância para a predição de uma classe. A maior parte desses métodos e das suas avaliações veio da análise de imagens. O artigo parte da constatação de que faltam avaliações em séries temporais e se propõe a comparar métodos de atribuição em classificadores convolucionais de séries temporais segundo vários critérios: efeito sobre a acurácia, Infidelity, Sensitivity, tempo de execução, concordância entre métodos, dependência dos rótulos e dos parâmetros do modelo e continuidade dos mapas (p.~1--2).
+
+\section{A ideia central}
+\begin{infobox}[note]{Em uma frase}
+Treinar a mesma rede (AlexNet adaptada para 1D) em seis conjuntos de séries temporais, explicar 100 amostras de teste de cada conjunto com 12 métodos e comparar os métodos em oito critérios, sem ajustar os hiperparâmetros de nenhum deles.
+\end{infobox}
+A conclusão é que nenhum método nem nenhuma família vence em tudo: os métodos por perturbação saem melhor em Sensitivity, no ``jogo de oclusão'' e em continuidade; os baseados no gradiente, em tempo de execução e em Infidelity (p.~1).
+
+\section{Dados e modelo}
+Seis conjuntos (Tabela 1, p.~3), cinco dos repositórios UEA \& UCR e um de anomalias pontuais:
+\begin{center}\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Conjunto} & \textbf{Treino} & \textbf{Teste} & \textbf{Passos} & \textbf{Canais} & \textbf{Classes} \\
+\midrule
+UWaveGestureLibraryAll & 896 & 3\,582 & 945 & 1 & 8 \\
+FordA & 3\,601 & 1\,320 & 500 & 1 & 2 \\
+Anomaly & 35\,000 & 15\,000 & 50 & 3 & 2 \\
+\textbf{ECG5000} & 500 & 4\,500 & 140 & 1 & 5 \\
+FaceDetection & 5\,890 & 3\,524 & 62 & 144 & 2 \\
+CharacterTrajectories & 1\,422 & 1\,436 & 182 & 3 & 20 \\
+\bottomrule
+\end{tabular}
+\end{center}
+O ECG5000 é univariado: cada amostra é um batimento de 140 pontos, com 5 classes. É muito diferente do ECG do TCC (12 derivações, registro completo, multirrótulo).
+
+\textbf{Modelo.} AlexNet adaptada para 1D (Tabela 2), treinada com SGD, taxa de aprendizado 0,01, até 100 épocas, redução da taxa no platô e parada antecipada pela validação (p.~3--4). Os dados são padronizados (média zero), e por isso o \textbf{sinal de referência é uma sequência de zeros} (p.~3).
+
+\textbf{Amostra avaliada.} Pelo custo, as atribuições são calculadas em 100 amostras de teste por conjunto, preservando a distribuição de classes (p.~4). A Tabela 3 compara o F1 ponderado no teste inteiro e nesse subconjunto; no ECG5000, 0,9352 e 0,8907.
+
+\section{Métodos de explicação}
+Doze métodos (p.~2--3), com os hiperparâmetros padrão dos artigos originais e sem ajuste ``para garantir justiça entre as abordagens'' (p.~3):
+\begin{itemize}
+\item \textbf{Baseados no gradiente:} \textbf{GradientShap}, GuidedBackprop, InputXGradient, IntegratedGradients e Saliency.
+\item \textbf{Por perturbação:} Dynamask, FeatureAblation, FeaturePermutation e Occlusion.
+\item \textbf{Outros:} KernelShap, Lime e ShapleyValueSampling.
+\end{itemize}
+O artigo não informa as referências (\textit{baselines}) nem o número de amostras do GradientShap.
+
+\section{Métricas de avaliação e adaptação a séries temporais}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Critério} & \textbf{Como é medido no artigo} \\
+\midrule
+Efeito na acurácia (§5.1) & Pontos acrescentados a um sinal de zeros em ordem de importância (mais e menos importantes primeiro); F1 ponderado ao longo da inserção \\
+Concordância (§5.2) & Porcentagem de pontos necessária para que 90\%, 95\% e 100\% das predições coincidam com as originais (menor é melhor) \\
+Infidelity (§5.3) & Yeh et al.\ (2019); erro médio com 100 amostras perturbadas por método (menor é melhor) \\
+Sensitivity (§5.3) & Yeh et al.\ (2019); mudança da atribuição quando a entrada é perturbada (menor é melhor) \\
+Tempo (§5.4) & Tempo para explicar uma amostra (GTX 1080 Ti) \\
+Correlação entre métodos (§5.5) & Pearson, Spearman e Jaccard dos 10\% de pontos mais importantes \\
+Randomização (§5.6) & Rótulos de treino permutados; camadas randomizadas (uma por vez, de cima para baixo e de baixo para cima); Spearman com o mapa original \\
+Continuidade (§5.8) & Média da diferença absoluta entre a atribuição de $t$ e de $t+1$ (menor é mais contínuo) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\textbf{Adaptações a séries temporais.} São poucas. A granularidade é o ponto (instante, canal), sem agrupamento em janelas; o valor de retirada é zero, que equivale à média por causa da padronização (p.~4); a continuidade é a única medida própria de séries. Os autores observam que, ao contrário das imagens com superpixels, a maioria dos métodos não considera grupos de valores (p.~9). O artigo \textbf{não informa} o raio nem a distribuição das perturbações da Infidelity e da Sensitivity, nem o número de perturbações da Sensitivity; a Sensitivity é descrita como calculada ``para uma única amostra'' (p.~5) e a legenda da Tabela 6 fala em ``Sensitivity de uma amostra'', o que deixa ambíguo se é uma amostra ou a média por amostra. Não há desvios-padrão nem testes estatísticos.
+
+\section{Resultados principais}
+Valores do ECG5000 para os 12 métodos (Tabelas 4 a 7, p.~5--10). Concordância: porcentagem de pontos para atingir 90/95/100\% de concordância.
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Método} & \textbf{Infidelity} & \textbf{Sensitivity} & \textbf{Continuidade} & \textbf{Concordância 90/95/100} \\
+\midrule
+GradientShap & 0,7897 & 0,9149 & 0,0616 & 15 / 20 / 75 \\
+GuidedBackprop & 0,8060 & 0,0562 & 0,0913 & 13 / 14 / 83 \\
+InputXGradient & 0,8135 & 0,0709 & 0,0508 & 18 / 24 / 42 \\
+IntegratedGradients & 0,8260 & 0,0458 & 0,0609 & 11 / 18 / 38 \\
+Saliency & 0,8174 & 0,1841 & 0,1439 & 32 / 37 / 75 \\
+\midrule
+Dynamask & 0,8271 & 0,0000 & 0,0252 & 18 / 31 / 100 \\
+FeatureAblation & 0,8459 & 0,0350 & 0,0584 & 6 / 9 / 60 \\
+FeaturePermutation & 0,7949 & 0,0350 & 0,0584 & 6 / 9 / 60 \\
+Occlusion & 0,8107 & 0,0305 & 0,0419 & 9 / 15 / 46 \\
+\midrule
+KernelShap & 0,8288 & 0,2162 & 0,0641 & 8 / 15 / 84 \\
+Lime & 0,8040 & 0,1408 & 0,0498 & 8 / 17 / 75 \\
+ShapleyValueSampling & 0,8153 & 0,1852 & 0,0505 & 10 / 18 / 71 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Sensitivity do GradientShap nos seis conjuntos (Tabela 6): Anomaly 0,9364; CharacterTrajectories 0,6610; ECG5000 0,9149; FaceDetection 0,9764; FordA 1,0369; UWaveGestureLibraryAll 1,0347. É a maior entre os métodos baseados no gradiente em todos os conjuntos; os outros quatro ficam entre 0,04 e 0,22. KernelShap, Lime e ShapleyValueSampling também têm valores altos (por exemplo, KernelShap entre 0,22 e 1,09).
+
+Outros resultados declarados:
+\begin{itemize}
+\item \textbf{Infidelity:} diferença média de 7,2\% entre o pior e o melhor método; maior no CharacterTrajectories (15,8\%) e menor no FordA (3,4\%); os valores dependem muito do conjunto (p.~5).
+\item \textbf{Sensitivity:} os métodos por perturbação são, em média, 30,9\% melhores; Dynamask tem Sensitivity zero porque produz mapas binários (p.~6).
+\item \textbf{Rótulos permutados:} a correlação com o mapa original cai para 0,05 a 0,2; GradientShap, GuidedBackprop, InputXGradient e IntegratedGradients têm correlações três vezes maiores que Dynamask, KernelShap e Saliency (p.~8).
+\item \textbf{Parâmetros randomizados:} uma única camada randomizada basta para que o mapa deixe de se relacionar com o original, exceto o GuidedBackprop quando só as camadas de cima são randomizadas (p.~8).
+\item \textbf{Avaliação geral} (Tabela 8, p.~10): o GradientShap recebe sinal positivo só em Infidelity e tempo de execução.
+\end{itemize}
+
+\section{Conclusões e limitações declaradas}
+A escolha do método depende do caso de uso: os métodos baseados no gradiente são rápidos e bons em Infidelity e dependência dos rótulos, mas ruidosos, pouco contínuos e piores em Sensitivity; os por perturbação dão mapas contínuos e melhor Sensitivity, mas são lentos (p.~11). As limitações declaradas são práticas: custo computacional (daí as 100 amostras), hiperparâmetros não ajustados e resultados omitidos ``por falta de espaço'' quando idênticos entre conjuntos (p.~3).
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+Resumo e introdução (p.~1--2), trabalhos relacionados (p.~2), métodos (§3, p.~2--3), dados (§4, p.~3), configuração (§5, p.~3--4), resultados por critério (§5.1--5.8, p.~4--10), discussão (§6, p.~9--11) e conclusão (§7, p.~11). As citações seguem essa ordem.
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“A detailed analysis shows that perturbation-based approaches are superior concerning the Sensitivity and occlusion game. These methods tend to produce explanations with higher continuity. Contrarily, the gradient-based techniques are superb in runtime and Infidelity.”\end{origquote}
+\begin{tradquote}“Uma análise detalhada mostra que as abordagens por perturbação são superiores quanto à Sensitivity e ao jogo de oclusão. Esses métodos tendem a produzir explicações mais contínuas. Por outro lado, as técnicas baseadas no gradiente se destacam em tempo de execução e Infidelity.”\end{tradquote}
+\explab{Explicação}
+É a síntese do artigo. O ``jogo de oclusão'' é a retirada ou inserção de pontos em ordem de importância. A divisão por família é o eixo de toda a análise; o TCC, com um só método, não compara famílias, mas se apoia nesses resultados para situar o GradientSHAP.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §3.1 Métodos baseados no gradiente}
+\begin{origquote}“The core concept of GradientShap relies on the estimation of the SHAP values of the input. SHAP values are estimated using targeted permutations of the input sequence. These values are an approximation since the exact calculation of the SHAP values is very time and resource-intensive. GradientShap is in this respect very similar to Integrated Gradients.”\end{origquote}
+\begin{tradquote}“O conceito central do GradientShap é a estimação dos valores SHAP da entrada. Os valores SHAP são estimados por permutações direcionadas da sequência de entrada. Esses valores são uma aproximação, pois o cálculo exato dos valores SHAP é muito custoso em tempo e recursos. Nesse aspecto, o GradientShap é muito parecido com o Integrated Gradients.”\end{tradquote}
+\explab{Explicação}
+A descrição é imprecisa: o GradientSHAP não usa ``permutações'' da entrada, e sim referências sorteadas, um ponto sorteado no caminho entre referência e entrada e o gradiente nesse ponto. O que importa para o TCC é a palavra ``aproximação'': o GradientSHAP é um estimador por amostragem, e dois cálculos do mesmo mapa dão resultados diferentes. O artigo não leva isso em conta ao medir a Sensitivity.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §5 Experimentos}
+\begin{origquote}“The methods were not optimized to ensure fairness among the approaches. Fine-tuning an attribution method requires assumptions about the dataset. However, in a real case, this prior knowledge is not necessarily given.”\end{origquote}
+\begin{tradquote}“Os métodos não foram otimizados, para garantir a justiça entre as abordagens. Ajustar um método de atribuição exige suposições sobre os dados. Num caso real, porém, esse conhecimento prévio não está necessariamente disponível.”\end{tradquote}
+\explab{Explicação}
+Todos os métodos usam os valores padrão. Para o GradientSHAP, isso significa referência e número de amostras não informados. O TCC mostra que essas escolhas importam: com 200 sorteios em vez de 50, o piso caiu pela metade e a Max-Sensitivity caiu cerca de 40\%.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §5 Experimentos}
+\begin{origquote}“The preprocessing of the data covers a standardization to achieve a mean of zero and a standard deviation. Therefore, the baseline signal is a sequence of zeros.”\end{origquote}
+\begin{tradquote}“O pré-processamento dos dados inclui uma padronização para média zero e desvio-padrão [unitário]. Por isso, o sinal de referência é uma sequência de zeros.”\end{tradquote}
+\explab{Explicação}
+Com dados padronizados, zero é a média, e as duas referências comuns coincidem. No TCC, a Faithfulness Correlation foi calculada com zero e com a média do treino, e as duas deram resultados praticamente iguais (diferença máxima de 0,003), o que é coerente com essa equivalência.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §5 Experimentos}
+\begin{origquote}“Due to the immense computational effort, a set of 100 test samples was selected to evaluate the attribution methods. In addition, these samples preserve the class distribution of the test set.”\end{origquote}
+\begin{tradquote}“Pelo enorme esforço computacional, foi selecionado um conjunto de 100 amostras de teste para avaliar os métodos de atribuição. Essas amostras preservam a distribuição de classes do conjunto de teste.”\end{tradquote}
+\explab{Explicação}
+Com 100 amostras e a distribuição original, as classes raras têm poucas amostras, e o artigo não analisa nenhum critério por classe; o desempenho é resumido pelo F1 ponderado. O TCC usa todas as predições corretas do teste (622 mapas) e organiza a análise por classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §5.3 Infidelity e Sensitivity}
+\begin{origquote}“The results show that the tested methods do differ by a large margin of less than 7.2\% on average, and in addition, the Infidelity values strongly depend on the dataset. Neither the gradient-based approaches nor the perturbation-based or other approaches are superior.”\end{origquote}
+\begin{tradquote}“Os resultados mostram que os métodos testados diferem por uma ampla margem de menos de 7,2\% em média e, além disso, os valores de Infidelity dependem fortemente do conjunto de dados. Nem as abordagens baseadas no gradiente nem as por perturbação ou as outras são superiores.”\end{tradquote}
+\explab{Explicação}
+A frase é contraditória (``ampla margem de menos de 7,2\%'') e conflita com o resumo, que diz que os métodos de gradiente se destacam em Infidelity. Na Tabela 5, os valores do ECG5000 vão de 0,79 a 0,85, sem medida de dispersão. A conclusão segura é a segunda parte: a Infidelity varia mais entre conjuntos do que entre métodos.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5--6} §5.3 Infidelity e Sensitivity}
+\begin{origquote}“Computationally, the Sensitivity is much more expensive but provides a good idea about the change in the attribution when the input is perturbed. Using the Sensitivity the robustness against of the methods concerning noise was evaluated. Ultimately, an attribution method tends to show low Sensitivity, although this depends on the model itself.”\end{origquote}
+\begin{tradquote}“Computacionalmente, a Sensitivity é muito mais cara, mas dá uma boa ideia da mudança da atribuição quando a entrada é perturbada. Com a Sensitivity, avaliou-se a robustez dos métodos ao ruído. Em última análise, um método de atribuição tende a mostrar Sensitivity baixa, embora isso dependa do próprio modelo.”\end{tradquote}
+\explab{Explicação}
+A definição coincide com a da Max/Avg-Sensitivity do TCC. A ressalva final (``depende do próprio modelo'') é a mesma de Yeh et al.: se o modelo muda a saída com a perturbação, a explicação também deve mudar. O artigo não acrescenta uma terceira fonte de variação, a do próprio estimador, que no TCC é medida pelo piso.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} Tabela 6}
+\begin{origquote}“Sensitivity comparison. Computed values show the Sensitivity of a sample. Results show larger values for Lime and Shap-based approaches. Overall the performance of the perturbation-based approaches was superior to most of the other approaches.”\end{origquote}
+\begin{tradquote}“Comparação da Sensitivity. Os valores mostram a Sensitivity de uma amostra. Os resultados mostram valores maiores para o Lime e para as abordagens baseadas em Shap. No geral, o desempenho das abordagens por perturbação foi superior ao da maioria das outras.”\end{tradquote}
+\explab{Explicação}
+Os métodos com os maiores valores (GradientShap e KernelShap, seguidos de Lime e ShapleyValueSampling) têm algo em comum que o artigo não menciona: são \textbf{estocásticos}, isto é, sorteiam referências, coalizões ou vizinhos a cada execução. Os métodos determinísticos (Saliency, InputXGradient, IntegratedGradients, GuidedBackprop, Occlusion, FeatureAblation) ficam todos abaixo de 0,23 em todos os conjuntos. Há uma exceção à regra: o FeaturePermutation também sorteia (permuta valores entre amostras do lote) e tem Sensitivity baixa (0,04 a 0,06). Uma leitura possível, não testada no artigo, é que parte da Sensitivity desses métodos seja variação de sorteio, e não reação à perturbação da entrada. É exatamente o que o TCC verificou com o piso: em nenhum dos 622 mapas a Max-Sensitivity passou do piso.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §5.3 Infidelity e Sensitivity}
+\begin{origquote}“The results show that Dynamask has a Sensitivity of zero. Dynamask by design forces the importance values to be either one or zero. Although this is a benefit concerning the Sensitivity it results in a drawback when ranking the features as shown in the accuracy drop experiment.”\end{origquote}
+\begin{tradquote}“Os resultados mostram que o Dynamask tem Sensitivity zero. Por construção, o Dynamask força as importâncias a serem um ou zero. Embora isso seja uma vantagem quanto à Sensitivity, é uma desvantagem ao ordenar os atributos, como mostra o experimento de queda de acurácia.”\end{tradquote}
+\explab{Explicação}
+Mostra que a robustez pode ser obtida de forma trivial, com mapas grosseiros. Uma Sensitivity baixa só tem valor junto com fidelidade, o que apoia a leitura conjunta de robustez e fidelidade adotada no TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §5.6 Dependência dos parâmetros}
+\begin{origquote}“In addition, the results show that for all attribution techniques, a single randomized layer is enough to get an attribution that is no longer related to the original attribution map. This high dependency on the model parameter is the desired property.”\end{origquote}
+\begin{tradquote}“Além disso, os resultados mostram que, para todas as técnicas de atribuição, uma única camada randomizada basta para obter uma atribuição que não se relaciona mais com o mapa original. Essa forte dependência dos parâmetros do modelo é a propriedade desejada.”\end{tradquote}
+\explab{Explicação}
+É o teste de randomização de parâmetros de Adebayo et al.\ (2018), base do eMPRT. O resultado vai na mesma direção do TCC: com o modelo de pesos sorteados, os mapas do GradientSHAP ficam muito acima do piso (8,7 vezes, com sinal), ou seja, dependem do modelo. A medida, porém, é outra (Spearman com o mapa original, contra distância nas 36 regiões), e o artigo mostra os resultados só para o CharacterTrajectories.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} §5.8 Continuidade}
+\begin{origquote}“One aspect that is missing most times is attribution continuity. In the image domain, the use of superpixels solves this problem. However, in the time series domain, it is not that easy. Most of the attribution methods do not consider groups of values.”\end{origquote}
+\begin{tradquote}“Um aspecto quase sempre ausente é a continuidade da atribuição. Em imagens, o uso de superpixels resolve esse problema. Em séries temporais, porém, não é tão simples. A maioria dos métodos de atribuição não considera grupos de valores.”\end{tradquote}
+\explab{Explicação}
+Apoia a decisão do TCC de agregar o mapa ponto a ponto em regiões do batimento (pré-QRS, QRS e ST-T em cada derivação), que fazem o papel dos superpixels: grupos de pontos com significado no sinal. O artigo identifica o problema, mas não agrupa os pontos na avaliação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} §6 Discussão}
+\begin{origquote}“Concerning Infidelity and Sensitivity, every method performed well, and no approach suffered more. The results show that gradient-based methods obtained the best Infidelity results. It was the opposite for the Sensitivity.”\end{origquote}
+\begin{tradquote}“Quanto à Infidelity e à Sensitivity, todos os métodos tiveram bom desempenho, e nenhuma abordagem sofreu mais. Os resultados mostram que os métodos baseados no gradiente obtiveram os melhores resultados de Infidelity. Na Sensitivity, foi o contrário.”\end{tradquote}
+\explab{Explicação}
+``Todos tiveram bom desempenho'' não se apoia em nenhuma referência: o artigo não diz a partir de que valor uma Infidelity ou uma Sensitivity seria ruim. O TCC enfrenta o mesmo problema e o resolve com o piso, que dá a escala da variação própria do método.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} §6 Discussão}
+\begin{origquote}“Generally, gradient-based methods are fast, show high Infidelity, label dependency but are noisy, not continuous, and suffer concerning the Sensitivity.”\end{origquote}
+\begin{tradquote}“Em geral, os métodos baseados no gradiente são rápidos, mostram Infidelity alta e dependência dos rótulos, mas são ruidosos, pouco contínuos e sofrem quanto à Sensitivity.”\end{tradquote}
+\explab{Explicação}
+``Infidelity alta'' seria um defeito (a métrica é um erro, menor é melhor), mas o contexto indica que os autores querem dizer ``bom desempenho em Infidelity''. É mais um sinal de que o texto deve ser citado pelas tabelas, e não pelas frases de síntese.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} §7 Conclusão}
+\begin{origquote}“Furthermore, the results show that the choice of an attribution method depends on the target scenario, and different aspects like runtime, accuracy, continuity, noise are indispensable.”\end{origquote}
+\begin{tradquote}“Além disso, os resultados mostram que a escolha de um método de atribuição depende do cenário-alvo, e diferentes aspectos, como tempo de execução, acurácia, continuidade e ruído, são indispensáveis.”\end{tradquote}
+\explab{Explicação}
+A mesma conclusão de outros \textit{benchmarks}: não há método melhor em tudo, e a avaliação precisa de vários critérios. O TCC não escolhe método; usa vários critérios para descrever um método só.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{A Sensitivity alta do GradientShap tem precedente.} Em todos os seis conjuntos, o GradientShap tem a maior Sensitivity entre os métodos de gradiente (0,66 a 1,04, contra 0,04 a 0,22 dos outros quatro). O artigo não explica o fato; a coincidência com os outros métodos estocásticos sugere variação de sorteio. O TCC mede essa variação diretamente (o piso: mesmo ECG, outra semente) e mostra que ela domina a sensibilidade do GradientSHAP. A comparação dá ao TCC um argumento para não ler a Sensitivity de um método estocástico sem uma referência de ruído.
+\item \textbf{Referência zero e média.} Com dados padronizados, as duas coincidem; no TCC, as duas deram a mesma Faithfulness Correlation.
+\item \textbf{Dependência do modelo.} O resultado da randomização de camadas vai na mesma direção do eMPRT do TCC (mapas dependem do modelo).
+\item \textbf{Agrupamento de pontos.} A observação sobre superpixels apoia a agregação em regiões do batimento.
+\item \textbf{Robustez trivial.} O caso do Dynamask mostra que robustez sem fidelidade não basta.
+\end{enumerate}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Dados de ECG & ECG5000: batimento único, 1 derivação, 140 pontos, 5 classes & CPSC2018: registro de 12 derivações, 9 classes, multirrótulo \\
+Modelo & AlexNet 1D & ResNet34-1D \\
+Métodos & 12, hiperparâmetros padrão & GradientSHAP, referência balanceada de 36 ECGs e 200 sorteios \\
+Amostra & 100 amostras de teste por conjunto & 622 mapas (predições corretas do teste) \\
+Granularidade & Ponto & 36 regiões (derivação $\times$ segmento) \\
+Sensitivity & Yeh et al.; raio e número de perturbações não informados & Max/Avg-Sensitivity por regiões, raio 0,1, 10 perturbações, comparada ao piso \\
+Fidelidade & Infidelity; inserção de pontos & Faithfulness Correlation e Faithfulness Estimate \\
+Randomização & Rótulos e camadas; Spearman com o original & eMPRT: modelo inteiro sorteado (3 sementes); distâncias contra o piso \\
+Referência de ruído & Nenhuma & Piso do GradientSHAP \\
+Análise por classe & Nenhuma (F1 ponderado) & Por classe, comparação descritiva com o F1 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item \textbf{Configuração incompleta.} Raio e número de perturbações da Sensitivity e da Infidelity, referências e número de amostras do GradientShap não são informados. Os valores numéricos não são comparáveis com os do TCC.
+\item \textbf{Sem dispersão nem testes.} As tabelas trazem uma média por célula; diferenças pequenas (como as da Infidelity) não podem ser lidas como superioridade.
+\item \textbf{Sínteses inconsistentes.} O resumo, o §5.3 e o §6 dizem coisas diferentes sobre a Infidelity, e a descrição do GradientShap é imprecisa. Citar pelas tabelas.
+\item \textbf{ECG5000 é outro problema.} Batimento único, uma derivação; o resultado não se transfere ao ECG de 12 derivações.
+\item \textbf{A leitura da Sensitivity como ruído de sorteio é do TCC}, não do artigo.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestões}
+\begin{itemize}
+\item Mercier et al.\ (2022) compararam 12 métodos de atribuição em seis conjuntos de séries temporais, entre eles o ECG5000, e concluíram que nenhum método ou família se sai melhor em todos os critérios: os métodos por perturbação foram mais robustos (menor Sensitivity) e os baseados no gradiente, mais rápidos.
+\item No mesmo estudo, o GradientShap teve a maior Sensitivity entre os métodos baseados no gradiente em todos os conjuntos avaliados (Mercier et al., 2022), resultado compatível com a variação própria do estimador observada neste trabalho por meio do piso.
+\item A observação de que a maioria dos métodos de atribuição em séries temporais não considera grupos de valores, ao contrário dos superpixels em imagens (Mercier et al., 2022), motiva a agregação dos mapas em regiões do batimento.
+\end{itemize}
+\end{infobox}
+
+\end{document}

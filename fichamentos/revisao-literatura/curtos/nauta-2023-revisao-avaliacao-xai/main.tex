@@ -1,0 +1,182 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: revisão sistemática da avaliação de XAI (Co-12)}} \\[0.35em]
+    {\large NAUTA, M.; TRIENES, J.; PATHAK, S.; NGUYEN, E.; PETERS, M.; SCHMITT, Y.; SCHLÖTTERER, J.; VAN KEULEN, M.; SEIFERT, C. \textit{From Anecdotal Evidence to Quantitative Evaluation Methods: A Systematic Review on Evaluating Explainable AI}. ACM Computing Surveys, v. 55, n. 13s, 2023} \\[0.3em]
+    \textbf{Tema:} propriedades de qualidade das explicações (Co-12) e catálogo de métodos quantitativos de avaliação \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1145/3583558} (arXiv: \url{https://arxiv.org/abs/2201.08164}) \\[0.2em]
+    \textbf{Leitura:} parcial --- texto principal (arXiv v3, §§1--3, 5--7, pp. 1--29) lido; Seção 4 (estatísticas por categoria) e material suplementar (pp. 30--34) consultados de forma parcial; lista de referências não lida \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v3, 43 páginas com material suplementar e referências). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} revisar sistematicamente como os métodos de XAI são avaliados e reunir os métodos quantitativos de avaliação existentes.
+  \item \textbf{Dados:} 606 artigos (2014--2020) de doze conferências da área (AAAI, IJCAI, NeurIPS, ICML, ICLR, CVPR, ICCV, ACL, WWW, ICDM, KDD, SIGIR); 361 incluídos, dos quais 312 propõem um método de explicação.
+  \item \textbf{Métodos de explicação:} não avalia métodos; categoriza-os por tipo de dado, de explicação, de problema, de modelo, de tarefa e de método.
+  \item \textbf{Avaliação:} propõe 12 propriedades de qualidade (Co-12) e associa a cada uma métodos quantitativos sem usuários.
+  \item \textbf{Conclusão:} 1 em cada 3 artigos avalia só com evidência anedótica (exemplos escolhidos), 1 em cada 5 faz estudo com usuários; a explicabilidade deve ser avaliada em várias dimensões.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O artigo parte da crítica à “evidência anedótica”, isto é, mostrar alguns exemplos de explicações que parecem razoáveis. Para substituí-la, define a explicabilidade como um conceito de várias facetas e propõe as \textbf{Co-12}, doze propriedades agrupadas em conteúdo (\textit{Correctness}, \textit{Completeness}, \textit{Consistency}, \textit{Continuity}, \textit{Contrastivity}, \textit{Covariate complexity}), apresentação (\textit{Compactness}, \textit{Composition}, \textit{Confidence}) e usuário (\textit{Context}, \textit{Coherence}, \textit{Controllability}). Em seguida, cataloga os métodos de avaliação quantitativa encontrados nos 361 artigos (Tabelas 3 e 4) e discute cada um.
+
+\section{Como avalia as explicações}
+Não há experimento próprio. As famílias de métodos mais próximas do TCC são:
+\begin{itemize}
+  \item \textbf{Correção (\textit{Correctness}):} \textit{Model Parameter Randomization Check} (base do eMPRT), \textit{Single Deletion} (correlação entre importância e mudança da saída, base da Faithfulness Correlation e da Faithfulness Estimate) e \textit{Incremental Deletion}; os autores recomendam comparar com uma ordenação aleatória e lembram que a remoção gera amostras fora da distribuição.
+  \item \textbf{Continuidade:} estabilidade para pequenas variações (base das Max/Avg-Sensitivity), com a ressalva de conferir se a saída do modelo não mudou.
+  \item \textbf{Contrastividade:} \textit{Target Sensitivity}, explicações para alvos diferentes devem diferir (base do Random Logit).
+  \item \textbf{Compacidade e regularidade:} tamanho ou esparsidade e entropia de Shannon dos escores (base da Complexity).
+  \item \textbf{Consistência:} determinismo e invariância à implementação.
+\end{itemize}
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{Xl}
+\toprule
+Achado & Valor relatado \\
+\midrule
+Artigos coletados / incluídos / que propõem método & 606 / 361 / 312 \\
+Avaliação apenas com evidência anedótica & 1 em 3 artigos \\
+Avaliação com estudo de usuários & 1 em 5 artigos (cerca de 20\% ao ano) \\
+Artigos com redes neurais como modelo explicado & 75\% \\
+Concordância entre revisores na inclusão (81 artigos) & 68 de 81; $\kappa$ de Cohen = 0,625 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+A maioria dos artigos que avaliam quantitativamente cobre só uma ou duas propriedades, com predominância de \textit{Coherence} (plausibilidade) e \textit{Output-completeness}. Os autores recomendam combinar vários métodos para cobrir o maior número possível de propriedades e avaliar correção e coerência separadamente, e admitem que há compromissos entre propriedades (por exemplo, completude e compacidade).
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 5} §2.1 Plausibilidade ou correção}
+\begin{origquote}“These commentaries relate to the inherent coupling of evaluating the black box’ predictive accuracy with explanation quality. As pointed out by Robnik-Šikonja and Bohanec [222], the correctness of an explanation and the accuracy of the predictive model may be orthogonal. Although the correctness of the explanation is independent of the correctness of the prediction, visual inspection cannot distinguish between the two.”\end{origquote}
+\begin{tradquote}“Esses comentários se relacionam ao acoplamento inerente entre avaliar a acurácia preditiva da caixa-preta e a qualidade da explicação. Como apontam Robnik-Šikonja e Bohanec [222], a correção de uma explicação e a acurácia do modelo preditivo podem ser ortogonais. Embora a correção da explicação seja independente da correção da predição, a inspeção visual não consegue distinguir as duas.”\end{tradquote}
+\explab{Explicação}
+É o fundamento teórico da pergunta do TCC: em princípio, a qualidade da explicação e o desempenho do modelo são independentes; o que as acopla é a forma de avaliar. Por isso o TCC usa métricas quantitativas, e não inspeção visual, ao comparar explicação e F1 por classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 22} §6.2 Completude}
+\begin{origquote}“In case of 𝑓 ≠ 𝑒, the predictive performance of 𝑓 is not directly related to the explanation quality and therefore not included as explanation evaluation metric (although it is generally good practice to report task accuracy and related metrics for evaluating 𝑓 , since this can influence the perceived coherence of the explanation).”\end{origquote}
+\begin{tradquote}“Quando $f \neq e$, o desempenho preditivo de $f$ não está diretamente relacionado à qualidade da explicação e, por isso, não entra como métrica de avaliação da explicação (embora seja, em geral, boa prática relatar a acurácia da tarefa e métricas relacionadas para avaliar $f$, pois isso pode influenciar a coerência percebida da explicação).”\end{tradquote}
+\explab{Explicação}
+O desempenho do modelo não mede a explicação, mas deve ser relatado ao lado dela. É exatamente o arranjo do TCC: o F1 por classe não entra como métrica de explicação, mas é apresentado junto às métricas para contextualizá-las.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 20} §6.1 Correção}
+\begin{origquote}“Analyzing the area or steepness of a curve however assumes that the majority of the importance is placed on only a few features. Although this is typically the case for softmax scores [236], there might be cases where this assumption is invalid. It is therefore good practice to compare the curve with other baselines, such as a random ranking.”\end{origquote}
+\begin{tradquote}“Analisar a área ou a inclinação de uma curva, porém, supõe que a maior parte da importância esteja em poucas características. Embora isso seja típico de escores softmax [236], pode haver casos em que a suposição não vale. Por isso é boa prática comparar a curva com outras referências, como uma ordenação aleatória.”\end{tradquote}
+\explab{Explicação}
+Reforça a calibração do TCC contra referências (piso entre sementes, mapa do modelo aleatório): um valor de métrica isolado não basta; é a distância em relação a uma referência que tem significado.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 29} §7 Discussão}
+\begin{origquote}“Instead of evaluating only one property, it is essential to get insight into, and preferably quantify, all properties such that an informed trade-off can be made.”\end{origquote}
+\begin{tradquote}“Em vez de avaliar apenas uma propriedade, é essencial entender e, de preferência, quantificar todas as propriedades, para que se possa fazer um compromisso informado.”\end{tradquote}
+\explab{Explicação}
+Justifica o conjunto de métricas do TCC, que cobre correção (Faithfulness Correlation e Estimate, Random Logit, eMPRT), continuidade (sensibilidade), consistência (piso), contrastividade (Random Logit) e compacidade (Complexity).
+\end{citacard}
+
+\section{Relação com o TCC}
+A revisão fornece o vocabulário para organizar as métricas do TCC (cada uma corresponde a uma propriedade Co-12) e dois argumentos sobre a comparação com o desempenho. O primeiro: correção da explicação e acurácia do modelo podem ser ortogonais, e só a avaliação quantitativa as separa; logo, comparar métricas por classe com o F1 por classe é uma pergunta legítima, e não uma redundância. O segundo: o desempenho do modelo não é métrica de explicação, mas deve ser relatado junto dela. A revisão não traz resultados sobre diferenças de qualidade entre classes ou grupos; esse ponto vem de Balagopalan et al.\ (2022) e Dai et al.\ (2022).
+
+Ressalvas: a revisão cobre artigos até 2020 de doze conferências, quase nenhum com séries temporais ou ECG, e não discute adaptações das métricas a sinais. As recomendações gerais (comparar com referências aleatórias, conferir que a saída não mudou nos testes de estabilidade, não confundir plausibilidade com correção) valem para o TCC, mas os detalhes de implementação por regiões são próprios do trabalho.
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Nauta et al.\ (2023) organizam a qualidade das explicações em doze propriedades e recomendam avaliá-las com várias métricas quantitativas, separando a correção da explicação da sua plausibilidade; observam ainda que a correção da explicação e a acurácia do modelo podem ser independentes, razão pela qual o desempenho do modelo é relatado ao lado das métricas de explicação, e não como uma delas.
+\end{itemize}
+
+\end{document}

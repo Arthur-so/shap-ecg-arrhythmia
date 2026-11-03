@@ -1,0 +1,166 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: bibliotecas de XAI para séries temporais}} \\[0.35em]
+    {\large PETER, L.; GUMPFER, N.; FISCHER, J.; SEIFERT, C.; HANNIG, J. \textit{Software Frameworks for Explainable AI in Time Series Classification: A Systematic Review}. Preprint arXiv:2608.21449v1, 2026} \\[0.3em]
+    \textbf{Tema:} revisão sistemática das bibliotecas de explicação e de avaliação para classificação de séries temporais; reprodutibilidade entre implementações \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2608.21449} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v1, 19/08/2026, 21 páginas com apêndice; tabelas do apêndice lidas só para localizar as métricas usadas no TCC) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v1). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} mapear as bibliotecas (\textit{frameworks}) de software que geram ou avaliam explicações para classificação de séries temporais e comparar métodos, métricas, usabilidade, bases de teste e reprodutibilidade.
+\item \textbf{Dados e modelos:} busca no GitHub (750 entradas, 6 bibliotecas incluídas: TSInterpret, tsCaptum, SIGN-XAI-2, Quantus, time\_interpret e XTSC-Bench); dois experimentos ilustrativos: AudioMNIST (voz) e uma CNN treinada em ECG de 12 derivações do PTB-XL (BRD contra normal).
+\item \textbf{Métodos de explicação:} 51 métodos catalogados (16 por perturbação, 25 por gradiente, 4 contrafactuais, 6 outros); comparação de Integrated Gradients entre Captum e Zennit.
+\item \textbf{Avaliação:} não avalia métodos no sentido do TCC; cataloga 52 métricas e compara implementações da mesma explicação e da mesma métrica em bibliotecas diferentes.
+\item \textbf{Conclusão principal:} só 2 das 52 métricas foram feitas para séries temporais, nenhuma para o domínio da frequência, e o mesmo método (Integrated Gradients, com os mesmos parâmetros) dá explicações sistematicamente diferentes em bibliotecas diferentes.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+É uma revisão sistemática centrada em software, e não em métodos. A busca foi feita no GitHub em 05/12/2025, com filtros de popularidade (pelo menos quatro estrelas e quatro \textit{forks}) e critérios de inclusão (dizer que suporta séries temporais, ter ao menos dois métodos ou duas métricas, ser instalável em Python e ter documentação) [p.~4--5]. Para cada biblioteca, registram-se métodos, métricas, suporte a séries uni e multivariadas, ao domínio da frequência e a bases com verdade conhecida, além de notas de usabilidade [p.~5--6].
+
+\section{Como avalia as explicações}
+O artigo não propõe nem aplica métricas de qualidade de explicação. A parte empírica é um teste de reprodutibilidade [p.~10--11]: uma CNN treinada no PTB-XL (3\,316 registros de 12 derivações, BRD e normais em igual número, acurácia de teste 96,98\%) foi explicada com Integrated Gradients no TSInterpret (via Captum) e no SIGN-XAI-2 (via Zennit), com parâmetros idênticos (baseline zero, 50 passos). A concordância entre as duas versões foi medida, nas 443 amostras de teste, pela correlação de Spearman e pela sobreposição de Jaccard dos 5\% mais relevantes. Cinco métodos foram comparados (Saliency, Occlusion, Feature Ablation, Deconvolution e Integrated Gradients); só uma métrica (ROC-AUC) existe em duas bibliotecas.
+
+\section{Resultados e conclusões}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Achado} & \textbf{Valor} \\
+\midrule
+Bibliotecas com suporte a séries temporais & 6 (contra 1 em 2022) [p.~11] \\
+Métodos catalogados / feitos para séries temporais & 51 / 16 [p.~7--8] \\
+Métricas catalogadas / compatíveis / específicas de séries & 52 / 44 / 2 (Mask Information e Mask Entropy) [p.~9] \\
+Maior coleção de métricas & Quantus, 36 [p.~7] \\
+IG Captum $\times$ Zennit no ECG (443 amostras) & Spearman médio $-0{,}14$ (mediana $-0{,}17$); 0 amostras com $\rho > 0{,}5$; Jaccard top-5\% 0,26 [p.~10] \\
+Demais métodos e a ROC-AUC & idênticos entre bibliotecas com parâmetros iguais [p.~11] \\
+\bottomrule
+\end{tabularx}
+\end{center}
+No ECG com BRD, só a versão baseada no Zennit destacou o padrão em ``M'' (rSR') em V1 [p.~10--11]. Na Tabela A.2, as métricas usadas no TCC (Faithfulness Correlation e Estimate, Max- e Avg-Sensitivity, Complexity, Consistency, Random Logit, eMPRT) aparecem como compatíveis com séries temporais, mas não específicas delas [p.~20--21].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“In contrast, the electrocardiogram (ECG) is a multivariate time series for which meaningful and clinically interpretable patterns are well defined and visible in the time domain. Pathology-related patterns can be reliably interpreted by domain experts, particularly cardiologists, and often arise from complex cross-channel dependencies, reflecting spatial and temporal interactions of cardiac activity.”\end{origquote}
+\begin{tradquote}“Em contraste, o eletrocardiograma (ECG) é uma série temporal multivariada em que padrões significativos e clinicamente interpretáveis são bem definidos e visíveis no domínio do tempo. Os padrões ligados a doenças podem ser interpretados com segurança por especialistas, em especial cardiologistas, e muitas vezes surgem de dependências complexas entre canais, que refletem interações espaciais e temporais da atividade cardíaca.”\end{tradquote}
+\explab{Explicação}
+Justifica explicar o ECG no domínio do tempo e organizar as regiões do TCC por derivação e por trecho do batimento (onda P, QRS, ST-T), que são as unidades em que o cardiologista lê o exame.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10--11} §3.5 Reprodutibilidade}
+\begin{origquote}“To verify the results, we analyzed the whole test set of 443 instances: Captum- and Zennit-based IG yielded a mean Spearman rank correlation of $-0.14$ (median $-0.17$, std $0.11$; 0 of 443 instances had $\rho > 0.5$) and a top-5\% Jaccard overlap of $0.26$ ($\pm 0.09$). These results confirm that the divergence in Fig.~5 reflects systematic disagreement rather than an instance-specific or thresholding artifact.”\end{origquote}
+\begin{tradquote}“Para verificar os resultados, analisamos todo o conjunto de teste de 443 instâncias: o IG baseado em Captum e em Zennit teve correlação de postos de Spearman média de $-0{,}14$ (mediana $-0{,}17$, desvio $0{,}11$; nenhuma das 443 instâncias com $\rho > 0{,}5$) e sobreposição de Jaccard dos 5\% mais relevantes de $0{,}26$ ($\pm 0{,}09$). Isso confirma que a divergência da Fig.~5 reflete discordância sistemática, e não um artefato de uma instância ou do limiar.”\end{tradquote}
+\explab{Explicação}
+O mesmo método, com os mesmos parâmetros, no mesmo modelo de ECG, deu mapas praticamente sem relação entre si conforme a biblioteca. Para o TCC, isso exige registrar a implementação exata do GradientSHAP (biblioteca, versão, número de amostras, referência) e ler as métricas como propriedades daquela implementação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 12} §4 Desafios em aberto}
+\begin{origquote}“An assumption that some metrics make is the independence of feature relevance, which is violated by temporal and cross-channel dependencies in time series. Only two of the 52 analyzed metrics were developed specifically for time series [...].”\end{origquote}
+\begin{tradquote}“Uma suposição de algumas métricas é a independência da relevância dos atributos, violada pelas dependências temporais e entre canais das séries temporais. Só duas das 52 métricas analisadas foram desenvolvidas especificamente para séries temporais [...].”\end{tradquote}
+\explab{Explicação}
+Apoia a decisão do TCC de não usar as métricas do Quantus ponto a ponto e de reimplementá-las por regiões do batimento, que agrupam pontos correlacionados no tempo; as dependências entre derivações continuam sem tratamento, o que deve aparecer como limitação.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo não avalia explicações; serve para situar o TCC no estado das ferramentas. Ele confirma que as métricas usadas no TCC existem no Quantus apenas como métricas genéricas, ``compatíveis'' com séries temporais, o que justifica as versões próprias por regiões. O experimento de reprodutibilidade, feito justamente em ECG de 12 derivações com BRD, mostra que diferenças de implementação podem dominar o mapa; no TCC, a medida análoga é o piso (dois mapas do mesmo ECG com sementes diferentes), que quantifica a variação interna do GradientSHAP, mas não a variação entre bibliotecas. Diferenças: o artigo usa Integrated Gradients, não GradientSHAP, e não relaciona explicações com desempenho por classe.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Peter et al.\ (2026) observam que, das 52 métricas de avaliação disponíveis em bibliotecas de XAI para séries temporais, só duas foram desenvolvidas para esse tipo de dado, e que o Integrated Gradients, com os mesmos parâmetros, produziu explicações sistematicamente discordantes em duas bibliotecas num modelo de ECG de 12 derivações.''
+\end{itemize}
+
+\end{document}

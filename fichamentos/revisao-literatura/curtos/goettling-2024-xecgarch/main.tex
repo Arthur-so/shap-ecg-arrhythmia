@@ -1,0 +1,182 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{±}{\ensuremath{\pm}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: xECGArch}} \\[0.35em]
+    {\large GOETTLING, M.; HAMMER, A.; MALBERG, H.; SCHMIDT, M. \textit{xECGArch: a trustworthy deep learning architecture for interpretable ECG analysis considering short-term and long-term features}. Scientific Reports, v.~14, 13122, 2024} \\[0.3em]
+    \textbf{Tema:} arquitetura com duas CNNs (curto e longo prazo) para fibrilação atrial e comparação de 13 métodos de explicação por \textit{pixel-flipping} com dois esquemas de perturbação \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1038/s41598-024-63656-x} \quad (PMC11161651) \\[0.2em]
+    \textbf{Leitura:} íntegra (versão publicada, PDF da editora, 14 páginas) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (versão publicada, 14 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} uma arquitetura de ECG interpretável que separe características de curto prazo (morfologia do batimento) e de longo prazo (ritmo), validando qual método de explicação é mais confiável.
+  \item \textbf{Dados e modelo:} derivação II de PTB-XL, Georgia, CPSC2018 e Chapman-Shaoxing (500 Hz, 10 s); 4927 ECGs com FA e 4927 sem FA ($n = 9854$); duas CNNs 1D de nove camadas com campo receptivo de 0,6 s e de 10 s, combinadas por média ponderada (F1 de 95,43\% no teste).
+  \item \textbf{Métodos de explicação:} 13, via iNNvestigate e afins: gradiente, IG, Input$\times$Gradient (ITG), Guided Backprop, SmoothGrad, Deep Taylor (DTD), quatro variantes de LRP, Grad-CAM, Grad-CAM+ e SHAP (\textit{gradient explainer} com 500 ECGs de fundo).
+  \item \textbf{Avaliação:} \textit{pixel-flipping} (perturbação em ordem decrescente de relevância, medindo a perda), com dois esquemas: \textbf{interpolação linear} (proposto) e \textbf{zerar} (usual); controle com ordem aleatória; AUC relativa.
+  \item \textbf{Conclusão:} com interpolação, DTD é o mais confiável; com zeros, Input$\times$Gradient vence e DTD vai mal. Os autores escolhem DTD por considerarem a interpolação menos ruidosa.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Os autores argumentam que uma explicação é confiável quando as características destacadas coincidem com o conhecimento clínico, e que o ECG tem dois domínios clínicos: a morfologia (curto prazo) e o ritmo (longo prazo). Daí duas CNNs independentes com o mesmo desenho, diferindo só no campo receptivo da última camada (0,6 s, no máximo um batimento a 100 bpm; e 10 s, o registro inteiro), cada uma com \textit{global average pooling} e softmax de duas classes. As saídas são combinadas com peso 1,0 (curto) e 1,2675 (longo). Os mapas DTD do modelo de curto prazo destacam ondas P (sem FA) e ondas F (com FA); os do longo prazo destacam QRS espaçados de forma regular ou irregular. Há ainda batimentos-modelo com relevância média por classe (análise “pseudo-quantitativa”).
+
+\section{Como avalia as explicações}
+\begin{itemize}
+  \item \textbf{Pixel-flipping:} amostras do sinal perturbadas na ordem da relevância de cada método, reclassificando o sinal e medindo a perda; a métrica é a AUC relativa entre a curva da perda e a fração perturbada (maior = método mais fiel).
+  \item \textbf{Esquema por interpolação (novo):} os valores das amostras escolhidas são retirados e preenchidos por interpolação linear entre os vizinhos, preservando a estrutura de baixa frequência e apagando a de alta frequência.
+  \item \textbf{Esquema por zeros (usual):} as amostras são zeradas, o que cria saltos que o modelo nunca viu.
+  \item \textbf{Controle:} a mesma curva com amostras sorteadas mede o “ruído” introduzido pelo próprio esquema de perturbação.
+\end{itemize}
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabular}{llrrrrrrr}
+\toprule
+Esquema & Modelo & LRP-$\alpha\beta$ & LRP-Z & LRP-$\varepsilon$ & DTD & Grad-CAM+ & ITG & Aleat. \\
+\midrule
+Interpolação & curto & 0,248 & 0,217 & 0,220 & 0,546 & 0,427 & 0,270 & 0,129 \\
+Interpolação & longo & 0,852 & 0,230 & 0,168 & 0,817 & 0,601 & 0,240 & 0,087 \\
+Zeros & curto & 0,261 & 0,490 & 0,459 & 0,209 & 0,232 & 0,529 & 0,252 \\
+Zeros & longo & 0,350 & 0,603 & 0,660 & 0,306 & 0,297 & 0,712 & 0,303 \\
+\bottomrule
+\end{tabular}
+\end{center}
+{\small AUC relativa (Tabela 3, p.~5; recorte). A tabela omite os métodos que nunca ficaram em 1.º ou 2.º lugar, entre eles o SHAP. Há pequenas divergências entre texto e tabela: o texto dá 0,247 para LRP-$\alpha\beta$ (curto) e 0,816 para DTD (longo) na interpolação (p.~5), e 0,125 para DTD (curto) com zeros (p.~6), contra 0,248, 0,817 e 0,209 na tabela.}
+
+Com interpolação, sortear as amostras quase não muda a perda até cerca de 70\% do sinal perturbado (AUC 0,129 e 0,087); com zeros, a perda sobe desde o início (0,252 e 0,303). Para os autores, isso mostra que zerar injeta ruído e confunde a avaliação; a interpolação seria mais adequada. Limitação declarada: a interpolação reduz o sinal a uma referência que provavelmente representa uma única classe (por exemplo, nunca insere ondas P num ECG com FA).
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 1} Introdução}
+\begin{origquote}“Trustworthiness is given when relevant xAI identified features match previous clinical expertise\textsuperscript{12}.”\end{origquote}
+\begin{tradquote}“A confiabilidade existe quando as características relevantes identificadas pela xAI coincidem com o conhecimento clínico prévio\textsuperscript{12}.”\end{tradquote}
+\explab{Explicação}
+É uma definição de confiabilidade por plausibilidade (concordância com o especialista), não por fidelidade ao modelo. O TCC adota o critério oposto: mede o quanto o mapa reflete o modelo (fidelidade, robustez, randomização), sem verdade clínica de referência. Convém distinguir as duas noções ao citar o artigo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} Métodos, validação}
+\begin{origquote}“In this work, a new perturbation scheme has been developed to address the concern that pixel-flipping degrades classification performance because the perturbation injects noise that is unknown from the training data distribution\textsuperscript{39}. Thus, sample values according to the rankings were extracted and the missing values were linearly interpolated.”\end{origquote}
+\begin{tradquote}“Neste trabalho, desenvolveu-se um novo esquema de perturbação para enfrentar a preocupação de que o \textit{pixel-flipping} degrada o desempenho porque a perturbação injeta ruído desconhecido da distribuição de treino\textsuperscript{39}. Assim, os valores das amostras, segundo a ordenação, foram retirados e os valores faltantes, interpolados linearmente.”\end{tradquote}
+\explab{Explicação}
+O 39 é a referência a Hooker et al.\ (ROAR). A perturbação por interpolação é uma alternativa à troca por valor fixo, que é o que as métricas de fidelidade do TCC fazem (troca da região pela referência). No TCC a unidade perturbada é uma região inteira (por exemplo, o QRS de uma derivação), e a interpolação apagaria a própria onda; a escolha da referência deve ser discutida como fonte de viés.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Discussão}
+\begin{origquote}“When perturbing sample values with the value zero, ITG led to the largest increases in loss score for both models while DTD led to much smaller scores. By this perturbation scheme, DTD would be deemed unsuitable, contrasting the results of the linear interpolation scheme.”\end{origquote}
+\begin{tradquote}“Ao perturbar as amostras com o valor zero, o ITG levou aos maiores aumentos da perda nos dois modelos, enquanto o DTD levou a valores muito menores. Por esse esquema, o DTD seria considerado inadequado, ao contrário do resultado com interpolação linear.”\end{tradquote}
+\explab{Explicação}
+É o achado central para o TCC: o vencedor de uma métrica de fidelidade se inverte quando só o valor de perturbação muda. Logo, os valores de Faithfulness Correlation e Faithfulness Estimate do TCC são condicionados à referência escolhida, e comparações devem ser feitas dentro da mesma configuração.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Discussão}
+\begin{origquote}“The perturbation scheme of interpolation is limited in that it reduces information to a baseline, which most likely represents one single class.”\end{origquote}
+\begin{tradquote}“O esquema de interpolação é limitado porque reduz a informação a uma referência que muito provavelmente representa uma única classe.”\end{tradquote}
+\explab{Explicação}
+Toda referência “neutra” favorece alguma classe. É o mesmo problema que levou o TCC a usar uma referência balanceada (36 ECGs do treino, de várias classes) no GradientSHAP e nas perturbações, em vez de um único sinal de linha de base.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo usa o CPSC2018 (entre outras bases) e inclui SHAP (\textit{gradient explainer}, a mesma família do GradientSHAP) entre os 13 métodos, mas o SHAP não aparece entre os dois melhores em nenhuma das quatro combinações. A contribuição principal para o TCC é metodológica: a ordem dos métodos numa métrica de fidelidade por perturbação depende do valor de perturbação, e um controle aleatório ajuda a medir o ruído do próprio esquema (função análoga à do piso no TCC). As diferenças são grandes: tarefa binária (FA ou não) em uma derivação, perturbação ponto a ponto, nenhuma comparação entre classes. A validação clínica é qualitativa (“pseudo-quantitativa”), e o código não é público por causa de um pedido de patente.
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Goettling et al.\ (2024) mostraram, na detecção de fibrilação atrial, que o método de explicação considerado mais fiel por \textit{pixel-flipping} muda com o valor usado na perturbação (interpolação linear ou zeros), o que torna as métricas de fidelidade dependentes dessa escolha.
+\end{itemize}
+
+\end{document}

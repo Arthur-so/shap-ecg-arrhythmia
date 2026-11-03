@@ -1,0 +1,179 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: justiça das explicações (lacunas de fidelidade)}} \\[0.35em]
+    {\large BALAGOPALAN, A.; ZHANG, H.; HAMIDIEH, K.; HARTVIGSEN, T.; RUDZICZ, F.; GHASSEMI, M. \textit{The Road to Explainability is Paved with Bias: Measuring the Fairness of Explanations}. ACM Conference on Fairness, Accountability, and Transparency (FAccT), 2022} \\[0.3em]
+    \textbf{Tema:} diferença de qualidade das explicações entre subgrupos de dados \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2205.03295} \\[0.2em]
+    \textbf{Leitura:} íntegra do texto principal (arXiv v2, pp. 1--16); apêndices (provas, tabelas adicionais, detalhes da simulação) não lidos \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2, 33 páginas com apêndices). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} auditar se a qualidade das explicações pós-hoc é igual entre subgrupos protegidos (sexo, raça).
+  \item \textbf{Dados e modelos:} quatro conjuntos tabulares (adult, lsac, mimic, recidivism); modelos caixa-preta de regressão logística e rede neural.
+  \item \textbf{Métodos de explicação:} locais (LIME, SHAP) e globais (modelo aditivo generalizado, GAM, e árvore de decisão esparsa).
+  \item \textbf{Avaliação:} \textbf{fidelidade} no sentido de aproximação (quanto o modelo explicativo reproduz as predições da caixa-preta), medida por acurácia, AUROC e erro médio, e duas medidas de \textbf{lacuna de fidelidade} entre subgrupos; 5 repetições; teste de Wilcoxon.
+  \item \textbf{Conclusão:} a fidelidade difere de forma significativa entre subgrupos; a média global superestima a qualidade para alguns deles.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O artigo transporta para as explicações a ideia de justiça de grupo (\textit{group fairness}): uma explicação é justa se tem fidelidade igualmente alta para todos os grupos. Aqui, “fidelidade” é a qualidade com que um modelo simples (linear local, GAM ou árvore) imita a caixa-preta, e não a correlação entre atribuição e queda da predição usada no TCC. Os autores provam que a diferença de paridade demográfica entre a caixa-preta e a explicação é igual à diferença do erro residual médio entre os grupos, o que liga a lacuna de fidelidade à preservação da justiça. Depois medem as lacunas, testam treino robusto (Just Train Twice e reamostragem balanceada), investigam causas (justiça da caixa-preta e informação de grupo presente nas variáveis) e simulam o efeito sobre decisões de admissão.
+
+\section{Como avalia as explicações}
+\begin{itemize}
+  \item \textbf{Lacuna máxima em relação à média} ($\Delta_L$): diferença entre a fidelidade média e a do pior subgrupo.
+  \item \textbf{Lacuna média entre subgrupos} ($\Delta_L^{group}$): média das diferenças de fidelidade entre todos os pares de grupos do mesmo atributo.
+  \item \textbf{Configuração:} divisão 50\% (treino da caixa-preta) / 30\% (treino da explicação) / 10\% (validação) / 10\% (teste); 5 repetições; lacunas testadas contra zero com o teste de Wilcoxon unilateral ($p < 0{,}05$); grupos interseccionais excluídos por tamanho amostral.
+\end{itemize}
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{Xl}
+\toprule
+Achado & Valor relatado \\
+\midrule
+LIME, lacuna máxima de acurácia em relação à média & 0,1\% a 21,4\% \\
+LIME, lacunas entre grupos protegidos (AUROC / acurácia) & 0--6,6\% / 0,3--20,6\% \\
+GAM e árvore, lacuna máxima de acurácia & 0 a 13,5\% \\
+mimic, regressão logística: diferença de desempenho da caixa-preta entre sexos $\times$ lacuna de fidelidade da árvore & 3,6\% $\times$ 8,1\% \\
+Fidelidade média global de todos os modelos & acima de 85\% \\
+\bottomrule
+\end{tabularx}
+\end{center}
+O SHAP tem lacuna zero quando a explicação usa as mesmas variáveis da caixa-preta, mas a lacuna aparece quando se usa um subconjunto delas; explicações mais esparsas têm lacunas maiores. O treino robusto reduz as lacunas em alguns conjuntos, mas não as elimina. As lacunas persistem mesmo com caixas-pretas justas e diminuem quando as variáveis carregam pouca informação de grupo. O subgrupo com as piores explicações nem sempre é o minoritário. A simulação, apoiada em hipóteses fortes declaradas pelos autores, sugere que lacunas maiores levam a diferenças maiores na acurácia das decisões.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“These findings indicate that judging the quality of explanations by their average fidelity alone—a common approach—overestimates explanation quality for some subgroups, potentially leading to worse downstream decision making.”\end{origquote}
+\begin{tradquote}“Esses resultados indicam que julgar a qualidade das explicações apenas pela fidelidade média, uma abordagem comum, superestima a qualidade das explicações para alguns subgrupos, o que pode levar a decisões piores.”\end{tradquote}
+\explab{Explicação}
+É o argumento central para relatar as métricas do TCC por classe de arritmia, e não só a média global: uma Faithfulness Correlation média aceitável pode esconder classes com explicações muito piores.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} §6.1 Caixas-pretas justas}
+\begin{origquote}“Strikingly, the gaps in fidelity AUROC often exceed the gaps in AUROC of the blackbox models themselves”\end{origquote}
+\begin{tradquote}“De forma marcante, as lacunas de fidelidade em AUROC frequentemente excedem as lacunas de AUROC dos próprios modelos caixa-preta”\end{tradquote}
+\explab{Explicação}
+A diferença de qualidade da explicação entre grupos não é um reflexo da diferença de desempenho do modelo: pode ser maior e ter outras causas. Para o TCC, a ordem das classes pelo F1 e a ordem pelas métricas de explicação não precisam coincidir, e a divergência é um resultado em si.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 14} §8.1 Recomendações}
+\begin{origquote}“We also highlight the importance of carefully choosing the metric for measuring fidelity (e.g., accuracy, AUROC, precision, etc.): different metrics may be affected by properties of the dataset and hence predictions from a blackbox/explanation model (e.g., class imbalance) differently.”\end{origquote}
+\begin{tradquote}“Destacamos também a importância de escolher com cuidado a métrica de fidelidade (p.~ex., acurácia, AUROC, precisão etc.): métricas diferentes podem ser afetadas de modos diferentes por propriedades do conjunto de dados e, portanto, pelas predições da caixa-preta ou do modelo explicativo (p.~ex., desbalanceamento de classes).”\end{tradquote}
+\explab{Explicação}
+O CPSC2018 é desbalanceado (classes como CVP e STE têm poucos exemplos). Comparações entre classes precisam considerar o tamanho de cada grupo, pois métricas calculadas em poucos ECGs são mais instáveis.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} §8.2 Implicações}
+\begin{origquote}“For example, rare subgroups may be more diffidult to approximate, and will naturally have lower fidelity than others [52, 102].”\end{origquote}
+\begin{tradquote}“Por exemplo, subgrupos raros podem ser mais difíceis de aproximar e terão naturalmente fidelidade menor que os demais [52, 102].”\end{tradquote}
+\explab{Explicação}
+Hipótese a verificar no TCC: classes raras no treino podem ter tanto F1 menor quanto explicações piores, e a raridade seria então uma causa comum, não uma relação direta entre desempenho e explicação.
+\end{citacard}
+
+\section{Relação com o TCC}
+Este é o trabalho que dá o enquadramento mais claro para a comparação por classe feita no TCC: trocando “subgrupo protegido” por “classe de arritmia”, a pergunta é a mesma (a qualidade da explicação é igual entre grupos?), e a recomendação é a mesma (analisar a qualidade por grupo, e não pela média). Três resultados interessam diretamente à comparação com o F1: as lacunas na explicação podem superar as lacunas de desempenho do modelo; o grupo com as piores explicações nem sempre é o minoritário; e a escolha da métrica interage com o desbalanceamento. As medidas de lacuna do artigo ($\Delta_L$, distância do pior grupo à média, e $\Delta_L^{group}$, diferença média entre pares) podem ser adaptadas como resumo descritivo das métricas por classe no TCC, sem recorrer a correlações com o F1.
+
+As diferenças são de natureza: o artigo trata de explicações por modelos substitutos e de dados tabulares, com fidelidade medida contra as predições da caixa-preta; o TCC usa atribuições (GradientSHAP) e mede fidelidade por perturbação de regiões do ECG. Os grupos do artigo são atributos demográficos que não definem o rótulo; no TCC, os grupos são as próprias classes, de modo que a classe e a explicação estão entrelaçadas.
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Balagopalan et al.\ (2022) mostraram que a qualidade das explicações pode diferir de forma significativa entre subgrupos e que a média global superestima essa qualidade para alguns deles; por isso, as métricas de explicação foram analisadas separadamente para cada classe de arritmia.
+\end{itemize}
+
+\end{document}

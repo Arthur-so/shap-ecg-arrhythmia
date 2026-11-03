@@ -1,0 +1,181 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: métricas de classificação para explicações de imagens}} \\[0.35em]
+    {\large FRESZ, B.; LOERCHER, L.; HUBER, M. F. \textit{Classification Metrics for Image Explanations: Towards Building Reliable XAI-Evaluations}. ACM Conference on Fairness, Accountability, and Transparency (FAccT), 2024} \\[0.3em]
+    \textbf{Tema:} métricas de saliência baseadas em mosaicos e avaliação da confiabilidade das próprias métricas \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1145/3630106.3658537} (arXiv: \url{https://arxiv.org/abs/2406.05068}) \\[0.2em]
+    \textbf{Leitura:} íntegra do texto principal (arXiv v1, pp. 1--14); apêndices A e B (configurações e resultados detalhados) não lidos \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v1, 25 páginas com apêndices). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} estender a métrica Focus (Arias-Duart et al.) para um conjunto de métricas análogas às de classificação e verificar a \textbf{confiabilidade} dessas métricas com conceitos da psicometria.
+  \item \textbf{Dados e modelos:} mosaicos $2 \times 2$ de imagens do ImageNet (dois casos-limite com 2 classes e 100 mosaicos por classe; 10.000 mosaicos de todas as classes); VGG11 e ResNet50 pré-treinadas, sem ajuste fino.
+  \item \textbf{Métodos de explicação:} LIME, LRP, Integrated Gradients, Grad-CAM, Grad-CAM++, SmoothGrad, SHAP (KernelSHAP) e redes B-cos.
+  \item \textbf{Avaliação:} precisão (Focus), sensibilidade, especificidade, taxas de falso negativo e falso positivo, acurácia e F1 da atribuição; confiabilidade entre avaliadores (alfa de Krippendorff) e entre métodos (Spearman).
+  \item \textbf{Conclusão:} as métricas são confiáveis na maioria dos casos, mas nenhum método é bom em todas; o desempenho dos métodos depende do modelo, dos dados e da imagem.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Cada mosaico junta duas imagens da classe-alvo e duas de outras classes. A hipótese é que um modelo capaz de separar as classes deve concentrar a importância positiva da classe-alvo nas imagens dessa classe. Com isso se define uma matriz de confusão da atribuição: verdadeiro positivo (importância positiva nas imagens da classe-alvo), falso positivo (importância positiva nas outras), falso negativo (importância negativa nas da classe-alvo) e verdadeiro negativo (importância negativa nas outras). A partir dela, calculam-se sete métricas no estilo das de classificação; as que usam importância negativa só valem para B-cos, LRP, Integrated Gradients e SHAP. O segundo eixo do trabalho é \textbf{avaliar as métricas}, pela confiabilidade, condição necessária para a validade.
+
+\section{Como avalia as explicações}
+\begin{itemize}
+  \item \textbf{Confiabilidade entre avaliadores:} cada imagem é tratada como um avaliador que ordena os métodos; o alfa de Krippendorff mede se essa ordenação é estável entre imagens (1 = concordância perfeita, perto de 0 = ordenação aleatória).
+  \item \textbf{Confiabilidade entre métodos:} correlação de Spearman entre os valores da métrica obtidos por métodos diferentes nas mesmas imagens; mede se as imagens ou classes “difíceis” são as mesmas para todos os métodos.
+  \item \textbf{Casos-limite:} classes fáceis de separar (gato malhado $\times$ carro esporte) e difíceis (duas raças de cães de montanha); as métricas deveriam ser quase perfeitas no primeiro e quase aleatórias no segundo.
+  \item \textbf{Normalização:} mapas divididos pelo máximo absoluto, no intervalo $[-1, 1]$, preservando o zero.
+\end{itemize}
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{Xl}
+\toprule
+Achado & Valor relatado \\
+\midrule
+Alfa de Krippendorff da precisão, ResNet50, gatos/carros & 0,88 \\
+Alfa de Krippendorff da precisão, ResNet50, ImageNet & 0,71 \\
+Maior alfa com a VGG11 & abaixo de 0,6 \\
+Confiabilidade entre avaliadores no ImageNet (todas as métricas) & 0,49 a 0,85 \\
+Correlação entre métodos (maioria dos casos) & abaixo de 0,8 \\
+Maior especificidade média, ResNet50, ImageNet & abaixo de 0,6 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Quanto mais fácil o modelo separar as classes, mais confiável é a ordenação dos métodos pela métrica; a ResNet50 dá resultados mais confiáveis que a VGG11. Nas classes difíceis de separar, os métodos falham juntos (correlação perto de 1 entre alguns deles); nas demais, não há padrão claro: “os métodos funcionam individualmente, mas alguns falham juntos”. Métricas diferentes ordenam os métodos de forma diferente, e há grande variância entre imagens. Para o ImageNet, LRP e SHAP são os recomendados, com fraquezas. Os autores reconhecem que as métricas podem ser enganadas (atribuir tudo a um pixel daria nota perfeita) e que todo o arcabouço fica “instável” sem verdade de referência.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 8} §4 Conjuntos de dados}
+\begin{origquote}“In general, it is difficult to disentangle the performance of the model and the performance of the explanation methods. Specifically, incorrectly distributed FI and thus, a low saliency metric score, could indicate either a high performing model with a low-fidelity explanation method (with feature attribution distributed evenly across a mosaic) or a bad model and a high-fidelity explanation method. To distinguish between these cases, the saliency scores and the model performance must always be considered in combination.”\end{origquote}
+\begin{tradquote}“Em geral, é difícil separar o desempenho do modelo do desempenho dos métodos de explicação. Especificamente, uma importância mal distribuída e, portanto, uma nota baixa na métrica de saliência podem indicar tanto um modelo de alto desempenho com um método de explicação de baixa fidelidade (com a atribuição espalhada igualmente pelo mosaico) quanto um modelo ruim com um método de alta fidelidade. Para distinguir esses casos, as notas de saliência e o desempenho do modelo devem ser sempre considerados em conjunto.”\end{tradquote}
+\explab{Explicação}
+É a justificativa mais direta para a pergunta do TCC. Uma métrica ruim numa classe de F1 baixo pode refletir o modelo, e não o GradientSHAP; numa classe de F1 alto, aponta mais para o método. Por isso as métricas por classe precisam ser lidas ao lado do F1.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §3.2.2 Confiabilidade entre métodos}
+\begin{origquote}“The saliency precision can also be used to identify images or classes that are particularly challenging to classify within a given dataset [6]. In order to utilize an evaluation metric for this objective, difficult classes and images should be found consistently.”\end{origquote}
+\begin{tradquote}“A precisão da saliência também pode ser usada para identificar imagens ou classes particularmente difíceis de classificar num conjunto de dados [6]. Para usar uma métrica de avaliação com esse objetivo, as classes e imagens difíceis devem ser encontradas de forma consistente.”\end{tradquote}
+\explab{Explicação}
+Usar métricas de explicação para apontar classes difíceis é o que o TCC investiga com as arritmias. A condição posta pelos autores, de que a classe “difícil” seja a mesma sob diferentes medições, sugere conferir se a mesma classe aparece mal posicionada em mais de uma métrica antes de tirar conclusões.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} §5.2 Confiabilidade entre métodos}
+\begin{origquote}“Overall, the performances of the XAI methods can be highly correlated between some of them, given that the model is not able to distinguish well between different classes, while for more diverse datasets, the performances of the XAI methods are not strongly correlated.”\end{origquote}
+\begin{tradquote}“De modo geral, o desempenho de alguns métodos de XAI pode ser altamente correlacionado quando o modelo não consegue distinguir bem as classes, enquanto em conjuntos de dados mais diversos o desempenho dos métodos não é fortemente correlacionado.”\end{tradquote}
+\explab{Explicação}
+Quando o modelo confunde as classes, todas as explicações pioram juntas: a qualidade da explicação passa a ser dominada pelo desempenho do modelo. É um mecanismo plausível para o TCC encontrar métricas piores em classes que o modelo confunde (por exemplo, STD e STE, ou CAP e SNR).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 12} §5.3 Achados gerais}
+\begin{origquote}“In classical literature, it has been long known that a single metric is not sufficient and multiple metrics are necessary to obtain a reliable assessment of a method, especially when some sort of unbalanced dataset is used [35].”\end{origquote}
+\begin{tradquote}“Na literatura clássica, sabe-se há muito tempo que uma única métrica não basta e que várias métricas são necessárias para uma avaliação confiável de um método, sobretudo quando se usa algum tipo de conjunto de dados desbalanceado [35].”\end{tradquote}
+\explab{Explicação}
+Apoia o uso de várias métricas no TCC e a cautela com o desbalanceamento do CPSC2018.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo oferece dois pontos centrais para a comparação entre métricas de explicação e desempenho por classe. O primeiro é a afirmação explícita de que a nota de uma explicação não se separa do desempenho do modelo e de que as duas devem ser lidas juntas, o que fundamenta a pergunta do TCC. O segundo é a observação empírica de que, nas classes que o modelo não separa bem, todos os métodos pioram juntos, enquanto nas classes bem separadas as diferenças entre métodos aparecem. A ideia de \textbf{confiabilidade} das métricas também é útil: a ordenação das classes por uma métrica do TCC só é informativa se for estável (entre ECGs e entre sementes), o que o piso do GradientSHAP ajuda a verificar. O alfa de Krippendorff, aplicado às ordens das classes em ECGs diferentes, seria uma forma de medir essa estabilidade sem recorrer a correlações com o F1.
+
+As diferenças: o artigo trabalha com imagens, mosaicos e uma verdade de referência aproximada (a posição das imagens da classe), compara métodos e não classes, e usa KernelSHAP, não GradientSHAP. A construção por mosaico não tem um análogo direto no ECG de 12 derivações, em que os sinais de classes diferentes não ocupam regiões separadas.
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Fresz et al.\ (2024) argumentam que é difícil separar o desempenho do modelo do desempenho do método de explicação e que as notas das explicações devem ser sempre interpretadas em conjunto com o desempenho do modelo; neste trabalho, as métricas por classe foram por isso apresentadas ao lado do F1 de cada classe.
+\end{itemize}
+
+\end{document}

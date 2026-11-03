@@ -1,0 +1,186 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Dynamask, máscaras dinâmicas para séries temporais}} \\[0.35em]
+    {\large CRABBÉ, J.; VAN DER SCHAAR, M. \textit{Explaining Time Series Predictions with Dynamic Masks}. International Conference on Machine Learning (ICML), PMLR 139, 2021} \\[0.3em]
+    \textbf{Tema:} método de saliência por perturbação para séries multivariadas e métricas de informação e entropia da máscara \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2106.05303} \\[0.2em]
+    \textbf{Leitura:} íntegra do texto principal (arXiv v1, p.~1--9); dos apêndices, só a seção A.3 (máscara para outros métodos) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv (25 páginas, com apêndices). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} um método de saliência que dê a importância de cada atributo em cada instante de uma série multivariada, respeitando a dependência temporal, selecionando poucos pontos (parcimônia) e produzindo mapas fáceis de ler (legibilidade).
+\item \textbf{Método:} uma máscara $M \in [0,1]^{T \times d}$ é otimizada para que a entrada perturbada mantenha a predição; a perturbação é \textbf{dinâmica}, feita com valores vizinhos no tempo (borrão gaussiano temporal ou média móvel).
+\item \textbf{Métricas novas:} informação da máscara e entropia da máscara, que também podem ser calculadas para outros métodos depois de normalizar o mapa para $[0,1]$.
+\item \textbf{Avaliação:} regressor caixa-branca com atributos importantes conhecidos; classificador GRU em dados sintéticos de um modelo oculto de Markov (HMM); GRU de mortalidade no MIMIC-III, avaliado substituindo as observações mais importantes pela média temporal.
+\item \textbf{Conclusão:} o Dynamask supera os métodos comparados, entre eles o GradientSHAP, na maioria das métricas.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+O artigo parte de dois problemas das séries temporais. O primeiro é o \textbf{contexto}: métodos agnósticos tratam cada instante como um atributo separado e esquecem a ordem temporal. O segundo é o \textbf{tamanho}: com $T$ instantes e $d$ atributos, o mapa tem $T \times d$ valores e fica difícil de ler. A resposta é uma máscara ajustada a cada exemplo. Onde $m_{t,i}$ é perto de 1, o valor original é mantido; onde é perto de 0, ele é trocado por uma versão borrada ou pela média da vizinhança temporal. A perda soma três termos: o erro entre a predição original e a perturbada, um termo de \textbf{área} que força a máscara a destacar uma fração $a$ dos pontos e a ficar quase binária, e um termo opcional de \textbf{continuidade} no tempo [p.~5]. A \textbf{máscara extremal} é a de menor área $a$ cujo erro fica abaixo de um limiar $\varepsilon$.
+
+\section{Como avalia as explicações}
+Há três experimentos, em ordem de dificuldade [p.~7--9]:
+\begin{itemize}
+\item \textbf{Caixa-branca} ($T = d = 50$, 10 repetições): a saída depende de poucos atributos ou de poucos instantes conhecidos. Métricas: área sob a curva de precisão (AUP) e de revocação (AUR) em relação aos pontos verdadeiramente importantes, informação $I_M(A) = -\sum_{(t,i)\in A} \ln(1 - m_{t,i})$ e entropia $S_M(A)$ na região importante $A$.
+\item \textbf{HMM} ($T = 200$, 3 atributos, 5 repetições): a classe depende de um atributo diferente conforme o estado oculto; uma GRU é treinada e explicada.
+\item \textbf{MIMIC-III} (48 horas, 31 atributos, 3 repetições): sem verdade de referência, as observações mais importantes são trocadas pela média temporal do atributo no paciente, e mede-se a entropia cruzada entre as predições (CE, maior é melhor) e a acurácia em relação às predições originais (ACC, menor é melhor).
+\end{itemize}
+Para comparar com os outros métodos, os mapas deles são normalizados pelo mínimo e pelo máximo e tratados como máscaras (Apêndice A.3).
+
+\section{Resultados e conclusões}
+Recorte da Tabela~3 [p.~8], experimento HMM (média $\pm$ desvio arredondados; $I$ dividido por $10^5$ e $S$ por $10^4$):
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Método} & \textbf{AUP $\uparrow$} & \textbf{AUR $\uparrow$} & \textbf{$I_M(A)$ $\uparrow$} & \textbf{$S_M(A)$ $\downarrow$} \\
+\midrule
+Dynamask & 0,88 & 0,70 & 2,24 & 0,04 \\
+Integrated Gradients & 0,56 & 0,78 & 0,05 & 1,39 \\
+GradientSHAP & 0,49 & 0,62 & 0,33 & 1,73 \\
+FIT & 0,44 & 0,60 & 0,47 & 1,57 \\
+\bottomrule
+\end{tabular}
+\end{center}
+O Integrated Gradients tem a maior AUR, mas marca 87\,\% dos pontos como importantes, contra 32\,\% do Dynamask, quando só um terço o é [p.~8]. No MIMIC-III, as observações escolhidas pelo Dynamask mudam mais a predição quando substituídas, mas a acurácia fica acima de 0,98 para todos os métodos, isto é, a substituição raramente inverte a predição [p.~9]. Enguehard (2023) relata problemas na implementação original do Dynamask que alteram parte desses números.
+
+\section{Citações comentadas}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“These methods are static as the time dependency, and hence the context, is forgotten when treating all the time steps as separate features.”\end{origquote}
+\begin{tradquote}“Esses métodos são estáticos, pois a dependência temporal, e portanto o contexto, é esquecida quando todos os instantes são tratados como atributos separados.”\end{tradquote}
+\explab{Explicação}
+A crítica atinge os métodos agnósticos aplicados ponto a ponto, como o SHAP. O GradientSHAP do TCC também atribui ponto a ponto; a agregação em trechos do batimento recupera parte do contexto na \textbf{leitura} do mapa, mas não muda o modo como o mapa é calculado.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“By parsimony, we mean that a saliency method should not select more inputs than necessary to explain a given prediction. For instance, a method that identifies 90\% of the inputs as salient is not making the interpretation task easier.”\end{origquote}
+\begin{tradquote}“Por parcimônia, entendemos que um método de saliência não deve selecionar mais entradas do que o necessário para explicar uma predição. Por exemplo, um método que identifica 90\,\% das entradas como importantes não facilita a interpretação.”\end{tradquote}
+\explab{Explicação}
+É a motivação das métricas de complexidade. No TCC, a entropia de Bhatt et al.\ (2020) por regiões indica cerca de 24 regiões efetivas em 36, um mapa pouco parcimonioso. A ressalva de Hicks et al.\ (2021), de que a rede também usa contexto fora da onda principal, impede ler isso automaticamente como defeito.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §2.4 Entropia da máscara}
+\begin{origquote}“Clearly, it is desirable for our mask to provide explanations with low entropy. This stems from the fact that the entropy is maximized when mask coefficients $m_{t,i}$ are close to 0.5.”\end{origquote}
+\begin{tradquote}“Claramente, é desejável que a máscara dê explicações com baixa entropia, porque a entropia é máxima quando os coeficientes $m_{t,i}$ estão perto de 0,5.”\end{tradquote}
+\explab{Explicação}
+A entropia da máscara mede a \textbf{indecisão} de cada ponto (importante ou não), somada sobre os pontos. A entropia usada no TCC é outra: mede como a importância total se \textbf{distribui} entre as regiões. As duas olham a legibilidade, mas não são intercambiáveis.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §3 Experimentos}
+\begin{origquote}“There are two big difficulties to keep in mind when evaluating the quality of a saliency method. The first one is that the true importance of features is usually unknown with real-world data. The second one is that the the [\textit{sic}] performance of a saliency method in identifying relevant features depends on the black-box and its performances.”\end{origquote}
+\begin{tradquote}“Há duas grandes dificuldades ao avaliar a qualidade de um método de saliência. A primeira é que a importância verdadeira dos atributos costuma ser desconhecida em dados reais. A segunda é que o desempenho de um método de saliência em identificar atributos relevantes depende do modelo caixa-preta e do desempenho dele.”\end{tradquote}
+\explab{Explicação}
+A segunda dificuldade é a pergunta do TCC: se a qualidade da explicação depende do desempenho do modelo, ela pode variar entre classes com F1 diferentes. O artigo afirma a dependência, mas não a mede; o TCC a examina de forma descritiva, por classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} §4 Conclusão}
+\begin{origquote}“For future works, it would be interesting to design more sophisticated consistency tests for saliency methods in a dynamic setting, like the ones that exist in image classification (Adebayo et al., 2018).”\end{origquote}
+\begin{tradquote}“Em trabalhos futuros, seria interessante criar testes de consistência mais sofisticados para métodos de saliência em contexto dinâmico, como os que existem em classificação de imagens (Adebayo et al., 2018).”\end{tradquote}
+\explab{Explicação}
+Os autores apontam como lacuna os testes de randomização. O TCC preenche parte dela no ECG com o eMPRT (modelo com pesos sorteados) e o Random Logit (classe trocada), calibrados pelo piso do GradientSHAP.
+\end{citacard}
+
+\section{Relação com o TCC}
+O Dynamask não é usado no TCC, mas o artigo contribui com conceitos: parcimônia e legibilidade como propriedades desejáveis (ligadas à métrica de complexidade), a escolha da substituição na avaliação por perturbação (aqui a média temporal do próprio exemplo) e a afirmação de que a qualidade da explicação depende do modelo. O GradientSHAP aparece entre os métodos comparados, com resultado fraco no HMM, mas o cenário (GRU, dados sintéticos, três atributos) é muito diferente de uma ResNet em ECG de 12 derivações, e a correção de implementação apontada por Enguehard (2023) recomenda cautela com os números.
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestão}
+Crabbé e van der Schaar (2021) propuseram o Dynamask, que ajusta a cada série uma máscara de importância por atributo e instante usando perturbações feitas com valores vizinhos no tempo, e introduziram a entropia da máscara como medida de legibilidade; os autores observam que a capacidade de um método de saliência em identificar atributos relevantes depende do modelo explicado e do seu desempenho.
+\end{infobox}
+
+\end{document}

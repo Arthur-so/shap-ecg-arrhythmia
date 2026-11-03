@@ -1,0 +1,356 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Efeitos dependentes da classe na avaliação por perturbação}} \\[0.35em]
+    {\large BAER, G.; GRAU, I.; ZHANG, C.; VAN GORP, P. \textit{Class-Dependent Perturbation Effects in Evaluating Time Series Attributions}. 3rd World Conference on Explainable Artificial Intelligence (xAI 2025), Communications in Computer and Information Science, v.~2579. Springer, 2025} \\[0.3em]
+    \textbf{Tema:} avaliação de atribuições em séries temporais por perturbação; diferenças entre classes \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2502.17022} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 1/4/2025, 24 páginas com apêndice) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2, 24 páginas; a numeração impressa coincide com a do PDF). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica o trabalho sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento, com as citações em ordem do texto; a \textbf{Parte III} relaciona o artigo com as decisões e os resultados do TCC. Os números das tabelas foram conferidos no PDF.
+
+\begin{infobox}[note]{Por que este artigo}
+A pergunta do TCC é se a qualidade das explicações GradientSHAP acompanha o F1 de cada classe. Duas das métricas do TCC, a Faithfulness Correlation e a Faithfulness Estimate, são métricas \textbf{de perturbação}: retiram partes do ECG e medem quanto a saída do modelo cai. Este artigo mostra, em séries temporais, que métricas desse tipo podem dar resultados muito diferentes entre classes por motivos que \textbf{não} são a qualidade da explicação: o valor usado para “retirar” um trecho pode, para algumas classes, parecer evidência da própria classe. É, portanto, a principal referência para a ressalva de que uma diferença de fidelidade entre classes no TCC não se lê diretamente como diferença de qualidade. O artigo também usa o GradientSHAP entre os métodos avaliados.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema que o artigo ataca}
+Um \textbf{método de atribuição} (por exemplo, o GradientSHAP) atribui a cada ponto de uma série temporal um valor de importância para a predição do modelo. Como não existe uma “resposta certa” para comparar essas importâncias, a forma mais comum de avaliá-las é a \textbf{análise por perturbação}: substituem-se os pontos considerados importantes por um valor “neutro” (zero, a média, ruído) e observa-se quanto a predição muda. Se a atribuição for correta, perturbar os pontos importantes deve derrubar a predição, e perturbar os pouco importantes deve mudá-la pouco.
+
+Os estudos anteriores em séries temporais reportam essas métricas como \textbf{médias sobre todo o conjunto de teste}. Os autores notam, nos resultados publicados, que grandes partes dos dados não reagem à perturbação, e perguntam se isso se concentra em algumas classes.
+
+\section{Ideia central}
+\begin{infobox}[note]{Em uma frase}
+A eficácia de uma métrica de perturbação pode variar muito entre as classes preditas; os autores chamam isso de \textbf{efeitos de perturbação dependentes da classe} e atribuem a causa, como hipótese, a vieses aprendidos pelo classificador em relação ao valor de perturbação.
+\end{infobox}
+O mecanismo proposto é simples. Se o modelo aprendeu a associar certo valor (por exemplo, zero) a uma classe, substituir os pontos “importantes” por zero pode \textbf{reforçar} a predição dessa classe em vez de destruí-la, seja a atribuição correta ou não. Para outra classe, o mesmo zero pode derrubar a predição com facilidade. A média sobre o conjunto mistura as duas situações e esconde a assimetria.
+
+\textbf{Exemplo hipotético no ECG} (construído só para ilustrar; não está no artigo). Num ECG normalizado por derivação, trocar um trecho por zero aproxima esse trecho da linha de base. Se o trecho retirado de um ECG em ritmo sinusal for a onda P, o resultado lembra a ausência de onda P, que é evidência de fibrilação atrial: a saída da classe SNR cai muito. Num ECG com fibrilação atrial, zerar a região pré-QRS não remove nenhuma onda P (ela já não existe), e a saída de AF pode cair pouco. A métrica diria que a explicação de SNR é “mais fiel” que a de AF, mas a diferença viria da interação entre o valor de perturbação e o que caracteriza cada classe.
+
+\section{Dados e modelos}
+Quatro conjuntos univariados do arquivo UCR (séries já normalizadas para média zero e desvio 1), escolhidos por estarem entre os maiores do arquivo e serem usados em estudos anteriores de perturbação. Dois modelos profundos: ResNet e InceptionTime, treinados com AdamW, \textit{cosine annealing}, até 500 épocas e parada antecipada (paciência de 25). A tabela reproduz a Tabela~1 do artigo (acurácia no teste) e a proporção de classes da Tabela~6.
+\begin{center}\small
+\begin{tabular}{lrrrrrrl}
+\toprule
+\textbf{Conjunto} & \textbf{Treino} & \textbf{Teste} & \textbf{Compr.} & \textbf{Classes} & \textbf{ResNet} & \textbf{InceptionTime} & \textbf{Proporção no teste} \\
+\midrule
+FordA   & 3\,601 & 1\,320 & 500 & 2 & 0,937 & 0,952 & 0,516 / 0,484 \\
+FordB   & 3\,636 &    810 & 500 & 2 & 0,804 & 0,849 & 0,495 / 0,505 \\
+Wafer   & 1\,000 & 6\,164 & 152 & 2 & 0,993 & 0,998 & 0,108 / 0,892 \\
+ElecDev & 8\,926 & 7\,711 &  96 & 7 & 0,716 & 0,702 & de 0,072 a 0,254 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Três dos quatro conjuntos são binários; só o ElecDev tem várias classes. Nenhum é de sinais fisiológicos.
+
+\section{Métodos de explicação}
+Cinco métodos, implementados com o pacote TSInterpret: \textbf{Gradients} (GR), \textbf{Integrated Gradients} (IG), \textbf{SmoothGrad} (SG), \textbf{GradientSHAP} (GS) e \textbf{Feature Occlusion} (FO, oclusão: tapa trechos e mede a mudança). As atribuições são calculadas numa amostra estratificada de \textbf{300 exemplos por classe} do teste e explicam sempre a \textbf{classe predita}. O artigo não informa os hiperparâmetros do GradientSHAP (baselines, número de amostras).
+
+\section{Métrica de avaliação e adaptação a séries temporais}
+\subsection{Degradation score (DS)}
+Duas ordens de perturbação são comparadas:
+\begin{itemize}
+\item \textbf{MoRF} (\textit{most relevant first}): perturbam-se primeiro os pontos de maior atribuição;
+\item \textbf{LeRF} (\textit{least relevant first}): perturbam-se primeiro os de menor atribuição.
+\end{itemize}
+A cada passo registra-se a probabilidade da classe; a sequência forma uma \textbf{curva de perturbação} ($PC$). O DS é a média, ao longo dos passos, da diferença entre as duas curvas:
+\[
+DS = \frac{1}{m}\sum_{i=1}^{m}\big(PC^{\text{LeRF}}_i - PC^{\text{MoRF}}_i\big) \in [-1,1].
+\]
+DS positivo indica atribuição correta (MoRF derruba mais que LeRF); perto de zero, atribuição que não discrimina; negativo, atribuição invertida.
+
+\subsection{Versão ajustada à classe (DS\textsubscript{c})}
+Os autores propõem uma penalidade que cresce com a diferença entre classes:
+\[
+DS_c(α) = \overline{DS} - α\,\Delta, \qquad \Delta = \frac{1}{2}\binom{C}{2}^{-1}\sum_{i<j}\lvert DS_i - DS_j\rvert,
+\]
+em que $DS_i$ é o DS médio da classe $i$. No caso binário, $\Delta = \frac{1}{2}\lvert DS_1 - DS_0\rvert$. O fator $\frac{1}{2}$ mantém $\Delta$ em $[0,1]$. Nos experimentos, $α = 1$. Exemplo do próprio artigo: com $DS_1 = 1$ e $DS_0 = 0$, a média é 0,5 (razoável), mas $\Delta = 0{,}5$ e $DS_c = 0$.
+
+\subsection{Como a perturbação foi configurada}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Aspecto} & \textbf{Escolha no artigo} \\
+\midrule
+Granularidade & Pontos individuais da série (atribuição ponto a ponto, série univariada) \\
+Passos & Incrementos de 2\% do comprimento (arredondado para cima), até cobrir 50\% da série \\
+Estratégias nomeadas & Gauss: $x'_i \sim \mathcal{N}(\text{média}(x), \text{desvio}(x))$; Unif: $x'_i \sim U(\min x, \max x)$; Opp: $x'_i = -x_i$; Inv: $x'_i = \max(x) - x_i$; SubMean: média de uma janela local de 10\% do comprimento; Zero: $x'_i = 0$ \\
+Constantes & $x'_i = c$, com $c \in \{-2; -1{,}5; -1; -0{,}5; 0; 0{,}5; 1; 1{,}5; 2\}$ (na escala normalizada) \\
+Normalização & Séries do UCR já em z-score; DS em $[-1,1]$ para comparar conjuntos de comprimentos diferentes \\
+Repetições & Não informadas (aparentemente uma execução por configuração) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Resultados principais}
+\textbf{(1) Média agregada.} FO, IG e GS tendem a ter os maiores DS; GR fica perto de zero ou negativo. Zero e SubMean são, em geral, as estratégias de maior DS.
+
+\textbf{(2) Distribuição por classe (estudo de caso FordB, InceptionTime, SubMean).} Para IG, GS e FO, os exemplos da classe 1 têm DS altos, e os da classe 0 se concentram em torno de zero: a perturbação praticamente não afeta a classe 0.
+
+\textbf{(3) Ajuste por classe.} Com o DS\textsubscript{c}, os valores caem para perto de zero ou ficam negativos, sobretudo para as estratégias que eram as melhores na média. A tabela mostra a coluna do GradientSHAP (Tabelas 3 e 4 do artigo):
+\begin{center}\small
+\begin{tabular}{llrrrr}
+\toprule
+& & \multicolumn{2}{c}{\textbf{DS (média)}} & \multicolumn{2}{c}{\textbf{DS\textsubscript{c} ($α=1$)}} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+\textbf{Conjunto} & \textbf{Perturbação} & \textbf{ResNet} & \textbf{InceptionTime} & \textbf{ResNet} & \textbf{InceptionTime} \\
+\midrule
+FordA   & Zero    & 0,072 & 0,149 & 0,002 & 0,000 \\
+        & SubMean & 0,071 & 0,143 & 0,002 & 0,000 \\
+FordB   & Zero    & 0,031 & 0,081 & 0,005 & 0,015 \\
+        & SubMean & 0,032 & 0,081 & 0,005 & 0,014 \\
+Wafer   & Zero    & 0,050 & 0,050 & 0,011 & 0,036 \\
+        & SubMean & 0,172 & 0,067 & 0,037 & 0,018 \\
+ElecDev & Zero    & 0,122 & 0,164 & 0,063 & 0,104 \\
+        & SubMean & 0,222 & 0,201 & 0,136 & 0,134 \\
+\bottomrule
+\end{tabular}
+\end{center}
+O caso mais marcante é o do FO no FordA com InceptionTime e perturbação Zero: DS de 0,205, o maior da coluna, e DS\textsubscript{c} de $-0{,}001$. Como a amostra tem 300 exemplos por classe, isso implica (cálculo deste fichamento, não do artigo) $\lvert DS_1 - DS_0\rvert \approx 0{,}41$: praticamente todo o DS vem de uma única classe.
+
+\textbf{(4) Valores constantes.} O valor de perturbação mais eficaz muda com o conjunto e com a arquitetura (por exemplo, 0,5 é frequentemente o melhor em FordA e FordB). Constantes negativas tendem a dar DS\textsubscript{c} negativo, o que indica respostas assimétricas das classes à direção da perturbação; há exceções (GR, SG e GS no ElecDev).
+
+\textbf{(5) Multiclasse.} No ElecDev (7 classes), a penalidade reduz menos os valores. Os próprios autores advertem que a média sobre pares de classes pode \textbf{subestimar} os efeitos quando há muitas classes.
+
+\section{Conclusões e limitações declaradas}
+\begin{itemize}
+\item A eficácia da perturbação varia entre classes; estratégias com melhor desempenho agregado tendem a ter os efeitos de classe mais fortes; a melhor estratégia depende do conjunto e da arquitetura.
+\item Recomendações: complementar as médias com análise estratificada por classe; usar penalidades como a proposta; avaliar cada exemplo com várias estratégias de perturbação.
+\item Limitações: apenas quatro conjuntos e duas arquiteturas; os padrões podem refletir a configuração experimental, e não propriedades gerais da avaliação.
+\end{itemize}
+\begin{infobox}[warn]{Leitura crítica}
+A hipótese do viés do classificador não é testada diretamente: não há experimento que isole o mecanismo (por exemplo, medindo a probabilidade de cada classe para uma série inteiramente perturbada). A evidência é indireta, vinda da variação com a estratégia e com o valor constante. O artigo seguinte do mesmo grupo (Baer et al., 2025, dados sintéticos; fichamento \texttt{baer-2025-dados-sinteticos-classe}) retoma exatamente essa pergunta.
+\end{infobox}
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+O artigo tem seis seções: introdução (p.~1--3), trabalhos relacionados (p.~3--6), a métrica ajustada à classe (§3, p.~6--8), o desenho experimental (§4, p.~9--11), resultados e discussão (§5, p.~11--19) e conclusão (§6, p.~19--20), mais um apêndice com os conjuntos (p.~20--22). As citações seguem essa ordem.
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“Our analysis suggests that these effects arise from the learned biases of classifiers, indicating that perturbation-based evaluation may reflect specific model behaviors rather than intrinsic attribution quality.”\end{origquote}
+\begin{tradquote}“Nossa análise sugere que esses efeitos surgem dos vieses aprendidos pelos classificadores, indicando que a avaliação baseada em perturbação pode refletir comportamentos específicos do modelo, e não a qualidade intrínseca da atribuição.”\end{tradquote}
+\explab{Explicação}
+É a tese do artigo. Note-se o verbo “sugere”: a causa (vieses do classificador) é uma interpretação dos resultados. Para o TCC, a consequência é que um valor de fidelidade por classe mistura duas coisas: a qualidade do mapa e o modo como o modelo reage à perturbação naquela classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“These effects manifest when perturbation strategies effectively validate feature attributions for some classes while showing limited or no sensitivity for others. We hypothesize that such behavior emerges from classifier biases, where models learn to associate certain perturbation values with specific classes, potentially compromising the reliability of current evaluation practices.”\end{origquote}
+\begin{tradquote}“Esses efeitos aparecem quando estratégias de perturbação validam efetivamente as atribuições para algumas classes, mas mostram sensibilidade limitada ou nula para outras. Formulamos a hipótese de que esse comportamento surge de vieses do classificador, em que os modelos aprendem a associar certos valores de perturbação a classes específicas, o que pode comprometer a confiabilidade das práticas atuais de avaliação.”\end{tradquote}
+\explab{Explicação}
+Define o fenômeno e a hipótese. “Validar” aqui significa que a métrica consegue distinguir uma boa atribuição de uma ruim; se a perturbação não muda a predição numa classe, a métrica não distingue nada nessa classe, por melhor que seja o mapa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §2 Trabalhos relacionados}
+\begin{origquote}“This phenomenon occurs when perturbation values inadvertently match features the model has associated with a specific class. As a result, substituting “important” features with these values might paradoxically reinforce rather than disrupt the prediction, regardless of attribution correctness.”\end{origquote}
+\begin{tradquote}“Esse fenômeno ocorre quando os valores de perturbação coincidem, sem querer, com características que o modelo associou a uma classe específica. Assim, substituir características “importantes” por esses valores pode, paradoxalmente, reforçar a predição em vez de destruí-la, independentemente de a atribuição estar correta.”\end{tradquote}
+\explab{Explicação}
+É o mecanismo que inspira o exemplo hipotético da Parte I. No ECG, a linha de base (zero) não é um valor “sem significado”: um trecho plano onde deveria haver uma onda é, por si, uma alteração com significado clínico.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} §2 Trabalhos relacionados}
+\begin{origquote}“For example, Schlegel et al. [14] evaluated 16 different perturbation approaches and found that for most datasets, only up to 60\% of the samples changed their predicted label under perturbation, regardless of the strategy employed.”\end{origquote}
+\begin{tradquote}“Por exemplo, Schlegel et al. [14] avaliaram 16 abordagens de perturbação e verificaram que, na maioria dos conjuntos, no máximo 60\% dos exemplos mudaram o rótulo predito sob perturbação, qualquer que fosse a estratégia.”\end{tradquote}
+\explab{Explicação}
+É a observação que motivou o trabalho: uma fração grande dos exemplos resiste a qualquer perturbação. A pergunta do artigo é se essa fração se concentra em certas classes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §3 Métrica ajustada à classe}
+\begin{origquote}“To evaluate attribution methods for multiple instances, we usually compute the mean degradation score DS. However, this aggregate metric can mask important class-specific behaviors. Therefore, we extend this evaluation framework by introducing the class-adjusted degradation score DSc that balances overall attribution accuracy with consistent performance across classes.”\end{origquote}
+\begin{tradquote}“Para avaliar métodos de atribuição em vários exemplos, costuma-se calcular o degradation score médio. Porém, essa métrica agregada pode mascarar comportamentos importantes específicos de cada classe. Por isso, estendemos esse arcabouço de avaliação com o degradation score ajustado à classe, DSc, que equilibra a acurácia geral da atribuição com a consistência do desempenho entre as classes.”\end{tradquote}
+\explab{Explicação}
+A penalidade serve para \textbf{comparar métodos de atribuição} com um só número. O TCC avalia um único método (GradientSHAP) e já reporta as métricas por classe, então a penalidade não é necessária; o ponto que se aproveita é o diagnóstico: a média global esconde a heterogeneidade entre classes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} §4 Desenho experimental}
+\begin{origquote}“To ensure balanced class representation while maintaining computational feasibility, we compute attributions on a stratified sample of 300 instances per class from the test set. Attributions always explain the predicted class label.”\end{origquote}
+\begin{tradquote}“Para garantir representação equilibrada das classes, mantendo a viabilidade computacional, calculamos as atribuições numa amostra estratificada de 300 exemplos por classe do conjunto de teste. As atribuições sempre explicam o rótulo predito.”\end{tradquote}
+\explab{Explicação}
+Com 300 exemplos em cada classe, as médias por classe têm precisão parecida. No TCC, o número de mapas por classe é muito desigual (de 14 em STE a 172 em BRD), o que torna as médias das classes raras menos estáveis; essa diferença deve ser lembrada ao comparar classes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10--11} §4 Desenho experimental}
+\begin{origquote}“For both orders, features are perturbed incrementally in steps of 2\% of the time series length (rounded up) until 50\% perturbation coverage is reached, recording the predicted probabilities at each perturbation step.”\end{origquote}
+\begin{tradquote}“Nas duas ordens, as características são perturbadas de forma incremental, em passos de 2\% do comprimento da série (arredondado para cima), até cobrir 50\% da série, registrando as probabilidades preditas a cada passo.”\end{tradquote}
+\explab{Explicação}
+A granularidade é o ponto da série, e a perturbação vai até metade do sinal. No TCC, a Faithfulness Correlation retira subconjuntos sorteados de \textbf{regiões} (4, 9 ou 18 de 36), e não pontos em ordem de importância; o princípio, porém, é o mesmo: substituir partes do sinal por um valor de referência.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 13} §5.2 Distribuição por classe}
+\begin{origquote}“For IG, GS, and FO, instances from class 1 consistently achieve higher DS scores with pronounced positive tails and minimal negative values. The same methods show markedly different behavior for class 0, where DS scores cluster tightly around zero, indicating minimal perturbation impact.”\end{origquote}
+\begin{tradquote}“Para IG, GS e FO, os exemplos da classe 1 têm consistentemente DS mais altos, com caudas positivas acentuadas e poucos valores negativos. Os mesmos métodos se comportam de forma muito diferente na classe 0, em que os DS se concentram em torno de zero, indicando impacto mínimo da perturbação.”\end{tradquote}
+\explab{Explicação}
+GS é o GradientSHAP. No mesmo conjunto, com o mesmo modelo e o mesmo método, uma classe parece ter explicações boas e a outra, explicações sem valor. Nada no artigo indica que as atribuições da classe 0 sejam piores; o que muda é a resposta do modelo à perturbação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 13} §5.3 Efeitos dependentes da classe}
+\begin{origquote}“Zero, SubMean and Gauss perturbations, which demonstrated superior performance before, show marked degradation under class-adjusted evaluation, with most DS scores shifting toward zero or even becoming negative.”\end{origquote}
+\begin{tradquote}“As perturbações Zero, SubMean e Gauss, que antes tinham o melhor desempenho, pioram muito na avaliação ajustada à classe, com a maioria dos DS indo para perto de zero ou ficando negativa.”\end{tradquote}
+\explab{Explicação}
+É o resultado da tabela da Parte I: a estratégia que parece “mais eficaz” na média é a que mais depende de uma classe. A perturbação por zero, usada no TCC, está entre elas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 16} §5.3 Efeitos dependentes da classe}
+\begin{origquote}“For ElecDev, the interpretation of these results requires additional context: as the only multiclass dataset in our evaluation, the pairwise averaging of class differences may underestimate class-specific effects due to the higher dimensionality of the classification space.”\end{origquote}
+\begin{tradquote}“No ElecDev, a interpretação desses resultados exige contexto adicional: por ser o único conjunto multiclasse da avaliação, a média das diferenças entre pares de classes pode subestimar os efeitos específicos de cada classe, devido à maior dimensionalidade do espaço de classificação.”\end{tradquote}
+\explab{Explicação}
+O TCC tem 9 classes e é multirrótulo. A evidência do artigo vem quase toda de problemas binários, e os próprios autores reconhecem que a penalidade dilui os efeitos com muitas classes. Por isso, no TCC, a comparação classe a classe (posições e valores) é mais informativa que um índice único de dispersão.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 16} §5.4 Valores constantes}
+\begin{origquote}“These results suggest that the effectiveness of perturbation-based evaluation depends on the alignment between perturbation values and the learned class representations in the feature space.”\end{origquote}
+\begin{tradquote}“Esses resultados sugerem que a eficácia da avaliação baseada em perturbação depende do alinhamento entre os valores de perturbação e as representações das classes aprendidas no espaço de características.”\end{tradquote}
+\explab{Explicação}
+A escolha do valor de referência não é um detalhe técnico: ela muda quais classes parecem bem explicadas. No TCC, a Faithfulness Correlation foi calculada com zero e com a média do treino, mas os dois valores praticamente coincidem no ECG (a média de cada ponto entre pacientes fica perto de zero), então não constituem duas estratégias distintas no sentido do artigo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 19} §6 Conclusão}
+\begin{origquote}“First, supplementing aggregate metrics with more detailed class-stratified analysis can help identify when dominant classes disproportionately influence results.”\end{origquote}
+\begin{tradquote}“Primeiro, complementar as métricas agregadas com uma análise mais detalhada, estratificada por classe, pode ajudar a identificar quando classes dominantes influenciam desproporcionalmente os resultados.”\end{tradquote}
+\explab{Explicação}
+Apoia diretamente o desenho do TCC, que reporta todas as métricas por classe. No CPSC2018, BRD tem 172 dos 622 mapas: uma média global da fidelidade pesa muito mais BRD do que STE ou BRE.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 19} §6 Conclusão, limitações}
+\begin{origquote}“Our investigation encompasses only four datasets and two classifier architectures, potentially limiting broader applicability. Additionally, the observed perturbation response patterns may reflect specific characteristics of our experimental configuration rather than fundamental properties of the evaluation approach.”\end{origquote}
+\begin{tradquote}“Nossa investigação abrange apenas quatro conjuntos de dados e duas arquiteturas de classificador, o que pode limitar a aplicabilidade mais ampla. Além disso, os padrões de resposta à perturbação observados podem refletir características específicas da nossa configuração experimental, e não propriedades fundamentais da abordagem de avaliação.”\end{tradquote}
+\explab{Explicação}
+Os autores não afirmam que o efeito aparecerá em qualquer problema. Para o TCC, o artigo é uma razão para cautela na leitura, e não uma prova de que as diferenças de fidelidade entre as classes do ECG sejam artefato.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{Análise por classe é necessária.} O artigo é uma justificativa explícita para reportar as métricas por classe, como o TCC faz, em vez de só a média global.
+\item \textbf{Diferença de fidelidade entre classes não é, por si, diferença de qualidade.} No TCC, a Faithfulness Correlation (regiões retiradas, baseline zero, mapas da versão 2, $|S| = 9$) vai de 0,45 em SNR a 0,75 em BRD. Pelo argumento do artigo, parte dessa diferença pode vir de como cada classe reage a regiões zeradas. A leitura descritiva frente ao F1 deve vir acompanhada dessa ressalva.
+\item \textbf{O efeito pesa mais nas métricas de perturbação.} O argumento atinge diretamente a Faithfulness Correlation e a Faithfulness Estimate, que dependem do valor de substituição. Atinge menos o Random Logit, o eMPRT, a Consistency e a complexidade, que comparam mapas ou medem a forma do mapa sem retirar partes do ECG; e atinge pouco a Max/Avg-Sensitivity, que usa ruído pequeno, sem mudar a predição. Ter famílias de métricas que não dependem da perturbação, e ver se elas apontam na mesma direção, é a resposta natural do TCC à crítica do artigo.
+\item \textbf{Escolha do valor de perturbação.} A versão antiga da Faithfulness Correlation no TCC (padrão do Quantus, mínimo do próprio ECG, ponto a ponto) dava correlação perto de zero; com regiões inteiras e baseline zero, subiu para cerca de 0,60. Isso é coerente com a mensagem do artigo de que o valor de perturbação muda o resultado.
+\end{enumerate}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Dados & UCR univariado (FordA, FordB, Wafer, ElecDev), 2 ou 7 classes, rótulo único & ECG de 12 derivações (CPSC2018), 9 classes, multirrótulo \\ \addlinespace
+Modelos & ResNet e InceptionTime & ResNet34-1D (F1 macro 0,819) \\ \addlinespace
+Métodos & GR, IG, SG, GS, FO (TSInterpret) & Só GradientSHAP (referência balanceada de 36 ECGs, 200 sorteios) \\ \addlinespace
+Classe explicada & Classe predita & Classes presentes e preditas corretamente (622 mapas) \\ \addlinespace
+Amostra & 300 exemplos por classe (estratificada) & De 14 (STE) a 172 (BRD) mapas por classe \\ \addlinespace
+Granularidade & Pontos da série & 36 regiões (12 derivações $\times$ pré-QRS, QRS, ST-T) \\ \addlinespace
+Métrica de perturbação & DS (MoRF contra LeRF), até 50\% da série & Faithfulness Correlation e Faithfulness Estimate por regiões \\ \addlinespace
+Valores de perturbação & Seis estratégias e nove constantes & Zero e média do treino (quase iguais no ECG) \\ \addlinespace
+Tratamento das classes & Penalidade $\Delta$ e DS\textsubscript{c} & Comparação descritiva das posições com o F1 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item \textbf{O mecanismo não foi demonstrado no ECG.} O exemplo da onda P (Parte I) é uma hipótese plausível, não um resultado. O TCC não mediu a resposta do modelo a um ECG inteiramente zerado, por classe, que seria o teste mais direto da hipótese.
+\item \textbf{As evidências do artigo são majoritariamente binárias.} Com 9 classes, os efeitos podem ser mais difusos, e a penalidade $\Delta$ os subestimaria, segundo os próprios autores.
+\item \textbf{DS não é Faithfulness Correlation.} O DS compara duas ordens de perturbação; a Faithfulness Correlation correlaciona a soma das atribuições com a queda da saída em subconjuntos sorteados. O argumento sobre o valor de perturbação vale para as duas, mas os números não são comparáveis.
+\item \textbf{Uma checagem possível}, sem mudar o desenho: recalcular a Faithfulness Correlation com uma estratégia de perturbação realmente diferente (por exemplo, a média local do próprio sinal, como a SubMean, ou ruído com a variância do sinal) e verificar se a ordem das classes se mantém. Se se mantiver, a ressalva perde força; se mudar, a ordem por classe da fidelidade deve ser tratada como dependente da perturbação.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “Em séries temporais, métricas de avaliação por perturbação podem ter eficácia muito diferente entre as classes preditas, e as estratégias de maior desempenho médio tendem a ser as mais dependentes da classe (Baer et al., 2025).”
+\item “Baer et al.\ (2025) sugerem que esses efeitos decorrem de vieses aprendidos pelo classificador em relação aos valores de perturbação, de modo que a métrica pode refletir o comportamento do modelo, e não a qualidade intrínseca da atribuição; por isso, as diferenças de fidelidade entre classes são lidas, neste trabalho, de forma descritiva e com cautela.”
+\item “Seguindo a recomendação de Baer et al.\ (2025), as métricas são reportadas por classe, e não apenas como média global.”
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,353 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: benchmark de saliência em séries temporais}} \\[0.35em]
+    {\large ISMAIL, A. A.; GUNADY, M.; CORRADA BRAVO, H.; FEIZI, S. \textit{Benchmarking Deep Learning Interpretability in Time Series Predictions}. NeurIPS, v.~33, p.~6441--6452, 2020} \\[0.3em]
+    \textbf{Tema:} avaliação de métodos de saliência em séries temporais multivariadas com dados sintéticos de atributos informativos conhecidos \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2010.13924} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv:2010.13924v1, 32 páginas, com o material suplementar) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v1, 32 páginas: 12 de artigo e referências e 20 de material suplementar). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica o trabalho sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento, com as citações em ordem do texto; a \textbf{Parte III} relaciona o artigo com o desenho do TCC.
+
+\begin{infobox}[note]{Por que este artigo}
+É o primeiro \textit{benchmark} sistemático de métodos de saliência em séries temporais multivariadas e é a referência de onde partem trabalhos posteriores da área (o XTSC-Bench, por exemplo, gera os seus dados com o procedimento deste artigo). Interessa ao TCC por três motivos. Primeiro, inclui o GradientSHAP entre os métodos avaliados. Segundo, o achado principal (os métodos acertam \textbf{quando} o sinal é importante, mas não \textbf{em qual variável}) toca diretamente o ECG de 12 derivações, em que a mesma janela de tempo aparece em todas as derivações. Terceiro, discute um problema de toda métrica de fidelidade por retirada de atributos, usada no TCC: retirar partes da entrada pode tirá-la da distribuição dos dados de treino.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema que o artigo ataca}
+Um \textbf{método de saliência} (ou de atribuição) produz, para uma entrada e uma classe, um \textbf{mapa de saliência}: um valor de importância para cada elemento da entrada. Numa série temporal multivariada, a entrada é uma matriz $X \in \mathbb{R}^{N \times T}$, com $N$ variáveis (no artigo, \textit{features}) e $T$ instantes; o mapa $R(X)$ tem o mesmo formato, e $R_{i,t}$ é a importância da variável $i$ no instante $t$. No ECG do TCC, as variáveis são as 12 derivações.
+
+Esses métodos foram criados e validados em imagens e textos, onde uma pessoa consegue olhar o mapa e julgar se ele faz sentido. Em séries multivariadas isso não funciona, e não há verdade de referência: mesmo sabendo quais trechos carregam informação, o modelo pode não precisar de todos eles. O artigo pergunta, então, se os métodos de saliência funcionam em séries temporais multivariadas e como medir isso de forma objetiva.
+
+\section{A ideia central}
+\begin{infobox}[note]{Em uma frase}
+Gerar dados sintéticos em que se sabe exatamente quais pontos (variável, instante) carregam a informação da classe, explicar modelos treinados nesses dados e medir quanto da saliência cai nesses pontos, retirando-os em ordem de saliência sem tirar a entrada da distribuição.
+\end{infobox}
+O resultado é negativo: a maioria dos pares (arquitetura, método) falha. Os métodos costumam acertar os instantes informativos, mas, dentro de um instante, marcam quase todas as variáveis como importantes. Os autores atribuem a falha à mistura (\textit{conflation}) dos eixos do tempo e das variáveis e propõem um remédio, o \textbf{Temporal Saliency Rescaling} (TSR), que calcula primeiro a importância de cada instante e só depois a de cada variável dentro dos instantes relevantes.
+
+\section{Dados e modelos}
+\textbf{Dados sintéticos.} Cada amostra tem $N = 50$ variáveis e $T = 50$ instantes, e a tarefa é binária. O ruído de fundo de cada variável vem de um de sete processos (ruído gaussiano, autorregressivo, autorregressivo contínuo, processo gaussiano, harmônico, NARMA e pseudoperiódico; p.~4 e 14). Os atributos informativos recebem $+\mu$ na classe positiva e $-\mu$ na negativa ($\mu = 1$, salvo indicação). As variações de onde fica a informação são:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Conjunto} & \textbf{Onde está a informação} \\
+\midrule
+Middle Box (normal/pequeno) & Um retângulo fixo de variáveis $\times$ instantes; normal: mais de 35\% dos atributos; pequeno: menos de 10\% \\
+Moving Box (normal/pequeno) & O mesmo retângulo, em posição diferente em cada amostra \\
+Rare Time (fixo/móvel) & Quase todas as variáveis numa janela curta de tempo (menos de 5\% dos atributos) \\
+Rare Feature (fixo/móvel) & Poucas variáveis em quase todos os instantes (menos de 5\% dos atributos) \\
+Positional Time / Feature & A classe depende da \textbf{posição} da informação (no tempo ou nas variáveis), não do valor \\
+MNIST como série & Imagem $28 \times 28$ lida como 28 variáveis em 28 instantes (único conjunto não binário) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Com sete processos e dez variações, são 70 conjuntos sintéticos (p.~4). Um conjunto real de fMRI (Human Connectome Project) aparece só para mostrar a distribuição dos valores de saliência (p.~15).
+
+\textbf{Modelos.} LSTM, LSTM com \textit{input-cell attention}, TCN (rede convolucional temporal) e Transformer (p.~3). Uma CNN que trata a série como imagem é usada só na comparação da seção 6 do artigo. Os resultados reportados são de modelos com acurácia acima de 95\% (p.~5).
+
+\section{Métodos de explicação}
+Dez métodos, todos com a implementação do Captum (p.~3), mais uma atribuição aleatória como controle:
+\begin{itemize}
+\item \textbf{Baseados no gradiente:} Gradient, Integrated Gradients, SmoothGrad, DeepLIFT, \textbf{GradientSHAP} e DeepSHAP.
+\item \textbf{Por perturbação:} Feature Occlusion, Feature Ablation e Feature Permutation.
+\item \textbf{Outro:} Shapley Value Sampling.
+\end{itemize}
+O GradientSHAP é descrito como no TCC: soma-se ruído à entrada, sorteia-se um ponto no caminho entre uma referência e a entrada e calcula-se o gradiente nesse ponto; o valor final é a esperança do gradiente multiplicado pela diferença entre entrada e referência (p.~13). O artigo não informa a referência nem o número de amostras usados com o GradientSHAP.
+
+\section{Métricas de avaliação e adaptação a séries temporais}
+\textbf{Retirada por fração da saliência total.} Em vez de retirar um número fixo de atributos, retiram-se os atributos mais salientes até somar uma fração $d$ da saliência total, com $d = 0, 10, \dots, 100\%$ (p.~4). Motivo: a saliência decai exponencialmente com a posição no ranking (Figura 3), e atributos vizinhos no ranking podem ter importâncias muito diferentes.
+
+\textbf{Valor de substituição.} Os atributos retirados são substituídos por valores da \textbf{distribuição original} do ruído de fundo, conhecida porque os dados são sintéticos (p.~4--5). Assim, a amostra modificada continua na distribuição de treino, e a queda de acurácia não vem da mudança de distribuição (o problema apontado por Hooker et al., 2019). Fora dos dados sintéticos, essa distribuição não está disponível.
+
+\textbf{Medidas.} Para cada nível $d$, mede-se a queda de acurácia e compara-se o conjunto retirado com o conjunto informativo conhecido. Precisão e revocação são \textbf{ponderadas pela saliência} (p.~17):
+\[
+\text{precisão} = \frac{\sum R(\text{VP})}{\sum R(\text{VP}) + \sum R(\text{FP})}, \qquad
+\text{revocação} = \frac{\sum R(\text{VP})}{\sum R(\text{VP}) + \sum R(\text{FN})},
+\]
+em que VP são atributos informativos com saliência alta, FP atributos de ruído com saliência alta e FN atributos informativos com saliência baixa. As curvas são resumidas pelas áreas AUP (precisão), AUR (revocação) e AUPR (precisão e revocação), e a queda de acurácia pela área AUC (quanto menor, mais rápida a queda). Também há versões só no eixo do tempo e só no eixo das variáveis: um instante (ou uma variável) conta como informativo se tiver informação em alguma variável (ou instante).
+
+\textbf{Granularidade e controle.} A unidade é o ponto (variável, instante); não há agregação em janelas antes da avaliação. O controle aleatório sorteia um método e permuta os seus valores de saliência (p.~5). O artigo não informa número de repetições, sementes nem normalização dos mapas além da ponderação.
+
+\section{O método proposto: Temporal Saliency Rescaling}
+O TSR funciona sobre qualquer método de saliência $R$ (Algoritmo 1, p.~9):
+\begin{enumerate}
+\item \textbf{Relevância de cada instante:} zera-se o instante $t$ em todas as variáveis (entrada $\bar{X}$) e mede-se a mudança total do mapa, $\Delta^{\text{tempo}}_t = \sum_{i,t} |R_{i,t}(X) - R_{i,t}(\bar{X})|$.
+\item \textbf{Relevância de cada variável}, só nos instantes com $\Delta^{\text{tempo}}_t > \alpha$: zera-se a variável e mede-se a mudança do mapa da mesma forma.
+\item \textbf{Mapa final:} produto das duas relevâncias.
+\end{enumerate}
+O custo é de cerca de $T + T(1-\alpha)N$ cálculos do mapa original (Tabela 3, p.~18), o que os autores reconhecem como a principal desvantagem.
+
+\section{Resultados principais}
+\begin{itemize}
+\item \textbf{A maioria dos pares falha} em destacar só os atributos informativos (Figura 4); em Rare Time, os métodos acertam os instantes, mas não as variáveis dentro deles (p.~5).
+\item \textbf{A arquitetura pesa mais que o método} na precisão e na revocação, e os métodos não se distinguem com clareza entre si (p.~6--7). Na LSTM, as curvas dos métodos quase não se separam do controle aleatório (p.~6).
+\item \textbf{Revocação alta e precisão baixa no eixo das variáveis}: dentro de um instante informativo, quase todas as variáveis recebem saliência alta (p.~7).
+\item \textbf{Queda rápida de acurácia não indica boa saliência}: os métodos com as curvas mais íngremes costumam ter a menor precisão e revocação (p.~7).
+\item \textbf{Imagem $\times$ série}: a CNN que trata a série como imagem e a TCN univariada dão mapas interpretáveis; a TCN bi e multivariada, não (p.~7--8).
+\item \textbf{TSR melhora os mapas} na maioria dos métodos, mas não no SmoothGrad (p.~8) nem, segundo o suplemento, no GradientSHAP (p.~18).
+\end{itemize}
+A única tabela numérica do texto principal (Tabela 1, p.~9) compara o TSR com três métodos na TCN:
+\begin{center}\small
+\begin{tabular}{lrrrrrrrr}
+\toprule
+& \multicolumn{4}{c}{\textbf{Middle Box}} & \multicolumn{4}{c}{\textbf{Moving Box}} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+\textbf{Método} & \textbf{AUPR} & \textbf{AUP} & \textbf{AUR} & \textbf{AUC} & \textbf{AUPR} & \textbf{AUP} & \textbf{AUR} & \textbf{AUC} \\
+\midrule
+Gradient & 0,331 & 0,328 & 0,457 & 64,90 & 0,225 & 0,229 & 0,394 & 95,35 \\
+DeepSHAP & 0,344 & 0,344 & 0,452 & 68,30 & 0,288 & 0,288 & 0,435 & 94,05 \\
+SmoothGrad & 0,294 & 0,300 & 0,451 & 64,00 & 0,241 & 0,247 & 0,395 & 92,90 \\
+TSR + Gradient & 0,399 & 0,381 & 0,471 & 62,20 & 0,335 & 0,326 & 0,456 & 84,00 \\
+\bottomrule
+\end{tabular}
+\end{center}
+AUPR, AUP e AUR: maior é melhor. AUC da queda de acurácia: menor é melhor. O GradientSHAP não aparece nessa tabela; os seus resultados estão só nas figuras do suplemento (Figuras 12--24), sem valores numéricos.
+
+\section{Conclusões e limitações declaradas}
+Os métodos comuns, de gradiente e de perturbação, falham em séries multivariadas, mas funcionam quando a série é tratada como imagem ou como univariada; o mecanismo matemático dessa falha é uma questão em aberto, e em muitos casos o desempenho é parecido com o de uma saliência aleatória (p.~9). As limitações declaradas são o custo do TSR (p.~9 e 17) e a falta de explicação para a falha. Não declaradas, mas visíveis: dados sintéticos com sinal aditivo constante, tarefa binária e nenhuma configuração dos métodos (referências, número de amostras) informada.
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+O texto principal tem nove páginas: motivação (§1, p.~1--2), métodos e arquiteturas (§2, p.~3), desenho do benchmark e métricas (§4, p.~4--5), resultados (§5--6, p.~5--8), TSR (§7, p.~8--9) e conclusão (§8, p.~9). O suplemento traz as definições formais (p.~13--17), as variações do TSR (p.~17--18) e as figuras por conjunto (p.~18--32). As citações seguem essa ordem.
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“Through several experiments, we show that (i) in general, network architectures and saliency methods fail to reliably and accurately identify feature importance over time in time series data, (ii) this failure is mainly due to the conflation of time and feature domains, and (iii) the quality of saliency maps can be improved substantially by using our proposed two-step temporal saliency rescaling (TSR) approach [...]”\end{origquote}
+\begin{tradquote}“Por meio de vários experimentos, mostramos que (i) em geral, as arquiteturas de rede e os métodos de saliência não identificam de forma confiável e precisa a importância dos atributos ao longo do tempo em séries temporais, (ii) essa falha se deve principalmente à mistura dos domínios do tempo e dos atributos, e (iii) a qualidade dos mapas de saliência pode melhorar substancialmente com a abordagem em dois passos proposta, o \textit{temporal saliency rescaling} (TSR) [...]”\end{tradquote}
+\explab{Explicação}
+São as três teses do artigo. A segunda é a que interessa ao TCC: o mapa costuma acertar \textbf{quando} algo importa, mas não \textbf{onde} (em qual variável). No ECG, seria acertar o batimento ou o segmento, mas não distinguir as derivações.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 1} §1 Introdução}
+\begin{origquote}“In multivariate time series data, these challenges are even more profound since we cannot rely on human perception as one would when visualizing interpretations by overlaying saliency maps over images or when highlighting relevant words in a sentence.”\end{origquote}
+\begin{tradquote}“Em séries temporais multivariadas, esses desafios são ainda maiores, porque não se pode contar com a percepção humana, como quando se sobrepõe o mapa de saliência a uma imagem ou se destacam palavras relevantes numa frase.”\end{tradquote}
+\explab{Explicação}
+É o argumento para avaliar as explicações com métricas, e não pela inspeção visual. O ECG é um caso intermediário (um cardiologista reconhece ondas e segmentos), mas o TCC adota a mesma posição: compara as explicações por métricas, sem julgar a compatibilidade clínica.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“(ii) saliency methods tend to fail to distinguish important vs. non-important features in a given time step; if a feature in a given time is assigned to high saliency, then almost all other features in that time step tend to have high saliency regardless of their actual values [...]”\end{origquote}
+\begin{tradquote}“(ii) os métodos de saliência tendem a não distinguir atributos importantes de não importantes num dado instante; se um atributo recebe saliência alta num instante, quase todos os outros atributos desse instante tendem a receber saliência alta, independentemente dos seus valores [...]”\end{tradquote}
+\explab{Explicação}
+Descreve o padrão de falha concretamente. No ECG, o equivalente seria um mapa que destaca o QRS em todas as 12 derivações sempre que o QRS importa para uma delas. As 36 regiões do TCC (12 derivações $\times$ 3 segmentos) permitem verificar esse padrão, porque separam as derivações dentro do mesmo segmento.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §4.2 Identificação da importância}
+\begin{origquote}“Modification-based evaluation metrics [27–29] have two main issues. First, they assume that feature ranking based on saliency faithfully represents feature importance. Consider the saliency distributions shown in Figure 3. Saliency decays exponentially with feature ranking, meaning that features that are closely ranked might have substantially different saliency values.”\end{origquote}
+\begin{tradquote}“As métricas de avaliação baseadas em modificação [27–29] têm dois problemas principais. Primeiro, supõem que o ranking dos atributos pela saliência representa fielmente a sua importância. Considere as distribuições de saliência da Figura 3. A saliência decai exponencialmente com a posição no ranking, de modo que atributos vizinhos no ranking podem ter valores de saliência muito diferentes.”\end{tradquote}
+\explab{Explicação}
+Métricas “baseadas em modificação” retiram atributos e observam a saída do modelo, como a Faithfulness Correlation e a Faithfulness Estimate do TCC. A crítica vale para as que usam só a \textbf{ordem} dos atributos. As do TCC usam os \textbf{valores} da atribuição (a soma das regiões retiradas, na Faithfulness Correlation; o valor de cada região, na Faithfulness Estimate), o que já leva em conta o decaimento apontado aqui.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §4.2 Identificação da importância}
+\begin{origquote}“A second issue, as discussed by Hooker et al. [14], is that eliminating features changes the test data distribution violating the assumption that both training and testing data are independent and identically distributed (i.i.d.). Hence, model accuracy degradation may be a result of changing data distribution rather than removing salient features.”\end{origquote}
+\begin{tradquote}“Um segundo problema, discutido por Hooker et al.\ [14], é que eliminar atributos muda a distribuição dos dados de teste, violando a suposição de que os dados de treino e de teste são independentes e identicamente distribuídos (i.i.d.). Assim, a queda de acurácia do modelo pode ser efeito da mudança de distribuição, e não da retirada dos atributos salientes.”\end{tradquote}
+\explab{Explicação}
+É a ressalva mais importante para as métricas de fidelidade do TCC. Quando uma região do ECG é trocada por zero ou pela média do treino, o ECG resultante não se parece com nenhum ECG real, e parte da queda da saída pode vir disso. A ressalva não invalida as métricas, mas deve constar na discussão.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §4.2 Identificação da importância}
+\begin{origquote}“We address the first issue by removing features that represent a certain percentage of the overall saliency rather than removing a constant number of features. Since we are using synthetic data and masking using the original data distribution, we are not violating i.i.d. assumptions.”\end{origquote}
+\begin{tradquote}“Tratamos o primeiro problema retirando atributos que representam uma certa porcentagem da saliência total, em vez de um número fixo de atributos. Como usamos dados sintéticos e mascaramos com a distribuição original dos dados, não violamos as suposições i.i.d.”\end{tradquote}
+\explab{Explicação}
+A solução do segundo problema depende de conhecer a distribuição que gerou os dados, o que só é possível em dados sintéticos. No ECG real, o análogo mais próximo seria substituir a região por um trecho correspondente de outro ECG, o que o TCC não faz. Fica como limitação a declarar.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §4.3 Métricas de desempenho}
+\begin{origquote}“This in mind, one should not compare saliency methods solely on the loss of accuracy after masking. Instead, we should look into features identified as salient and answer the following questions: (1) Are all features identified as salient informative? (precision) (2) Was the saliency method able to identify all informative features? (recall)”\end{origquote}
+\begin{tradquote}“Com isso em mente, não se deve comparar métodos de saliência apenas pela perda de acurácia após o mascaramento. Em vez disso, deve-se olhar os atributos identificados como salientes e responder: (1) todos os atributos identificados como salientes são informativos? (precisão) (2) o método identificou todos os atributos informativos? (revocação)”\end{tradquote}
+\explab{Explicação}
+Precisão e revocação exigem saber quais atributos são informativos, o que o ECG real não fornece. O TCC não tem essa verdade de referência e, por decisão do projeto, não avalia localização clínica. O ponto aproveitável é a primeira frase: uma única medida por perturbação não basta, o que apoia o uso de várias métricas de propriedades diferentes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} §5 Resultados}
+\begin{origquote}“The results reported in the following section are for models that produce accuracy above 95\% in the classification task.”\end{origquote}
+\begin{tradquote}“Os resultados apresentados na seção seguinte são de modelos com acurácia acima de 95\% na tarefa de classificação.”\end{tradquote}
+\explab{Explicação}
+O artigo só avalia explicações de modelos quase perfeitos, para que a falha seja atribuída ao método e não ao modelo. O TCC faz a pergunta oposta: como a qualidade da explicação se comporta em classes com desempenho diferente (F1 de 0,60 a 0,93). O artigo não traz nenhum resultado para modelos ou classes com desempenho baixo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6--7} §5.2 Precisão e revocação}
+\begin{origquote}“(a) Model architecture has the largest effect on precision and recall. (b) Results do not show clear distinctions between saliency methods. (c) Methods can identify informative time steps while fail to identify informative features [...]”\end{origquote}
+\begin{tradquote}“(a) A arquitetura do modelo tem o maior efeito sobre a precisão e a revocação. (b) Os resultados não mostram distinções claras entre os métodos de saliência. (c) Os métodos conseguem identificar os instantes informativos, mas não os atributos informativos [...]”\end{tradquote}
+\explab{Explicação}
+O item (a) importa para o alcance das conclusões do TCC, que usa um só modelo (ResNet34-1D) e um só método (GradientSHAP). Se a arquitetura pesa mais que o método, os resultados do TCC devem ser lidos como propriedades do \textbf{par} modelo--método, e não do GradientSHAP em geral.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §5.2 Precisão e revocação}
+\begin{origquote}“A steep drop in model accuracy does not indicate that a saliency method is correctly identifying features used by the model since, in most cases, saliency methods with leftmost curves in Figure 6 have the lowest precision and recall values.”\end{origquote}
+\begin{tradquote}“Uma queda acentuada da acurácia do modelo não indica que o método de saliência esteja identificando corretamente os atributos usados pelo modelo, pois, na maioria dos casos, os métodos com as curvas mais à esquerda na Figura 6 têm os menores valores de precisão e revocação.”\end{tradquote}
+\explab{Explicação}
+É um alerta sobre as métricas de fidelidade: derrubar a saída do modelo ao retirar o que o mapa destaca não prova que o mapa aponta os atributos certos. O artigo não explica o fenômeno; uma explicação possível, coerente com a citação sobre Hooker et al., é que retirar muitos atributos de uma vez tira a entrada da distribuição. Para o TCC, a Faithfulness Correlation e a Faithfulness Estimate medem a coerência entre mapa e modelo, e não a correção do que o mapa aponta.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §6 Imagens $\times$ séries multivariadas}
+\begin{origquote}“These observations suggest that saliency maps fail when feature and time domains are conflated. When the input is represented solely on the feature domain (as is the case of CNN), saliency maps are relatively accurate. When the input is represented solely on the time domain, maps are also accurate.”\end{origquote}
+\begin{tradquote}“Essas observações sugerem que os mapas de saliência falham quando os domínios dos atributos e do tempo se misturam. Quando a entrada é representada só no domínio dos atributos (como na CNN), os mapas são relativamente precisos. Quando é representada só no domínio do tempo, os mapas também são precisos.”\end{tradquote}
+\explab{Explicação}
+A ResNet34-1D do TCC recebe as 12 derivações como canais de uma convolução no tempo, a mesma organização da TCN do artigo, em que as variáveis entram como canais. Pelo argumento dos autores, é o arranjo em que a mistura entre tempo e variáveis pode aparecer. Isso não foi testado no ECG; fica como hipótese para a leitura dos mapas por derivação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} §8 Conclusão}
+\begin{origquote}“The exact mathematical mechanism underlying this result is an open question. Consequently, there is no clear distinction in performance between different interpretability methods on multiple evaluation metrics when applied to multivariate time series, and in many cases, the performance is similar to random saliency.”\end{origquote}
+\begin{tradquote}“O mecanismo matemático exato por trás desse resultado é uma questão em aberto. Consequentemente, não há distinção clara de desempenho entre os diferentes métodos de interpretabilidade nas várias métricas de avaliação quando aplicados a séries temporais multivariadas, e em muitos casos o desempenho é semelhante ao de uma saliência aleatória.”\end{tradquote}
+\explab{Explicação}
+A comparação com uma saliência aleatória é um controle que o TCC adota de outra forma: o Random Logit e o eMPRT comparam o mapa com mapas que não deveriam ser iguais a ele (outra classe; modelo de pesos sorteados), e o piso (mesmo ECG, outra semente) dá a escala do ruído do próprio GradientSHAP.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} §9 Impacto}
+\begin{origquote}“Critically, failure to provide faithful interpretations is a severe negative outcome. Having no interpretation at all is, in many situations, better than trusting an incorrect interpretation.”\end{origquote}
+\begin{tradquote}“É crucial notar que não fornecer interpretações fiéis é um resultado muito negativo. Não ter interpretação nenhuma é, em muitas situações, melhor do que confiar numa interpretação incorreta.”\end{tradquote}
+\explab{Explicação}
+Resume a motivação de avaliar as explicações antes de usá-las, que é também a motivação do TCC no contexto clínico.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 18} Suplemento, qualidade dos mapas}
+\begin{origquote}“From figures 12, 13 and 14, when applying temporal saliency rescaling we observe a definite improvement in saliency quality across different architectures and interpretability methods except for Gradient SHAP and SmoothGrad.”\end{origquote}
+\begin{tradquote}“Pelas Figuras 12, 13 e 14, ao aplicar o \textit{temporal saliency rescaling}, observa-se uma melhora clara da qualidade da saliência nas diferentes arquiteturas e métodos de interpretabilidade, exceto no Gradient SHAP e no SmoothGrad.”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP e o SmoothGrad são os dois métodos que somam ruído à entrada. No texto principal (p.~8), os autores explicam a exceção do SmoothGrad pelo gradiente ruidoso; o suplemento estende a exceção ao GradientSHAP, sem discutir. Para o TCC, isso desaconselha adotar o TSR e reforça a atenção ao ruído próprio do GradientSHAP, que o piso mede.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{Separar derivações dentro do mesmo segmento.} O achado central (o mapa acerta o instante, mas espalha a importância por todas as variáveis desse instante) é um risco concreto no ECG, porque o QRS ocorre ao mesmo tempo nas 12 derivações. A agregação do TCC em 36 regiões preserva a separação por derivação e permite verificar se o mapa diferencia as derivações. O resultado do eMPRT dá uma pista: com pesos sorteados, o mapa concentra-se no QRS (as duas regiões principais caem no QRS em 88\% dos mapas, contra 42\% no modelo treinado). Concentrar a importância no trecho de maior amplitude, independentemente do que o modelo aprendeu, lembra o comportamento descrito pelo artigo.
+\item \textbf{A retirada de atributos pode tirar o ECG da distribuição.} O artigo resolve isso com a distribuição original dos dados sintéticos; o TCC usa zero e a média do treino (na Faithfulness Correlation, as duas deram resultados praticamente iguais). A ressalva deve aparecer na discussão das métricas de fidelidade.
+\item \textbf{Fidelidade não é correção.} Derrubar a saída ao retirar o que o mapa destaca não garante que o mapa aponte os atributos certos (p.~7). O TCC já trata as métricas de fidelidade como coerência entre mapa e modelo.
+\item \textbf{Escopo das conclusões.} Como a arquitetura pesa mais que o método (p.~6), os resultados do TCC valem para o par ResNet34-1D + GradientSHAP.
+\item \textbf{TSR não é necessário.} Não melhora o GradientSHAP (p.~18) e multiplica o custo.
+\end{enumerate}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Dados & Sintéticos, $50 \times 50$, sinal aditivo $\pm\mu$; MNIST como série & ECG real de 12 derivações (CPSC2018) \\
+Tarefa & Binária (MNIST: 10 classes) & 9 classes, multirrótulo \\
+Verdade de referência & Conhecida (atributos informativos) & Inexistente \\
+Modelos & LSTM, LSTM com atenção, TCN, Transformer & ResNet34-1D \\
+Métodos & 10 métodos + controle aleatório & Só GradientSHAP \\
+Métricas & Queda de acurácia; precisão e revocação ponderadas & Fidelidade (2), robustez, complexidade, Consistency, Random Logit, eMPRT \\
+Valor de substituição & Distribuição original do ruído & Zero e média do treino \\
+Granularidade & Ponto (variável, instante); eixos agregados à parte & 36 regiões (derivação $\times$ segmento) \\
+Seleção & Modelos com acurácia acima de 95\% & Predições corretas do teste (622 mapas); F1 macro 0,819 \\
+Controle & Saliência aleatória (permutada) & Piso do GradientSHAP; outra classe; modelo de pesos sorteados \\
+Análise por classe & Não há & Comparação descritiva com o F1 de cada classe \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item \textbf{Os resultados do GradientSHAP não estão em números.} A tabela numérica do artigo não inclui o GradientSHAP; o que se sabe do método vem das figuras e de uma frase do suplemento. O artigo não informa a referência nem o número de amostras usados. Não é possível citar um valor do artigo para o GradientSHAP.
+\item \textbf{Dados sintéticos simples.} A informação é um deslocamento constante num retângulo de pontos. No ECG, a informação está na forma e no ritmo das ondas, em várias derivações ao mesmo tempo, e a transferência das conclusões não é direta.
+\item \textbf{Modelos quase perfeitos.} Com acurácia acima de 95\%, o artigo não informa o que acontece com classes mal aprendidas, que é o foco do TCC.
+\item \textbf{Mecanismo não explicado.} Os próprios autores deixam em aberto por que a mistura de tempo e variáveis prejudica os mapas (p.~9).
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestões}
+\begin{itemize}
+\item Ismail et al.\ (2020) mostraram, em séries multivariadas sintéticas com atributos informativos conhecidos, que os métodos de saliência, entre eles o GradientSHAP, tendem a identificar os instantes relevantes, mas não as variáveis relevantes dentro desses instantes, e que a arquitetura do modelo influencia mais a qualidade dos mapas do que a escolha do método.
+\item Os mesmos autores observam que retirar atributos para medir a fidelidade de uma explicação pode tirar a entrada da distribuição dos dados de treino, de modo que a queda de desempenho pode refletir a mudança de distribuição, e não a importância dos atributos retirados (Ismail et al., 2020; Hooker et al., 2019).
+\item A agregação dos mapas por derivação e segmento do batimento permite verificar se a importância atribuída a um segmento se distribui igualmente por todas as derivações, padrão de falha descrito por Ismail et al.\ (2020).
+\end{itemize}
+\end{infobox}
+
+\end{document}

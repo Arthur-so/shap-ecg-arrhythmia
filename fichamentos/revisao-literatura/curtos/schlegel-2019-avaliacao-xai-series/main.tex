@@ -1,0 +1,183 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: avaliação rigorosa de XAI em séries temporais}} \\[0.35em]
+    {\large SCHLEGEL, U.; ARNOUT, H.; EL-ASSADY, M.; OELKE, D.; KEIM, D. A. \textit{Towards a Rigorous Evaluation of XAI Methods on Time Series}. IEEE/CVF International Conference on Computer Vision Workshops (ICCVW), 2019} \\[0.3em]
+    \textbf{Tema:} avaliação de atribuições em séries temporais por perturbação, com referência aleatória e testes sequenciais \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/1909.07082} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 5 páginas) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv (5 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} propor uma metodologia para avaliar automaticamente atribuições em séries temporais, levando em conta a dimensão temporal.
+\item \textbf{Dados e modelos:} nove bases do arquivo UCR e o MIT-BIH Arrhythmia, todas univariadas; uma CNN simples, uma RNN (LSTM de 100 unidades) e, quando disponível, o modelo do artigo da base (arquiteturas do tipo ResNet), treinados por 50 épocas.
+\item \textbf{Métodos de explicação:} Saliency, LRP, DeepLIFT, LIME e SHAP, além de uma relevância aleatória como referência.
+\item \textbf{Avaliação:} os pontos com relevância acima de um limiar (por exemplo, o percentil 90) são perturbados (zero ou inverso), e a queda da acurácia é comparada com a de uma perturbação de pontos sorteados; dois testes novos alteram subsequências (inversão da ordem e troca pela média).
+\item \textbf{Conclusão:} SHAP foi robusto em todos os modelos; DeepLIFT, LRP e Saliency funcionaram melhor em arquiteturas específicas; LIME foi o pior.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+É um artigo curto de oficina (\textit{workshop}) e um dos primeiros a testar métodos de XAI vindos de imagens e textos em séries temporais. Cada ponto no tempo é tratado como um atributo, e o método devolve um vetor de relevância $r = (r_0, \dots, r_m)$, um valor por ponto. O artigo argumenta que mapas de calor sobre séries longas são difíceis de interpretar, até para especialistas, e por isso propõe uma verificação \textbf{automática} [p.~2].
+
+\section{Como avalia as explicações}
+A ideia é a da \textbf{análise de perturbação}: se os pontos mais relevantes forem alterados, a acurácia de um bom modelo deve cair muito. Os detalhes:
+\begin{itemize}
+\item \textbf{Seleção:} pontos com $r_i$ acima de um limiar $e$, por exemplo o percentil 90 de $r$; a fração alterada é pequena.
+\item \textbf{Perturbação pontual:} o ponto vira zero ou o seu inverso ($\max t - t_i$).
+\item \textbf{Verificação:} repete-se o processo com uma relevância \textbf{aleatória}, alterando o mesmo número de pontos.
+\item \textbf{Testes sequenciais:} a partir de cada ponto relevante, uma subsequência de comprimento $n_s$ é invertida (\textit{Swap Time Points}) ou trocada pela sua média (\textit{Mean Time Points}), para testar se o modelo usa tendências e formas, e não só valores isolados.
+\item \textbf{Critério:} $qm(t) \geq qm(t_r) > qm(t_c)$, em que $qm$ é a acurácia, $t$ a série original, $t_r$ a série com pontos aleatórios alterados e $t_c$ a série com pontos relevantes alterados.
+\end{itemize}
+O artigo não informa o valor de $n_s$ nem testa outros limiares, e os resultados são médias sobre as dez bases.
+
+\section{Resultados e conclusões}
+Tabela~1 [p.~4], modelos do artigo da base (ResNet). Os valores são a variação média da acurácia, normalizada pela acurácia original; maior significa queda maior:
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Método} & \textbf{Zero} & \textbf{Inverso} & \textbf{Swap} & \textbf{Média} \\
+\midrule
+Saliency & 0,06 & 0,08 & 0,07 & 0,07 \\
+LRP & 0,29 & 0,29 & 0,29 & 0,34 \\
+DeepLIFT & 0,29 & 0,30 & 0,29 & 0,35 \\
+LIME & 0,02 & 0,06 & 0,04 & 0,02 \\
+SHAP & 0,29 & 0,40 & 0,31 & 0,38 \\
+Aleatório & 0,13 & 0,21 & 0,07 & 0,04 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Na ResNet, SHAP, LRP e DeepLIFT superam a referência aleatória em todas as perturbações; o LIME fica abaixo dela em todas, e o Saliency fica abaixo nas perturbações pontuais (zero e inverso). Na CNN simples, porém, a perturbação aleatória por inversão já derruba a acurácia quase tanto quanto os melhores métodos (0,45, contra 0,46 do SHAP), e na RNN o DeepLIFT tem 0,00 em todas as colunas. Os autores leem isso como dependência da arquitetura e pedem métodos de XAI mais adequados a séries temporais [p.~4].
+
+\section{Citações comentadas}
+
+\begin{citacard}{\pagechip{p. 2} §3 Avaliação}
+\begin{origquote}“However, because, e.g., a zero could be an indicator for an anomaly in a time series task, the methodology of evaluation of XAI methods for time series needs specialized heuristics.”\end{origquote}
+\begin{tradquote}“No entanto, como, por exemplo, um zero pode indicar uma anomalia numa tarefa de séries temporais, a metodologia de avaliação de métodos de XAI para séries temporais precisa de heurísticas especializadas.”\end{tradquote}
+\explab{Explicação}
+É o problema da \textbf{referência de perturbação}: em imagens, zerar um pixel é “apagar”; numa série temporal, o zero pode ser um valor com significado. No ECG, 0~mV é a linha isoelétrica, e zerar um QRS cria um sinal plausível de outra coisa. Toda métrica de fidelidade do TCC depende dessa escolha.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2--3} §3.1 Perturbação}
+\begin{origquote}“To verify the assumption, a random relevance $r_r = (r_0, r_1, r_2, \dots, r_m)$ is used for the same procedure. The number of changed time points, amount of $r_i$ larger than the threshold $e$, is the same as in the case before to set the same prerequisites for the classifier.”\end{origquote}
+\begin{tradquote}“Para verificar a hipótese, uma relevância aleatória $r_r$ é usada no mesmo procedimento. O número de pontos alterados, isto é, a quantidade de $r_i$ acima do limiar $e$, é o mesmo do caso anterior, para dar ao classificador as mesmas condições.”\end{tradquote}
+\explab{Explicação}
+Uma queda de acurácia só diz algo quando comparada com a queda produzida por uma escolha \textbf{sem informação}. A tabela mostra por quê: na CNN simples, alterar pontos sorteados já derruba a acurácia. O TCC segue a mesma lógica de sempre ter uma referência: o piso do GradientSHAP e o modelo com pesos sorteados no eMPRT.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §3.3 Metodologia}
+\begin{origquote}“If the XAI method produces correct explanations, the assumptions $qm(t) \geq qm(t_{cr}) > qm(t_c)$ with $qm$ as the quality measure, $t$ the original time series, $t_{cr}$ the random changed, and $t_c$ the relevant changed time series, holds.”\end{origquote}
+\begin{tradquote}“Se o método de XAI produz explicações corretas, vale a desigualdade $qm(t) \geq qm(t_{cr}) > qm(t_c)$, em que $qm$ é a medida de qualidade, $t$ a série original, $t_{cr}$ a série com alteração aleatória e $t_c$ a série com alteração nos pontos relevantes.”\end{tradquote}
+\explab{Explicação}
+O critério é por conjunto de dados (acurácia), e não por explicação. Diz se um método, em média, aponta pontos que importam, mas não dá um valor por ECG nem por classe. As métricas do TCC (Faithfulness Correlation e Estimate) dão um valor por mapa, o que permite resumir por classe e comparar descritivamente com o F1.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §5 Conclusão}
+\begin{origquote}“In our experiment, we find that SHAP works robust for all models, but others like DeepLIFT, LRP, and Saliency Maps work better for specific architectures.”\end{origquote}
+\begin{tradquote}“Em nosso experimento, verificamos que o SHAP funciona de forma robusta em todos os modelos, enquanto outros, como DeepLIFT, LRP e mapas de saliência, funcionam melhor em arquiteturas específicas.”\end{tradquote}
+\explab{Explicação}
+É um dos apoios empíricos mais citados para usar SHAP em séries temporais. Deve ser lido com as ressalvas do próprio artigo: resultados preliminares, séries univariadas, um limiar único e médias sobre dez bases, sem resultado separado para o MIT-BIH. O artigo também não diz qual variante de SHAP foi usada.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo fundamenta a avaliação por perturbação em séries temporais e dois cuidados que o TCC adota: comparar sempre com uma referência sem informação e escolher com cuidado o valor de substituição. As diferenças são grandes: o artigo trabalha com séries univariadas, perturba pontos isolados ou janelas de tamanho fixo e mede a acurácia do conjunto; o TCC trabalha com 12 derivações, perturba regiões fisiológicas do batimento e mede a fidelidade de cada mapa. O resultado favorável ao SHAP apoia a escolha do GradientSHAP só de forma indireta, porque o modelo, os dados e a variante de SHAP são outros.
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestão}
+Schlegel et al.\ (2019) avaliaram atribuições em séries temporais alterando os pontos mais relevantes e comparando a queda da acurácia com a de pontos sorteados, e propuseram testes que alteram subsequências inteiras; nos experimentos preliminares, com séries univariadas, o SHAP foi o método mais estável entre as arquiteturas testadas.
+\end{infobox}
+
+\end{document}

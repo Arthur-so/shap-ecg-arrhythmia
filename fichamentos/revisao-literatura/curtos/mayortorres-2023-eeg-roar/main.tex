@@ -1,0 +1,157 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: ROAR em EEG de reconhecimento de emoções}} \\[0.35em]
+    {\large MAYOR-TORRES, J. M.; MEDINA-DEVILLIERS, S.; CLARKSON, T.; LERNER, M. D.; RICCARDI, G. \textit{Evaluation of Interpretability for Deep Learning algorithms in EEG Emotion Recognition: A case study in Autism}. Artificial Intelligence in Medicine, v.~143, 102545, 2023 (texto lido: arXiv:2111.13208v6)} \\[0.3em]
+    \textbf{Tema:} avaliação de mapas de relevância (SmoothGrad, LRP, PatternNet, PatternAttribution) por remoção e retreino (ROAR) em EEG, comparando grupos TD e TEA \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2111.13208v6} \\[0.2em]
+    \textbf{Leitura:} íntegra da versão arXiv v6 (23/02/2023, 12 páginas); material suplementar (Figuras S.1--S.5, Tabela S.1) e versão de periódico não lidos \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v6); a versão publicada pode ter outra paginação e redação. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} verificar quais métodos de explicação são confiáveis para recuperar as características de EEG que uma CNN usa para decodificar emoções faciais vistas por adolescentes com desenvolvimento típico (TD) e com transtorno do espectro autista (TEA).
+\item \textbf{Dados e modelos:} 88 participantes (48 TD, 40 TEA), 48 ensaios cada; EEG de 30 canais $\times$ 752 instantes tratado como imagem; CNN de três blocos, treinada por participante com validação deixando um ensaio de fora.
+\item \textbf{Métodos de explicação:} SmoothGrad (referência), SmoothGrad ao quadrado, PatternNet, PatternAttribution e LRP (preset B), via iNNvestigate.
+\item \textbf{Avaliação:} ROAR (\textit{RemOve And Retrain}): remover as características mais relevantes segundo o mapa médio do grupo, retreinar e medir a queda de acurácia, contra máscaras aleatórias e contra fatias de 47 instantes $\times$ 1 canal.
+\item \textbf{Conclusão principal:} os métodos recuperam trechos tardios (após 500 ms) como essenciais; LRP-B, PatternNet e PatternAttribution são os mais confiáveis ao remover mais de 50\% das características, e mostram diferenças entre TD e TEA.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Os ensaios de EEG são pré-processados (remoção de artefatos, branqueamento ZCA) e empilhados como imagem canal $\times$ tempo [p.~2--3]. A CNN atinge acurácia média de 0,860 (TD) e 0,934 (TEA), acima do desempenho dos próprios participantes na tarefa (0,815 e 0,776) [p.~4]. Os mapas de relevância, normalizados em $[-1,1]$, são tirados em cada iteração da validação cruzada e \textbf{promediados por grupo e por emoção}; as comparações estatísticas são feitas em cinco janelas de tempo (0--500, 250--750, \dots, 1000--1500 ms) [p.~4, 6--7].
+
+\section{Como avalia as explicações}
+\begin{itemize}
+\item \textbf{ROAR} [p.~6--7]: o mapa médio do grupo (média das quatro emoções) vira uma máscara binária para cada taxa de remoção $r$ (0,1 a 0,9); a CNN é retreinada só com as características admitidas e mede-se a queda de acurácia.
+\item \textbf{Referências} [p.~7]: máscara aleatória uniforme com $r=0{,}5$; fatias aleatórias de 47 instantes $\times$ 1 canal (cerca de 20 ms) e as mesmas fatias ordenadas pelo método (``fatias do método'').
+\item \textbf{Estatística} [p.~7--9]: teste de Kolmogorov-Smirnov entre mapas, ANOVA de um fator com correção de Bonferroni-Holm entre grupos e entre valores de $r$.
+\end{itemize}
+A avaliação é feita sobre mapas médios de grupo, não sobre explicações individuais, e retreina o modelo, ao contrário das métricas por perturbação sem retreino.
+
+\section{Resultados e conclusões}
+SmoothGrad e SmoothGrad ao quadrado têm distribuições de relevância semelhantes em todas as janelas; PatternNet se assemelha ao LRP-B e ao PatternAttribution só nas janelas tardias [p.~7]. Entre TD e TEA, só o LRP-B mostra diferenças significativas nos mapas, sobretudo para raiva e medo [p.~7]. No ROAR, as diferenças em relação às referências aparecem em valores de $r$ específicos e variam por método (por exemplo, SmoothGrad em $r=0{,}7$ e $0{,}9$; SmoothGrad ao quadrado e LRP-B em $r=0{,}2$) [p.~8--9]. Na discussão, os autores recomendam começar pelo SmoothGrad ao quadrado, por ser o mais simples, mas na conclusão apontam LRP-B, PatternNet e PatternAttribution como os mais confiáveis quando se remove mais da metade das características [p.~9--10].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“ROAR works by systematically removing features, indicated to be informative according to the XAI methods, one a time from the CNN and obtaining classifier accuracies without that features. If after their feature-removal the classifier cannot obtain a high categorization accuracy, then the feature identified by XAI methods is indeed informative, reliable and necessary for decoding.”\end{origquote}
+\begin{tradquote}“O ROAR remove sistematicamente as características que os métodos de XAI indicam como informativas e obtém a acurácia do classificador sem elas. Se, após a remoção, o classificador não consegue alta acurácia, a característica identificada pelo método é de fato informativa, confiável e necessária para a decodificação.”\end{tradquote}
+\explab{Explicação}
+O ROAR evita o problema da perturbação fora da distribuição ao retreinar o modelo, mas passa a avaliar o que é informativo \textbf{para a tarefa}, e não o que o modelo original usou. Por isso, e pelo custo de retreinar a ResNet34-1D várias vezes, o ROAR ficou fora das métricas do TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §2.8.1 Referências do ROAR}
+\begin{origquote}“As a gold-standard, we expect that the feature removal associated with the more reliable XAI saliency-maps reduces more accuracy than the random baselines. We also expect that the accuracy detriment will be more plausible for higher r values in comparison with lower r values, thus assuring that those removed features are truly relevant.”\end{origquote}
+\begin{tradquote}“Como padrão-ouro, espera-se que a remoção guiada pelos mapas mais confiáveis reduza mais a acurácia do que as referências aleatórias. Espera-se também que a queda de acurácia seja mais plausível para valores maiores de r do que para valores menores, garantindo que as características removidas sejam de fato relevantes.”\end{tradquote}
+\explab{Explicação}
+As referências do artigo incluem fatias contíguas no tempo dentro de um canal, o que respeita a estrutura do sinal, ideia próxima das regiões por derivação do TCC. A exigência de superar referências aleatórias é a mesma que o TCC aplica com o piso.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} §4 Discussão}
+\begin{origquote}“However, this effect is only observed when less than 50\% of the relevant features are removed [...]. While the best performing method differs based on the exact setting, we recommend using the SmoothGrad-Squared approach, since it is the easiest to implement, before using more complicated methods.”\end{origquote}
+\begin{tradquote}“Porém, esse efeito só é observado quando se remove menos de 50\% das características relevantes [...]. Embora o melhor método mude conforme a configuração exata, recomendamos usar o SmoothGrad ao quadrado, por ser o mais fácil de implementar, antes de métodos mais complicados.”\end{tradquote}
+\explab{Explicação}
+O trecho mostra que o ``melhor método'' depende da configuração da avaliação (aqui, da taxa de remoção), e a conclusão do artigo (p.~10) fala em remover \textbf{mais} de 50\%, em tensão com este trecho. Para o TCC, é um exemplo de por que relatar os resultados por configuração e evitar uma ordenação única.
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo é relevante sobretudo por comparar explicações entre \textbf{grupos} (TD e TEA) e relacioná-las ao desempenho (da CNN e humano), o que lembra a comparação por classe do TCC. Porém, a comparação é feita sobre mapas médios de grupo e por testes de hipótese, não sobre a qualidade das explicações por grupo, e não há relação entre qualidade da explicação e acurácia por grupo. Na avaliação, o ROAR mede a informatividade dos trechos para a tarefa, com retreino, enquanto o TCC mede fidelidade ao modelo treinado, sem retreino; o artigo também não usa SHAP. Como ressalva, os resultados do ROAR são fragmentados (significância em valores isolados de $r$) e a recomendação final muda entre discussão e conclusão, o que pede cautela ao citar o artigo como evidência a favor de um método.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Em EEG, Mayor-Torres et al.\ (2023) avaliaram mapas de relevância por remoção e retreino (ROAR), comparando-os com máscaras aleatórias e com fatias contíguas de cada canal, e observaram que o método mais confiável muda conforme a fração de características removida.''
+\end{itemize}
+
+\end{document}

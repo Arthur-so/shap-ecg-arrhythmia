@@ -1,0 +1,179 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: estudo diagnóstico de explicações em texto}} \\[0.35em]
+    {\large ATANASOVA, P.; SIMONSEN, J. G.; LIOMA, C.; AUGENSTEIN, I. \textit{A Diagnostic Study of Explainability Techniques for Text Classification}. Conference on Empirical Methods in Natural Language Processing (EMNLP), 2020} \\[0.3em]
+    \textbf{Tema:} propriedades diagnósticas de métodos de explicação comparadas entre arquiteturas, tarefas e desempenho \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2009.13295} \\[0.2em]
+    \textbf{Leitura:} íntegra do texto principal e do Apêndice A.1 (arXiv v1, pp. 1--14); tabelas detalhadas do Apêndice A.3 consultadas de forma parcial \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v1, 19 páginas com apêndices). As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+  \item \textbf{Objetivo:} propor uma lista de propriedades diagnósticas, com medidas automáticas, para comparar métodos de explicação, e relacionar o desempenho do modelo à concordância das explicações com anotações humanas.
+  \item \textbf{Dados e modelos:} três tarefas de classificação de texto com palavras salientes anotadas por humanos (e-SNLI, Movie Reviews/IMDB, Tweet Sentiment Extraction); CNN, LSTM e Transformer (BERT), cada um treinado com 5 sementes, mais 5 versões com pesos aleatórios.
+  \item \textbf{Métodos de explicação:} Saliency (gradiente), InputXGradient, Guided Backpropagation (com agregação por média $\mu$ ou norma $\ell_2$), Occlusion, Shapley Value Sampling e LIME.
+  \item \textbf{Avaliação:} concordância com humanos, indicação de confiança, fidelidade, consistência entre modelos e consistência entre instâncias; mapa aleatório como referência.
+  \item \textbf{Conclusão:} os métodos baseados em gradiente com agregação $\ell_2$ são os melhores na maioria das propriedades, arquiteturas e tarefas.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Os autores observam que os estudos de avaliação anteriores costumavam variar só um ou dois destes eixos: grupo de métodos, tarefa e arquitetura. O artigo varia os três e reúne cinco propriedades diagnósticas, cada uma com uma medida. Todas as medidas são normalizadas para $[0, 1]$ e comparadas a um mapa de saliência aleatório. Também é registrado o custo computacional (FLOPs).
+
+\section{Como avalia as explicações}
+\begin{itemize}
+  \item \textbf{Concordância com humanos (HA):} precisão média (MAP) da saliência em relação às palavras anotadas; mede plausibilidade, não fidelidade.
+  \item \textbf{Indicação de confiança (CI):} uma regressão logística prevê a confiança do modelo a partir da distância entre os mapas da classe predita e das outras classes; menor erro absoluto médio (MAE) é melhor.
+  \item \textbf{Fidelidade (F):} as palavras são mascaradas em ordem decrescente de saliência (0, 10, \ldots, 100\%) e calcula-se a área sob a curva de queda de desempenho (AUC-TP).
+  \item \textbf{Consistência de raciocínio (RC):} correlação de Spearman entre a distância das ativações de dois modelos (mesma arquitetura, sementes diferentes ou pesos aleatórios) e a distância das suas explicações para a mesma instância.
+  \item \textbf{Consistência no conjunto de dados (DC):} o mesmo, entre pares de instâncias num único modelo (2.000 pares parecidos e 2.000 sorteados).
+\end{itemize}
+
+\section{Resultados e conclusões}
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+F1 macro no teste (média de 5 sementes) & Transformer & CNN & LSTM \\
+\midrule
+e-SNLI & 0,892 & 0,768 & 0,793 \\
+Movie Reviews & 0,856 & 0,773 & 0,567 \\
+TSE & 0,781 & 0,730 & 0,727 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Os métodos de gradiente ficam em primeiro ou segundo lugar em todas as combinações; a agregação por média ($\mu$) dá alguns dos piores resultados, e Occlusion é o pior no conjunto. LIME e Shapley Value Sampling só se destacam na indicação de confiança e custam muito mais. Quanto ao desempenho: a concordância com humanos do Transformer (o modelo de maior F1) é sempre maior que a da CNN e da LSTM, mas a CNN supera a LSTM na concordância com humanos no e-SNLI, onde a LSTM tem F1 maior; e a CNN, de menor F1 que o Transformer, tem a maior fidelidade em 7 de 9 métodos. Fidelidade alta não implica concordância alta com humanos, e vice-versa.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 3} §3 Concordância com humanos}
+\begin{origquote}“With this diagnostic property, we can also compare how the type and the performance of a model and/or dataset affect the agreement with human rationales when observing one type of explainability technique.”\end{origquote}
+\begin{tradquote}“Com esta propriedade diagnóstica, também podemos comparar como o tipo e o desempenho de um modelo e/ou conjunto de dados afetam a concordância com as justificativas humanas ao observar um tipo de método de explicação.”\end{tradquote}
+\explab{Explicação}
+Fixar o método e variar o desempenho é o desenho do TCC (GradientSHAP fixo, F1 variando entre classes). A diferença é que aqui a propriedade é a plausibilidade (concordância com humanos), que o TCC não mede.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7--9} §5.1 Concordância com humanos}
+\begin{origquote}“While for the CNN and the LSTM models, we observe similar trends, their MAP scores are always lower than for the Transformer, which indicates a correlation between the performance of a model and its agreement with human rationales. Furthermore, the MAP scores of the CNN model are higher than for the LSTM model, even though the latter achieves higher F1 scores on the e-SNLI dataset.”\end{origquote}
+\begin{tradquote}“Embora para a CNN e a LSTM se observem tendências semelhantes, os seus valores de MAP são sempre menores que os do Transformer, o que indica uma correlação entre o desempenho de um modelo e a sua concordância com as justificativas humanas. Além disso, os valores de MAP da CNN são maiores que os da LSTM, embora esta última alcance F1 maior no e-SNLI.”\end{tradquote}
+\explab{Explicação}
+Exemplo de comparação \textbf{descritiva} entre qualidade da explicação e desempenho, feita com poucos pontos (três modelos), em que a ordem do F1 e a da métrica concordam no extremo e se invertem no meio. É o tipo de leitura que o TCC faz com as nove classes: comparar posições, sem impor uma correlação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} §5.1 Fidelidade}
+\begin{origquote}“Finally, models with high Faithfulness scores do not necessarily have high Human agreement scores and vice versa. This suggests that these two are indeed separate diagnostic properties, and the first should not be confused with estimating the faithfulness of the techniques.”\end{origquote}
+\begin{tradquote}“Por fim, modelos com valores altos de Fidelidade não têm necessariamente valores altos de concordância com humanos, e vice-versa. Isso sugere que essas duas são de fato propriedades diagnósticas distintas, e a primeira não deve ser confundida com a estimativa da fidelidade dos métodos.”\end{tradquote}
+\explab{Explicação}
+Cada propriedade responde a uma pergunta; uma não substitui a outra. Apoia a leitura separada das métricas do TCC (fidelidade, robustez, randomização, complexidade) e lembra que uma explicação clinicamente plausível (que destaca o QRS num bloqueio de ramo) não prova que ela seja fiel ao modelo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} §5.1 Resultados gerais}
+\begin{origquote}“We suggest that the performance of the explainability tools can be worse for large complex architectures with a huge number of neural nodes, like the Transformer one, and perform better for small, linear architectures like the CNN.”\end{origquote}
+\begin{tradquote}“Sugerimos que o desempenho das ferramentas de explicação pode ser pior para arquiteturas grandes e complexas, com um número enorme de neurônios, como o Transformer, e melhor para arquiteturas pequenas e lineares, como a CNN.”\end{tradquote}
+\explab{Explicação}
+As propriedades da explicação dependem do modelo, não só do método; o modelo de maior F1 não foi o de explicações mais fiéis. Converge com Krishna et al.\ (2024) e Karimi et al.\ (2023).
+\end{citacard}
+
+\section{Relação com o TCC}
+O artigo é um dos poucos desta seção que compara explicitamente a qualidade da explicação com o desempenho do modelo, e o faz de forma descritiva, com poucos pontos e comentando as inversões. O resultado é misto: na concordância com humanos, o modelo de maior F1 vence; na fidelidade, o modelo mais simples (de F1 intermediário) vence. Para o TCC, isso significa que é plausível encontrar classes em que a ordem do F1 e a ordem de uma métrica coincidem e outras em que se invertem, e que cada métrica pode contar uma história diferente. O desenho também se parece com o do TCC em outro ponto: modelos com pesos aleatórios entram como referência na consistência de raciocínio, como o modelo aleatório do eMPRT.
+
+As diferenças: o artigo compara arquiteturas (três modelos) dentro de cada tarefa, e não classes de um mesmo modelo; tem anotação humana, que o TCC não tem (não há marcação, por cardiologistas, das regiões do ECG que justificam cada diagnóstico no CPSC2018); e usa mascaramento de palavras, que no texto é natural, enquanto no ECG a retirada de uma região cria um sinal fora da distribuição.
+
+\section{Como citar no TCC}
+\begin{itemize}
+  \item Atanasova et al.\ (2020) compararam propriedades de explicações entre modelos de desempenhos diferentes e observaram que o modelo de maior F1 não foi o de explicações mais fiéis, e que fidelidade e concordância com anotações humanas são propriedades distintas; a comparação entre métricas de explicação e F1 por classe feita neste trabalho segue a mesma leitura descritiva.
+\end{itemize}
+
+\end{document}

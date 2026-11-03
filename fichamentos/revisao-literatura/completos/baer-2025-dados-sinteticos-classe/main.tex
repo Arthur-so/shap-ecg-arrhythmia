@@ -1,0 +1,347 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Por que surgem efeitos dependentes da classe (dados sintéticos)}} \\[0.35em]
+    {\large BAER, G.; GRAU, I.; ZHANG, C.; VAN GORP, P. \textit{Why Do Class-Dependent Evaluation Effects Occur with Time Series Feature Attributions? A Synthetic Data Investigation}. Preprint arXiv:2506.11790, 2025} \\[0.3em]
+    \textbf{Tema:} avaliação de atribuições em séries temporais; perturbação contra verdade conhecida; diferenças entre classes \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2506.11790} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 24/7/2025, 16 páginas com apêndice) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v2, 16 páginas; a numeração impressa coincide com a do PDF). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica o trabalho; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} relaciona o artigo com o TCC. Este artigo é a continuação de Baer et al.\ (2025, xAI), fichado em \texttt{baer-2025-efeitos-dependentes-classe}; os termos DS, MoRF e LeRF são definidos aqui de novo para que a leitura seja independente.
+
+\begin{infobox}[note]{Por que este artigo}
+O artigo anterior do grupo mostrou que métricas de perturbação variam entre classes e sugeriu que a causa seria o modo como o modelo reage ao valor de perturbação. Este artigo testa o fenômeno em dados \textbf{sintéticos}, em que se sabe onde está a evidência de cada classe, e mostra que diferenças simples de \textbf{amplitude} ou de \textbf{duração} do padrão entre as classes bastam para produzir os efeitos. Mostra também que a métrica de perturbação e a métrica de verdade conhecida discordam sobre \textbf{qual} classe tem as melhores explicações. No ECG, as classes do TCC diferem justamente em amplitude e duração (QRS largo nos bloqueios de ramo, desvios pequenos do segmento ST, intervalo PR longo no bloqueio AV de 1.º grau). O artigo é, por isso, a referência mais direta para a ressalva de que a ordem das classes numa métrica de fidelidade pode refletir essas propriedades do sinal, e não a qualidade da explicação.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema que o artigo ataca}
+Quando não há “verdade” sobre quais pontos importam, a qualidade de uma atribuição é estimada por \textbf{perturbação}: retiram-se os pontos que a atribuição aponta como importantes e verifica-se se a predição cai. O artigo anterior encontrou \textbf{efeitos dependentes da classe}: a mesma métrica dá valores muito diferentes para classes diferentes do mesmo conjunto. Os autores formulam o dilema assim: se essas diferenças refletem diferenças reais de qualidade entre classes, a perturbação está medindo certo; se a própria perturbação introduz vieses, as conclusões sobre métodos de explicação podem estar erradas. A pergunta do artigo é: \textbf{em que condições esses efeitos surgem?}
+
+\section{Ideia central}
+\begin{infobox}[note]{Em uma frase}
+Construir problemas binários sintéticos em que se sabe exatamente onde está o padrão que separa as classes, variar só a amplitude ou só a duração desse padrão entre as classes, e comparar uma métrica de perturbação (DS) com uma métrica de verdade conhecida (AUC-PR$'$), classe a classe.
+\end{infobox}
+Se as duas métricas apontassem a mesma classe como a mais bem explicada, a perturbação seria um bom substituto da verdade. O resultado é o contrário: as duas variam entre classes, mas em direções opostas na maioria dos casos.
+
+\section{Dados e modelos}
+\textbf{Geração das séries.} Cada série é a soma de um ruído de fundo e de um padrão localizado: $x = n + f$, com $n \sim \mathcal{N}(0,1)$ e $f$ diferente de zero só numa janela contígua de comprimento $L$, colocada em posição sorteada (para que o modelo não aprenda a posição). Séries univariadas de 150 pontos; 1\,000 exemplos de treino, 300 de validação e 300 de teste, com classes balanceadas; todas as séries são padronizadas antes do treino.
+
+\textbf{Quatro tipos de padrão} (Tabela~2 do artigo): degrau de nível ($f = A$), pulso gaussiano ($\sigma = L/6$), senoide (período 10) e tendência linear crescente.
+
+\textbf{Dois contrastes entre classes} (Tabela~3 do artigo):
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lllX}
+\toprule
+\textbf{Contraste} & \textbf{Classe 0} & \textbf{Classe 1} & \textbf{O que testa} \\
+\midrule
+Amplitude & $A = 1$ & $A = 2$ & Efeito da intensidade do padrão ($L = 60$ nas duas classes) \\
+Duração   & $L = 30$ & $L = 60$ & Efeito da extensão temporal (“prevalência”) do padrão ($A = 2$ nas duas) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Quatro padrões $\times$ dois contrastes dão oito conjuntos. \textbf{Modelos:} ResNet e InceptionTime (AdamW, \textit{cosine annealing}, até 100 épocas, paciência 10). Acurácia e F1 ponderado acima de 0,9 em todos os conjuntos, exceto InceptionTime no Amplitude-Pulso (F1 0,70; acurácia 0,723).
+
+\section{Métodos de explicação}
+Três métodos: \textbf{Gradients} (GR), \textbf{Integrated Gradients} (IG) e \textbf{Feature Occlusion} (FO). IG e FO foram escolhidos por terem mostrado, no artigo anterior, boa qualidade e efeitos de classe fortes; GR entra como referência simples. As atribuições são calculadas para os 300 exemplos de teste e explicam a \textbf{classe predita}. O GradientSHAP, avaliado no artigo anterior, não está neste.
+
+\section{Métricas de avaliação e adaptação a séries temporais}
+\subsection{Métrica de perturbação: degradation score (DS)}
+Perturbam-se os pontos em duas ordens: \textbf{MoRF} (mais relevantes primeiro) e \textbf{LeRF} (menos relevantes primeiro). A cada passo registra-se a probabilidade predita, formando duas curvas, e
+\[
+DS = \frac{1}{m}\sum_{i=1}^{m}\big(PC^{\text{LeRF}}_i - PC^{\text{MoRF}}_i\big) \in [-1,1],
+\]
+positivo quando retirar os pontos “importantes” derruba mais a predição do que retirar os “pouco importantes”.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Aspecto} & \textbf{Escolha no artigo} \\
+\midrule
+Valores de perturbação & Zero (que, com séries padronizadas, equivale à média) e ruído $\mathcal{N}(0,1)$, da mesma distribuição do fundo \\
+Granularidade e passos & Um ponto por vez, em ordem de atribuição \\
+Quantidade perturbada & Exatamente $L$ pontos por exemplo, o tamanho da janela verdadeira: no contraste de duração, 30 pontos na classe 0 e 60 na classe 1 \\
+Repetições & Não informadas \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Métrica de verdade conhecida: AUC-PR normalizada}
+A avaliação é tratada como \textbf{recuperação de informação}: a máscara $l_i \in \{0,1\}$ marca os pontos da janela verdadeira. Limiarizando a atribuição em todos os seus valores, obtêm-se precisão (fração dos pontos apontados que estão na janela) e revocação (fração da janela que foi apontada), e a área sob a curva precisão--revocação (AUC-PR). Como a AUC-PR de um ordenamento aleatório é a prevalência $P/N$ (fração de pontos na janela), e a prevalência muda com $L$, os autores usam
+\[
+\text{AUC-PR}' = \frac{\text{AUC-PR} - \text{Prevalência}}{1 - \text{Prevalência}},
+\]
+que vale 0 para o acaso, 1 para a recuperação perfeita e é negativa quando pior que o acaso.
+
+\subsection{Comparação entre as duas}
+Correlação de Spearman entre AUC-PR$'$ e DS, por conjunto e por classe. Segundo a legenda da Figura~4, as correlações são “calculadas por observação e depois promediadas”; o texto não detalha sobre quais pares de valores cada correlação é calculada.
+
+\section{Resultados principais}
+A Figura~3 do artigo mostra as médias por conjunto e classe, agregadas sobre métodos de explicação e arquiteturas (e, no DS, sobre as duas perturbações). A tabela abaixo transcreve os rótulos das barras; a associação de cada barra à classe foi conferida com as Tabelas~5 e 6 do apêndice (por exemplo, AUC-PR$'$ do Amplitude-Senoide: média dos seis valores da classe 0 = 0,22 e da classe 1 = 0,53).
+\begin{center}\small
+\begin{tabular}{lrrlrrl}
+\toprule
+& \multicolumn{3}{c}{\textbf{AUC-PR$'$ (verdade)}} & \multicolumn{3}{c}{\textbf{DS (perturbação)}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+\textbf{Conjunto} & \textbf{Cl.\ 0} & \textbf{Cl.\ 1} & \textbf{Melhor} & \textbf{Cl.\ 0} & \textbf{Cl.\ 1} & \textbf{Melhor} \\
+\midrule
+Amplitude-Nível     & 0,19 & 0,24 & 1 & 0,06 & 0,08 & 1 \\
+Amplitude-Pulso     & 0,31 & 0,46 & 1 & 0,40 & $-0{,}03$ & 0 \\
+Amplitude-Senoide   & 0,22 & 0,53 & 1 & 0,43 & 0,25 & 0 \\
+Amplitude-Tendência & 0,21 & 0,32 & 1 & 0,29 & 0,19 & 0 \\
+Duração-Nível       & 0,09 & 0,00 & 0 & 0,04 & $-0{,}01$ & 0 \\
+Duração-Pulso       & 0,22 & 0,47 & 1 & 0,15 & 0,24 & 1 \\
+Duração-Senoide     & 0,29 & 0,42 & 1 & 0,41 & 0,16 & 0 \\
+Duração-Tendência   & 0,11 & 0,16 & 1 & 0,16 & 0,03 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Verdade conhecida:} a classe 1 (maior amplitude ou janela mais longa) é mais bem recuperada em 7 dos 8 conjuntos; a exceção é o Duração-Nível. No Amplitude-Senoide e no Duração-Pulso, a AUC-PR$'$ da classe 1 é mais que o dobro da classe 0.
+\item \textbf{Perturbação:} o DS favorece a classe 0 em 6 dos 8 conjuntos. As duas métricas só concordam nos dois conjuntos de degrau de nível (Amplitude-Nível e Duração-Nível), que têm valores baixos nas duas.
+\item \textbf{Correlação entre as métricas} (Figura~4): de $-0{,}18$ a $0{,}291$, com sinais que mudam entre as classes do mesmo conjunto. Exemplos: Amplitude-Senoide, $-0{,}180$ na classe 0 e $0{,}112$ na classe 1; Duração-Senoide, $-0{,}044$ e $0{,}291$; Duração-Nível, $0{,}270$ e $-0{,}053$.
+\item \textbf{Relação inversa:} os conjuntos em que uma classe tem o melhor desempenho são também os de maior desacordo entre as duas métricas.
+\end{itemize}
+
+\section{Conclusões e limitações declaradas}
+\begin{itemize}
+\item Efeitos dependentes da classe surgem mesmo em tarefas muito simples, com um único padrão localizado, bastando diferenças de amplitude ou de duração entre as classes.
+\item Os efeitos aparecem nas duas métricas; os autores leem isso como sinal de que os métodos de atribuição de fato funcionam de modo diferente entre classes, e não apenas como artefato de medida.
+\item A métrica de perturbação e a de verdade conhecida discordam com frequência sobre qual classe é mais bem explicada; a sensibilidade do modelo à perturbação não é um bom substituto da localização correta do padrão.
+\item Limitações: séries univariadas simples, um padrão por série, duas arquiteturas e três métodos gerais; a métrica de verdade supõe que uma boa atribuição cubra toda a janela, embora o modelo possa usar legitimamente só pontos de mudança (como as bordas de um degrau).
+\end{itemize}
+\begin{infobox}[warn]{Leitura crítica}
+\begin{itemize}
+\item \textbf{Tensão com o artigo anterior.} O primeiro artigo atribuía os efeitos a vieses do classificador. Aqui, os autores argumentam que, como todos os modelos têm acurácia alta, as diferenças vêm da metodologia de atribuição ou de perturbação, e não de viés do classificador (p.~8). Acurácia alta, porém, não exclui que o modelo reaja de forma assimétrica a um valor de perturbação; as duas leituras não são incompatíveis, mas o mecanismo continua sem teste direto.
+\item \textbf{Quantidade perturbada diferente por classe.} No contraste de duração, perturbam-se 30 pontos na classe 0 e 60 na classe 1. Isso torna o DS das duas classes menos comparável, e pode contribuir para a diferença observada.
+\item \textbf{Agregação.} A Figura~3 promedia métodos, arquiteturas e perturbações. As Tabelas~5 e 6 mostram que, em vários conjuntos, o sinal da diferença entre classes muda com o método ou com a arquitetura (por exemplo, no Amplitude-Senoide com InceptionTime, o DS favorece a classe 1 em 5 das 6 combinações de método e perturbação, como GR com ruído: 0,230 na classe 0 e 0,458 na classe 1, ao contrário da média agregada).
+\end{itemize}
+\end{infobox}
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+Introdução (p.~1--3), arcabouço de avaliação (§2, p.~3--7: DS, geração dos dados, AUC-PR$'$), desenho experimental (§3, p.~7--9), resultados (§4, p.~9--11), conclusão (§5, p.~11--12) e apêndice com as tabelas completas (p.~13--14).
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“Our experiments demonstrate that class-dependent effects emerge with both evaluation approaches, even in simple scenarios with temporally localized features, triggered by basic variations in feature amplitude or temporal extent between classes.”\end{origquote}
+\begin{tradquote}“Nossos experimentos demonstram que efeitos dependentes da classe surgem nas duas abordagens de avaliação, mesmo em cenários simples com características localizadas no tempo, desencadeados por variações básicas de amplitude ou de extensão temporal da característica entre as classes.”\end{tradquote}
+\explab{Explicação}
+Amplitude e duração são exatamente o que distingue muitas classes do ECG. No TCC, BRE e BRD alongam o QRS, CVP produz complexos largos e amplos, STD e STE alteram pouco a amplitude do segmento ST, e IAVB alonga o intervalo PR. Diferenças desse tipo podem, por si, produzir diferenças por classe nas métricas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“Most critically, we find that perturbation-based and ground truth metrics frequently yield contradictory assessments of attribution quality across classes, with weak correlations between evaluation approaches.”\end{origquote}
+\begin{tradquote}“O mais importante: verificamos que as métricas baseadas em perturbação e as de verdade conhecida frequentemente produzem avaliações contraditórias da qualidade da atribuição entre as classes, com correlações fracas entre as abordagens.”\end{tradquote}
+\explab{Explicação}
+É o resultado que mais pesa para o TCC: a ordem das classes numa métrica de perturbação pode ser o \textbf{inverso} da ordem de qualidade real de localização. O TCC não tem verdade conhecida para conferir.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §1 Introdução}
+\begin{origquote}“If class-dependent differences reflect genuine variations in attribution quality, where methods truly perform better for certain classes, then perturbation analysis correctly captures these differences. However, if perturbation analysis itself introduces systematic biases regardless of attribution quality, researchers may draw misleading conclusions about method performance.”\end{origquote}
+\begin{tradquote}“Se as diferenças dependentes da classe refletem variações genuínas na qualidade da atribuição, em que os métodos realmente funcionam melhor para certas classes, então a análise por perturbação capta corretamente essas diferenças. Porém, se a própria análise por perturbação introduz vieses sistemáticos, independentemente da qualidade da atribuição, os pesquisadores podem tirar conclusões enganosas sobre o desempenho dos métodos.”\end{tradquote}
+\explab{Explicação}
+É o mesmo dilema da pergunta do TCC. Se a fidelidade de SNR é menor que a de BRD, isso pode significar explicações piores para SNR ou apenas que retirar regiões de um ECG de SNR afeta o modelo de outro modo. O artigo mostra que, sem verdade conhecida, não é possível separar as duas leituras só com a métrica de perturbação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §1 Contribuições}
+\begin{origquote}“Second, we show that class-dependent effects occur in both ground truth-based and perturbation-based evaluation metrics, indicating that attribution methods genuinely perform differently across classes rather than reflecting measurement artifacts.”\end{origquote}
+\begin{tradquote}“Segundo, mostramos que os efeitos dependentes da classe ocorrem tanto nas métricas baseadas em verdade conhecida quanto nas baseadas em perturbação, indicando que os métodos de atribuição de fato funcionam de modo diferente entre as classes, e não que isso reflita artefatos de medida.”\end{tradquote}
+\explab{Explicação}
+Nuance importante: o artigo \textbf{não} diz que as diferenças entre classes são sempre artefato. A qualidade real da atribuição também varia entre classes (a de maior amplitude ou duração é mais bem localizada). O que é enganoso é a \textbf{direção} indicada pela perturbação. Para o TCC, é plausível que a qualidade das explicações varie entre classes; o que não se pode é ler essa variação diretamente da Faithfulness Correlation.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §2 Arcabouço}
+\begin{origquote}“Although these metrics measure distinct properties, we would expect them to agree: attributions that correctly identify discriminative features should also prove critical when perturbed.”\end{origquote}
+\begin{tradquote}“Embora essas métricas meçam propriedades distintas, esperaríamos que concordassem: atribuições que identificam corretamente as características discriminativas deveriam também se mostrar críticas quando perturbadas.”\end{tradquote}
+\explab{Explicação}
+Perturbação mede se o \textbf{modelo depende} dos pontos apontados; verdade conhecida mede se os pontos apontados são \textbf{onde está o padrão}. São perguntas diferentes, e o artigo mostra que as respostas podem divergir. No TCC, a fidelidade responde à primeira pergunta; nenhuma métrica responde à segunda, porque a seleção de métricas deixou a localização de fora.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5--6} §2.2 Geração dos dados}
+\begin{origquote}“Feature length contrast varies temporal extent between classes, testing whether feature prevalence affects evaluation metrics. Amplitude contrast varies signal magnitude between classes, examining whether signal strength differences drive evaluation disparities. Feature locations are randomized across observations to prevent positional classification shortcuts.”\end{origquote}
+\begin{tradquote}“O contraste de duração varia a extensão temporal entre as classes, testando se a prevalência da característica afeta as métricas de avaliação. O contraste de amplitude varia a magnitude do sinal entre as classes, examinando se diferenças de intensidade causam disparidades na avaliação. As posições das características são sorteadas entre as observações para evitar atalhos posicionais de classificação.”\end{tradquote}
+\explab{Explicação}
+O desenho isola um fator por vez. No ECG, não há como isolar: as classes diferem ao mesmo tempo em amplitude, duração, posição no batimento e número de derivações afetadas, e, além disso, a posição das ondas é parcialmente fixa (o QRS sempre depois da onda P).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} §3 Desenho experimental}
+\begin{origquote}“These performance levels ensure that observed class-dependent evaluation differences stem from attribution or perturbation methodology rather than classifier bias toward specific classes.”\end{origquote}
+\begin{tradquote}“Esses níveis de desempenho garantem que as diferenças de avaliação dependentes da classe observadas decorram da metodologia de atribuição ou de perturbação, e não de um viés do classificador em favor de classes específicas.”\end{tradquote}
+\explab{Explicação}
+O argumento é que, com acurácia acima de 0,9 nas duas classes, a diferença de métrica não vem de o modelo errar mais numa delas. No TCC, a situação é a oposta: o F1 varia entre classes (de 0,596 em STE a 0,931 em AF), e as métricas são calculadas só nas predições corretas. Assim, no TCC, a qualidade do modelo por classe e as propriedades do sinal de cada classe se misturam, o que reforça a escolha de uma comparação descritiva com o F1.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} §3 Perturbação}
+\begin{origquote}“To maintain fair comparisons across datasets with varying feature lengths, we perturb exactly L timesteps for each sample, where L corresponds to the true feature window size. For instance, in length-contrast datasets, we perturb 30 timesteps for class 0 samples and 60 timesteps for class 1 samples.”\end{origquote}
+\begin{tradquote}“Para manter comparações justas entre conjuntos com comprimentos de característica diferentes, perturbamos exatamente L pontos em cada exemplo, em que L é o tamanho da janela verdadeira. Por exemplo, nos conjuntos com contraste de duração, perturbamos 30 pontos nos exemplos da classe 0 e 60 nos da classe 1.”\end{tradquote}
+\explab{Explicação}
+A escolha adapta a perturbação à verdade de cada classe, mas faz com que as duas classes sejam avaliadas com quantidades de perturbação diferentes (ver a Leitura crítica da Parte I). No TCC, a Faithfulness Correlation retira o mesmo número de regiões (4, 9 ou 18) em todas as classes, o que evita esse problema, mas não o de as classes terem evidência em regiões de tamanhos diferentes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} §4 Resultados}
+\begin{origquote}“While ground truth evaluation favors class 1 attributions in seven of eight datasets, perturbation analysis indicates better attribution quality for class 0 observations in six of eight datasets.”\end{origquote}
+\begin{tradquote}“Enquanto a avaliação com verdade conhecida favorece as atribuições da classe 1 em sete de oito conjuntos, a análise por perturbação indica melhor qualidade de atribuição para as observações da classe 0 em seis de oito conjuntos.”\end{tradquote}
+\explab{Explicação}
+É a inversão sistemática da tabela da Parte I. A classe com o padrão mais forte ou mais longo é mais bem localizada, mas aparece como “pior” no DS. Uma explicação possível (não testada no artigo): quando o padrão é longo ou forte, retirar uma parte dele não basta para derrubar a predição, porque o restante ainda sustenta a classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} §4 Resultados}
+\begin{origquote}“This pattern likely reflects how attribution methods focus on temporal change points rather than extended feature windows when detecting level shifts.”\end{origquote}
+\begin{tradquote}“Esse padrão provavelmente reflete o fato de que os métodos de atribuição se concentram nos pontos de mudança, e não em toda a janela da característica, ao detectar degraus de nível.”\end{tradquote}
+\explab{Explicação}
+No degrau, o modelo pode decidir olhando só as bordas; a atribuição concentrada nas bordas é então correta para o modelo, mas “errada” para a máscara da janela inteira. No ECG, situações análogas são plausíveis: o modelo pode reconhecer um QRS largo pelas bordas do complexo, ou a fibrilação atrial pela irregularidade entre batimentos, e não pela área inteira de uma região.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} §4 Síntese}
+\begin{origquote}“This weak correspondence demonstrates that perturbation analysis does not reliably identify whether attributions correctly locate class-discriminating regions, indicating that the two evaluation frameworks measure different aspects of attribution behavior.”\end{origquote}
+\begin{tradquote}“Essa correspondência fraca demonstra que a análise por perturbação não identifica de forma confiável se as atribuições localizam corretamente as regiões que discriminam as classes, indicando que as duas abordagens de avaliação medem aspectos diferentes do comportamento das atribuições.”\end{tradquote}
+\explab{Explicação}
+Correlações entre $-0{,}18$ e $0{,}29$ mostram que um valor alto de DS num exemplo pouco diz sobre a localização. Para o TCC, isso limita o que a fidelidade pode afirmar: ela indica dependência do modelo, não acerto clínico da região destacada.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 12} §5 Conclusão}
+\begin{origquote}“This systematic disagreement creates a conceptual challenge: in the absence of ground truth, researchers rely on perturbation-based metrics knowing they measure model sensitivity, with the implicit assumption that this serves as a reasonable proxy for feature localization accuracy. Our findings challenge this assumption by demonstrating that model sensitivity and correct feature identification can diverge systematically.”\end{origquote}
+\begin{tradquote}“Esse desacordo sistemático cria um desafio conceitual: na ausência de verdade conhecida, os pesquisadores recorrem a métricas de perturbação sabendo que elas medem a sensibilidade do modelo, com a suposição implícita de que isso é um substituto razoável da precisão de localização das características. Nossos resultados contestam essa suposição, ao demonstrar que a sensibilidade do modelo e a identificação correta das características podem divergir sistematicamente.”\end{tradquote}
+\explab{Explicação}
+Frase-chave para a discussão do TCC: a fidelidade mede o que o modelo usa; não garante que a região destacada seja a evidência “certa” da classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 12} §5 Limitações}
+\begin{origquote}“Our evaluation also assumes that good attributions should cover entire feature windows, yet models may legitimately focus on sparse temporal markers like change points or learn from subtle patterns beyond our designed features. When models identify features through different strategies than we expect, standard metrics may underestimate their actual attribution quality.”\end{origquote}
+\begin{tradquote}“Nossa avaliação também supõe que boas atribuições devam cobrir janelas inteiras, mas os modelos podem legitimamente se concentrar em marcadores temporais esparsos, como pontos de mudança, ou aprender padrões sutis além das características que desenhamos. Quando os modelos identificam as características por estratégias diferentes das esperadas, as métricas usuais podem subestimar a qualidade real da atribuição.”\end{tradquote}
+\explab{Explicação}
+Os autores reconhecem que a própria “verdade” tem limites. Para o TCC, isso vale também para uma eventual comparação com regiões clinicamente esperadas: um modelo pode usar marcadores legítimos que não coincidem com a região que o cardiologista destacaria.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{Mecanismo concreto para a ressalva.} O artigo dá dois fatores verificáveis (amplitude e duração do padrão) que bastam para criar diferenças de métrica entre classes. Na discussão do TCC, a ordem das classes na Faithfulness Correlation (BRD 0,75 no topo; SNR 0,45 na base, com $|S| = 9$) pode ser lida à luz desses fatores, sem afirmar que eles sejam a causa.
+\item \textbf{A qualidade pode, sim, variar entre classes.} Como as duas métricas do artigo mostram efeitos de classe, a hipótese de que a qualidade das explicações acompanha propriedades das classes não é absurda. O que o artigo contesta é a leitura direta dessa qualidade a partir da perturbação.
+\item \textbf{Apoio à combinação de famílias de métricas.} Como a perturbação sozinha pode inverter a ordem das classes, o TCC ganha ao comparar a ordem da fidelidade com a de métricas que não perturbam o ECG (Random Logit, eMPRT, complexidade, Consistency). Uma coincidência das pontas entre famílias (por exemplo, AF mais específica no Random Logit, mas apenas 6.ª na Faithfulness Correlation) é informativa justamente porque as métricas têm vieses diferentes.
+\item \textbf{Relação com o fator de amplitude do GradientSHAP.} O artigo mostra que a classe de maior amplitude é mais bem localizada. No TCC, o eMPRT mostrou que o mapa de um modelo de pesos sorteados se concentra no QRS, o trecho de maior amplitude. As duas observações apontam para o mesmo cuidado: a amplitude do sinal influencia tanto os mapas quanto as métricas.
+\end{enumerate}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Dados & Sintéticos, univariados, 150 pontos, um padrão por série, classes balanceadas & ECG real de 12 derivações, 9 classes, multirrótulo, classes desbalanceadas \\ \addlinespace
+Verdade sobre a evidência & Conhecida (máscara da janela) & Desconhecida; só conhecimento clínico das regiões típicas \\ \addlinespace
+Modelos & ResNet e InceptionTime, acurácia acima de 0,9 (uma exceção) & ResNet34-1D; F1 por classe de 0,596 a 0,931 \\ \addlinespace
+Métodos & GR, IG, FO & GradientSHAP \\ \addlinespace
+Métrica de perturbação & DS (MoRF contra LeRF), $L$ pontos, zero ou $\mathcal{N}(0,1)$ & Faithfulness Correlation e Estimate, 36 regiões, zero ou média do treino \\ \addlinespace
+Métrica de localização & AUC-PR$'$ & Nenhuma (excluída na seleção de métricas) \\ \addlinespace
+Relação entre métricas & Spearman entre AUC-PR$'$ e DS & Comparação descritiva de posições por classe; sem correlação com o F1 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item \textbf{Generalização.} Os resultados vêm de séries univariadas sintéticas com um único padrão; o ECG tem várias evidências por classe, distribuídas por derivações e partes do batimento. A transferência para o ECG é uma hipótese.
+\item \textbf{Direção não é transferível.} O artigo encontrou que a classe com padrão mais forte aparece pior no DS. Não se deve concluir que, no ECG, as classes de maior amplitude terão fidelidade menor: no TCC, BRD e BRE (QRS largo e amplo) estão entre as de maior Faithfulness Correlation. O que se transfere é a cautela, não o sentido do efeito.
+\item \textbf{O TCC não pode separar as leituras.} Sem verdade conhecida, não há como dizer se a baixa fidelidade de SNR é qualidade pior ou efeito da perturbação. A discussão deve apresentar as duas possibilidades.
+\item \textbf{Trabalho futuro natural:} ECGs sintéticos com evidência conhecida (por exemplo, alterando só a amplitude do segmento ST ou só a largura do QRS) permitiriam repetir o desenho do artigo no domínio do TCC.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “Em dados sintéticos com evidência conhecida, diferenças simples de amplitude ou de duração do padrão entre as classes bastam para produzir diferenças por classe nas métricas de avaliação de atribuições, e a métrica de perturbação chega a indicar a ordem inversa da obtida com a verdade conhecida (Baer et al., 2025).”
+\item “Como as métricas de perturbação medem a sensibilidade do modelo, e não a localização correta da evidência (Baer et al., 2025), as diferenças de fidelidade entre as classes do ECG são discutidas, neste trabalho, como compatíveis tanto com diferenças de qualidade quanto com propriedades do sinal de cada classe.”
+\end{itemize}
+
+\end{document}

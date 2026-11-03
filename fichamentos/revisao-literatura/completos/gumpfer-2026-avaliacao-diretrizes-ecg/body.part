@@ -1,0 +1,264 @@
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: avaliação guiada por diretrizes (Gumpfer et al.)}} \\[0.35em]
+    {\large GUMPFER, N.; GUCKERT, M.; SOSSALLA, S.; AẞMUS, B.; HANNIG, J. \textit{Beyond Local Inspection: Global, Guideline-Grounded Evaluation of Post-hoc XAI Methods for ECG Classification}. Preprint arXiv:2607.24035, 2026} \\[0.3em]
+    \textbf{Tema:} avaliação global de 13 métodos de atribuição em ECG contra regiões de diretrizes clínicas \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2607.24035} \\[0.2em]
+    \textbf{Leitura:} íntegra do texto principal (arXiv v1, 17 páginas); material suplementar (Métodos Suplementares, Tabelas S1--S3, Figuras S1--S2) não incluído no PDF do arXiv e não consultado \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv (v1, 17 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre; os números de referência bibliográfica que aparecem no meio das frases foram omitidos e a omissão está indicada com “[...]” quando corta texto. A \textbf{Parte I} explica o trabalho; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} relaciona o artigo ao TCC. Por ser um \textit{preprint}, os números podem mudar na versão publicada.
+
+\begin{infobox}[note]{Por que este artigo}
+É a avaliação mais direta, até agora, de um efeito que o TCC encontrou por outro caminho: métodos que multiplicam o gradiente pela entrada ou subtraem uma referência, \textbf{GradientSHAP incluído}, tendem a pôr a relevância nos trechos de maior amplitude do ECG (pico R, onda T), mesmo quando a evidência diagnóstica está num trecho de baixa amplitude (intervalo PR, segmento ST). Além disso, as regiões que o artigo usa como referência (PR, QRS, ST) são quase as mesmas regiões do batimento usadas no TCC (pré-QRS, QRS, ST-T), e as quatro doenças estudadas têm equivalentes entre as classes do CPSC2018 (IAVB, BRD, BRE, STD/STE). O resultado do GradientSHAP é dado \textbf{por doença}, o que permite uma comparação descritiva com o comportamento por classe no TCC.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema}
+Explicações de ECG costumam ser avaliadas olhando mapas de exames isolados. Um mapa local pode parecer plausível e, ainda assim, refletir um viés sistemático do método. Há uma suspeita antiga na literatura de que os métodos de gradiente destacam os componentes de maior amplitude do ECG; os autores argumentam que essa suspeita só pode ser confirmada ou descartada olhando \textbf{muitos} batimentos ao mesmo tempo e comparando com uma referência externa.
+
+\section{A ideia central}
+As diretrizes clínicas dizem \textbf{em que trecho do batimento} cada diagnóstico é feito: o intervalo PR no bloqueio AV, o segmento ST na isquemia, o QRS nos bloqueios de ramo. Essas regiões viram \textbf{máscaras de referência}. As explicações de muitos batimentos verdadeiro-positivos são alinhadas e somadas, e mede-se quanto da relevância positiva cai dentro da máscara. A pergunta é de \textbf{plausibilidade clínica}, não de fidelidade ao modelo: o modelo é mantido fixo e serve como \textit{pattern proxy}, de modo que diferenças entre métodos no mesmo modelo e nos mesmos exames são atribuídas aos métodos.
+
+\section{Dados e modelos}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} \\
+\midrule
+Base & PTB-XL 1.0.3 (21\,799 ECGs de 12 derivações, 10 s, 500 Hz); excluídos 426 registros (menores de 18 anos ou idade desconhecida) e 6 pelo limiar de confiança de 80\% dos rótulos \\
+Tarefas & 4 classificadores \textbf{binários}: bloqueio AV (AVB), isquemia miocárdica (ISCH), bloqueio de ramo direito (RBBB, completo + incompleto) e esquerdo (LBBB, completo + incompleto) \\
+Divisão & 30\% teste; do restante, 80\% treino e 20\% validação; estratificação por sexo e rótulo \\
+Pré-processamento & Passa-baixas de 40 Hz, \textit{notch} de 50 Hz e 0,05 Hz, correção de linha de base; recortes de 4 s (fator de subamostragem 5) \\
+Modelo & CNN para recortes curtos de 12 derivações (trabalho anterior dos autores), Adam, lr 0,001, pesos de classe \\
+Desempenho & AUROC 0,93--0,99; sensibilidade 0,89--0,98; especificidade 0,82--0,98 (Tabela S1, não consultada) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Métodos de explicação}
+Treze métodos baseados em gradiente, mais dois mapas de referência: Gradient, Gradient $\times$ Input, Gradient $\times$ SIGN, SmoothGrad, SmoothGrad $\times$ Input, SmoothGrad $\times$ SIGN, VarGrad, DeepSHAP, \textbf{GradSHAP} (GradientSHAP), Integrated Gradients, LRP-$\alpha\beta$, LRP-$\varepsilon$ ($\varepsilon = 0{,}5\cdot\sigma(x)$) e LRP-$\varepsilon$/SIGN. Referências: \textbf{Random} (ruído gaussiano padrão) e \textbf{Input} (o próprio sinal como mapa, $R = x$). As variantes \textbf{SIGN} (trabalho anterior dos autores) trocam o fator de entrada pelo seu sinal ($\pm 1$), descartando a amplitude. A configuração do GradSHAP (referência, número de amostras) está nos Métodos Suplementares, que não estão no PDF do arXiv; o texto principal não a informa.
+
+\section{Avaliação e adaptação ao ECG}
+\textbf{Pipeline global} (p.~11): (1) só predições \textbf{verdadeiro-positivas} do teste; (2) mapa local para cada uma; (3) extração de \textbf{dois batimentos} por registro, pelos picos R detectados na derivação I (NeuroKit2), reamostrados para \textbf{500 pontos}; (4) só a relevância \textbf{positiva} $R^+ = \max(R, 0)$, normalizada para $[0,1]$ por amostra, com valores abaixo de 0,05 descartados; (5) agregação sobre todos os batimentos.
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{p{3.1cm}X}
+\toprule
+\textbf{Medida} & \textbf{Definição e adaptação} \\
+\midrule
+Histogramas espectrais & Para cada posição do batimento (eixo $x$), a distribuição dos valores de relevância (eixo $y$), com a frequência em cor; por derivação e resumidos \\ \addlinespace
+SCC (correlação com a amplitude) & Spearman entre $|x_i|$ e $|R_i|$, em $5\times10^5$ pares sorteados por método e doença; erro-padrão abaixo de 0,005 \\ \addlinespace
+Cobertura (Cov) & $\text{Cov} = 100\cdot\sum_{b,l,t} M_t R^+_{b,l,t} \big/ \sum_{b,l,t} R^+_{b,l,t}$: fração da relevância positiva, somada em todos os batimentos $b$, derivações $l$ e instantes $t$, que cai na máscara $M_t$ \\ \addlinespace
+Cobertura normalizada (NCov) & $\text{NCov}_i = 100\cdot(\text{Cov}_i - \text{Cov}^{\text{rand}}_i)/(100 - \text{Cov}^{\text{rand}}_i)$: 0\% = acaso, 100\% = toda a relevância na máscara, negativo = pior que o acaso \\ \addlinespace
+Pior caso (NCov\textsubscript{min}) & Mínimo de NCov entre as quatro doenças; critério principal de ordenação \\ \addlinespace
+Robustez & IC de 95\% por \textit{bootstrap} (1\,000 reamostragens por registro); máscaras deslocadas em $k \in \{-20, -10, 0, +10, +20\}$ pontos \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\textbf{Máscaras} (p.~10): segmentos temporais fixos no batimento de 500 pontos, definidos por dois cardiologistas e conferidos contra batimentos medianos do teste: PR (início da onda P ao início do QRS) para AVB; ST (fim do QRS ao início da onda T) para ISCH; QRS para RBBB e LBBB. As máscaras só codificam o \textbf{tempo}: a mesma máscara vale para as 12 derivações, e as de RBBB e LBBB coincidem.
+
+\section{Resultados principais}
+Recorte da Tabela 1 (p.~4), ordenada no artigo por NCov\textsubscript{min}:
+\begin{center}\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrr}
+\toprule
+& \textbf{SCC} & \multicolumn{4}{c}{\textbf{NCov (\%)}} & & \\
+\cmidrule(lr){3-6}
+\textbf{Método} & \textbf{média} & \textbf{AVB} & \textbf{ISCH} & \textbf{RBBB} & \textbf{LBBB} & \textbf{Média} & \textbf{Mín.} \\
+\midrule
+LRP-$\varepsilon$/SIGN & 0,16 & 56,7 & 41,5 & 80,9 & 63,7 & 60,7 & 41,5 \\
+SmoothGrad $\times$ SIGN & 0,03 & 37,7 & 22,9 & 29,4 & 28,0 & 29,5 & 22,9 \\
+Gradient $\times$ SIGN & 0,08 & 47,7 & 22,8 & 60,4 & 50,5 & 45,4 & 22,8 \\
+Gradient $\times$ Input & 0,57 & 34,7 & 15,5 & 85,4 & 79,0 & 53,6 & 15,5 \\
+Random & 0,00 & 0,0 & 0,0 & 0,0 & 0,0 & 0,0 & 0,0 \\
+\textbf{GradSHAP} & \textbf{0,33} & \textbf{32,6} & $\mathbf{-5{,}5}$ & \textbf{80,9} & \textbf{75,8} & \textbf{45,9} & $\mathbf{-5{,}5}$ \\
+Gradient & 0,07 & 45,4 & $-8{,}6$ & 53,1 & 55,3 & 36,3 & $-8{,}6$ \\
+Integrated Gradients & 0,69 & $-9{,}0$ & $-14{,}6$ & 94,4 & 71,5 & 35,6 & $-14{,}6$ \\
+Input (sinal) & 1,00 & $-33{,}1$ & $-4{,}8$ & 42,3 & 21,5 & 6,5 & $-33{,}1$ \\
+DeepSHAP & 0,32 & 36,9 & $-37{,}7$ & 86,9 & 90,6 & 44,2 & $-37{,}7$ \\
+LRP-$\varepsilon$ & 0,67 & 24,9 & $-54{,}0$ & 95,6 & 91,0 & 39,4 & $-54{,}0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Cobertura bruta do GradSHAP (sem normalizar): AVB 55,5\%, ISCH 34,7\%, RBBB 87,0\%, LBBB 83,5\%; a do mapa aleatório: 34,0\%, 38,1\%, 31,9\% e 31,9\%. O SCC do GradSHAP por doença vai de 0,25 (AVB) a 0,38 (ISCH).
+
+\begin{itemize}
+\item Métodos com multiplicação pela entrada ou subtração de referência seguem a forma do batimento mediano nas quatro doenças; as variantes SIGN deslocam a relevância para a região de cada doença.
+\item A pior doença é a isquemia para 12 dos 13 métodos (exceção: VarGrad, pior em RBBB).
+\item Nove dos 13 métodos ficam abaixo do acaso em pelo menos uma doença; só os três SIGN e o Gradient $\times$ Input ficam acima do acaso nas quatro.
+\item Média e pior caso ordenam os métodos de forma diferente: DeepSHAP é 6.º pela média e penúltimo pelo pior caso.
+\item A ordem por pior caso se mantém com deslocamentos de até 10 pontos nas máscaras; com dilatação de 20 pontos, alguns métodos sensíveis à amplitude passam a positivos porque a máscara engole o QRS.
+\end{itemize}
+
+\section{Conclusões e limitações declaradas}
+\textbf{Conclusões:} métodos populares em ECG (IG, DeepSHAP, GradSHAP, LRP-$\varepsilon$) amarram a relevância à magnitude da entrada e deslocam a atribuição para componentes de alta amplitude; isso não aparece na inspeção local; variantes SIGN são uma adaptação barata que restaura a cobertura das regiões diagnósticas.
+
+\textbf{Limitações:} só métodos de gradiente; plausibilidade, e não fidelidade; máscaras só temporais, aplicadas a todas as derivações; só a relevância positiva é avaliada; quatro doenças, sem critérios de ritmo ou entre batimentos; uma única arquitetura e uma base (PTB-XL); só verdadeiro-positivos, o que impede detectar acerto pelos motivos errados nos negativos; detecção do pico R na derivação I pode desalinhar batimentos em RBBB e LBBB.
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+A estrutura segue o padrão de periódico: Introdução (p.~1--3), Resultados (p.~3--6), Discussão (p.~6--9) e Métodos no fim (p.~9--14). As citações abaixo seguem a ordem do texto e cobrem motivação, enquadramento (plausibilidade, não fidelidade), resultados, mecanismo, máscaras e limitações.
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“Their explanations often follow signal amplitude rather than clinical relevance, with mean Spearman correlations up to 0.69, leading them to overlook diagnostically decisive low-amplitude regions. For ischemia, LRP-ε assigns only 4.6\% of relevance to the ST segment, compared with 63.8\% for LRP-SIGN.”\end{origquote}
+\begin{tradquote}“Suas explicações frequentemente seguem a amplitude do sinal, e não a relevância clínica, com correlações médias de Spearman de até 0,69, o que as leva a ignorar regiões de baixa amplitude decisivas para o diagnóstico. Na isquemia, o LRP-$\varepsilon$ atribui só 4,6\% da relevância ao segmento ST, contra 63,8\% do LRP-SIGN.”\end{tradquote}
+\explab{Explicação}
+“Seguir a amplitude” é o mesmo efeito que o TCC discute para o GradientSHAP: o fator (ECG $-$ referência) é grande onde o ECG é grande, no QRS. O artigo dá a medida direta desse efeito (correlação entre $|x|$ e $|R|$).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Introdução}
+\begin{origquote}“A further motivation is a concern widely suspected but hard to confirm locally, namely that gradient-based methods have repeatedly been reported to emphasize high-amplitude ECG components across diagnostic tasks [...]. Because ECG amplitudes differ markedly between waveform components, most notably the dominant R-peak, these methods may over-attribute large-amplitude regions even when the diagnostically critical information lies in low-amplitude regions such as the PR interval or the ST segment”\end{origquote}
+\begin{tradquote}“Outra motivação é uma suspeita amplamente difundida, mas difícil de confirmar localmente: a de que os métodos baseados em gradiente têm destacado, repetidas vezes, os componentes de alta amplitude do ECG em várias tarefas diagnósticas [...]. Como as amplitudes do ECG diferem muito entre os componentes da onda, sobretudo o pico R dominante, esses métodos podem superatribuir regiões de grande amplitude mesmo quando a informação diagnóstica crítica está em regiões de baixa amplitude, como o intervalo PR ou o segmento ST”\end{tradquote}
+\explab{Explicação}
+Para o TCC, a consequência é concreta: as classes cuja evidência está em regiões de baixa amplitude (IAVB no PR; STD e STE no ST) são as mais expostas a explicações “erradas por construção”, independentemente do modelo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2--3} Introdução, escopo}
+\begin{origquote}“Throughout our experiments, the model serves as a fixed pattern proxy, so that we assess plausibility against the guideline rather than faithfulness to the model.”\end{origquote}
+\begin{tradquote}“Em todos os experimentos, o modelo serve como um substituto fixo dos padrões, de modo que avaliamos a plausibilidade frente à diretriz, e não a fidelidade ao modelo.”\end{tradquote}
+\explab{Explicação}
+Distinção central: \textbf{plausibilidade} (o mapa concorda com o que o médico olha) não é \textbf{fidelidade} (o mapa mostra o que o modelo usa). O TCC mede fidelidade, robustez e testes de sanidade, e deixou métricas de localização fora (decisão de 22/10). Este artigo é o complemento: mostra o que uma avaliação de localização encontraria, sem substituir as métricas do TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} Resultados, padrões globais}
+\begin{origquote}“Methods involving input multiplication or baseline-dependent contrast shifts, such as Gradient × Input, SmoothGrad × Input, Integrated Gradients, DeepSHAP, GradSHAP, and LRP-ε, aligned visibly more closely with the input baseline, their histograms following the amplitude shape of the median beat across all four pathologies rather than the respective diagnostic segments.”\end{origquote}
+\begin{tradquote}“Métodos que envolvem multiplicação pela entrada ou deslocamentos de contraste dependentes da referência, como Gradient $\times$ Input, SmoothGrad $\times$ Input, Integrated Gradients, DeepSHAP, GradSHAP e LRP-$\varepsilon$, ficaram visivelmente mais próximos do mapa de referência ‘Input’, com histogramas que seguem a forma de amplitude do batimento mediano nas quatro doenças, e não os respectivos segmentos diagnósticos.”\end{tradquote}
+\explab{Explicação}
+O GradSHAP está explicitamente no grupo que acompanha a amplitude. Ressalva: no SCC médio (0,33), ele é o mais fraco desse grupo, bem abaixo do Integrated Gradients (0,69) e do LRP-$\varepsilon$ (0,67).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Resultados, isquemia}
+\begin{origquote}“The ISCH histograms show that for amplitude-sensitive methods relevance accumulates strongly on R-peaks and T-waves in V1-V6, while the intervening ST segment receives little to no attribution.”\end{origquote}
+\begin{tradquote}“Os histogramas de ISCH mostram que, nos métodos sensíveis à amplitude, a relevância se acumula fortemente nos picos R e nas ondas T de V1--V6, enquanto o segmento ST, entre eles, recebe pouca ou nenhuma atribuição.”\end{tradquote}
+\explab{Explicação}
+No TCC, a região ST-T inclui a onda T; um mapa que vai para a onda T conta como “ST-T”. Por isso, as regiões do TCC não separam o ST da onda T, e um mapa de STD/STE concentrado em ST-T não prova que o modelo olha o desnível do ST. É uma ressalva para qualquer leitura clínica das regiões.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} Resultados, pior caso}
+\begin{origquote}“LRP-ε with ε = 0.5 · σ (x), for example, reached NCov = 95.6 \% on RBBB and 91.0 \% on LBBB, yet dropped to −54.0 \% on ISCH, and SmoothGrad × Input, Integrated Gradients, and DeepSHAP likewise turned negative on ISCH despite comparatively high average coverage.”\end{origquote}
+\begin{tradquote}“O LRP-$\varepsilon$ com $\varepsilon = 0{,}5\cdot\sigma(x)$, por exemplo, chegou a NCov = 95,6\% em RBBB e 91,0\% em LBBB, mas caiu para $-54{,}0$\% em ISCH, e SmoothGrad $\times$ Input, Integrated Gradients e DeepSHAP também ficaram negativos em ISCH apesar da cobertura média relativamente alta.”\end{tradquote}
+\explab{Explicação}
+O mesmo padrão aparece no GradSHAP (80,9\% e 75,8\% nos bloqueios de ramo, $-5{,}5$\% na isquemia). Os bloqueios de ramo, cuja evidência está no QRS, dão uma falsa impressão de qualidade a métodos que seguem a amplitude. Para o TCC: uma boa nota de BRD e BRE em qualquer métrica pode refletir, em parte, a coincidência entre a evidência diagnóstica e a região de maior amplitude.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6--7} Discussão}
+\begin{origquote}“The worst-case normalized coverage captures this fragility and matches deployment conditions, where a method is chosen once and then applied to whichever condition arises, so that an average would conceal the failing pathology.”\end{origquote}
+\begin{tradquote}“A cobertura normalizada no pior caso captura essa fragilidade e corresponde às condições de uso, em que um método é escolhido uma vez e aplicado a qualquer condição que apareça, de modo que uma média esconderia a doença em que ele falha.”\end{tradquote}
+\explab{Explicação}
+Argumento a favor de olhar classe por classe, e não só a média global, como o TCC faz. O TCC não adota o mínimo como resumo, mas a tabela por classe cumpre a mesma função de não esconder a pior classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Discussão, origem da dependência da amplitude}
+\begin{origquote}“Its better floor likely reflects the absence of baseline subtraction, since Integrated Gradients and SHAP-based methods can produce large negative deviations when baseline and input differ markedly. Input multiplication alone is thus less harmful than baseline-dependent contrast amplification.”\end{origquote}
+\begin{tradquote}“Seu piso melhor provavelmente reflete a ausência de subtração de referência, já que o Integrated Gradients e os métodos baseados em SHAP podem produzir grandes desvios negativos quando a referência e a entrada diferem muito. A multiplicação pela entrada, sozinha, é portanto menos prejudicial que a amplificação de contraste dependente da referência.”\end{tradquote}
+\explab{Explicação}
+“Seu” refere-se ao Gradient $\times$ Input. O ponto atinge diretamente a escolha da referência do GradientSHAP no TCC: a diferença (ECG $-$ referência) depende de quem está na referência. O TCC já estudou isso (opção D, referência balanceada de 36 ECGs), e o artigo dá um motivo a mais para documentar essa escolha. A frase “provavelmente” indica hipótese dos autores, não resultado testado.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Discussão}
+\begin{origquote}“High amplitude-relevance correlation should therefore be read as evidence of insufficient domain adaptation, not of faithfulness to the model.”\end{origquote}
+\begin{tradquote}“Uma correlação alta entre amplitude e relevância deve, portanto, ser lida como sinal de adaptação insuficiente ao domínio, e não de fidelidade ao modelo.”\end{tradquote}
+\explab{Explicação}
+Cuidado útil na leitura das métricas de fidelidade do TCC: remover a região de maior amplitude (QRS) costuma mudar muito a saída de qualquer modelo; um mapa que acompanha a amplitude pode, por isso, ganhar pontos de fidelidade sem refletir uma escolha do modelo. É uma hipótese a mencionar, não um resultado do artigo sobre fidelidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Discussão, plausibilidade e fidelidade}
+\begin{origquote}“A high coverage value nevertheless does not certify faithfulness, since a method could attribute to regions the model does not use, and the SIGN variants show only that guideline-aligned attribution is attainable on these models, which the amplitude-driven methods fail to achieve. [...] Guideline coverage is therefore complementary to faithfulness evaluation, not a substitute.”\end{origquote}
+\begin{tradquote}“Um valor alto de cobertura, porém, não certifica fidelidade, pois um método poderia atribuir a regiões que o modelo não usa, e as variantes SIGN mostram apenas que uma atribuição alinhada à diretriz é possível nesses modelos, o que os métodos guiados pela amplitude não conseguem. [...] A cobertura da diretriz é, portanto, complementar à avaliação de fidelidade, e não um substituto.”\end{tradquote}
+\explab{Explicação}
+Os próprios autores limitam o alcance: o artigo não mostra que o GradSHAP é infiel, e sim que ele é pouco plausível na isquemia. O TCC pode usar o artigo como evidência complementar, não como contradição dos seus resultados de fidelidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} Métodos, máscaras}
+\begin{origquote}“Boundaries were defined as fixed temporal segments within the standardized 500-timestep beat representation: the PR interval for AVB (P-wave onset to QRS onset), the ST segment for ISCH (QRS offset to T-wave onset), and the QRS complex for RBBB and LBBB. They were specified by two board-certified cardiologists and verified iteratively against median beat morphologies computed from the PTB-XL test set.”\end{origquote}
+\begin{tradquote}“Os limites foram definidos como segmentos temporais fixos na representação padronizada do batimento com 500 pontos: o intervalo PR para AVB (início da onda P ao início do QRS), o segmento ST para ISCH (fim do QRS ao início da onda T) e o complexo QRS para RBBB e LBBB. Foram especificados por dois cardiologistas certificados e conferidos iterativamente contra as morfologias de batimentos medianos do teste do PTB-XL.”\end{tradquote}
+\explab{Explicação}
+A divisão é muito próxima das três regiões do TCC (pré-QRS $\approx$ P + PR; QRS; ST-T $\approx$ ST + T). A diferença é que o artigo isola o ST da onda T, e o TCC não. A decisão do TCC de agregar por trechos do batimento tem, assim, um paralelo clínico publicado.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 12} Métodos, relevância positiva}
+\begin{origquote}“For the spectral and coverage analyses, only positive relevance was considered, denoted R+ i = max(Ri , 0), and normalized per sample to the range [0, 1], with values below 0.05 discarded to suppress background noise.”\end{origquote}
+\begin{tradquote}“Nas análises espectral e de cobertura, só a relevância positiva foi considerada, $R^+_i = \max(R_i, 0)$, normalizada por amostra para o intervalo [0, 1], com valores abaixo de 0,05 descartados para suprimir o ruído de fundo.”\end{tradquote}
+\explab{Explicação}
+O TCC trabalha com mapas com sinal (as regiões podem ter soma negativa) e, em algumas métricas, só com as magnitudes. A cobertura do artigo descarta a evidência negativa, o que os próprios autores listam como limitação (p.~8). Uma comparação numérica com o TCC precisaria da mesma convenção.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 13} Métodos, escopo}
+\begin{origquote}“We apply no perturbation, deletion, or model-randomization test, and therefore make no claim about how tightly an individual method tracks the internal computation of the model.”\end{origquote}
+\begin{tradquote}“Não aplicamos nenhum teste de perturbação, remoção ou randomização do modelo e, portanto, não afirmamos nada sobre quão de perto um método acompanha a computação interna do modelo.”\end{tradquote}
+\explab{Explicação}
+É exatamente o que o TCC faz e o artigo não: perturbação (Faithfulness Correlation e Estimate) e randomização (eMPRT, Random Logit). Os dois trabalhos se complementam.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Limitações}
+\begin{origquote}“The four pathologies cover principal categories of guideline criteria but not the full diagnostic spectrum of the ECG, as rhythm-based criteria and those relating successive beats are not represented, so that NCovmin is a worst case over the conditions examined rather than over all conceivable ones.”\end{origquote}
+\begin{tradquote}“As quatro doenças cobrem as principais categorias de critérios das diretrizes, mas não todo o espectro diagnóstico do ECG, pois os critérios de ritmo e os que relacionam batimentos sucessivos não estão representados, de modo que o NCov\textsubscript{min} é o pior caso entre as condições examinadas, e não entre todas as concebíveis.”\end{tradquote}
+\explab{Explicação}
+AF, CAP e CVP, três das classes do TCC, dependem de ritmo ou da relação entre batimentos e não têm máscara temporal simples. Esse é um dos motivos pelos quais uma avaliação por máscaras de diretriz não cobriria as nove classes do TCC.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{itemize}
+\item \textbf{Evidência independente do viés de amplitude do GradientSHAP em ECG.} O TCC observou, no eMPRT, que o mapa do modelo de pesos sorteados se concentra no QRS (76\% a 92\% dos mapas com as 2 regiões principais no QRS, conforme a classe). O artigo mostra o mesmo tipo de efeito no modelo treinado, por outra medida (correlação com $|x|$ e cobertura de máscaras). Os dois resultados apontam para o fator (ECG $-$ referência).
+\item \textbf{Comportamento por doença.} O GradSHAP do artigo vai bem onde a evidência coincide com o QRS (RBBB 80,9\%, LBBB 75,8\%), razoavelmente no PR (AVB 32,6\%) e abaixo do acaso no ST (ISCH $-5{,}5$\%). No TCC, com o modelo treinado, a fração de mapas com as 2 regiões principais no QRS também varia por classe (95\% em BRE, 2\% em IAVB, no eMPRT). As duas leituras são compatíveis: bloqueios de ramo no QRS, IAVB fora dele.
+\item \textbf{Leitura descritiva das classes de ST.} STD e STE estão entre as classes com explicações menos específicas no Random Logit do TCC, e STE tem o menor F1 (0,596). O artigo dá uma explicação possível, ligada ao método e não ao modelo: o ST é a região mais difícil para métodos sensíveis à amplitude. É uma hipótese para a discussão, não algo que o TCC tenha testado.
+\item \textbf{Justificativa das regiões do batimento.} As máscaras de diretriz (PR, ST, QRS) dão um paralelo clínico para a divisão pré-QRS/QRS/ST-T do TCC.
+\item \textbf{Cuidado com médias.} O argumento do pior caso apoia a apresentação por classe.
+\end{itemize}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{p{3cm}XX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Pergunta & Plausibilidade clínica (concordância com a diretriz) & Fidelidade, robustez, complexidade, sanidade; relação com o F1 por classe \\
+Base & PTB-XL, recortes de 4 s & CPSC2018, até 30 s \\
+Modelo & 4 CNNs binárias & 1 ResNet34-1D multirrótulo, 9 classes \\
+Métodos & 13 de gradiente + 2 referências & Só GradientSHAP \\
+Exemplos & Verdadeiro-positivos, 2 batimentos por registro & 622 mapas de predições corretas do teste \\
+Unidade & Batimento reamostrado para 500 pontos, agregação global & Mapa inteiro, agregado em 36 regiões por exame \\
+Sinal da relevância & Só a parte positiva, normalizada, limiar 0,05 & Mapa com sinal; magnitudes em algumas análises \\
+Regiões & PR, ST, QRS (máscaras de cardiologistas) & Pré-QRS, QRS, ST-T por derivação \\
+Derivações & Ignoradas na cobertura & Parte das regiões (12 $\times$ 3) \\
+Referência de acaso & Mapa gaussiano (NCov) & Piso do GradientSHAP \\
+Resumo & Média e pior caso por doença & Valores e posições por classe \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item É um \textit{preprint} (arXiv v1, julho de 2026); os números podem mudar.
+\item A configuração do GradSHAP (referência e número de amostras) não está no texto principal; o efeito da amplitude depende da referência, e a do TCC (36 ECGs balanceados) pode ser diferente.
+\item O artigo mede plausibilidade, não fidelidade: não autoriza dizer que os mapas do TCC são infiéis nas classes de ST.
+\item As doenças e os recortes não coincidem com as classes do CPSC2018: “isquemia” agrupa elevação e depressão do ST; os bloqueios de ramo incluem formas incompletas; não há classes de ritmo.
+\item A comparação com o TCC é qualitativa: as medidas (cobertura de relevância positiva vs.\ métricas por regiões com sinal) não são equivalentes.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “Gumpfer et al.\ (2026, \textit{preprint}) compararam 13 métodos de atribuição em ECG com regiões definidas por diretrizes clínicas e observaram que métodos que multiplicam o gradiente pela entrada ou subtraem uma referência, entre eles o GradientSHAP, concentram a relevância em componentes de alta amplitude, como o pico R e a onda T.”
+\item “No mesmo estudo, o GradientSHAP cobriu bem o QRS nos bloqueios de ramo, mas ficou abaixo do acaso no segmento ST da isquemia (cobertura normalizada de $-5{,}5$\%), o que sugere que explicações de classes definidas por alterações de baixa amplitude, como STD e STE, são as mais expostas a esse viés.”
+\item “Os autores ressaltam que essa avaliação mede plausibilidade clínica, e não fidelidade ao modelo, sendo complementar às métricas de fidelidade adotadas neste trabalho.”
+\end{itemize}
+
+\end{document}
