@@ -1,0 +1,279 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Metodologia e análise dos resultados (versão inicial)}} \\[0.35em]
+    {\large Avaliação das explicações SHAP em redes neurais profundas para classificação de arritmias cardíacas em ECG} \\[0.3em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \quad \textbf{Orientador:} Prof.\ Dr.\ Luis Augusto Martins Pereira \\[0.2em]
+    \textbf{Versão:} 03/11/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+{\raggedright\textbf{Sobre este documento.} Rascunho dos capítulos de Metodologia e de Resultados do TCC, em voz impessoal, com as escolhas justificadas pela literatura lida (fichamentos em \url{fichamentos/}, guia em \url{fichamentos/revisao-literatura/guia-de-leitura/main.pdf}). Todos os números vêm de \url{results/modeloB_v2/} (versão 2 dos mapas) e de \url{results/ablacao_bce/}. As citações entre parênteses indicam o fichamento que sustenta cada escolha.\par}
+
+\begin{infobox}[note]{Pergunta do trabalho}
+A qualidade das explicações GradientSHAP de uma rede ResNet34-1D, medida por sete métricas quantitativas, acompanha o desempenho (F1) do modelo em cada classe de arritmia? A comparação é \textbf{descritiva}, por posições das classes, e é acompanhada de uma discussão dos fatores, além do F1, que ordenam as classes em cada métrica.
+\end{infobox}
+
+\section{Visão geral}
+O trabalho tem cinco etapas:
+\begin{enumerate}
+\item preparação do CPSC2018 e treino de uma ResNet34-1D multirrótulo (seções~\ref{sec:dados} e~\ref{sec:modelo});
+\item geração de mapas GradientSHAP para as predições corretas do teste (seção~\ref{sec:gshap});
+\item agregação de cada mapa em 36 regiões do batimento (seção~\ref{sec:regioes});
+\item cálculo de sete métricas de qualidade, calibradas por uma medida da variação própria do GradientSHAP, o piso (seções~\ref{sec:piso} e~\ref{sec:metricas});
+\item comparação descritiva, por classe, entre as métricas e o F1 (seção~\ref{sec:comparacao}).
+\end{enumerate}
+
+\section{Dados}\label{sec:dados}
+\textbf{Base.} CPSC2018 (\textit{China Physiological Signal Challenge} 2018), na distribuição do desafio PhysioNet/CinC 2020: 6\,877 registros de ECG de 12 derivações a 500 Hz, rotulados em nove classes: ritmo sinusal normal (SNR), fibrilação atrial (AF), bloqueio atrioventricular de 1.º grau (IAVB), bloqueio de ramo esquerdo (BRE), bloqueio de ramo direito (BRD), contração atrial prematura (CAP), contração ventricular prematura (CVP), depressão do segmento ST (STD) e elevação do segmento ST (STE). Um registro pode ter mais de uma classe (problema multirrótulo). Os rótulos foram lidos dos códigos SNOMED CT dos cabeçalhos, com os códigos equivalentes do desafio de 2020 mapeados para as nove classes.
+
+\textbf{Pré-processamento} (protocolo de Zhang et al., 2021): truncamento ou preenchimento com zeros até 15\,000 amostras (30 s); normalização z-score por derivação; divisão estratificada por classe em treino, validação e teste (70\%, 20\% e 10\%), com semente fixa. O comprimento real de cada registro é guardado para que o preenchimento seja excluído de todas as análises por região. A mesma base é usada por Turbé et al.\ (2023), numa tarefa binária de BRD, o que facilita a comparação.
+
+\section{Modelo}\label{sec:modelo}
+\textbf{Arquitetura.} ResNet34 unidimensional: blocos residuais com convolução de kernel 7 e resumo da saída por \textit{pooling} adaptativo de média e de máximo concatenados, seguido de uma camada linear com nove saídas (um logit por classe, com sigmoide independente).
+
+\textbf{Treino.} Entropia cruzada binária (BCE) simples, Adam com taxa de aprendizado $10^{-4}$, lotes de 32, até 60 épocas com parada antecipada (paciência 10), aumento de dados por escala e deslocamento de linha de base. O limiar de decisão de cada classe é escolhido para maximizar o F1 na validação. Uma ablação comparou BCE simples e BCE ponderada por classe: F1-macro no teste de 0,819 e 0,816, diferença menor que a variação entre execuções ($\approx$ 0,01); adotou-se a BCE simples, mais fiel à referência e com probabilidades mais bem calibradas (F1 de 0,806 com limiar 0,5, contra 0,785).
+
+\textbf{Desempenho.} F1-macro de \textbf{0,819} no teste, próximo do relatado por Zhang et al.\ (2021) na mesma base (0,813, média de 10 dobras). A Tabela~\ref{tab:f1} traz o F1 por classe, ordenado.
+\begin{table}[H]\centering\small
+\caption{F1 por classe no teste (limiares por classe) e número de mapas explicados.}\label{tab:f1}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+& AF & BRD & IAVB & BRE & CVP & SNR & STD & CAP & STE \\
+\midrule
+F1 & 0,931 & 0,927 & 0,884 & 0,870 & 0,837 & 0,796 & 0,778 & 0,750 & 0,596 \\
+Mapas & 108 & 172 & 61 & 20 & 59 & 78 & 65 & 45 & 14 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Explicações GradientSHAP}\label{sec:gshap}
+\textbf{Método.} GradientSHAP (Lundberg e Lee, 2017), implementação do Captum. Para cada ponto do ECG, a atribuição aproxima a média de gradiente × (entrada − referência), com a referência sorteada de um conjunto de ECGs e o ponto de avaliação sorteado no caminho entre os dois, mais um ruído gaussiano (desvio 0,09).
+
+\textbf{O que é explicado.} Só as predições corretas do teste: para cada registro e cada classe presente e predita, um mapa (12 × 15\,000) da saída dessa classe. São \textbf{622 mapas} (Tabela~\ref{tab:f1}). Explicar só acertos é prática comum (Suh et al., 2024, usam só predições com probabilidade acima de 0,9; Gumpfer et al., 2026, só verdadeiros positivos), para que a explicação descreva uma decisão correta.
+
+\textbf{Referência.} 36 ECGs do treino com um único rótulo, 4 de cada classe, sorteados com semente fixa (referência balanceada). Uma referência formada por uma \textbf{distribuição} de exemplos reais segue Turbé et al.\ (2023), que usam 50 ECGs do teste; o balanceamento evita que a referência represente sobretudo as classes comuns.
+
+\textbf{Sorteios.} 200 sorteios por mapa (média de 4 blocos de 50), com semente própria por mapa. O número foi escolhido para reduzir a variação de estimativa: com 50 sorteios, a distância entre dois mapas do mesmo ECG com sementes diferentes (o piso, seção~\ref{sec:piso}) era 0,36; com 200, caiu para 0,18. Arends et al.\ (2026) adotam o mesmo cuidado, fixando o número de sorteios para que dois mapas do mesmo ECG tenham correlação de pelo menos 0,98.
+
+\section{Regiões do batimento}\label{sec:regioes}
+Os picos R são detectados na derivação II. Cada batimento completo (entre dois picos R) é dividido em três segmentos:
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Segmento} & \textbf{Intervalo} \\
+\midrule
+QRS & de $R - 80$ ms a $R + 100$ ms \\
+ST-T & de $R + 100$ ms a $R + 0{,}45 \cdot RR$ \\
+pré-QRS (onda P e PR) & de $R + 0{,}45 \cdot RR$ até 80 ms antes do R seguinte \\
+\bottomrule
+\end{tabular}
+\end{center}
+A importância de uma região é a soma do mapa em todos os batimentos daquela derivação e segmento: cada mapa vira um vetor de \textbf{36 valores} (12 derivações × 3 segmentos). Batimentos incompletos e o preenchimento ficam de fora.
+
+\textbf{Justificativa.} Avaliar ponto a ponto, como fazem as versões do Quantus, trata cada uma das 180\,000 amostras como um atributo independente e inclui o preenchimento; nos testes iniciais, isso gerou artefatos (por exemplo, Faithfulness Correlation próxima de zero). A literatura de séries temporais aponta a falta de agrupamento de pontos como um problema (Mercier et al., 2022) e mostra que os métodos acertam mais o \textit{quando} do que o \textit{onde} (Ismail et al., 2020); Gumpfer et al.\ (2026) avaliam o ECG por segmentos clínicos (PR, QRS, ST) muito próximos dos usados aqui.
+
+\section{O piso: a variação própria do GradientSHAP}\label{sec:piso}
+Como o GradientSHAP sorteia referências e ruído, dois mapas do mesmo ECG e da mesma classe, com sementes diferentes, não são iguais. O \textbf{piso} de um mapa é a distância $\ell_2$ entre esses dois mapas, cada um normalizado para norma 1 no vetor das 36 regiões. Ele vai de 0 (mapas iguais) a 2 (opostos). Toda métrica que compara dois mapas (sensibilidade, Random Logit, eMPRT) é lida em relação ao piso: só uma distância acima dele indica uma mudança real. A necessidade dessa régua aparece na literatura: o GradientShap tem a maior Sensitivity entre os métodos de gradiente em Mercier et al.\ (2022), e Fouladgar et al.\ (2022) mostram que distâncias sem normalização confundem a escala dos escores com a robustez. \textbf{Piso médio: 0,18} (de 0,13 em BRD e BRE a 0,25 em CAP).
+
+\section{Métricas}\label{sec:metricas}
+As sete métricas foram reimplementadas por regiões (Tabela~\ref{tab:metricas}); as versões ponto a ponto do Quantus não foram usadas. Cada métrica responde a uma pergunta diferente.
+\begin{table}[H]\centering\small
+\caption{Métricas, pergunta que respondem e configuração.}\label{tab:metricas}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{3.2cm}X}
+\toprule
+\textbf{Métrica} & \textbf{Pergunta} & \textbf{Configuração no TCC} \\
+\midrule
+Faithfulness Correlation (Bhatt et al., 2020) & A soma das atribuições de um conjunto de regiões prevê a queda da saída ao retirá-las? & 50 subconjuntos de 9 regiões por mapa (também 4 e 18); regiões substituídas por zero (média da derivação em z-score) ou pela média do treino; Pearson com a queda do logit; média por classe \\ \addlinespace
+Faithfulness Estimate (Alvarez-Melis e Jaakkola, 2018) & A atribuição de cada região prevê a queda ao retirá-la sozinha? & As 36 regiões retiradas uma a uma; Pearson entre atribuição e queda do logit (probabilidade como verificação); mesmas referências \\ \addlinespace
+Max/Avg-Sensitivity (Yeh et al., 2019; Bhatt et al., 2020) & A explicação muda pouco quando o ECG muda pouco? & 10 perturbações por mapa, ruído uniforme de raio 0,1 só no trecho real; mesma semente do GradientSHAP; perturbações que mudam a predição descartadas; distância $\ell_2$ normalizada nas 36 regiões; máximo e média; comparada ao piso \\ \addlinespace
+Complexidade (Bhatt et al., 2020) & A importância está concentrada em poucas regiões? & Entropia das frações de $|$importância$|$ nas 36 regiões; número efetivo de regiões $e^{H}$ (1 a 36); índice de Gini como verificação \\ \addlinespace
+Consistency (Dasgupta et al., 2022) & ECGs que recebem a mesma explicação recebem a mesma predição? & Explicação discretizada como o sinal das 2 regiões de maior $|$importância$|$; fração dos outros mapas com a mesma explicação e a mesma classe; valor esperado ao acaso como referência \\ \addlinespace
+Random Logit (Sixt et al., 2020) & O mapa é específico da classe? & No mesmo ECG, mapas das 8 outras classes com a mesma semente; distância $\ell_2$ normalizada ao mapa da classe explicada; classes ausentes como resultado principal; razão com o piso \\ \addlinespace
+eMPRT (Hedström et al., 2023) & O mapa depende do que o modelo aprendeu? & Pesos de todas as camadas sorteados de novo (3 sementes); aumento relativo da entropia $q$; como complemento, distâncias com sinal e só nas magnitudes, comparadas ao piso, e fração de mapas com as 2 regiões principais no QRS \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Valor de substituição.} Retirar uma região significa trocar os seus pontos por um valor de referência. Como o valor escolhido pode carregar informação numa série temporal (Höllig et al., 2023) e mudar os resultados entre classes (Baer et al., 2025a), as métricas de fidelidade foram calculadas com duas referências (zero e média do treino). Os resultados foram praticamente iguais (Faithfulness Correlation global de 0,600 nas duas), e o texto usa a referência zero.
+
+\textbf{Precedentes.} A Faithfulness Correlation já foi aplicada a ECG por Suh et al.\ (2024), ponto a ponto, com substituição por zero; Faithfulness Correlation, Max/Avg-Sensitivity e Complexity foram usadas juntas em séries temporais pelo XTSC-Bench (Höllig et al., 2023). Não se encontrou, na revisão, aplicação em ECG das sete métricas em conjunto, nem o cálculo por regiões fisiológicas calibrado pelo piso.
+
+\section{Comparação com o F1}\label{sec:comparacao}
+Para cada métrica, as classes são ordenadas da melhor para a pior, e a ordem é comparada com a do F1 (Tabela~\ref{tab:f1}), com atenção às pontas (as três melhores e as duas piores classes em F1). Não se calculam correlações entre as métricas e o F1: há só nove classes, que não são uma amostra independente de uma população (uma correlação de postos precisaria de $|\rho| \ge 0{,}70$ para ser distinguível do acaso com $n = 9$), e a literatura mostra fatores, além do desempenho, que variam entre as classes e afetam as métricas: amplitude e duração do padrão de cada classe (Baer et al., 2025b), o tipo de região diagnóstica (Gumpfer et al., 2026) e o comportamento do modelo frente ao valor de substituição (Baer et al., 2025a). Arends et al.\ (2026) também tratam a relação com o desempenho por classe de forma descritiva.
+
+\section{Resultados}\label{sec:resultados}
+
+\subsection{Visão por classe}
+\begin{table}[H]\centering\small
+\caption{Métricas por classe (versão 2 dos mapas). Classes na ordem do F1. FC: Faithfulness Correlation ($|S| = 9$, referência zero). FE: Faithfulness Estimate (logit, referência zero). Max-S: Max-Sensitivity. N.º efet.: número efetivo de regiões (complexidade). Cons.: Consistency (entre parênteses, o valor ao acaso). RL: distância do Random Logit às classes ausentes. Setas: sentido melhor.}\label{tab:res}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+\textbf{Classe} & \textbf{F1} & \textbf{FC} $\uparrow$ & \textbf{FE} $\uparrow$ & \textbf{Max-S} $\downarrow$ & \textbf{Piso} & \textbf{N.º efet.} $\downarrow$ & \textbf{Cons.} $\uparrow$ & \textbf{RL} $\uparrow$ \\
+\midrule
+AF   & 0,931 & 0,544 & 0,515 & 0,056 & 0,19 & 22,9 & 0,457 (0,145) & 1,687 \\
+BRD  & 0,927 & 0,746 & 0,784 & 0,029 & 0,13 & 22,2 & 0,723 (0,231) & 1,632 \\
+IAVB & 0,884 & 0,647 & 0,553 & 0,041 & 0,18 & 23,0 & 0,424 (0,081) & 1,607 \\
+BRE  & 0,870 & 0,651 & 0,698 & 0,033 & 0,13 & 26,2 & 0,335 (0,026) & 1,622 \\
+CVP  & 0,837 & 0,618 & 0,659 & 0,047 & 0,17 & 25,0 & 0,382 (0,078) & 1,626 \\
+SNR  & 0,796 & 0,448 & 0,493 & 0,049 & 0,23 & 26,2 & 0,260 (0,104) & 1,479 \\
+STD  & 0,778 & 0,471 & 0,491 & 0,056 & 0,23 & 26,9 & 0,389 (0,086) & 1,483 \\
+CAP  & 0,750 & 0,503 & 0,544 & 0,066 & 0,25 & 25,4 & 0,163 (0,059) & 1,578 \\
+STE  & 0,596 & 0,633 & 0,592 & 0,045 & 0,18 & 25,5 & 0,084 (0,018) & 1,426 \\
+\midrule
+Global & 0,819 & 0,600 & 0,611 & 0,045 & 0,18 & 24,1 & 0,455 & 1,595 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]\centering\small
+\caption{Ordem das classes em cada métrica (da melhor para a pior).}\label{tab:ordens}
+\begin{tabular}{lccccccccc}
+\toprule
+\textbf{Critério} & \textbf{1.º} & \textbf{2.º} & \textbf{3.º} & \textbf{4.º} & \textbf{5.º} & \textbf{6.º} & \textbf{7.º} & \textbf{8.º} & \textbf{9.º} \\
+\midrule
+F1 & AF & BRD & IAVB & BRE & CVP & SNR & STD & CAP & STE \\
+Consistency & BRD & AF & IAVB & STD & CVP & BRE & SNR & CAP & STE \\
+Random Logit & AF & BRD & CVP & BRE & IAVB & CAP & STD & SNR & STE \\
+Faithfulness Correlation & BRD & BRE & IAVB & STE & CVP & AF & CAP & STD & SNR \\
+Faithfulness Estimate & BRD & BRE & CVP & STE & IAVB & CAP & AF & SNR & STD \\
+Max-Sensitivity & BRD & BRE & IAVB & STE & CVP & SNR & AF & STD & CAP \\
+Complexidade (concentração) & BRD & AF & IAVB & CVP & CAP & STE & SNR & BRE & STD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Fidelidade}
+A Faithfulness Correlation global é 0,60 e a Faithfulness Estimate, 0,61: a soma das atribuições prevê de forma moderada a queda da saída ao retirar regiões. Correlações moderadas são esperadas: Turbé et al.\ (2023) concluem que a relevância dos métodos funciona mais como ordem do que como contribuição proporcional, e Suh et al.\ (2024) obtêm, para a família SHAP em ECG, valores de 0,41 a 0,63 (DeepSHAP, ponto a ponto).
+
+\textbf{Frente ao F1.} A fidelidade \textbf{não} acompanha o F1 nas pontas. BRD está no topo das duas métricas (0,75 e 0,78) e também no topo do F1, mas AF, a classe de maior F1, é só a 6.ª na Faithfulness Correlation e a 7.ª na Faithfulness Estimate; STE, a de menor F1, é a 4.ª nas duas. A ordem segue outro padrão: as classes reconhecidas pela \textbf{forma do QRS} (BRD, BRE, CVP) ficam no alto; as de \textbf{ritmo e onda P} (SNR, AF, CAP) e a de \textbf{depressão de ST} (STD), embaixo. Esse padrão é o descrito por Gumpfer et al.\ (2026): o GradientSHAP cobre bem o QRS nos bloqueios de ramo e mal o segmento ST na isquemia, porque a atribuição acompanha a amplitude. Baer et al.\ (2025a, 2025b) mostram que diferenças de amplitude e de duração do padrão entre classes bastam para mudar métricas de perturbação. A posição de STE (14 mapas) deve ser lida com cautela.
+
+\subsection{Robustez}
+A Max-Sensitivity global é 0,045 e a Avg-Sensitivity, 0,036, ambas cerca de quatro vezes \textbf{menores que o piso} (0,18): uma perturbação pequena do ECG muda a explicação menos do que repetir o GradientSHAP com outra semente. Ao passar de 50 para 200 sorteios (versão 1 para versão 2 dos mapas), a Max-Sensitivity caiu cerca de 40\% (de 0,072 para 0,045), ou seja, parte da sensibilidade medida era erro de estimativa do próprio método, como sugere a alta Sensitivity do GradientShap em Mercier et al.\ (2022). A ordem das classes repete a da fidelidade (BRD e BRE as mais robustas; CAP, STD e AF as menos), e não a do F1.
+
+\subsection{Complexidade}
+Os mapas usam, em média, o equivalente a \textbf{24 das 36 regiões}: a importância é espalhada. BRD, AF e IAVB têm os mapas mais concentrados (22 a 23 regiões); STD, SNR e BRE, os mais espalhados (26 a 27). Reduzir o erro de estimativa (de 50 para 200 sorteios) quase não mudou a complexidade (24,2 para 24,1); o espalhamento é, portanto, do modelo, e não do ruído do método. As três classes mais concentradas coincidem com as três de maior F1, mas BRE (4.ª no F1) está entre as mais espalhadas.
+
+\subsection{Consistency}
+A Consistency global é 0,455, bem acima do valor ao acaso em todas as classes. É a métrica cuja ordem \textbf{mais se aproxima da do F1}: as três classes de maior F1 (AF, BRD, IAVB) são as três de maior Consistency, e as duas de menor F1 (CAP, STE) são as duas de menor Consistency. Duas ressalvas: a Consistency depende da frequência da classe entre os mapas (BRD tem 172 mapas e o maior valor ao acaso, 0,23; STE tem 14), e ela usa as próprias predições do modelo, o que a aproxima, por construção, do desempenho.
+
+\subsection{Especificidade da classe (Random Logit)}
+No mesmo ECG, o mapa da classe explicada fica, em média, a \textbf{1,60} do mapa de uma classe ausente (máximo possível: 2), cerca de \textbf{10 vezes o piso}, e todos os 4\,886 pares ficam acima do piso do próprio mapa: as explicações são específicas da classe. As pontas acompanham o F1: AF (maior F1) tem as explicações mais específicas e STE (menor F1), as menos; as cinco classes de maior F1 ocupam as cinco primeiras posições, embora em outra ordem entre si.
+
+\subsection{Dependência do modelo (eMPRT)}
+Com os pesos sorteados de novo, o mapa \textbf{não} fica mais espalhado: o número efetivo de regiões passa de 24,1 para 22,9 e o aumento relativo da entropia é $q = -0{,}015$ (só 37\% dos mapas com $q > 0$; com a entropia do histograma usada no artigo, numa verificação com 174 mapas, $q = -0{,}31$). Pelo critério de Hedström et al.\ (2023), o GradientSHAP não passa. Os complementos mostram, porém, que o mapa depende do modelo: a distância entre o mapa do modelo treinado e o do aleatório é \textbf{8,7 vezes o piso} com sinal e 5,8 vezes só nas magnitudes, em todos os 622 mapas, e a região principal coincide em só 5\% dos casos. O critério falha porque, sem o que o modelo aprendeu, o fator (ECG $-$ referência) concentra o mapa nos picos do QRS (2 regiões principais no QRS em 88\% dos mapas do modelo aleatório, contra 42\% no treinado), efeito previsto por Adebayo et al.\ (2018) para métodos do tipo entrada × gradiente e coerente com Gumpfer et al.\ (2026). No modelo treinado, essa fração depende da classe (95\% em BRE e 71\% em BRD, contra 2\% em IAVB e 6\% em STD); no aleatório, não. O eMPRT é usado, por isso, como teste de sanidade do método, e não como métrica por classe.
+
+\subsection{Síntese}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.6cm}X}
+\toprule
+\textbf{Grupo de métricas} & \textbf{Relação com o F1 por classe} \\
+\midrule
+Consistency, Random Logit & Acompanham o F1 nas pontas: as classes de maior F1 têm explicações mais consistentes e mais específicas; STE (e CAP, na Consistency) ficam embaixo. \\ \addlinespace
+Fidelidade (FC, FE), robustez (Max/Avg-Sensitivity) & Não acompanham o F1; seguem o tipo de evidência da classe: QRS (BRD, BRE, CVP) no alto, ritmo e ST (SNR, AF, CAP, STD) embaixo. \\ \addlinespace
+Complexidade & Parcial: as três classes mais concentradas são as três de maior F1, mas BRE e STE fogem do padrão. \\ \addlinespace
+Testes de sanidade (eMPRT, Random Logit, piso) & O GradientSHAP depende do modelo e é específico da classe; a variação própria do método é a maior fonte de variação na sensibilidade. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+A resposta à pergunta do trabalho é, portanto, \textbf{depende da propriedade medida}: as métricas que envolvem a decisão do modelo entre classes (Consistency, Random Logit) acompanham o F1, enquanto as de fidelidade e robustez acompanham o tipo de evidência e a amplitude da região diagnóstica de cada classe. Essa separação é coerente com a literatura: nenhum trabalho encontrado relaciona diretamente a qualidade das explicações com o F1 por classe, mas Gumpfer et al.\ (2026) e Baer et al.\ (2025a, 2025b) mostram que métricas de atribuição variam com a morfologia e a amplitude de cada classe, e Arends et al.\ (2026) não observam diferença clara entre classes de desempenho alto e baixo.
+
+\section{Limitações}
+\begin{itemize}
+\item \textbf{Deslocamento de distribuição.} Retirar regiões cria ECGs diferentes dos vistos no treino; a queda da saída pode refletir essa estranheza (Ismail et al., 2020; Turbé et al., 2023; Suh et al., 2024). Foi mitigado pela retirada de regiões inteiras e por duas referências, mas não eliminado; o modelo não foi treinado com perturbações, como em Turbé et al.
+\item \textbf{Um único modelo treinado.} Arends et al.\ (2026) mostram concordância apenas moderada entre mapas de modelos treinados com sementes diferentes; o piso do TCC mede a variação do método, não a do treino.
+\item \textbf{Poucos mapas em algumas classes.} BRE (20) e STE (14) têm posições menos estáveis.
+\item \textbf{Sem verdade de referência.} O CPSC2018 não anota as regiões diagnósticas; a plausibilidade clínica não é avaliada (Storås et al., 2025, e Suh et al., 2024, mostram que ela pode discordar da fidelidade).
+\item \textbf{Regiões fixas.} Os limites dos segmentos são aproximados (frações do intervalo RR) e dependem da detecção dos picos R na derivação II.
+\end{itemize}
+
+\end{document}

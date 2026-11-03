@@ -1,0 +1,356 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: Explicabilidade em EEG com verdade simulada}} \\[0.35em]
+    {\large SUJATHA RAVINDRAN, A.; CONTRERAS-VIDAL, J. \textit{An empirical comparison of deep learning explainability approaches for EEG using simulated ground truth}. Scientific Reports, v.~13, 17709, 2023} \\[0.3em]
+    \textbf{Tema:} testes de sanidade (randomização de pesos e de rótulos) e precisão de 12 métodos de explicação em sinais fisiológicos simulados \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1038/s41598-023-43871-8} \\[0.2em]
+    \textbf{Leitura:} íntegra (versão publicada, PDF da Scientific Reports, 20 páginas) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (versão publicada, 20 páginas, numeradas como no periódico). As citações estão no original em inglês, cada uma seguida de uma tradução livre; números de referência bibliográfica sobrescritos do original foram omitidos e indicados com [\ldots] quando cortavam a frase. A \textbf{Parte I} explica o trabalho; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} relaciona o artigo com o TCC. Os valores das Figuras~3 e 6 foram lidos dos mapas de calor e da tabela colorida do PDF, pois o artigo não os traz em tabela numérica.
+
+\begin{infobox}[note]{Por que este artigo}
+O TCC aplica dois testes de randomização às explicações GradientSHAP: o eMPRT (modelo com pesos sorteados) e o Random Logit (outra classe no mesmo ECG). Este artigo é um dos poucos que aplicam os testes de sanidade de Adebayo et al.\ (2018), randomização de pesos e de rótulos, a \textbf{sinais fisiológicos em forma de série temporal multicanal} (EEG), e que, além disso, comparam com uma \textbf{verdade simulada}: sabe-se em que canal, instante e frequência está a evidência. O resultado principal interessa diretamente ao TCC: o mapa de saliência (gradiente puro), o mais usado em EEG, não é específico do modelo nem da classe, enquanto os métodos do tipo “entrada $\times$ gradiente” com referência, como DeepLift, LRP e Input $\times$ Gradient, são ao mesmo tempo precisos e sensíveis à randomização. O GradientSHAP pertence a essa família, embora não tenha sido avaliado no artigo.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema que o artigo ataca}
+Em interfaces cérebro-computador, redes profundas decodificam o EEG com bom desempenho, mas raramente são explicadas. A revisão dos autores (Web of Science, novembro de 2021) encontrou 65 publicações que combinam EEG, redes neurais e interpretabilidade, das quais só 33 usavam de fato algum método de explicação, e estimou que menos de 0,6\% dos estudos de aprendizado profundo em EEG incluem explicações. Quando incluem, quase sempre usam o mapa de saliência e o inspecionam visualmente em um exemplo ou na média de um sujeito.
+
+Dois problemas tornam isso arriscado: (i) em visão computacional, já se mostrou que vários métodos de explicação são insensíveis ao modelo e aos dados (Adebayo et al., 2018); (ii) no EEG real não se sabe onde está a evidência, o sinal tem baixa razão sinal-ruído (SNR) e várias propriedades relevantes (tempo, frequência e posição no escalpo) se sobrepõem.
+
+\section{Ideia central}
+\begin{infobox}[note]{Em uma frase}
+Simular EEG em que a evidência de cada classe é conhecida no tempo, na frequência ou no espaço, treinar uma CNN genérica e medir, para 12 métodos de explicação, (a) quanto do mapa cai sobre a evidência verdadeira e (b) quanto o mapa muda quando os pesos ou os rótulos são randomizados.
+\end{infobox}
+As duas medidas são complementares. Um método pode concentrar o mapa na região certa (alta “sensibilidade”, no vocabulário dos autores) e, ainda assim, produzir quase o mesmo mapa com um modelo aleatório (baixa “robustez”): nesse caso, o mapa acerta porque segue o sinal, não porque segue o modelo.
+
+\section{Dados e modelos}
+\textbf{Simulação.} Toolbox SEREEGA, modelo de cabeça New York, projeção para 62 canais (montagem actiCAP64 sem dois canais), 250 Hz, janelas de 1 s. Ruído “cerebral” rosa de 5 $\mu$V em fontes sorteadas e ruído branco de sensor. Cinco níveis de SNR: $-3{,}5$, $-12$, $-16$, $-19$ e $-23$ dB. Três condições:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lcX}
+\toprule
+\textbf{Condição} & \textbf{Classes} & \textbf{O que distingue as classes} \\
+\midrule
+Temporal (ERP) & 4 & Componentes evocados com latências diferentes (cerca de 60, 900 e 500 ms), sinal oposto (classe 3) ou fonte diferente (classe 4); 10\,000 épocas por classe \\
+Espectral & 4 & Rajadas de oscilação em quatro bandas (3--8, 8--13, 14--30, 30--58 Hz), com latência e duração sorteadas \\
+Espacial & 2 & Mesma atividade, com fonte no hemisfério esquerdo ou no direito \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\textbf{Modelo.} CNN genérica (sem arquitetura especializada): cinco camadas convolucionais temporais de 32 filtros ($5\times1$), uma camada espacial de 32 filtros ($1\times62$), \textit{pooling} temporal, camada densa de 32 unidades, \textit{dropout} 0,5 e saída \textit{softmax}; ReLU em todas as camadas internas. Validação cruzada em cinco partes; um modelo por condição. Acurácia no teste (Tabela~1 do artigo):
+\begin{center}\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{SNR (dB)} & \textbf{Espacial (\%)} & \textbf{Temporal (\%)} & \textbf{Espectral (\%)} \\
+\midrule
+$-3{,}5$ & 99,0 & 99,54 & 98,01 \\
+$-12$    & 94,26 & 95,4 & 84,5 \\
+$-16$    & 87,8 & 90,2 & 70,05 \\
+$-19$    & 82,14 & 84,9 & 57,1 \\
+$-23$    & 71,65 & 73,7 & 42,0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+O acaso é 50\% (espacial) e 25\% (temporal e espectral).
+
+\section{Métodos de explicação}
+Doze métodos baseados em retropropagação, via Captum 0.4.0 ou pytorch-grad-cam: Saliência (gradiente), Deconvolução, Guided Backpropagation, Input $\times$ Gradient (gradiente multiplicado pela entrada), GradCAM, GradCAM++, Guided GradCAM, LRP, DeepLift, ScoreCAM, FullGrad e LayerCAM. O DeepLift usa como referência um vetor de zeros. \textbf{Não} estão incluídos GradientSHAP, Integrated Gradients nem métodos de perturbação como oclusão ou KernelSHAP. (A legenda da Figura~6 expande “IxG” como \textit{integrated gradient}, mas o texto define e usa Input $\times$ Gradient; trata-se de um erro da legenda.)
+
+\section{Métricas de avaliação e adaptação a séries temporais}
+\textbf{Verdade simulada.} A janela do sinal simulado é projetada para os canais pelo mesmo campo condutor; fora do sinal, a verdade vale zero; dentro, é normalizada pelo máximo. O mapa e a verdade têm a forma do EEG (instantes $\times$ canais), e a comparação é feita ponto a ponto, sem agregação em janelas.
+
+\textbf{Sensibilidade (precisão em relação à verdade).}
+\begin{itemize}
+\item \textbf{Relevance Mass Accuracy (RMA)}: fração da relevância total do mapa que cai dentro da máscara da verdade, $R_{\text{dentro}}/R_{\text{total}}$. A Figura~3 mostra duas variantes, “RMA (abs)” e “RMA top5”, que o texto não define separadamente.
+\item \textbf{Similaridade de cosseno} entre o mapa no escalpo e a projeção verdadeira, usada na condição espacial, porque a condução de volume deixa a verdade diferente de zero em todos os canais.
+\end{itemize}
+
+\textbf{Robustez (testes de sanidade de Adebayo et al.).} Gera-se o mapa original e refaz-se o mapa (i) após randomizar os \textbf{rótulos} e (ii) após randomizar os \textbf{pesos} do modelo. A semelhança entre os mapas é medida pela correlação de Pearson (o texto diz “absoluta”, mas a Figura~3 mostra valores negativos) e pelo SSIM (índice de similaridade estrutural, que compara luminância, contraste e estrutura de duas imagens), com os mapas achatados. Semelhança alta indica que o mapa não depende do modelo ou da classe. O texto não detalha se o modelo é retreinado com os rótulos embaralhados (como no teste original de Adebayo) nem como os pesos são randomizados (todas as camadas de uma vez ou em cascata).
+
+\textbf{Limiares de leitura} (Figura~6): sensibilidade média acima de 0,55 é considerada boa; robustez acima de 0,5 marca o método como não específico da classe (ou do modelo), e entre 0,3 e 0,5, como parcialmente não específico. Não há referência de ruído do próprio método: os limiares são fixos.
+
+\section{Resultados principais}
+\subsection{Condição temporal (ERP), SNR de $-3{,}5$ dB}
+Valores lidos da Figura~3 do artigo (mapas de calor), para uma seleção de métodos. RMA: maior é melhor. Semelhança após randomização: menor é melhor.
+\begin{center}\small
+\begin{tabular}{lrrrrr}
+\toprule
+& & \multicolumn{2}{c}{\textbf{Rótulos randomizados}} & \multicolumn{2}{c}{\textbf{Pesos randomizados}} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+\textbf{Método} & \textbf{RMA (abs)} & \textbf{SSIM} & \textbf{Pearson} & \textbf{SSIM} & \textbf{Pearson} \\
+\midrule
+Saliência             & 0,52 & 0,76 & 0,74 & 0,29 & 0,26 \\
+Guided Backprop.      & 0,53 & 0,05 & 0,62 & 0,06 & 0,42 \\
+Input $\times$ Gradient & 0,77 & 0,07 & $-0{,}11$ & 0,09 & 0,17 \\
+LRP                   & 0,77 & 0,07 & $-0{,}11$ & 0,09 & 0,17 \\
+DeepLift              & 0,81 & 0,09 & $-0{,}10$ & 0,11 & 0,20 \\
+GradCAM               & 0,42 & 0,05 & 0,02 & 0,12 & 0,19 \\
+GradCAM++             & 0,37 & 0,94 & 0,96 & 0,56 & 0,59 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Com o ruído crescente, a precisão cai junto com a acurácia: o RMA (abs) do DeepLift vai de 0,81 em $-3{,}5$ dB para 0,51 em $-23$ dB, enquanto a acurácia temporal cai de 99,54\% para 73,7\%.
+
+\subsection{Resumo das três condições (Figura~6)}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Condição} & \textbf{Três métodos mais precisos} & \textbf{Marcados como não específicos da classe (robustez $> 0{,}5$)} \\
+\midrule
+Espectral & DeepLift, LRP, Input $\times$ Gradient & Guided BP, Saliência, Deconvolução, FullGrad, GradCAM++ \\
+Temporal  & DeepLift, LRP, Input $\times$ Gradient & Saliência, Guided BP, Deconvolução, FullGrad, GradCAM++ \\
+Espacial  & GradCAM, ScoreCAM, GradCAM++ & ScoreCAM, GradCAM++, FullGrad, Saliência, Guided BP \\
+\bottomrule
+\end{tabularx}
+\end{center}
+DeepLift, LRP e Input $\times$ Gradient ficam entre os mais precisos nas condições temporal e espectral e nunca são marcados como não específicos; na espacial, são menos precisos que o GradCAM, mas continuam robustos. O GradCAM é robusto, mas tem baixa resolução temporal (o mapa vem da última camada e é interpolado) e degrada rápido quando a SNR cai.
+
+\section{Conclusões e limitações declaradas}
+\begin{itemize}
+\item Vários métodos de alta “sensibilidade” não são específicos do modelo nem da classe; a saliência, a mais usada em EEG, deve ser usada com cautela.
+\item DeepLift (e LRP) é recomendado como método geral; GradCAM serve para relevância espacial quando a decodificação é boa.
+\item Limitações: o EEG simulado é uma aproximação (faltam artefatos e sinais fisiológicos reais); só métodos de visualização por retropropagação; só uma CNN genérica (sem conexões residuais, atenção ou transformadores); conjunto limitado de características testadas.
+\end{itemize}
+\begin{infobox}[warn]{Leitura crítica}
+O artigo não traz testes estatísticos nem intervalos entre as cinco partes da validação cruzada nas figuras; os limiares de 0,3, 0,5 e 0,55 são convenções dos autores. A robustez é avaliada com SSIM e Pearson sobre mapas com sinal, o que pode tratar como “diferentes” dois mapas que destacam as mesmas regiões com sinais trocados.
+\end{infobox}
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+O artigo segue o formato da Scientific Reports: introdução e revisão da literatura (p.~1--4), resultados por condição (p.~4--7), discussão e limitações (p.~7--10), conclusão (p.~10) e métodos no fim (p.~10--17). As citações seguem a ordem das páginas.
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“Multiple methods tested here showed reliability issues after randomizing either model weights or labels: e.g., the saliency approach, which is the most used visualization technique in EEG, was not class or model-specific. We found that DeepLift was consistently accurate as well as robust to detect the three key attributes tested here (temporal, spatial, and spectral precision).”\end{origquote}
+\begin{tradquote}“Vários métodos testados aqui mostraram problemas de confiabilidade após a randomização dos pesos do modelo ou dos rótulos: por exemplo, a saliência, a técnica de visualização mais usada em EEG, não foi específica da classe nem do modelo. Verificamos que o DeepLift foi consistentemente preciso e robusto na detecção dos três atributos testados aqui (precisão temporal, espacial e espectral).”\end{tradquote}
+\explab{Explicação}
+Resume os dois achados: o gradiente puro falha nos testes de sanidade em EEG; o DeepLift, que multiplica a diferença em relação a uma referência pela contribuição propagada, passa. O GradientSHAP tem estrutura próxima à do DeepLift e do Input $\times$ Gradient (gradiente vezes diferença em relação a uma referência), mas não foi testado.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} Introdução}
+\begin{origquote}“Adebayo et al. showed that visual inspection of model explanations alone can mislead into giving compelling cases. They demonstrated that many of the commonly used explainable methods lack sensitivity to the model and the data generating process [\ldots]. In that study, they randomized the labels and separately reinitialized the model weights. [\ldots] However, they found that many methods were invariant to these manipulations and only gradients and GradCAM passed their sanity checks.”\end{origquote}
+\begin{tradquote}“Adebayo et al.\ mostraram que a inspeção visual das explicações, sozinha, pode levar a casos convincentes, mas enganosos. Demonstraram que muitos dos métodos de explicação mais usados não são sensíveis ao modelo nem ao processo gerador dos dados [\ldots]. Naquele estudo, randomizaram os rótulos e, separadamente, reinicializaram os pesos do modelo. [\ldots] Verificaram, porém, que muitos métodos eram invariantes a essas manipulações e que só os gradientes e o GradCAM passaram nos testes de sanidade.”\end{tradquote}
+\explab{Explicação}
+É a origem dos testes que o TCC aplica (o eMPRT é uma versão revisada do teste de randomização de parâmetros). Curiosamente, em EEG o gradiente puro, que passou em imagens, falha; isso mostra que o resultado de um teste de sanidade depende do domínio e do modelo, e justifica repeti-lo no ECG.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} Introdução}
+\begin{origquote}“Also, finding the ground truth in real EEG is a challenging task, particularly with the lower values of signal-to-noise ratios (SNR). Even the same task repeated might have a large source of variability due to the nature of how the human brain works, the influence of the environment, etc.”\end{origquote}
+\begin{tradquote}“Além disso, encontrar a verdade no EEG real é uma tarefa difícil, sobretudo com valores baixos de razão sinal-ruído (SNR). Mesmo a mesma tarefa repetida pode ter grande variabilidade, pela própria natureza do funcionamento do cérebro, pela influência do ambiente etc.”\end{tradquote}
+\explab{Explicação}
+Justifica a simulação. No ECG a situação é um pouco melhor (as regiões típicas de cada classe são conhecidas pela clínica), mas o TCC também não tem uma máscara de verdade por exame, e por isso usa métricas sem verdade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Resultados, ERP}
+\begin{origquote}“When the similarity of original explanations was compared to that with randomized labels, it was observed that methods like GradCAM++, Fullgrad, and Saliency have very similar explanations suggesting that their explanations are not class-specific. Similarly, Deconvolution and Guided Backpropagation also yielded a high correlation with the original true explanation. DeepLift, LRP, I × G, and GradCam were the most robust.”\end{origquote}
+\begin{tradquote}“Quando se comparou a semelhança das explicações originais com as obtidas com rótulos randomizados, observou-se que métodos como GradCAM++, FullGrad e Saliência têm explicações muito parecidas, o que sugere que elas não são específicas da classe. Da mesma forma, Deconvolução e Guided Backpropagation também tiveram correlação alta com a explicação original. DeepLift, LRP, I $\times$ G e GradCAM foram os mais robustos.”\end{tradquote}
+\explab{Explicação}
+“Específico da classe”, aqui, significa que o mapa depende da relação entre dados e rótulos aprendida pelo modelo. No TCC, o Random Logit testa outro aspecto da especificidade de classe (o mapa de outra saída do mesmo modelo), e o resultado foi análogo: os mapas de classes diferentes ficam cerca de 10 vezes acima do piso de ruído do GradientSHAP.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Discussão}
+\begin{origquote}“The methods which have a mean sensitivity measure greater than 0.55 (higher is better) are indicated by the dark blue color. The red color indicates the particular method for the condition being considered is not class-specific (robustness measure > 0.5; higher is worse).”\end{origquote}
+\begin{tradquote}“Os métodos com medida média de sensibilidade acima de 0,55 (maior é melhor) estão em azul-escuro. A cor vermelha indica que o método, na condição considerada, não é específico da classe (medida de robustez $> 0{,}5$; maior é pior).”\end{tradquote}
+\explab{Explicação}
+Os critérios de aprovação são limiares fixos sobre a semelhança. O TCC usa outra referência: a distância entre dois mapas GradientSHAP do mesmo ECG com sementes diferentes (o piso). Isso permite dizer se a mudança após a randomização é maior que a variação natural do próprio método, o que um limiar fixo não diz.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Discussão}
+\begin{origquote}“Evaluating the robustness and sensitivity measures, even though many measures show high accuracy/sensitivity to the feature of interest, they are not class or model-specific. E.g., Saliency/Gradient is a basic yet one of the most commonly used model explanation methods in EEG [\ldots]. They also have high sensitivity to detect spectral perturbation and relevant channels as well. However, randomizing the model weights or labels yielded a very similar explanation to the original one.”\end{origquote}
+\begin{tradquote}“Ao avaliar as medidas de robustez e de sensibilidade, embora muitos métodos mostrem alta precisão/sensibilidade à característica de interesse, eles não são específicos da classe nem do modelo. Por exemplo, a Saliência/Gradiente é um método básico, mas um dos mais usados em EEG [\ldots]. Ela também tem alta sensibilidade para detectar a perturbação espectral e os canais relevantes. Porém, randomizar os pesos do modelo ou os rótulos produziu uma explicação muito parecida com a original.”\end{tradquote}
+\explab{Explicação}
+É o ponto conceitual mais importante: \textbf{acertar a região não basta}. Um mapa pode cair sobre a evidência verdadeira porque segue o sinal (por exemplo, sua amplitude) e não o modelo. No TCC, isso corresponde ao achado do eMPRT: o mapa de um modelo aleatório se concentra no QRS, a região de maior amplitude; o que distingue os mapas do modelo treinado é que eles ficam muito acima do piso em relação aos do modelo aleatório.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Discussão}
+\begin{origquote}“On the other hand, DeepLift, Input × Gradient, and LRP was found to be both accurate as well as robust in all three cases (spatial, temporal, and spectral).”\end{origquote}
+\begin{tradquote}“Por outro lado, DeepLift, Input $\times$ Gradient e LRP mostraram-se ao mesmo tempo precisos e robustos nos três casos (espacial, temporal e espectral).”\end{tradquote}
+\explab{Explicação}
+Os três métodos multiplicam algo que depende do modelo pela entrada (ou pela diferença da entrada em relação a uma referência). Adebayo et al.\ alertaram que, nesse tipo de método, o fator “entrada” pode dominar o mapa; no EEG simulado deste artigo isso não aconteceu. É um resultado favorável à família do GradientSHAP, mas obtido com outra arquitetura e outro sinal.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Discussão}
+\begin{origquote}“There exist multiple studies in Computer Vision that assessed the unreliability of Saliency map-based approaches [\ldots]. However, these studies do not measure the accuracy of these explanation methods.”\end{origquote}
+\begin{tradquote}“Há vários estudos em visão computacional que avaliaram a falta de confiabilidade dos métodos baseados em mapas de saliência [\ldots]. Porém, esses estudos não medem a precisão desses métodos de explicação.”\end{tradquote}
+\explab{Explicação}
+A contribuição do artigo é juntar as duas dimensões. O TCC só tem a dimensão dos testes de sanidade (eMPRT, Random Logit) e a da fidelidade ao modelo; não mede precisão contra uma verdade, o que deve constar como limitação.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Discussão}
+\begin{origquote}“Another limitation of using GradCAM which needs to be checked for was that their performance decreased much faster than other methods when the SNR decreased i.e. when the model confidence dropped.”\end{origquote}
+\begin{tradquote}“Outra limitação do GradCAM que precisa ser verificada é que seu desempenho caiu muito mais rápido que o dos outros métodos quando a SNR diminuiu, isto é, quando a confiança do modelo caiu.”\end{tradquote}
+\explab{Explicação}
+O artigo associa a queda da qualidade da explicação à queda da confiança do modelo, em todos os métodos e com mais força em alguns. Isso toca a pergunta do TCC, mas com uma diferença: no artigo, a SNR é a causa comum da queda de acurácia e da queda de precisão; no TCC, as classes diferem em muitas coisas ao mesmo tempo, e a relação com o F1 é examinada só de forma descritiva.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Discussão}
+\begin{origquote}“However, DeepLift avoids this issue as it makes use of a baseline and has the conservation property. It ensures that the sum of the contribution scores for the input would add up to the difference between the model prediction for specific input and that of the baseline.”\end{origquote}
+\begin{tradquote}“O DeepLift, porém, evita esse problema, pois usa uma referência (\textit{baseline}) e tem a propriedade de conservação. Ela garante que a soma das contribuições da entrada seja igual à diferença entre a predição do modelo para aquela entrada e a predição para a referência.”\end{tradquote}
+\explab{Explicação}
+“Esse problema” é a saturação do gradiente (regiões em que o gradiente é zero, como em ReLUs inativas). O GradientSHAP também usa referências (no TCC, 36 ECGs do treino) e tem uma propriedade aproximada de conservação: a soma do mapa acompanha a saída para o ECG menos a saída média para as referências. A explicação dos autores para o bom desempenho do DeepLift se aplica, em princípio, ao GradientSHAP.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} Limitações}
+\begin{origquote}“Synthetic EEG is only an approximation to measured EEG. Many physiological and non-physiological signals and artifacts, which are generally present in measured EEG, are not contained in the synthetic EEG. This can be both an advantage and also a limitation of the simulation approach.”\end{origquote}
+\begin{tradquote}“O EEG sintético é apenas uma aproximação do EEG medido. Muitos sinais fisiológicos e não fisiológicos e artefatos, geralmente presentes no EEG medido, não estão no EEG sintético. Isso pode ser tanto uma vantagem quanto uma limitação da abordagem por simulação.”\end{tradquote}
+\explab{Explicação}
+A conclusão favorável ao DeepLift e ao Input $\times$ Gradient vale para sinais limpos e evidências bem definidas. O ECG real do CPSC2018 tem ruído, variação de derivações e comorbidades; os testes do TCC são feitos nesses dados reais, sem verdade, o que é a situação complementar à do artigo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 10} Conclusão}
+\begin{origquote}“In this study, we kept the scope to a generic CNN architecture particularly since many of the methods such as deconvolution or guided backpropagation, for instance, are only applicable to CNN architectures. [\ldots] However, there exists different variants of deep learning models such as CNN with attention modules and/or residual connections, Transformer models, Recurrent Neural Networks etc.”\end{origquote}
+\begin{tradquote}“Neste estudo, limitamos o escopo a uma arquitetura de CNN genérica, sobretudo porque vários métodos, como a deconvolução ou o guided backpropagation, só se aplicam a CNNs. [\ldots] Porém, existem variantes de modelos profundos como CNNs com módulos de atenção e/ou conexões residuais, Transformers, redes recorrentes etc.”\end{tradquote}
+\explab{Explicação}
+O modelo do TCC é uma ResNet34-1D, com conexões residuais, isto é, uma das variantes que o artigo deixa para estudos futuros. Os resultados do artigo servem de indicação, não de garantia, para o modelo do TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} Métodos, robustez}
+\begin{origquote}“To test the robustness of each of the explanation methods, the approach used in Adebayo et al. was adopted. Once the original explanation was obtained, the explanation after independently randomizing the labels and the model weights was re-computed. This tests whether the explanations are class or model-specific. The similarity of explanations w.r.t. the original explanation based on the absolute Pearson’s correlation coefficient and the SSIM measure (detailed later) was estimated.”\end{origquote}
+\begin{tradquote}“Para testar a robustez de cada método, adotou-se a abordagem de Adebayo et al. Obtida a explicação original, a explicação foi recalculada após randomizar, de forma independente, os rótulos e os pesos do modelo. Isso testa se as explicações são específicas da classe ou do modelo. Estimou-se a semelhança das explicações em relação à original pelo coeficiente de correlação de Pearson absoluto e pelo SSIM (detalhado adiante).”\end{tradquote}
+\explab{Explicação}
+É a configuração completa do teste: uma randomização de cada tipo, semelhança por Pearson e SSIM, sem referência de ruído. Note-se a palavra “robustez”: aqui ela significa \textbf{sensibilidade à randomização}, e não estabilidade a pequenas perturbações da entrada, que é o sentido da Max/Avg-Sensitivity no TCC. Os dois usos não devem ser confundidos no texto do TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 17} Métodos, métricas de sensibilidade}
+\begin{origquote}“Relevance Mass Accuracy (RMA): Ratio of the total relevancy inside the ground truth mask divided by the sum of the total relevancy assigned for the input.”\end{origquote}
+\begin{tradquote}“Relevance Mass Accuracy (RMA): razão entre a relevância total dentro da máscara da verdade e a soma da relevância total atribuída à entrada.”\end{tradquote}
+\explab{Explicação}
+É uma métrica de localização. A seleção de métricas do TCC deixou a localização de fora, por falta de máscaras de verdade por exame; uma versão aproximada exigiria definir, por classe, as regiões clinicamente esperadas (por exemplo, ST-T para STD e STE), o que traria outros problemas (ver Baer et al., 2025, dados sintéticos).
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{Testes de sanidade em séries temporais fisiológicas.} O artigo mostra que os testes de Adebayo et al.\ são aplicáveis a sinais multicanais e que discriminam métodos: alguns falham claramente (saliência, GradCAM++), outros passam (DeepLift, LRP, Input $\times$ Gradient). Isso apoia a inclusão do eMPRT e do Random Logit no TCC.
+\item \textbf{A família do GradientSHAP passou.} Os métodos que multiplicam um termo dependente do modelo pela entrada (ou pela diferença em relação a uma referência) foram robustos à randomização. É coerente com o que o TCC encontrou: distâncias entre os mapas do modelo treinado e os do modelo aleatório muito acima do piso no eMPRT, e mapas de classes diferentes cerca de 10 vezes acima do piso no Random Logit.
+\item \textbf{Precisão e dependência do modelo são dimensões distintas.} O caso da saliência (precisa, mas igual com um modelo aleatório) é o exemplo mais claro de por que o TCC não pode se apoiar só em “o mapa destaca o QRS”: é preciso mostrar que o destaque depende do modelo treinado.
+\item \textbf{Qualidade da explicação e desempenho do modelo caem juntos} quando a SNR cai. É uma observação próxima da pergunta do TCC, mas, no artigo, a causa comum (o ruído) é conhecida e controlada.
+\end{enumerate}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Sinal & EEG simulado, 62 canais, 250 Hz, 1 s & ECG real, 12 derivações (CPSC2018) \\ \addlinespace
+Verdade & Conhecida (janela projetada nos canais) & Desconhecida \\ \addlinespace
+Modelo & CNN genérica de 6 camadas convolucionais & ResNet34-1D (conexões residuais) \\ \addlinespace
+Métodos & 12 métodos de retropropagação; sem GradientSHAP & Só GradientSHAP \\ \addlinespace
+Teste de pesos & Pesos randomizados, Pearson e SSIM entre mapas achatados & eMPRT: 3 sementes de pesos sorteados, entropia e distâncias nas 36 regiões \\ \addlinespace
+Especificidade de classe & Rótulos randomizados & Random Logit: mapas de outras classes do mesmo modelo \\ \addlinespace
+Referência de ruído & Nenhuma; limiares fixos (0,3; 0,5) & Piso: dois mapas do mesmo ECG com sementes diferentes \\ \addlinespace
+Sinal do mapa & Mapas com sinal (Pearson, SSIM) & Distâncias com sinal e só com magnitude \\ \addlinespace
+Precisão & RMA e cosseno contra a verdade & Não medida (localização excluída) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item \textbf{O GradientSHAP não foi testado no artigo.} A semelhança com DeepLift e Input $\times$ Gradient é estrutural; usar o artigo como evidência direta sobre o GradientSHAP seria um exagero.
+\item \textbf{A randomização de rótulos não equivale ao Random Logit.} A primeira altera o que o modelo aprende; o segundo compara saídas diferentes de um mesmo modelo treinado. Ambos falam de especificidade de classe, mas por caminhos diferentes.
+\item \textbf{O sentido de “robustez” é outro.} No artigo, robustez é mudar após a randomização; no TCC, a Max/Avg-Sensitivity mede estabilidade sob pequenas perturbações. É preciso usar os termos com cuidado ao citar o artigo.
+\item \textbf{Sinais sintéticos e arquitetura simples.} O próprio artigo aponta que redes residuais ficaram fora do estudo.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “Em EEG simulado com evidência conhecida, Sujatha Ravindran e Contreras-Vidal (2023) mostraram que métodos de alta precisão podem ser insensíveis à randomização do modelo ou dos rótulos, como a saliência, enquanto DeepLift, LRP e Input $\times$ Gradient foram ao mesmo tempo precisos e sensíveis à randomização.”
+\item “Esse resultado em sinais fisiológicos reforça a necessidade de testes de randomização, como o eMPRT e o Random Logit, além das métricas de fidelidade, pois um mapa pode destacar a região esperada sem depender do que o modelo aprendeu (Sujatha Ravindran; Contreras-Vidal, 2023).”
+\end{itemize}
+
+\end{document}

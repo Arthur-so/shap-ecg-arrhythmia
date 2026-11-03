@@ -1,0 +1,330 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: avaliação em séries temporais (Turbé et al., 2023)}} \\[0.35em]
+    {\large TURBÉ, H.; BJELOGRLIC, M.; LOVIS, C.; MENGALDO, G. \textit{Evaluation of post-hoc interpretability methods in time-series classification}. Nature Machine Intelligence, v.~5, p.~250--260, 2023} \\[0.3em]
+    \textbf{Tema:} métricas de identificação e de atribuição de relevância em séries temporais, sem deslocamento de distribuição, com aplicação ao CPSC (bloqueio de ramo direito) \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1038/s42256-023-00620-w} \\[0.2em]
+    \textbf{Leitura:} íntegra da versão publicada (acesso aberto; PDF de 24 páginas: artigo, Métodos, \textit{Extended Data} e \textit{Reporting Summary}); as \textit{Supplementary Information} (hiperparâmetros, métricas de classificação, resultados do FordA e a derivação teórica da Seção 4) não foram lidas \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido; nas páginas 1 a 11, a página N do PDF corresponde à página $249+N$ do periódico (p.~1 = p.~250). As páginas 12 a 21 são as figuras do \textit{Extended Data}. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Por que este artigo}
+Usa a \textbf{mesma base do TCC}, o subconjunto CPSC do desafio PhysioNet 2020, numa tarefa binária: presença ou ausência de bloqueio de ramo direito (BRD, ou RBBB em inglês). Avalia o \textbf{GradShap} (o GradientSHAP do Captum), com uma referência de 50 ECGs sorteados do teste, ao lado de outros cinco métodos e em três arquiteturas. Propõe métricas de retirada que evitam o \textbf{deslocamento de distribuição} treinando o modelo com trechos corrompidos por ruído $\mathcal{N}(0,1)$, o mesmo ruído usado depois na avaliação. E conclui que a relevância dos métodos funciona mais como \textbf{ordem} do que como contribuição proporcional, o que toca diretamente a Faithfulness Correlation e a Faithfulness Estimate do TCC.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema}
+Métodos de interpretabilidade \textbf{pós-hoc} explicam um modelo já treinado, atribuindo uma \textbf{relevância} a cada ponto da entrada. Aplicados ao mesmo modelo, métodos diferentes dão mapas muito diferentes (Fig.~1, com um ECG, p.~3), e é preciso saber qual está mais perto do que a rede de fato usa. As avaliações existentes tinham, segundo os autores, três defeitos (p.~1--2):
+\begin{enumerate}
+\item \textbf{Julgamento humano}: supõem que a rede usa as mesmas características que um especialista.
+\item \textbf{Deslocamento de distribuição}: ao corromper (ocultar) os pontos mais relevantes e medir a queda da saída, a entrada corrompida deixa de se parecer com os dados de treino, e a queda pode vir disso, e não da perda de informação.
+\item \textbf{Retreino}: o ROAR (Hooker et al., 2019) retreina o modelo nos dados corrompidos, mas o modelo retreinado pode usar outras características que o original, que é o que se quer explicar.
+\end{enumerate}
+
+\section{A ideia central}
+\begin{itemize}
+\item \textbf{Treinar já com corrupção.} Durante o treino, em cada lote, uma fração $\gamma \sim \mathcal{U}(0; 0{,}8)$ da série é trocada, em blocos de $\beta \sim \mathcal{U}(1, 7)$ instantes consecutivos, por valores sorteados de $\mathcal{N}(0,1)$, a mesma distribuição da série normalizada (p.~7). Na avaliação, os pontos retirados são trocados pelo mesmo tipo de ruído; assim, a entrada corrompida não é estranha ao modelo, e não é preciso retreinar.
+\item \textbf{Duas propriedades a medir.} \textbf{Identificação de relevância}: o método ordena corretamente os instantes do mais ao menos importante? \textbf{Atribuição de relevância}: os valores refletem a contribuição relativa de cada instante para a saída?
+\end{itemize}
+
+\section{Dados e modelos}
+\begin{itemize}
+\item \textbf{Sintético} (p.~9): 6 variáveis com 500 instantes; em duas variáveis sorteadas, uma senoide de 100 instantes é inserida; a classe depende de a soma das duas frequências passar de 60. As regiões discriminativas são conhecidas e a tarefa exige dependência temporal e entre variáveis.
+\item \textbf{FordA} (p.~9): série univariada de um subsistema automotivo (UCR), detecção de anomalia.
+\item \textbf{ECG} (p.~9): subconjunto CPSC do desafio PhysioNet/CinC 2020, com 6\,877 ECGs anotados para nove doenças; tarefa binária \textbf{BRD presente ou ausente} (1\,857 com BRD, 5\,020 sem). Pré-processamento: remoção da oscilação da linha de base por decomposição em modos empíricos (modos com frequência média abaixo de 0,7~Hz descartados), remoção de ruído de alta frequência por limiar nos coeficientes da transformada \textit{wavelet} e, por fim, cálculo de um \textbf{batimento médio por derivação}, com janelas de 0,35~s antes e 0,55~s depois de cada pico R. O modelo recebe as 12 derivações desse batimento médio, e não o ECG inteiro.
+\item \textbf{Arquiteturas}: CNN, Bi-LSTM (rede recorrente bidirecional) e Transformer. Os hiperparâmetros e o desempenho de classificação estão nas \textit{Supplementary Information}, não lidas.
+\end{itemize}
+
+\section{Métodos de explicação}
+Seis métodos do Captum (p.~8): DeepLift, \textbf{GradShap}, Integrated Gradients, KernelShap, DeepLiftShap e Shapley Value Sampling (amostragem de valores de Shapley, chamado só de Shapley). \textbf{Referências} (p.~9): para os métodos de referência única (Integrated Gradients, DeepLift, Shapley, KernelShap), a média dos exemplos em cada instante; para \textbf{GradShap e DeepLiftShap}, uma distribuição de \textbf{50 exemplos sorteados do conjunto de teste}. As explicações e as avaliações usam a saída \textbf{após o \textit{softmax}} (probabilidade), e não o \textit{logit} (p.~8).
+
+\section{Métricas e adaptação a séries temporais}
+\textbf{Só relevância positiva.} As métricas usam apenas os pontos com relevância $r_{m,t} > 0$ (a derivação $m$ no instante $t$), interpretados como o que a rede usa a favor da predição (p.~8). Os pontos são ordenados pela relevância, e corrompe-se uma fração $k \in \{0{,}05;\ 0{,}15;\ 0{,}25;\ \dots;\ 0{,}95;\ 1\}$ deles, trocando-os por ruído $\mathcal{N}(0,1)$:
+\begin{itemize}
+\item \textbf{\textit{top}-$k$}: os de maior relevância primeiro; \textbf{\textit{bottom}-$k$}: os de menor relevância primeiro.
+\end{itemize}
+\textbf{Queda normalizada.} Para uma entrada corrompida $\bar{X}$, $\tilde{S}(\bar{X}) = \big(S(X)-S(\bar{X})\big)/S(X)$, em que $S$ é a probabilidade da classe. O eixo horizontal é $\tilde{N}$, a fração de pontos corrompidos em relação ao \textbf{total} de pontos da amostra ($N = M \times T$), e não em relação aos pontos de relevância positiva; isso torna a comparação independente de quantos pontos cada método marca como positivos (p.~3).
+
+\textbf{Identificação de relevância} (p.~8):
+\begin{itemize}
+\item $\mathrm{AUC}\tilde{S}_{\text{top}}$: área sob a curva $\tilde{S}$ × $\tilde{N}$ do \textit{top}-$k$, acrescida do ponto ($\tilde{N} = 1$; queda com todos os pontos positivos corrompidos), o que favorece métodos que derrubam a saída marcando poucos pontos. Maior é melhor.
+\item $\mathrm{F1}\tilde{S} = \dfrac{\mathrm{AUC}\tilde{S}_{\text{top}}\,(1-\mathrm{AUC}\tilde{S}_{\text{bottom}})}{\mathrm{AUC}\tilde{S}_{\text{top}} + (1-\mathrm{AUC}\tilde{S}_{\text{bottom}})}$: média harmônica entre achar os pontos mais importantes (queda grande no \textit{top}) e os menos importantes (queda pequena no \textit{bottom}).
+\item Referência: relevância atribuída ao acaso (\textit{Random}).
+\end{itemize}
+\textbf{Atribuição de relevância} (p.~8--9): o índice \textbf{TIC} (\textit{time-series information content}) é a fração da relevância positiva contida nos pontos corrompidos, $\mathrm{TIC}(k) = \sum_{R^+_k} r_{m,t} \big/ \big(\sum_{R^+} r_{m,t} + \epsilon\big)$; a \textbf{queda ajustada} é $\tilde{S}_A(k) = \big(S(X)-S(\bar{X}^{\text{top}}_k)\big)\big/\big(S(X)-S(\bar{X}^{\text{top}}_{k=1})\big)$. Se a relevância fosse aditiva e linear, $\tilde{S}_A(k) = \mathrm{TIC}(k)$, isto é, a razão $\mathrm{IR} = \tilde{S}_A/\mathrm{TIC}$ seria 1: corromper pontos com 30\% da relevância positiva tiraria 30\% da queda total. A avaliação é \textbf{qualitativa}, pelas curvas $\tilde{S}_A$ × TIC comparadas com a reta de inclinação 1 (Fig.~3, p.~6).
+
+\section{Resultados principais}
+Resultados no ECG (Tabela 2, p.~5; as colunas do sintético e do FordA estão no artigo):
+\begin{center}\small
+\begin{tabular}{l|rr|rr|rr}
+\toprule
+& \multicolumn{2}{c|}{\textbf{Bi-LSTM}} & \multicolumn{2}{c|}{\textbf{CNN}} & \multicolumn{2}{c}{\textbf{Transformer}} \\
+\textbf{Método} & AUC$\tilde{S}_{\text{top}}$ & F1$\tilde{S}$ & AUC$\tilde{S}_{\text{top}}$ & F1$\tilde{S}$ & AUC$\tilde{S}_{\text{top}}$ & F1$\tilde{S}$ \\
+\midrule
+DeepLift     & 0,165 & 0,068 & 0,280 & 0,122 & 0,441 & 0,168 \\
+DeepLiftShap & 0,156 & 0,061 & \textbf{0,465} & \textbf{0,200} & 0,539 & 0,217 \\
+GradShap     & 0,262 & 0,110 & 0,357 & 0,156 & 0,584 & 0,222 \\
+IG           & 0,326 & 0,131 & 0,313 & 0,134 & 0,581 & 0,215 \\
+KernelShap   & 0,099 & 0,028 & 0,025 & $-0{,}006$ & 0,150 & 0,051 \\
+Shapley      & \textbf{0,348} & \textbf{0,139} & 0,341 & 0,142 & \textbf{0,619} & \textbf{0,228} \\
+Aleatório    & 0,088 & --- & 0,047 & --- & 0,156 & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item \textbf{Shapley} é o melhor na maioria dos casos, exceto na CNN treinada no ECG, onde o DeepLiftShap vence; é também o mais caro (p.~4).
+\item \textbf{GradShap} fica perto do topo no Transformer (empatado, na prática, com o Integrated Gradients) e em posição intermediária na CNN (3.º em AUC$\tilde{S}_{\text{top}}$ e 2.º em F1$\tilde{S}$) e na Bi-LSTM.
+\item \textbf{KernelShap} fica no nível do acaso ou abaixo dele (na CNN, 0,025 contra 0,047 do aleatório).
+\item \textbf{Atribuição}: nenhum método segue a reta teórica; o comportamento muda entre arquiteturas e bases (p.~6).
+\item \textbf{Leitura do BRD} (p.~6--7): no Transformer, o Shapley destaca uma região compacta que corresponde a uma das características morfológicas usadas por cardiologistas, e mostra que o modelo depende quase só de uma derivação, embora critérios diagnósticos usem outras.
+\end{itemize}
+
+\section{Conclusões e limitações declaradas}
+O protocolo avalia métodos sem julgamento humano, sem retreino e sem deslocamento de distribuição; Shapley é o melhor em identificação de relevância, e a escolha de alternativas mais baratas depende da arquitetura (Integrated Gradients na Bi-LSTM, DeepLiftShap na CNN, GradShap ou Integrated Gradients no Transformer). A avaliação da atribuição é declarada como um “primeiro passo”, qualitativo (p.~6). Não há seção formal de limitações. O conjunto sintético é proposto como substituto leve de bases reais, com desempenho dos métodos coerente com o observado no FordA e no ECG (p.~6).
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+Introdução com a crítica às avaliações existentes (p.~1--3), resultados (p.~3--5), discussão (p.~5--7), métodos: treino com corrupção, métricas, dados e referências (p.~7--9). As figuras das curvas no ECG estão no \textit{Extended Data} (Figs.~3 a 5 e 7, p.~14--16 e 18).
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“We show that several drawbacks identified in the literature are addressed, namely, the dependence on human judgement, retraining and the shift in the data distribution when occluding samples.”\end{origquote}
+\begin{tradquote}“Mostramos que vários problemas apontados na literatura são resolvidos, a saber, a dependência do julgamento humano, o retreino e o deslocamento da distribuição dos dados ao ocultar partes das amostras.”\end{tradquote}
+\explab{Explicação}
+Resume o programa do artigo. Para o TCC, o item central é o deslocamento de distribuição, que afeta as métricas de retirada (Faithfulness Correlation e Faithfulness Estimate).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Introdução}
+\begin{origquote}“This evaluation method was later questioned, as corrupting the images changes the distribution of the values of the sample and therefore the observed drop in score might be caused by this shift in distribution rather than actual information being removed.”\end{origquote}
+\begin{tradquote}“Esse método de avaliação foi depois questionado, pois corromper as imagens muda a distribuição dos valores da amostra, e a queda observada pode ser causada por esse deslocamento de distribuição, e não pela retirada efetiva de informação.”\end{tradquote}
+\explab{Explicação}
+É o mesmo argumento de Suh et al.\ (2024) e de Hooker et al.\ (2019). No TCC, trocar uma região do batimento por zero ou pela média do treino também produz um ECG que o modelo não viu no treino.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Introdução, crítica ao ROAR}
+\begin{origquote}“Yet we argue that it does not necessarily explain which features the initial network used to make its prediction as the similarity between neural network models is only maintained if the models are trained on datasets sampled from the same distribution.”\end{origquote}
+\begin{tradquote}“Argumentamos, porém, que ele não explica necessariamente quais características a rede original usou, pois a semelhança entre modelos de redes neurais só se mantém se eles forem treinados com dados amostrados da mesma distribuição.”\end{tradquote}
+\explab{Explicação}
+Justifica não retreinar. O TCC também avalia o modelo original, sem retreino; a diferença é que o modelo do TCC não foi treinado com o tipo de perturbação usado nas métricas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Introdução}
+\begin{origquote}“We note that a key aspect of this work is the training of the models with a random level of perturbation for each batch, in a similar fashion to widely used data-augmentation methods. This perturbation is later used to corrupt the signal when evaluating interpretability methods such that the distribution is maintained across the training and perturbed datasets used for the evaluation.”\end{origquote}
+\begin{tradquote}“Um aspecto central deste trabalho é treinar os modelos com um nível aleatório de perturbação em cada lote, de forma parecida com métodos de aumento de dados muito usados. Essa perturbação é depois usada para corromper o sinal ao avaliar os métodos de interpretabilidade, de modo que a distribuição se mantém entre os dados de treino e os dados perturbados usados na avaliação.”\end{tradquote}
+\explab{Explicação}
+É a solução proposta. Ela exige \textbf{decidir a métrica antes de treinar o modelo}: o modelo é treinado já preparado para ser avaliado. O TCC não pode adotá-la sem retreinar a ResNet34-1D, o que mudaria o modelo cujo F1 é a referência do trabalho; pode, no máximo, citá-la como alternativa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Métodos, deslocamento de distribuição}
+\begin{origquote}“Similarly to the random cropping applied to images, part of the times series is corrupted by substituting the initial time steps with points drawn from a normal distribution $\sim$ $\mathcal{N}(0, 1)$. This distribution follows the normalization applied as a preprocessing step to the samples.”\end{origquote}
+\begin{tradquote}“De forma parecida com o recorte aleatório aplicado a imagens, parte da série temporal é corrompida, substituindo os instantes originais por pontos sorteados de uma normal $\mathcal{N}(0, 1)$. Essa distribuição segue a normalização aplicada às amostras no pré-processamento.”\end{tradquote}
+\explab{Explicação}
+O valor de substituição é ruído com a mesma média e o mesmo desvio do sinal normalizado, e não uma constante. No TCC, a substituição é constante (zero ou média do treino); um trecho plano é tão “estranho” quanto ruído para um modelo que não viu nenhum dos dois no treino.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Métodos, deslocamento de distribuição}
+\begin{origquote}“The change in score observed when corrupting time steps can therefore not be attributed to a shift in the distribution, and hence fully reflects a loss of information for the model as measured by the interpretability methods.”\end{origquote}
+\begin{tradquote}“A mudança na saída observada ao corromper instantes não pode, portanto, ser atribuída a um deslocamento de distribuição, e reflete inteiramente uma perda de informação para o modelo, tal como medida pelos métodos de interpretabilidade.”\end{tradquote}
+\explab{Explicação}
+A afirmação vale para corrupções dentro do que o modelo viu no treino (até 80\% da série, blocos de 1 a 7 instantes). Como as métricas corrompem até 100\% dos pontos positivos, os casos extremos podem sair dessa faixa; o artigo não discute esse ponto.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Métodos, relevância e saída}
+\begin{origquote}“As we are interested in how the network is using data to make its predictions, we use the positive relevance to build the new metrics. [...] In this sense, the evaluation of the interpretability methods for the rest of the paper are produced with the post-softmax models’ output as well as evaluated with changes in these outputs when corrupting samples”\end{origquote}
+\begin{tradquote}“Como interessa saber como a rede usa os dados para predizer, usamos a relevância positiva para construir as novas métricas. [...] Assim, no restante do artigo, as interpretações são produzidas com a saída do modelo após o \textit{softmax} e avaliadas pelas mudanças dessa saída ao corromper as amostras.”\end{tradquote}
+\explab{Explicação}
+Duas escolhas que o TCC não segue: (i) o TCC usa a relevância com sinal (a soma por região inclui valores negativos); (ii) o TCC explica e avalia o \textit{logit}, como recomenda Bhatt et al.\ para a Faithfulness Correlation. Os autores justificam o \textit{softmax} citando Srinivas e Fleuret (2021). No TCC, o modelo é multirrótulo com uma saída independente por classe, e não há \textit{softmax} entre as classes.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} Resultados}
+\begin{origquote}“We note that k is only used for calculating the number of elements to corrupt; however, the evaluation of the interpretability methods is performed with respect to the total number of elements in the sample, denoted by $\tilde{N}$. This was performed such that the evaluation of different interpretability methods is independent of the number of time steps assigned with positive relevance, and instead is based on the total number of time steps.”\end{origquote}
+\begin{tradquote}“O $k$ só é usado para calcular quantos elementos corromper; a avaliação dos métodos é feita em relação ao número total de elementos da amostra, denotado por $\tilde{N}$. Isso torna a avaliação independente de quantos instantes cada método marca com relevância positiva, e a baseia no número total de instantes.”\end{tradquote}
+\explab{Explicação}
+Um cuidado de normalização: métodos que marcam poucos pontos como positivos não são favorecidos nem prejudicados pela escala do eixo. No TCC, a questão aparece de outra forma: as 36 regiões têm tamanhos diferentes (o QRS é mais curto que o ST-T), e retirar “9 regiões” não retira sempre a mesma fração do sinal.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Discussão}
+\begin{origquote}“Shapley is, however, the most computationally intensive interpretability method of the ones tested in this paper. It is therefore convenient to look for alternatives, which depend on the type of architecture selected.”\end{origquote}
+\begin{tradquote}“O Shapley é, porém, o método mais caro computacionalmente entre os testados. Convém, portanto, procurar alternativas, que dependem da arquitetura escolhida.”\end{tradquote}
+\explab{Explicação}
+O melhor método depende da arquitetura. Na CNN, a mais próxima da ResNet34-1D do TCC, o DeepLiftShap venceu e o GradShap ficou em posição intermediária. Isso não invalida o GradientSHAP no TCC, mas indica que a qualidade da explicação deve ser medida, e não presumida.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 6} Discussão, atribuição de relevância}
+\begin{origquote}“The common denominator is the inability of the interpretability methods to follow the theoretical estimate. This indicates that the relevance attributed to each time step does not reflect the relative importance of this time step in the classification task. The attributed relevance instead acts more as a ranking of the most important time steps among themselves.”\end{origquote}
+\begin{tradquote}“O denominador comum é a incapacidade dos métodos de seguir a estimativa teórica. Isso indica que a relevância atribuída a cada instante não reflete a importância relativa desse instante na tarefa de classificação. A relevância funciona mais como uma ordenação dos instantes mais importantes entre si.”\end{tradquote}
+\explab{Explicação}
+É o resultado mais relevante para o TCC. A Faithfulness Correlation e a Faithfulness Estimate supõem que a soma das atribuições acompanha a queda da saída. Se a relevância vale mais como ordem do que como quantidade, correlações moderadas são esperadas mesmo para bons métodos, o que ajuda a interpretar os cerca de 0,6 obtidos no TCC. A ressalva é que o artigo usa a probabilidade (saturável) e só a relevância positiva; com o \textit{logit} e a relevância com sinal, a aditividade do GradientSHAP é mais direta.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Métodos, base de ECG}
+\begin{origquote}“The dataset was narrowed down to the CPSC subset, which included 6,877 ECGs annotated for nine cardiovascular diseases. As part of these annotations, it was chosen to classify the ECGs for the presence/absence of a Right Bundle Branch Block (RBBB).”\end{origquote}
+\begin{tradquote}“A base foi restrita ao subconjunto CPSC, com 6\,877 ECGs anotados para nove doenças cardiovasculares. Entre essas anotações, escolheu-se classificar os ECGs pela presença ou ausência de bloqueio de ramo direito (BRD).”\end{tradquote}
+\explab{Explicação}
+É a mesma base do TCC, com as mesmas nove classes. O artigo usa apenas uma delas, numa tarefa binária; o TCC usa as nove, em classificação multirrótulo, e compara as explicações entre classes. BRD é, no TCC, uma das classes de maior F1 (0,927) e das mais fiéis.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Métodos, base de ECG}
+\begin{origquote}“The beats centred around the R-peaks are then extracted from the ECG by taking 0.35 before and 0.55 s after the R-peak. The mean of the extracted beat is then computed to obtain an average beat of each lead.”\end{origquote}
+\begin{tradquote}“Os batimentos centrados nos picos R são então extraídos, tomando 0,35~s antes e 0,55~s depois do pico R. Calcula-se a média dos batimentos extraídos para obter um batimento médio de cada derivação.”\end{tradquote}
+\explab{Explicação}
+A entrada do modelo é um batimento médio, não o ECG de 10 a 60~s. Isso elimina a informação de ritmo (intervalos entre batimentos), irrelevante para o BRD, mas essencial para classes como AF e SNR do TCC. No TCC, o modelo vê o registro inteiro, e o batimento entra só na agregação dos mapas em regiões.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 9} Métodos, referências}
+\begin{origquote}“For those methods, the baseline was set as the mean taken across samples for each time step. GradShap and DeepLiftShap uses a distribution of baseline and this baseline was constructed by taking 50 random samples from the test set.”\end{origquote}
+\begin{tradquote}“Para esses métodos, a referência foi a média dos exemplos em cada instante. GradShap e DeepLiftShap usam uma distribuição de referências, construída com 50 exemplos sorteados do conjunto de teste.”\end{tradquote}
+\explab{Explicação}
+O TCC também usa uma distribuição de referências, mas com 36 ECGs do \textbf{treino}, balanceados por classe (4 de rótulo único por classe), e 200 sorteios por mapa. Sortear do teste mistura os papéis de dados avaliados e de referência; sortear sem balancear deixa a referência com a proporção das classes da base (no CPSC, 27\% dos exemplos são BRD).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Discussão, uso clínico}
+\begin{origquote}“The interpretability method also shows that the trained model relies almost entirely on a single lead to predict the disease in question, namely RBBB; however, other diagnostic criteria focusing on different leads are commonly used.”\end{origquote}
+\begin{tradquote}“O método de interpretabilidade também mostra que o modelo treinado depende quase só de uma derivação para predizer a doença em questão, o BRD; no entanto, critérios diagnósticos que usam outras derivações são comumente empregados.”\end{tradquote}
+\explab{Explicação}
+Um exemplo de uso da explicação para revelar o que o modelo usa, mesmo quando difere do critério clínico. No TCC, a concentração dos mapas por classe é medida pela complexidade (número efetivo de regiões) e pela Consistency; o mapa de BRD do TCC pode ser lido à luz dessa observação, sem pressupor que deva usar uma só derivação.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{Mesma base, GradientSHAP avaliado.} O artigo mostra que, no CPSC, o GradShap identifica instantes relevantes melhor que o acaso em todas as arquiteturas, perto do topo no Transformer e em posição intermediária na CNN. É um precedente favorável, com as diferenças da seção seguinte.
+\item \textbf{Relevância como ordem.} A conclusão sobre a atribuição (p.~6) sustenta ler a fidelidade moderada do TCC (cerca de 0,6) como compatível com explicações úteis, e mostra que a proporcionalidade estrita é uma exigência forte.
+\item \textbf{Deslocamento de distribuição como limitação nomeada.} O artigo dá a formulação mais clara do problema e uma solução que exige retreino com corrupção. O TCC pode citá-la como alternativa não adotada, explicando por quê (manter o modelo cujo F1 é a referência).
+\item \textbf{Normalizações cuidadosas.} O eixo $\tilde{N}$ relativo ao total de pontos lembra que o tamanho da parte retirada deve ser comparável entre os casos avaliados.
+\end{enumerate}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Base & CPSC (desafio PhysioNet 2020), 6\,877 ECGs & CPSC2018, mesmas 9 classes \\ \addlinespace
+Tarefa & Binária: BRD presente ou ausente & Multirrótulo, 9 classes \\ \addlinespace
+Entrada & Batimento médio por derivação (0,35~s antes e 0,55~s depois do R), após filtragem & ECG inteiro, 12 × 15\,000 pontos com preenchimento, z-score por derivação \\ \addlinespace
+Modelos & CNN, Bi-LSTM, Transformer, treinados com corrupção $\mathcal{N}(0,1)$ & ResNet34-1D, aumento de dados usual, sem corrupção \\ \addlinespace
+GradientSHAP & 50 referências sorteadas do teste & 36 referências do treino, balanceadas; 200 sorteios \\ \addlinespace
+Saída explicada & Probabilidade (\textit{softmax}) & \textit{Logit} de cada classe \\ \addlinespace
+Relevância usada & Só a positiva & Com sinal, somada por região \\ \addlinespace
+Unidade & Ponto (derivação × instante) & 36 regiões do batimento \\ \addlinespace
+Valor de substituição & Ruído $\mathcal{N}(0,1)$ & Zero ou média do treino \\ \addlinespace
+Métricas & AUC$\tilde{S}_{\text{top}}$, F1$\tilde{S}$ (ordem); $\tilde{S}_A$ × TIC (proporção, qualitativa) & Faithfulness Correlation e Estimate, sensibilidade, Consistency, Random Logit, complexidade \\ \addlinespace
+Referência & Relevância aleatória & Piso entre sementes \\ \addlinespace
+Objetivo & Comparar métodos e arquiteturas & Comparar classes, frente ao F1 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão}
+\begin{itemize}
+\item \textbf{Configuração diferente do GradShap.} Referência do teste, sem balanceamento, e saída em probabilidade; os resultados não se transferem diretamente ao GradientSHAP do TCC.
+\item \textbf{Batimento médio.} O modelo do artigo não vê ritmo. Resultados no CPSC com batimento médio dizem pouco sobre classes de ritmo (AF, SNR) num modelo com o registro inteiro.
+\item \textbf{Treino com corrupção.} A ausência de deslocamento depende de o modelo ter sido treinado assim; o modelo do TCC não foi, e as métricas de retirada do TCC continuam sujeitas ao problema.
+\item \textbf{Atribuição qualitativa.} A conclusão de que a relevância funciona como ordem vem de curvas, sem um número resumo; a derivação teórica está nas \textit{Supplementary Information}, não lidas.
+\item \textbf{Sem análise por classe.} A tarefa é binária; não há comparação entre diagnósticos.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestões}
+\begin{itemize}
+\item “Turbé et al.\ (2023) avaliaram seis métodos pós-hoc, entre eles o GradientSHAP com 50 referências sorteadas, na detecção de bloqueio de ramo direito no CPSC; para evitar o deslocamento de distribuição nas métricas de retirada, os modelos foram treinados com trechos substituídos por ruído $\mathcal{N}(0,1)$, o mesmo usado na avaliação.”
+\item “Os autores observaram que nenhum método produz relevâncias proporcionais ao efeito de cada instante sobre a saída; a relevância funciona mais como uma ordenação dos instantes importantes, o que torna esperadas correlações moderadas em métricas que comparam a soma das atribuições com a queda da saída.”
+\item “Como o modelo deste trabalho não foi treinado com o tipo de perturbação usado nas métricas, as medidas de fidelidade estão sujeitas ao deslocamento de distribuição apontado por Turbé et al.\ (2023), o que é mitigado, mas não eliminado, pela retirada de regiões inteiras e pelo uso de duas referências de substituição.”
+\end{itemize}
+\end{infobox}
+
+\end{document}

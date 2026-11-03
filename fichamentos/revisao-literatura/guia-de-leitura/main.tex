@@ -1,0 +1,298 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{κ}{\ensuremath{\kappa}}
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Guia de leitura da revisão da literatura}} \\[0.35em]
+    {\large Resumo dos fichamentos completos, ordem de leitura, conexões com o TCC e glossário} \\[0.3em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 03/11/2026 \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+{\raggedright\textbf{Como usar.} Este guia organiza os \textbf{11 fichamentos completos} da pasta \texttt{fichamentos/revisao-literatura/completos/}. A seção~\ref{sec:ordem} sugere uma ordem de leitura; a seção~\ref{sec:resumos} resume cada artigo em poucas linhas; a seção~\ref{sec:conexoes} mostra os temas que ligam os artigos entre si e ao TCC; a seção~\ref{sec:uso} indica em que parte do texto do TCC cada um entra; a seção~\ref{sec:glossario} explica os termos técnicos que aparecem nos artigos. O relatório completo da revisão está em \texttt{fichamentos/revisao-literatura/relatorio/main.pdf}, e os 28 fichamentos curtos, em \texttt{curtos/}, ficam como consulta.\par}
+
+\begin{infobox}[note]{Os 11 fichamentos completos}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Pasta} & \textbf{Artigo} & \textbf{Tema} \\
+\midrule
+\texttt{ismail-2020-benchmark-series} & Ismail et al.\ (2020), NeurIPS & \textit{Benchmark} de saliência em séries \\
+\texttt{mercier-2022-benchmark-atribuicao} & Mercier et al.\ (2022), ICAART & \textit{Benchmark} com Sensitivity e Infidelity \\
+\texttt{hollig-2023-xtsc-bench} & Höllig et al.\ (2023), ICMLA & XTSC-Bench (Quantus em séries) \\
+\texttt{turbe-2023-avaliacao-series} & Turbé et al.\ (2023), \textit{Nat.\ Mach.\ Intell.} & Avaliação no CPSC (BRD) \\
+\texttt{suh-2024-atribuicao-ecg} & Suh et al.\ (2024), \textit{Comput.\ Biol.\ Med.} & Faithfulness Correlation em ECG \\
+\texttt{storas-2025-mapas-calor-ecg} & Storås et al.\ (2025), JAMIA & Especialistas × perturbação \\
+\texttt{arends-2026-atribuicao-ecg} & Arends et al.\ (2026), \textit{EHJ Digital Health} & ResNet-1D, 9 classes, GradientSHAP \\
+\texttt{gumpfer-2026-avaliacao-diretrizes-ecg} & Gumpfer et al.\ (2026), \textit{preprint} & Regiões das diretrizes e amplitude \\
+\texttt{baer-2025-efeitos-dependentes-classe} & Baer et al.\ (2025a), xAI & Efeitos dependentes da classe \\
+\texttt{baer-2025-dados-sinteticos-classe} & Baer et al.\ (2025b), \textit{preprint} & As causas, em dados sintéticos \\
+\texttt{ravindran-2023-eeg-verdade-simulada} & Sujatha Ravindran e Contreras-Vidal (2023), \textit{Sci.\ Rep.} & Randomização em EEG simulado \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Os fichamentos das métricas do TCC (Bhatt, Alvarez-Melis, Yeh, Dasgupta, Sixt e Hedström) continuam nas pastas próprias em \texttt{fichamentos/}.
+\end{infobox}
+
+\section{Ordem de leitura sugerida}\label{sec:ordem}
+A ordem vai do geral (como se avalia explicação em séries temporais) para o específico (ECG, classes, randomização). Cada bloco responde a uma pergunta que o TCC também faz.
+
+\begin{enumerate}
+\item \textbf{Bloco 1 — Como se avalia uma explicação em séries temporais?}
+\begin{enumerate}
+\item \textbf{Ismail et al.\ (2020).} O ponto de partida da área: mostra que os métodos acham \textit{quando} o sinal importa, mas não \textit{em qual canal}, e que retirar partes da entrada tira o exemplo da distribuição de treino.
+\item \textbf{Mercier et al.\ (2022).} Primeiro contato com a Sensitivity (família da Max/Avg-Sensitivity do TCC) em séries, com o GradientShap e um conjunto de ECG.
+\item \textbf{Höllig et al.\ (2023), XTSC-Bench.} O antecedente mais próximo do \textbf{conjunto de métricas} do TCC (Faithfulness Correlation, Max/Avg-Sensitivity, Complexity, via Quantus).
+\end{enumerate}
+\item \textbf{Bloco 2 — E no ECG?}
+\begin{enumerate}
+\item \textbf{Turbé et al.\ (2023).} Mesma base do TCC (CPSC), GradientSHAP com 50 referências e o problema do deslocamento de distribuição.
+\item \textbf{Suh et al.\ (2024).} O precedente da Faithfulness Correlation em ECG real; localização e perturbação discordam.
+\item \textbf{Storås et al.\ (2025).} Especialistas e perturbação discordam; o GradientSHAP é o caso extremo.
+\item \textbf{Arends et al.\ (2026).} O trabalho mais parecido com o TCC: ResNet-1D, nove classes, GradientSHAP, estabilidade, randomização e perturbação.
+\item \textbf{Gumpfer et al.\ (2026).} Por que o GradientSHAP vai bem nos bloqueios de ramo e mal no segmento ST: a relevância segue a amplitude.
+\end{enumerate}
+\item \textbf{Bloco 3 — Por que as classes diferem nas métricas?}
+\begin{enumerate}
+\item \textbf{Baer et al.\ (2025a).} Métricas de perturbação variam por classe por motivos que não são a qualidade da explicação.
+\item \textbf{Baer et al.\ (2025b).} A causa, em dados sintéticos: diferenças de amplitude e duração entre as classes bastam.
+\end{enumerate}
+\item \textbf{Bloco 4 — O mapa depende do modelo?}
+\begin{enumerate}
+\item \textbf{Sujatha Ravindran e Contreras-Vidal (2023).} Testes de randomização em sinal fisiológico (EEG simulado). Ler em seguida o fichamento do eMPRT (\url{fichamentos/hedstrom-2023-emprt}) e o do Random Logit (\url{fichamentos/sixt-2020-random-logit}).
+\end{enumerate}
+\end{enumerate}
+Quem tiver pouco tempo pode ler só \textbf{Arends, Suh, Gumpfer e Baer (2025a)}: juntos, eles cobrem o desenho mais próximo, o precedente da métrica, o efeito da amplitude e a ressalva sobre as classes.
+
+\section{Resumo de cada artigo}\label{sec:resumos}
+
+\subsection{Ismail et al.\ (2020) — \textit{benchmark} de saliência em séries}
+\textbf{O que fizeram.} Criaram séries multivariadas sintéticas em que se sabe quais instantes e quais variáveis carregam a informação, treinaram várias arquiteturas e compararam métodos de saliência, entre eles o GradientSHAP. \textbf{Achado.} Os métodos identificam os instantes relevantes, mas não as variáveis dentro deles; a arquitetura pesa mais que o método. Retirar atributos para medir fidelidade pode tirar a entrada da distribuição de treino. \textbf{Para o TCC.} Justifica olhar a importância \textbf{por derivação} (e não só por segmento) e a ressalva sobre o deslocamento de distribuição na Faithfulness Correlation e na Faithfulness Estimate.
+
+\subsection{Mercier et al.\ (2022) — \textit{benchmark} com Sensitivity e Infidelity}
+\textbf{O que fizeram.} Compararam 12 métodos em seis conjuntos de séries (entre eles o ECG5000) pelas métricas de Yeh et al.\ (2019), Sensitivity e Infidelity, além de testes de dependência do modelo e dos rótulos. \textbf{Achado.} Nenhum método vence em todos os critérios; os métodos por perturbação foram mais robustos e os baseados no gradiente, mais rápidos. O GradientShap teve a maior Sensitivity entre os métodos de gradiente em todos os conjuntos. \textbf{Para o TCC.} Apoia a leitura de que a variação própria do GradientSHAP (o piso) domina a sensibilidade, e a agregação em grupos de pontos (regiões).
+
+\subsection{Höllig et al.\ (2023) — XTSC-Bench}
+\textbf{O que fizeram.} Uma ferramenta de avaliação de explicações para classificação de séries temporais sobre o Quantus, com Faithfulness Correlation, Max/Avg-Sensitivity, Complexity e localização, incluindo o GradientSHAP. \textbf{Achado.} Nenhum explicador supera os demais em todas as propriedades; substituir trechos por zero ou média pode introduzir informação em séries; só avaliam classificadores com acurácia acima de 90\%. \textbf{Para o TCC.} É o precedente do conjunto de métricas; o TCC difere ao calcular por regiões e ao estudar justamente o que acontece em classes de desempenho mais baixo.
+
+\subsection{Turbé et al.\ (2023) — avaliação no CPSC}
+\textbf{O que fizeram.} Na mesma base do TCC (CPSC), numa tarefa binária (BRD sim/não), compararam seis métodos (DeepLift, GradShap, IG, KernelShap, DeepLiftShap e Shapley Value Sampling) em três arquiteturas, com métricas de retirada (AUC $\tilde{S}_{top}$, F1$\tilde{S}$). Para evitar o deslocamento de distribuição, treinaram o modelo já com trechos trocados por ruído $\mathcal{N}(0,1)$. O GradShap usa 50 ECGs sorteados do teste como referência; o ECG é reduzido a um batimento médio por derivação. \textbf{Achado.} Na CNN com ECG, DeepLiftShap 0,465, GradShap 0,357, Shapley 0,341, IG 0,313 e KernelShap 0,025, contra 0,047 do aleatório. A relevância funciona mais como \textbf{ordem} do que como contribuição proporcional; o modelo de BRD depende quase só de uma derivação. \textbf{Para o TCC.} Justifica a referência como distribuição de ECGs e explica por que correlações moderadas na Faithfulness Correlation são esperadas.
+
+\subsection{Suh et al.\ (2024) — Faithfulness Correlation em ECG}
+\textbf{O que fizeram.} Avaliaram 11 métodos (incluindo DeepSHAP e KernelSHAP; sem GradientSHAP) em cinco bases de ECG com uma ResNet-18 1D, com quatro métricas de localização e três de perturbação, entre elas a \textbf{Faithfulness Correlation}: 10\% dos pontos substituídos por zero, 100 sorteios, Pearson com a queda do logit, só predições com probabilidade acima de 0,9. \textbf{Achado.} O DeepSHAP teve a maior Faithfulness Correlation nas quatro bases (0,41 a 0,63); os métodos melhores na localização não são os melhores na perturbação; os autores recomendam localização quando há anotação, por causa do deslocamento de distribuição. \textbf{Para o TCC.} É o precedente a citar: a métrica \textbf{não é inédita em ECG}. O que é próprio do TCC é o cálculo por regiões, o piso e a comparação por classe.
+
+\subsection{Storås et al.\ (2025) — especialistas × perturbação}
+\textbf{O que fizeram.} Nove métodos de gradiente, entre eles o Gradient SHAP com referência zero, em modelos que medem intervalos e amplitudes do ECG (regressão, ECGs sintéticos). Avaliação por três especialistas e por perturbação ordenada (um ponto por vez, ruído). \textbf{Achado.} O Gradient SHAP foi dos melhores na perturbação e quase não foi escolhido pelos especialistas; nenhum método venceu sempre. A perturbação por ruído afeta pouco os trechos de grande amplitude. \textbf{Para o TCC.} Mostra que ``fiel ao modelo'' e ``convincente para o médico'' são critérios diferentes e que a amplitude do sinal interfere nas métricas de retirada.
+
+\subsection{Arends et al.\ (2026) — o desenho mais próximo}
+\textbf{O que fizeram.} ResNet-1D treinadas em ECG de 12 derivações para nove classes, 12 métodos (GradientSHAP incluído, pelo Captum), com três testes: concordância entre modelos treinados com sementes diferentes, randomização progressiva dos pesos e perturbação no estilo ROAD. Fixaram o número de sorteios dos métodos estocásticos para que dois mapas do mesmo ECG tivessem correlação de pelo menos 0,98. \textbf{Achado.} Autoconsistência apenas moderada entre modelos (cerca de 0,55 para o GradientSHAP) e correlação perto de zero após randomizar os pesos; comportamento semelhante em classes de AUPRC alta e baixa, sem análise formal. \textbf{Para o TCC.} É o comparador principal; o TCC mede explicitamente a variação do método (piso) e faz a comparação por classe que eles deixaram em aberto.
+
+\subsection{Gumpfer et al.\ (2026) — regiões das diretrizes e amplitude}
+\textbf{O que fizeram.} Treze métodos no PTB-XL, comparados com regiões definidas por diretrizes clínicas (PR, QRS, ST) em quatro doenças. \textbf{Achado.} Métodos que multiplicam o gradiente pela entrada ou subtraem uma referência, entre eles o GradientSHAP, concentram a relevância em componentes de alta amplitude (pico R, onda T). O GradientSHAP cobre bem o QRS nos bloqueios de ramo e fica abaixo do acaso no ST da isquemia ($-5{,}5\%$). \textbf{Para o TCC.} Explica o eMPRT (o modelo aleatório concentra o mapa no QRS) e o padrão por classe: classes definidas pela forma do QRS (BRD, BRE, CVP) saem melhor nas métricas; classes de ST e de ritmo, pior.
+
+\subsection{Baer et al.\ (2025a) — efeitos dependentes da classe}
+\textbf{O que fizeram.} Em séries temporais (UCR), analisaram métricas de perturbação por classe predita, com vários valores de perturbação e métodos (GradientSHAP incluído). \textbf{Achado.} A eficácia das métricas varia muito entre classes; as estratégias de melhor média são as mais dependentes da classe; a causa provável são vieses do classificador em relação ao valor usado para ``retirar'' um trecho. \textbf{Para o TCC.} A ressalva central: diferença de fidelidade entre classes não é, por si, diferença de qualidade. Recomendam reportar por classe.
+
+\subsection{Baer et al.\ (2025b) — as causas em dados sintéticos}
+\textbf{O que fizeram.} Repetiram a análise em dados sintéticos com evidência conhecida. \textbf{Achado.} Diferenças simples de \textbf{amplitude} ou de \textbf{duração} do padrão entre as classes bastam para gerar os efeitos; a métrica de perturbação chega a ordenar as classes ao contrário da verdade conhecida. \textbf{Para o TCC.} As classes do ECG diferem exatamente nisso (QRS largo, desvios pequenos de ST, PR longo); a ordem das classes na fidelidade deve ser discutida à luz dessas propriedades.
+
+\subsection{Sujatha Ravindran e Contreras-Vidal (2023) — randomização em EEG}
+\textbf{O que fizeram.} EEG simulado com evidência conhecida (canal, instante, frequência); 12 métodos; testes de randomização de pesos e de rótulos (Adebayo et al., 2018). \textbf{Achado.} A saliência (gradiente puro) não foi específica do modelo nem da classe; DeepLift, LRP e Input × Gradient foram precisos e sensíveis à randomização. O GradientSHAP não foi avaliado, mas pertence a essa última família. \textbf{Para o TCC.} Reforça a necessidade dos testes de randomização (eMPRT, Random Logit) além das métricas de fidelidade.
+
+\section{Conexões entre os artigos e com o TCC}\label{sec:conexoes}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.1cm}XX}
+\toprule
+\textbf{Tema} & \textbf{O que os artigos dizem} & \textbf{Decisão ou achado do TCC} \\
+\midrule
+Retirar trechos tira o ECG da distribuição & Ismail, Turbé, Suh e XTSC-Bench apontam o problema; Turbé treina com ruído para evitá-lo & Retirada de regiões inteiras e duas referências (zero e média, com resultados praticamente iguais); limitação declarada \\ \addlinespace
+A amplitude domina o mapa & Gumpfer (atribuição segue o pico R e a onda T), Storås (ruído afeta pouco o pico R), Adebayo (entrada × gradiente ``devolve a entrada'') & eMPRT: mapa do modelo aleatório no QRS; classes de QRS (BRD, BRE, CVP) no topo da fidelidade \\ \addlinespace
+O GradientSHAP é estocástico & Mercier (maior Sensitivity entre os de gradiente), Arends (fixa sorteios para correlação $\ge$ 0,98) & Piso medido (0,18) e usado como régua; 200 sorteios \\ \addlinespace
+Métricas variam por classe & Baer (a, b), Gumpfer (por doença), Arends (AUPRC por classe) & Resultados por classe; comparação descritiva com o F1 \\ \addlinespace
+Métricas discordam entre si & Suh (localização × perturbação), Storås (especialistas × perturbação), Mercier, XTSC-Bench & Sete métricas, lidas em conjunto, sem um ``vencedor'' único \\ \addlinespace
+O mapa depende do modelo? & Arends (randomização progressiva), Ravindran (pesos e rótulos), Mercier & eMPRT e Random Logit: distâncias muito acima do piso \\ \addlinespace
+Agregar pontos em grupos & Mercier (falta de grupos em séries), Gumpfer (máscaras PR/QRS/ST), Ismail (tempo × canal) & 36 regiões = 12 derivações × pré-QRS/QRS/ST-T \\ \addlinespace
+Desempenho do modelo e explicação & XTSC-Bench só usa modelos > 90\%; Arends sem relação clara com AUPRC & A pergunta do TCC; nenhum trabalho a responde diretamente \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Como usar no texto do TCC}\label{sec:uso}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.3cm}X}
+\toprule
+\textbf{Parte do TCC} & \textbf{Artigos e o que sustentam} \\
+\midrule
+Introdução e justificativa & Arends e Gumpfer (avaliar atribuições em ECG é necessário e pouco feito); Suh (falta de avaliação sistemática em ECG); Storås (especialistas e métricas discordam) \\ \addlinespace
+Fundamentação: avaliação de explicações & Ismail, Mercier, XTSC-Bench (como se avalia em séries); Baer (limites das métricas de perturbação); Ravindran (testes de randomização) \\ \addlinespace
+Trabalhos relacionados & Turbé (mesma base), Suh (mesma métrica), Arends (mesmo desenho), Gumpfer (regiões e amplitude) \\ \addlinespace
+Metodologia: referência do GradientSHAP & Turbé (distribuição de 50 ECGs), Arends (controle da variação de sorteio) \\ \addlinespace
+Metodologia: regiões & Mercier, Gumpfer, Ismail \\ \addlinespace
+Metodologia: valor de substituição & XTSC-Bench (zero pode carregar informação), Suh (zero), Turbé (ruído) \\ \addlinespace
+Metodologia: comparação descritiva com o F1 & Baer (efeitos de classe), Gumpfer (diferenças por doença), Arends (análise só descritiva) \\ \addlinespace
+Discussão dos resultados & Gumpfer e Baer (por que BRD/BRE/CVP saem melhor e ST/ritmo pior); Mercier (sensibilidade e piso); Ravindran e Adebayo (eMPRT) \\ \addlinespace
+Limitações & Ismail, Turbé e Suh (deslocamento de distribuição); Storås (plausibilidade não avaliada); Arends (um único modelo treinado) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{infobox}[warn]{Ao citar}
+Os fichamentos trazem, no fim, sugestões de frases (``Como citar no TCC''). Gumpfer et al.\ (2026) e Baer et al.\ (2025b) são \textit{preprints}: citar como tal. Escrever ``não se encontrou'' (e não ``não existe'') ao afirmar a originalidade do TCC.
+\end{infobox}
+
+\section{Glossário}\label{sec:glossario}
+Termos agrupados por assunto. Cada definição é a forma mais simples que basta para ler os artigos.
+
+\subsection{Medidas de desempenho do classificador}
+\begin{description}[leftmargin=0pt, style=sameline]
+\item[Precisão e revocação.] Precisão: das vezes em que o modelo disse ``classe X'', quantas estavam certas. Revocação (\textit{recall}, sensibilidade): dos casos que eram X, quantos o modelo encontrou.
+\item[F1.] Média harmônica de precisão e revocação; só é alto se as duas forem altas. \textbf{F1-macro}: média simples do F1 das classes (cada classe pesa igual, rara ou comum).
+\item[Limiar.] Valor a partir do qual a probabilidade vira ``sim''. No TCC, cada classe tem o seu limiar, escolhido para maximizar o F1 na validação.
+\item[Curva ROC e AUC (AUROC).] A curva ROC mostra, para todos os limiares possíveis, a taxa de verdadeiros positivos contra a de falsos positivos. A \textbf{AUC} (\textit{area under the curve}) é a área sob essa curva: 0,5 é o acaso e 1 é perfeito. Pode ser lida como a probabilidade de o modelo dar escore maior a um positivo sorteado do que a um negativo sorteado. Não depende de limiar.
+\item[AUPRC.] Área sob a curva precisão–revocação. Parecida com a AUC, mas mais informativa para classes raras: o valor do acaso é a prevalência da classe (por exemplo, 0,03 se a classe aparece em 3\% dos exames), e não 0,5.
+\item[AUC em métricas de explicação.] Vários artigos usam ``AUC'' para a área sob uma \textbf{curva de retirada} (quanto a saída cai à medida que se retiram os trechos mais importantes), não para a curva ROC. É o caso da AUC $\tilde{S}_{top}$ de Turbé e da área sob a curva de erro de Storås. Sempre conferir qual curva é.
+\item[Logit, sigmoide, softmax.] Logit: a saída ``crua'' do modelo antes de virar probabilidade. A sigmoide transforma cada logit numa probabilidade independente (multirrótulo, como no TCC); a softmax transforma o vetor de logits em probabilidades que somam 1 (uma classe só).
+\item[BCE.] Entropia cruzada binária, a função de perda do treino multirrótulo; ``ponderada'' quando os positivos de classes raras pesam mais.
+\end{description}
+
+\subsection{Métodos de explicação}
+\begin{description}[leftmargin=0pt, style=sameline]
+\item[Mapa de atribuição (saliência, \textit{heatmap}).] Um número por ponto (ou região) do sinal dizendo quanto ele contribuiu para a saída de uma classe.
+\item[Saliency.] O gradiente puro da saída em relação à entrada.
+\item[Input × Gradient (G×I).] Gradiente multiplicado pela própria entrada.
+\item[Integrated Gradients (IG).] Média dos gradientes ao longo de um caminho reto entre uma referência e a entrada, multiplicada pela diferença entre as duas.
+\item[Valor de Shapley.] Divisão ``justa'' da saída entre os atributos, pela média da contribuição de cada atributo em todas as combinações possíveis dos demais.
+\item[KernelSHAP, Shapley Value Sampling.] Aproximações do valor de Shapley por amostragem de combinações (perturbando a entrada e rodando o modelo muitas vezes).
+\item[DeepLIFT, DeepSHAP (DeepLiftShap).] Propagam para trás a diferença entre a ativação na entrada e numa referência; o DeepSHAP faz a média sobre várias referências.
+\item[GradientSHAP.] Média de gradiente × (entrada − referência) em pontos sorteados entre a entrada e referências sorteadas, com ruído; é estocástico. É o método do TCC.
+\item[SmoothGrad.] Média de mapas de saliência de cópias da entrada com ruído.
+\item[LRP.] \textit{Layer-wise Relevance Propagation}: redistribui a saída para trás, camada a camada, por regras próprias.
+\item[Grad-CAM, Guided Backprop, Guided Grad-CAM.] Grad-CAM usa os mapas de ativação de uma camada convolucional pesados pelo gradiente (mapa de baixa resolução); Guided Backprop deixa passar só gradientes positivos; Guided Grad-CAM combina os dois.
+\item[LIME.] Ajusta um modelo linear simples em torno do exemplo, com versões perturbadas da entrada.
+\item[Referência (\textit{baseline}).] O ``sinal ausente'' contra o qual se mede a contribuição (zero, média ou uma distribuição de exemplos). No TCC: 36 ECGs do treino, 4 por classe.
+\end{description}
+
+\subsection{Avaliação de explicações}
+\begin{description}[leftmargin=0pt, style=sameline]
+\item[Fidelidade × plausibilidade.] Fidelidade: o mapa reflete o que o \textbf{modelo} usa. Plausibilidade: o mapa coincide com o que um \textbf{especialista} olharia. São coisas diferentes; o TCC mede fidelidade.
+\item[Deleção/inserção, MoRF/LeRF, AOPC.] Retirar (ou inserir) trechos na ordem do mapa e medir a saída. MoRF: retira primeiro os mais relevantes (a saída deve cair rápido); LeRF: os menos relevantes (deve cair devagar). AOPC: área média da queda ao longo das retiradas.
+\item[Valor de perturbação.] O que se põe no lugar do trecho retirado (zero, média, ruído, interpolação). Muda os resultados (Baer, XTSC-Bench).
+\item[Deslocamento de distribuição (OOD).] Entrada perturbada diferente de tudo o que o modelo viu no treino; a queda da saída pode vir da estranheza, e não da informação retirada.
+\item[ROAR, ROAD.] ROAR: retira os trechos e \textbf{retreina} o modelo para evitar o OOD. ROAD: retira trechos com interpolação ruidosa, sem retreinar.
+\item[Localização: IoU, \textit{pointing game}, \textit{relevance rank/mass accuracy}.] Comparam o mapa com uma região anotada: sobreposição (IoU), se o ponto máximo cai na região (\textit{pointing game}), fração dos pontos mais relevantes ou da relevância total dentro dela.
+\item[Testes de sanidade, randomização em cascata.] Sortear de novo os pesos do modelo (de uma vez ou camada a camada) ou os rótulos e verificar se o mapa muda (MPRT, eMPRT).
+\item[Autoconsistência.] Concordância entre mapas do mesmo exemplo gerados por modelos treinados com sementes diferentes (Arends).
+\item[Verdade simulada (\textit{ground truth}).] Dados sintéticos em que se sabe onde está a evidência.
+\item[Meta-avaliação.] Avaliar as próprias métricas de avaliação (por exemplo, MetaQuantus).
+\item[Quantus, Captum.] Bibliotecas em Python: Quantus implementa métricas de avaliação; Captum, métodos de explicação (o GradientSHAP do TCC vem do Captum).
+\end{description}
+
+\subsection{Estatística e concordância}
+\begin{description}[leftmargin=0pt, style=sameline]
+\item[Pearson e Spearman.] Pearson: correlação linear entre valores. Spearman: correlação entre as \textbf{posições} (postos), insensível a escala. A Faithfulness Correlation usa Pearson dentro de cada mapa.
+\item[κ de Cohen.] Concordância entre avaliadores descontando o acaso (0 = acaso, 1 = perfeita).
+\item[ICC.] Coeficiente de correlação intraclasse: concordância entre avaliadores para notas numéricas.
+\item[SSIM.] Índice de semelhança estrutural entre imagens, usado em testes de randomização em imagens.
+\item[Entropia, Gini.] Medidas de espalhamento: entropia alta e Gini baixo indicam importância distribuída em muitas regiões.
+\item[\textit{Bootstrap}.] Reamostrar os dados com reposição para obter intervalos de confiança.
+\end{description}
+
+\subsection{Dados e treino}
+\begin{description}[leftmargin=0pt, style=sameline]
+\item[CPSC2018, PTB-XL, MIT-BIH, Icentia11K, ECG5000.] Bases de ECG: CPSC2018 (12 derivações, 9 classes, base do TCC); PTB-XL (12 derivações, cerca de 21 mil exames); MIT-BIH e Icentia11K (Holter, batimentos); ECG5000 (batimentos de uma derivação, do arquivo UCR).
+\item[UCR/UEA.] Repositórios de séries temporais usados como \textit{benchmark} (univariadas e multivariadas).
+\item[Multirrótulo.] Um exame pode ter mais de uma classe ao mesmo tempo (no CPSC2018, por exemplo, AF e BRD).
+\item[Ablação.] Experimento que muda um único componente para medir o seu efeito (no TCC, BCE ponderada × simples).
+\item[\textit{Early stopping}, z-score, \textit{padding}.] Parar o treino quando a validação deixa de melhorar; normalizar cada derivação para média 0 e desvio 1; completar o sinal com zeros até o comprimento fixo.
+\item[\textit{Preprint}.] Artigo publicado antes da revisão por pares (arXiv, medRxiv).
+\end{description}
+
+\end{document}

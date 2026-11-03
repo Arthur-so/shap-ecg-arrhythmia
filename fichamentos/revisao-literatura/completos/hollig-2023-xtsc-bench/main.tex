@@ -1,0 +1,323 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: XTSC-Bench}} \\[0.35em]
+    {\large HÖLLIG, J.; THOMA, S.; GRIMM, F. \textit{XTSC-Bench: Quantitative Benchmarking for Explainers on Time Series Classification}. In: International Conference on Machine Learning and Applications (ICMLA), 22., 2023, p.~1126--1131} \\[0.3em]
+    \textbf{Tema:} ferramenta padronizada para avaliar explicações de classificadores de séries temporais com métricas do Quantus (Faithfulness Correlation, Max/Avg-Sensitivity, Complexity) e de localização \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 28/10/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1109/ICMLA58977.2023.00168} (arXiv: \url{https://arxiv.org/abs/2310.14957}) \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv:2310.14957v1, 10 páginas, com o apêndice) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF lido (arXiv v1, 10 páginas: 6 de artigo e referências e 4 de apêndice). As citações estão no original em inglês, cada uma seguida de uma tradução livre. A \textbf{Parte I} explica o trabalho sem pressupor a leitura do artigo; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} relaciona o artigo com o desenho do TCC. Os resultados do artigo estão só em gráficos de caixa; quando este fichamento cita um valor lido nos gráficos, isso é indicado como \textbf{leitura visual aproximada}.
+
+\begin{infobox}[note]{Por que este artigo}
+É o antecedente mais próximo do conjunto de métricas do TCC: avalia explicações de séries temporais com a \textbf{Faithfulness Correlation}, a \textbf{Max/Avg-Sensitivity} e a \textbf{Complexity} de Bhatt et al., calculadas com o Quantus, e inclui o \textbf{GradientSHAP}. Além disso, levanta dois pontos que o TCC enfrentou: a referência de retirada (zero ou média) pode carregar informação numa série temporal, e explicações só fazem sentido para classificadores com bom desempenho (o artigo avalia apenas modelos com acurácia acima de 90\%). O TCC, ao contrário, implementou as métricas por regiões, em vez de ponto a ponto como no Quantus, e pergunta justamente o que acontece com a explicação em classes de desempenho mais baixo.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema que o artigo ataca}
+Para imagens, tabelas e textos, já existem métricas e ferramentas padronizadas de avaliação de explicações (Captum, AIX360, Quantus). Para a classificação de séries temporais (TSC), não. Os autores apontam três dificuldades (p.~1): (a) as métricas tradicionais não se aplicam diretamente; (b) as adaptações publicadas variam entre artigos; (c) as referências (\textit{baselines}) usadas variam. A Tabela I (p.~2) mostra essa diversidade: cada método de explicação para séries foi avaliado com métricas, dados e comparações diferentes.
+
+\section{A ideia central}
+\begin{infobox}[note]{Em uma frase}
+Oferecer uma ferramenta única (XTSC-Bench), integrada à biblioteca TSInterpret, com dados sintéticos de verdade conhecida, modelos já treinados e quatro famílias de métricas (complexidade, confiabilidade, fidelidade e robustez), e usá-la para comparar 11 explicadores.
+\end{infobox}
+As quatro propriedades desejadas são definidas na p.~2: \textbf{confiável} (a explicação fica em torno da região informativa conhecida), \textbf{fiel} (reproduz o comportamento do modelo), \textbf{robusta} (entradas parecidas dão explicações parecidas) e \textbf{pouco complexa} (usa poucos atributos).
+
+\section{Dados e modelos}
+\textbf{Dados sintéticos.} 60 conjuntos univariados e 60 multivariados, com 50 instantes, gerados pelo procedimento de Ismail et al.\ (2020): um processo de fundo (gaussiano, autorregressivo, harmônico, NARMA, pseudoperiódico e outros) e uma região informativa que recebe uma constante somada na classe positiva e subtraída na negativa (p.~3 e 7). As regiões informativas variam de tamanho (normal, mais de 35\% dos atributos; pequena, menos de 10\%; rara, menos de 5\%) e de posição (fixa, móvel, posicional). A tarefa é binária. Os multivariados têm 50 variáveis (p.~7). Os dados são normalizados para o intervalo $[0, 1]$ (p.~7).
+
+\textbf{Modelos.} Rede convolucional 1D com arquitetura ResNet e LSTM com camada oculta de tamanho 10, treinadas com entropia cruzada por até 500 épocas (paciência 20), Adam, taxa 0,001 (p.~3). Só entram na avaliação os classificadores com \textbf{acurácia acima de 90\%} (p.~4, nota 5).
+
+\section{Métodos de explicação}
+Todos da biblioteca TSInterpret (p.~4):
+\begin{itemize}
+\item \textbf{Baseados no gradiente:} Saliency (GRAD), \textbf{GradientSHAP (GS)} e SmoothGrad (SG), cada um com e sem o Temporal Saliency Rescaling (TSR) de Ismail et al.\ (2020).
+\item \textbf{Por perturbação:} Feature Occlusion (FO), com e sem TSR, e LEFTIST (adaptação de LIME/SHAP a séries, segmentos de tamanho 10).
+\item \textbf{Baseados em exemplos:} TSEvo e Native Guide (contrafactuais).
+\end{itemize}
+A contagem por família é inconsistente no texto (o resumo fala em ``3 de perturbação e 6 de gradiente''; a introdução, em ``3 de gradiente e 6 de perturbação''). A lista da seção V dá 6 de gradiente (3 métodos $\times$ com/sem TSR), 3 de perturbação e 2 de exemplos. O artigo não informa as referências nem o número de amostras do GradientSHAP.
+
+\section{Métricas e adaptação a séries temporais}
+\textbf{Implementação.} ``Um \textit{wrapper} construído em torno do Quantus, com alguns ajustes específicos para tempo'' (p.~3). Os ajustes não são descritos no artigo.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Métrica} & \textbf{Definição no artigo} \\
+\midrule
+Max-Sensitivity & $\max_{\|\bar{x} - x\| \le r} \|E_f(\bar{x}) - E_f(x)\|$, com raio $r$ da vizinhança (Eq.~1) \\
+Avg-Sensitivity & Média de $\|E_f(\bar{x}) - E_f(x)\|$ na vizinhança (Eq.~2) \\
+Faithfulness Correlation & Correlação entre a soma das atribuições de um subconjunto $S$ e a queda da saída quando $S$ recebe a referência $\tilde{x}$ (Eq.~3) \\
+Complexity & Entropia da contribuição fracionária $P_g(i) = |E_f(x)_i| / \sum |E_f(x)|$; máximo $\ln d$ (Eq.~4) \\
+Relevance Rank Accuracy & Fração dos $K$ atributos mais relevantes que cai na região informativa (Eq.~5) \\
+Relevance Mass Accuracy & Fração da soma das atribuições que cai na região informativa (Eq.~6) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\textbf{Referência de retirada.} Nos dados sintéticos, a referência $\tilde{x}$ é sorteada do próprio processo gerador, porque zero ou a média podem ser informativos numa série (p.~3). Para dados reais, o usuário pode fornecer a sua referência; o padrão é a referência ``uniforme'' (p.~4, nota 4). O artigo não define essa referência; o nome coincide com a opção do Quantus que sorteia valores de uma distribuição uniforme. No apêndice F, a referência uniforme dá, em média, uma fidelidade parecida com a do processo gerador e é a recomendada para dados reais (p.~8).
+
+\textbf{Granularidade e configuração.} As métricas operam ponto a ponto (variável, instante), como no Quantus. O artigo não informa o raio da sensibilidade, o número de perturbações, o tamanho dos subconjuntos da Faithfulness Correlation, o número de repetições nem o número de amostras explicadas; remete ao repositório no GitHub para detalhes (p.~4).
+
+\section{Resultados principais}
+Os resultados estão nos gráficos de caixa da Figura 4 (p.~5), com médias sobre todos os conjuntos e modelos. O texto (p.~4) diz:
+\begin{itemize}
+\item \textbf{Complexidade:} os métodos de gradiente e de perturbação dão explicações menos complexas que os baseados em exemplos; o TSR reduz um pouco a complexidade.
+\item \textbf{Confiabilidade:} maior nos univariados que nos multivariados; sem TSR, os métodos se saem um pouco melhor na Relevance Rank.
+\item \textbf{Fidelidade:} semelhante para a maioria dos explicadores; o LEFTIST é o menos fiel.
+\item \textbf{Robustez:} nos univariados, os métodos por perturbação são menos sensíveis que os baseados em exemplos.
+\item \textbf{Nenhum explicador domina}; nenhum supera os métodos simples de gradiente e de perturbação incluídos como referência.
+\end{itemize}
+\textbf{Leitura visual aproximada da Figura 4} (não há números no texto):
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Painel} & \textbf{O que se vê} \\
+\midrule
+Faithfulness Correlation (4e, 4f) & Caixas centradas perto de zero em todos os explicadores, uni e multivariados (medianas aproximadamente entre $-0{,}1$ e $0{,}1$) \\
+Complexity univariada (4a) & Valores aproximadamente entre 3 e 3,8; o máximo possível com 50 atributos é $\ln 50 \approx 3{,}91$ \\
+Complexity multivariada (4b) & Valores aproximadamente entre 6 e 7,7; o máximo com $50 \times 50 = 2\,500$ atributos é $\ln 2\,500 \approx 7{,}82$ \\
+Robustez (4g, 4h) & As variantes com TSR têm sensibilidade maior que as versões sem TSR \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Os máximos de complexidade foram calculados neste fichamento a partir da definição do artigo ($\ln d$). Com essa leitura, as explicações ficam próximas da entropia máxima, isto é, quase uniformes no nível do ponto, e a fidelidade média é quase nula. O artigo não comenta nenhum dos dois fatos.
+
+\section{Conclusões e limitações declaradas}
+Os explicadores atuais para séries temporais deixam espaço para melhora, sobretudo em confiabilidade nos dados multivariados (p.~6). O artigo não tem seção de limitações. Limitações visíveis: só dados sintéticos e binários; resultados apenas em gráficos; configuração das métricas não informada; ajustes ``específicos para tempo'' não descritos.
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+Resumo e introdução (p.~1), trabalhos relacionados e Tabela I (p.~1--2), definição do problema e das propriedades (§III, p.~2), ferramenta, dados e métricas (§IV, p.~3--4), avaliação (§V, p.~4--5), conclusão (§VI, p.~6) e apêndice com dados, explicadores e resultados por tipo de região, por modelo e por referência (p.~7--10).
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“While steps to standardized evaluations were taken for tabular, image, and textual data, benchmarking explainability methods on time series is challenging due to a) traditional metrics not being directly applicable, b) implementation and adaption of traditional metrics for time series in the literature vary, and c) varying baseline implementations.”\end{origquote}
+\begin{tradquote}“Embora já tenha havido passos rumo a avaliações padronizadas para dados tabulares, imagens e textos, avaliar comparativamente métodos de explicabilidade em séries temporais é difícil porque a) as métricas tradicionais não se aplicam diretamente, b) a implementação e a adaptação dessas métricas a séries temporais variam na literatura e c) as implementações das referências variam.”\end{tradquote}
+\explab{Explicação}
+Os três problemas são os que o TCC precisou resolver: (a) as versões ponto a ponto do Quantus não se aplicam bem ao ECG (por exemplo, a complexidade ponto a ponto mede a duração do registro); (b) não há uma adaptação padrão, e o TCC escreveu as suas, por regiões; (c) a referência foi testada (zero e média do treino).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 1} §I Introdução}
+\begin{origquote}“Using metrics from traditional frameworks (e.g., [12]) can lead to erroneous assumptions in the time series domain.”\end{origquote}
+\begin{tradquote}“Usar métricas de ferramentas tradicionais (por exemplo, [12]) pode levar a suposições erradas no domínio das séries temporais.”\end{tradquote}
+\explab{Explicação}
+A referência [12] é o Quantus. O próprio artigo, porém, usa o Quantus por meio de um \textit{wrapper}. O TCC chegou a um resultado concreto nessa linha: com a configuração padrão do Quantus, a Faithfulness Correlation dava $-0{,}02$, por causa dos picos artificiais criados pela referência; a versão própria por regiões dá 0,60.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §II Trabalhos relacionados}
+\begin{origquote}“While providing uninformative features is trivial for e.g., images by replacing parts of an image with black or white pixels [38], replacing features with standard techniques (class means or zeros) might be relevant information in time series.”\end{origquote}
+\begin{tradquote}“Embora fornecer atributos não informativos seja trivial em imagens, por exemplo trocando partes da imagem por pixels pretos ou brancos [38], substituir atributos com as técnicas padrão (médias de classe ou zeros) pode introduzir informação relevante em séries temporais.”\end{tradquote}
+\explab{Explicação}
+No ECG, zerar uma região produz um trecho plano. Isso não é neutro: um trecho sem atividade pode parecer ausência de onda P ou uma pausa, e o modelo pode reagir a isso como evidência. A média do treino tem o mesmo risco. No TCC, as duas referências deram a mesma Faithfulness Correlation, o que indica que o resultado não depende dessa escolha, mas não elimina a ressalva.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} §III Definição do problema}
+\begin{origquote}“Complex: Explanations using a smaller number of features are preferred. It is assumed that explanations using a large number of features are difficult for the user to understand [26].”\end{origquote}
+\begin{tradquote}“Complexa: explicações que usam menos atributos são preferidas. Supõe-se que explicações que usam muitos atributos são difíceis de entender para o usuário [26].”\end{tradquote}
+\explab{Explicação}
+É a justificativa da métrica de complexidade, a mesma de Bhatt et al. No TCC, a complexidade é medida nas 36 regiões e lida como número efetivo de regiões ($e^{\text{entropia}}$): cerca de 24 de 36. A métrica descreve a explicação; não diz se ela está certa.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §IV XTSC-Bench}
+\begin{origquote}“For all metrics we use a wrapper build around Quantus [12] and added some time-specific tweaks.”\end{origquote}
+\begin{tradquote}“Para todas as métricas, usamos um \textit{wrapper} construído em torno do Quantus [12], com alguns ajustes específicos para tempo.”\end{tradquote}
+\explab{Explicação}
+Os ``ajustes específicos para tempo'' não são descritos no artigo. Na prática, as métricas continuam ponto a ponto. Essa é a principal diferença em relação ao TCC, que agrega o mapa em regiões com significado no batimento antes de calcular qualquer métrica.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §IV-B Robustez}
+\begin{origquote}“Robustness measures the stability of an explanation method’s output subjected to a slight input perturbation $\bar{x} = x + \epsilon$ under the assumption that the model’s output approximately stays the same $f(x) \approx f(\bar{x})$. Small, unmeaningful changes around x should lead to a consistent explanation.”\end{origquote}
+\begin{tradquote}“A robustez mede a estabilidade da saída de um método de explicação submetido a uma pequena perturbação da entrada $\bar{x} = x + \epsilon$, supondo que a saída do modelo continue aproximadamente a mesma, $f(x) \approx f(\bar{x})$. Mudanças pequenas e sem significado em torno de $x$ devem levar a uma explicação consistente.”\end{tradquote}
+\explab{Explicação}
+É a mesma definição usada no TCC. A suposição $f(x) \approx f(\bar{x})$ não é verificada no artigo. Também falta uma referência para o que é ``pequeno'': num método estocástico como o GradientSHAP, dois cálculos do mesmo mapa já diferem. No TCC, essa variação (o piso) é maior que a Max-Sensitivity em todos os mapas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 3} §IV-C Fidelidade}
+\begin{origquote}“However, for time series data those baselines might contain information (e.g., 0 might be an informative anomaly). Therefore, on the proposed synthetic data the reference baseline $\tilde{x}$ is sampled from the generation process.”\end{origquote}
+\begin{tradquote}“Em séries temporais, porém, essas referências podem conter informação (por exemplo, 0 pode ser uma anomalia informativa). Por isso, nos dados sintéticos propostos, a referência $\tilde{x}$ é sorteada do processo gerador.”\end{tradquote}
+\explab{Explicação}
+É a mesma solução de Ismail et al.\ (2020): substituir pelo processo que gerou os dados, possível só em dados sintéticos. Em dados reais, a ferramenta recai numa referência uniforme (citação seguinte).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Nota 4}
+\begin{origquote}“In case of using our benchmarking tool with non-synthetic data we provide the possibility to provide a custom baseline. As default, baselining is done uniformly.”\end{origquote}
+\begin{tradquote}“Ao usar a ferramenta com dados não sintéticos, é possível fornecer uma referência própria. Por padrão, a referência é uniforme.”\end{tradquote}
+\explab{Explicação}
+Uma referência uniforme sorteada no intervalo dos dados normalizados preenche a região retirada com ruído, o que tira o sinal da distribuição tanto quanto zero ou a média. No ECG, ruído uniforme numa região do QRS seria um artefato evidente. O TCC não usou essa opção.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Nota 5}
+\begin{origquote}“Explainers are usually used to validate the inner-workings of well-performing classifiers. Classifiers with low accuracy cannot be expected to learn sufficient features to ensure an explainers reliability and classifier consistency.”\end{origquote}
+\begin{tradquote}“Os explicadores costumam ser usados para validar o funcionamento interno de classificadores com bom desempenho. Não se pode esperar que classificadores com acurácia baixa aprendam atributos suficientes para garantir a confiabilidade do explicador e a consistência do classificador.”\end{tradquote}
+\explab{Explicação}
+É a justificativa do corte de 90\% de acurácia (o apêndice E confirma: modelos abaixo de 90\% não aparecem nos gráficos, p.~8). A frase é uma hipótese próxima da pergunta do TCC: se a explicação depende do quanto o modelo aprendeu, classes de F1 baixo deveriam ter explicações piores. O artigo não testa essa hipótese, porque exclui os modelos fracos. No TCC, as classes variam de F1 0,60 (STE) a 0,93 (AF), e a comparação descritiva com as métricas é justamente o teste.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §V Avaliação}
+\begin{origquote}“The faithfulness (Figure 4e and Figure 4f) of the explainers to the classification models’ behavior is similar for most explainers on the uni- and multivariate data. Least faithful is LEFTIST, as LEFTIST is the only approach relying on a local surrogate model instead of frequent classifier calls or the classifiers’ inner workings (i.e., gradients).”\end{origquote}
+\begin{tradquote}“A fidelidade (Figuras 4e e 4f) dos explicadores ao comportamento dos modelos é semelhante para a maioria dos explicadores, nos dados uni e multivariados. O menos fiel é o LEFTIST, a única abordagem que se apoia num modelo substituto local, e não em chamadas frequentes ao classificador ou no seu funcionamento interno (isto é, gradientes).”\end{tradquote}
+\explab{Explicação}
+O texto não diz o nível: pela Figura 4, as caixas ficam em torno de zero (leitura visual aproximada). Uma Faithfulness Correlation perto de zero, ponto a ponto e com referência uniforme, é coerente com o que o TCC observou com o Quantus padrão ($-0{,}02$) e contrasta com a versão por regiões (0,60). Isso sugere que a granularidade e a referência pesam no resultado tanto quanto o explicador.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §V Avaliação}
+\begin{origquote}“This results from perturbation-based approaches only relying on the perturbation function (which is constantly the same) and the classification model’s output, while gradient-based approaches rely on a model’s inner workings that possibly change with varying the input.”\end{origquote}
+\begin{tradquote}“Isso resulta de as abordagens por perturbação dependerem só da função de perturbação (sempre a mesma) e da saída do modelo, enquanto as baseadas no gradiente dependem do funcionamento interno do modelo, que pode mudar quando a entrada varia.”\end{tradquote}
+\explab{Explicação}
+A explicação dos autores para a robustez considera só o modelo. Não considera o sorteio interno de métodos como o GradientSHAP e o SmoothGrad, que muda o mapa mesmo sem mudar a entrada. No TCC, essa é a parcela dominante da sensibilidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} §V Avaliação}
+\begin{origquote}“Summarizing the results, no clear indication can be given on which explanation approaches should be preferred. No approach was able to dominate the plain gradient, and perturbation-based methods, which are included as baselines.”\end{origquote}
+\begin{tradquote}“Em resumo, não é possível indicar com clareza quais abordagens de explicação devem ser preferidas. Nenhuma abordagem conseguiu superar os métodos simples de gradiente e de perturbação, incluídos como referência.”\end{tradquote}
+\explab{Explicação}
+Mesma conclusão de Ismail et al.\ (2020) e Mercier et al.\ (2022): nenhum método vence. Para o TCC, que usa um só método, o resultado reforça que as métricas servem para descrever as explicações, e não para declarar o GradientSHAP melhor ou pior que outros.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Apêndice F}
+\begin{origquote}“Figure 8 compares the faithfulness metric with the generation baseline used for the synthetic data to the ’traditionally’ used baselines mean and uniform. As the uniform baseline performs, on average, similar to the known generation process baseline, we advise users with non-synthetic data to use the uniform baseline.”\end{origquote}
+\begin{tradquote}“A Figura 8 compara a métrica de fidelidade com a referência do processo gerador às referências ‘tradicionais’, média e uniforme. Como a referência uniforme tem, em média, desempenho semelhante ao da referência do processo gerador, recomendamos que usuários com dados não sintéticos usem a referência uniforme.”\end{tradquote}
+\explab{Explicação}
+A recomendação se apoia numa comparação de médias de uma métrica que, pela Figura 4, fica perto de zero; com valores tão baixos, referências diferentes podem dar médias parecidas sem que nenhuma funcione bem. O TCC não segue a recomendação e mantém zero e a média do treino, que deram o mesmo resultado.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{enumerate}
+\item \textbf{Precedente para o conjunto de métricas.} Faithfulness Correlation, Max/Avg-Sensitivity e Complexity de Bhatt et al.\ já foram usadas juntas em séries temporais. O TCC as mantém e acrescenta Faithfulness Estimate, Consistency, Random Logit e eMPRT.
+\item \textbf{A referência de retirada importa em séries.} O artigo e o TCC concordam no diagnóstico (zero e média podem ser informativos); o TCC verificou que, nas suas regiões, as duas referências dão o mesmo resultado.
+\item \textbf{Por que não usar o Quantus ponto a ponto.} A leitura visual da Figura 4 (fidelidade perto de zero, complexidade perto do máximo) é coerente com os diagnósticos do TCC: com o Quantus padrão, a Faithfulness Correlation dava $-0{,}02$, e a complexidade ponto a ponto media a duração do registro. A agregação por regiões é a resposta do TCC aos problemas (a) e (b) apontados pelos autores.
+\item \textbf{Desempenho do modelo e qualidade da explicação.} A nota 5 formula a hipótese que o TCC investiga por classe, sem testá-la.
+\end{enumerate}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Dados & Sintéticos, 50 instantes, 1 ou 50 variáveis, binários & ECG real de 12 derivações, 9 classes, multirrótulo \\
+Modelos & ResNet 1D e LSTM & ResNet34-1D \\
+Seleção & Só classificadores com acurácia acima de 90\% & Todas as classes (F1 de 0,60 a 0,93); só predições corretas \\
+Métodos & 11 explicadores, GradientSHAP com e sem TSR & GradientSHAP (referência balanceada de 36 ECGs, 200 sorteios) \\
+Implementação & \textit{Wrapper} do Quantus, ponto a ponto & Implementação própria, 36 regiões \\
+Referência de retirada & Processo gerador (sintético); uniforme (real) & Zero e média do treino \\
+Sensibilidade & Max/Avg-Sensitivity, raio não informado & Max/Avg-Sensitivity, raio 0,1, 10 perturbações, comparada ao piso \\
+Complexidade & Entropia ponto a ponto & Entropia nas 36 regiões, lida como número efetivo de regiões \\
+Localização & Relevance Rank/Mass Accuracy (verdade conhecida) & Fora do escopo \\
+Outras & --- & Faithfulness Estimate, Consistency, Random Logit, eMPRT \\
+Análise por classe & Não há & Comparação descritiva com o F1 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item \textbf{Sem números no texto.} Todos os resultados estão em gráficos de caixa; os valores deste fichamento lidos nas figuras são aproximados e não devem ser citados como números do artigo.
+\item \textbf{Configuração não informada.} Raio, número de perturbações, tamanho dos subconjuntos e os ``ajustes específicos para tempo'' estão fora do artigo.
+\item \textbf{Inconsistências de contagem} (número de explicadores por família; seis ou sete processos geradores, conforme a seção).
+\item \textbf{O corte de 90\%} torna o artigo silencioso sobre modelos ou classes de desempenho baixo.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{infobox}[ok]{Sugestões}
+\begin{itemize}
+\item Höllig et al.\ (2023) propuseram o XTSC-Bench, ferramenta de avaliação de explicações para classificação de séries temporais que reúne métricas de fidelidade (Faithfulness Correlation), robustez (Max/Avg-Sensitivity), complexidade e localização, calculadas sobre o Quantus, e não encontraram um explicador que superasse os demais em todas as propriedades.
+\item Os mesmos autores observam que substituir atributos por zeros ou médias, prática comum em imagens, pode introduzir informação em séries temporais (Höllig et al., 2023); por isso, neste trabalho, a Faithfulness Correlation foi calculada com as duas referências.
+\item Höllig et al.\ (2023) restringem a avaliação a classificadores com acurácia acima de 90\%, por considerar que modelos de desempenho baixo não aprendem atributos suficientes para explicações confiáveis; este trabalho examina essa relação por classe, de forma descritiva.
+\end{itemize}
+\end{infobox}
+
+\end{document}
