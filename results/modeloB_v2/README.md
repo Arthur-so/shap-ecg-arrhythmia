@@ -23,6 +23,7 @@ Os resultados da versão 1 (32 ECGs sorteados do treino, 50 sorteios) continuam 
 | `rlogit/` | Random Logit (mapas das 9 classes com a mesma semente; piso) | Kaggle, versão 23 do runner, 26/10/2026, 264 min |
 | `sens/` | Max/Avg-Sensitivity (10 perturbações de raio 0,1; piso) | Kaggle, versão 24 do runner, 27/10/2026, 329 min |
 | `emprt/` | eMPRT (modelo com pesos sorteados, 3 sementes; entropia por regiões, distâncias contra o piso, relação com a amplitude) | Kaggle, versão 25 do runner, 27/10/2026, 77 min |
+| `regioes_robustez.json` | Robustez dos limites das regiões: Consistency (k = 1, 2, 3) e complexidade em 9 combinações (QRS 140/180/220 ms × fim do ST-T em 40/45/50% do RR; `src/regioes_robustez.py`). Com k = 2, BRD em 1º e CAP e STE nas duas últimas posições em todas; na complexidade, BRD, AF e IAVB as mais concentradas e STD a mais espalhada em todas | Local (CPU), 04/11/2026 |
 
 Os arquivos de cada pasta têm o mesmo formato das pastas da versão 1 (ver os README de
 `results/modeloB_faithcorr/`, `modeloB_faithest/`, `modeloB_rlogit/` e `modeloB_sens/`). Nenhum valor indefinido.

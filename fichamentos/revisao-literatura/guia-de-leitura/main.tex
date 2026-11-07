@@ -90,14 +90,14 @@
     {\LARGE \textbf{Guia de leitura da revisão da literatura}} \\[0.35em]
     {\large Resumo dos fichamentos completos, ordem de leitura, conexões com o TCC e glossário} \\[0.3em]
     \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
-    \textbf{Atualizado em:} 03/11/2026 \\[0.2em]
+    \textbf{Atualizado em:} 04/11/2026 \\[0.2em]
     \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
 \end{center}
 \vspace{-0.5em}
 \hrule
 \vspace{0.8em}
 
-{\raggedright\textbf{Como usar.} Este guia organiza os \textbf{11 fichamentos completos} da pasta \texttt{fichamentos/revisao-literatura/completos/}. A seção~\ref{sec:ordem} sugere uma ordem de leitura; a seção~\ref{sec:resumos} resume cada artigo em poucas linhas; a seção~\ref{sec:conexoes} mostra os temas que ligam os artigos entre si e ao TCC; a seção~\ref{sec:uso} indica em que parte do texto do TCC cada um entra; a seção~\ref{sec:glossario} explica os termos técnicos que aparecem nos artigos. O relatório completo da revisão está em \texttt{fichamentos/revisao-literatura/relatorio/main.pdf}, e os 28 fichamentos curtos, em \texttt{curtos/}, ficam como consulta.\par}
+{\raggedright\textbf{Como usar.} Este guia organiza os \textbf{11 fichamentos completos} da pasta \texttt{fichamentos/revisao-literatura/completos/}. A seção~\ref{sec:ordem} sugere uma ordem de leitura; a seção~\ref{sec:resumos} resume cada artigo em poucas linhas; a seção~\ref{sec:conexoes} mostra os temas que ligam os artigos entre si e ao TCC; a seção~\ref{sec:uso} indica em que parte do texto do TCC cada um entra; a seção~\ref{sec:regioes} reúne os precedentes para dividir o ECG em regiões a partir do pico R; a seção~\ref{sec:glossario} explica os termos técnicos que aparecem nos artigos. O relatório completo da revisão está em \texttt{fichamentos/revisao-literatura/relatorio/main.pdf}, e os 28 fichamentos curtos, em \texttt{curtos/}, ficam como consulta.\par}
 
 \begin{infobox}[note]{Os 11 fichamentos completos}
 \begin{center}\small
@@ -176,7 +176,7 @@ Quem tiver pouco tempo pode ler só \textbf{Arends, Suh, Gumpfer e Baer (2025a)}
 \textbf{O que fizeram.} ResNet-1D treinadas em ECG de 12 derivações para nove classes, 12 métodos (GradientSHAP incluído, pelo Captum), com três testes: concordância entre modelos treinados com sementes diferentes, randomização progressiva dos pesos e perturbação no estilo ROAD. Fixaram o número de sorteios dos métodos estocásticos para que dois mapas do mesmo ECG tivessem correlação de pelo menos 0,98. \textbf{Achado.} Autoconsistência apenas moderada entre modelos (cerca de 0,55 para o GradientSHAP) e correlação perto de zero após randomizar os pesos; comportamento semelhante em classes de AUPRC alta e baixa, sem análise formal. \textbf{Para o TCC.} É o comparador principal; o TCC mede explicitamente a variação do método (piso) e faz a comparação por classe que eles deixaram em aberto.
 
 \subsection{Gumpfer et al.\ (2026) — regiões das diretrizes e amplitude}
-\textbf{O que fizeram.} Treze métodos no PTB-XL, comparados com regiões definidas por diretrizes clínicas (PR, QRS, ST) em quatro doenças. \textbf{Achado.} Métodos que multiplicam o gradiente pela entrada ou subtraem uma referência, entre eles o GradientSHAP, concentram a relevância em componentes de alta amplitude (pico R, onda T). O GradientSHAP cobre bem o QRS nos bloqueios de ramo e fica abaixo do acaso no ST da isquemia ($-5{,}5\%$). \textbf{Para o TCC.} Explica o eMPRT (o modelo aleatório concentra o mapa no QRS) e o padrão por classe: classes definidas pela forma do QRS (BRD, BRE, CVP) saem melhor nas métricas; classes de ST e de ritmo, pior.
+\textbf{O que fizeram.} Treze métodos no PTB-XL, comparados com regiões definidas por diretrizes clínicas (PR, QRS, ST) em quatro doenças. \textbf{Achado.} Métodos que multiplicam o gradiente pela entrada ou subtraem uma referência, entre eles o GradientSHAP, concentram a relevância em componentes de alta amplitude (pico R, onda T). O GradientSHAP cobre bem o QRS nos bloqueios de ramo e fica abaixo do acaso no ST da isquemia ($-5{,}5\%$). \textbf{Para o TCC.} Explica o eMPRT (o modelo aleatório concentra o mapa no QRS) e o padrão por classe: classes definidas pela forma do QRS (BRD, BRE, CVP) saem melhor nas métricas; classes de ST e de ritmo, pior. É também o precedente mais forte, entre os completos, para as regiões do batimento (seção~\ref{sec:regioes}).
 
 \subsection{Baer et al.\ (2025a) — efeitos dependentes da classe}
 \textbf{O que fizeram.} Em séries temporais (UCR), analisaram métricas de perturbação por classe predita, com vários valores de perturbação e métodos (GradientSHAP incluído). \textbf{Achado.} A eficácia das métricas varia muito entre classes; as estratégias de melhor média são as mais dependentes da classe; a causa provável são vieses do classificador em relação ao valor usado para ``retirar'' um trecho. \textbf{Para o TCC.} A ressalva central: diferença de fidelidade entre classes não é, por si, diferença de qualidade. Recomendam reportar por classe.
@@ -193,13 +193,13 @@ Quem tiver pouco tempo pode ler só \textbf{Arends, Suh, Gumpfer e Baer (2025a)}
 \toprule
 \textbf{Tema} & \textbf{O que os artigos dizem} & \textbf{Decisão ou achado do TCC} \\
 \midrule
-Retirar trechos tira o ECG da distribuição & Ismail, Turbé, Suh e XTSC-Bench apontam o problema; Turbé treina com ruído para evitá-lo & Retirada de regiões inteiras e duas referências (zero e média, com resultados praticamente iguais); limitação declarada \\ \addlinespace
+Retirar trechos tira o ECG da distribuição & Ismail, Turbé, Suh e XTSC-Bench apontam o problema; Turbé treina com ruído para evitá-lo. Os quatro perturbam \textbf{pontos} ou trechos curtos, não regiões fisiológicas: servem para a limitação, não para justificar as regiões (seção~\ref{sec:regioes}) & Duas referências (zero e média, com resultados praticamente iguais); limitação declarada. Que regiões contíguas atenuam o problema é argumento do TCC, com apoio indireto de Cui (2023, curto) \\ \addlinespace
 A amplitude domina o mapa & Gumpfer (atribuição segue o pico R e a onda T), Storås (ruído afeta pouco o pico R), Adebayo (entrada × gradiente ``devolve a entrada'') & eMPRT: mapa do modelo aleatório no QRS; classes de QRS (BRD, BRE, CVP) no topo da fidelidade \\ \addlinespace
 O GradientSHAP é estocástico & Mercier (maior Sensitivity entre os de gradiente), Arends (fixa sorteios para correlação $\ge$ 0,98) & Piso medido (0,18) e usado como régua; 200 sorteios \\ \addlinespace
 Métricas variam por classe & Baer (a, b), Gumpfer (por doença), Arends (AUPRC por classe) & Resultados por classe; comparação descritiva com o F1 \\ \addlinespace
 Métricas discordam entre si & Suh (localização × perturbação), Storås (especialistas × perturbação), Mercier, XTSC-Bench & Sete métricas, lidas em conjunto, sem um ``vencedor'' único \\ \addlinespace
 O mapa depende do modelo? & Arends (randomização progressiva), Ravindran (pesos e rótulos), Mercier & eMPRT e Random Logit: distâncias muito acima do piso \\ \addlinespace
-Agregar pontos em grupos & Mercier (falta de grupos em séries), Gumpfer (máscaras PR/QRS/ST), Ismail (tempo × canal) & 36 regiões = 12 derivações × pré-QRS/QRS/ST-T \\ \addlinespace
+Agregar pontos em regiões do batimento & Wagner (derivação × segmento, janela fixa no pico R; curto), Gumpfer (máscaras PR/QRS/ST e teste de deslocamento), Turbé (recorte fixo no pico R), Hicks (retirada de ondas inteiras; curto), Mercier (falta de grupos em séries) & 36 regiões = 12 derivações × pré-QRS/QRS/ST-T; limites variados sem mudar a ordem das classes (seção~\ref{sec:regioes}) \\ \addlinespace
 Desempenho do modelo e explicação & XTSC-Bench só usa modelos > 90\%; Arends sem relação clara com AUPRC & A pergunta do TCC; nenhum trabalho a responde diretamente \\
 \bottomrule
 \end{tabularx}
@@ -215,17 +215,59 @@ Introdução e justificativa & Arends e Gumpfer (avaliar atribuições em ECG é
 Fundamentação: avaliação de explicações & Ismail, Mercier, XTSC-Bench (como se avalia em séries); Baer (limites das métricas de perturbação); Ravindran (testes de randomização) \\ \addlinespace
 Trabalhos relacionados & Turbé (mesma base), Suh (mesma métrica), Arends (mesmo desenho), Gumpfer (regiões e amplitude) \\ \addlinespace
 Metodologia: referência do GradientSHAP & Turbé (distribuição de 50 ECGs), Arends (controle da variação de sorteio) \\ \addlinespace
-Metodologia: regiões & Mercier, Gumpfer, Ismail \\ \addlinespace
+Metodologia: regiões & Wagner e Gumpfer (precedentes diretos), Turbé e Hicks (recorte no pico R, retirada de ondas), Mercier, Serramazza e Šimić (agrupar pontos); ver a seção~\ref{sec:regioes} \\ \addlinespace
 Metodologia: valor de substituição & XTSC-Bench (zero pode carregar informação), Suh (zero), Turbé (ruído) \\ \addlinespace
 Metodologia: comparação descritiva com o F1 & Baer (efeitos de classe), Gumpfer (diferenças por doença), Arends (análise só descritiva) \\ \addlinespace
 Discussão dos resultados & Gumpfer e Baer (por que BRD/BRE/CVP saem melhor e ST/ritmo pior); Mercier (sensibilidade e piso); Ravindran e Adebayo (eMPRT) \\ \addlinespace
-Limitações & Ismail, Turbé e Suh (deslocamento de distribuição); Storås (plausibilidade não avaliada); Arends (um único modelo treinado) \\
+Limitações & Ismail, Turbé e Suh (deslocamento de distribuição); Gumpfer e Wagner (regiões fixas × delineação das ondas); Storås (plausibilidade não avaliada); Arends (um único modelo treinado) \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
 \begin{infobox}[warn]{Ao citar}
 Os fichamentos trazem, no fim, sugestões de frases (``Como citar no TCC''). Gumpfer et al.\ (2026) e Baer et al.\ (2025b) são \textit{preprints}: citar como tal. Escrever ``não se encontrou'' (e não ``não existe'') ao afirmar a originalidade do TCC.
+\end{infobox}
+
+\section{Precedentes para as regiões do batimento}\label{sec:regioes}
+O TCC soma o mapa em 36 regiões (12 derivações × pré-QRS, QRS e ST-T), delimitadas por janelas fixas a partir do pico R (QRS de $R - 80$ ms a $R + 100$ ms; ST-T até $0{,}45 \cdot RR$). A banca pode perguntar duas coisas: \textbf{por que regiões, e não pontos}, e \textbf{por que esses milissegundos}. Esta seção reúne o que os fichamentos oferecem para responder.
+
+\begin{infobox}[warn]{O que a linha do deslocamento de distribuição \textbf{não} sustenta}
+Ismail, Turbé, Suh e XTSC-Bench aparecem na tabela de conexões porque mostram que retirar trechos tira o ECG da distribuição de treino. Nenhum deles usa regiões fisiológicas: Ismail e XTSC-Bench perturbam pontos ou instantes; Turbé, uma fração dos pontos do batimento médio; Suh, 10\% dos pontos sorteados na Faithfulness Correlation e trechos fixos de cerca de 0,06 s, sem relação com as ondas, em outra métrica. Eles sustentam a \textbf{limitação}, não a escolha das regiões.
+\end{infobox}
+
+\subsection{Trabalhos que agrupam o ECG por regiões do batimento}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.5cm}X>{\raggedright\arraybackslash}p{2.1cm}}
+\toprule
+\textbf{Trabalho} & \textbf{O que fazem} & \textbf{Fichamento} \\
+\midrule
+Wagner et al.\ (2024), \textit{Comput.\ Biol.\ Med.} & Alinham as atribuições de cada batimento numa janela fixa em torno do pico R (\textbf{300 ms antes e 500 ms depois}) ou as ponderam por uma segmentação em 24 segmentos, e agregam em mapas \textbf{derivação × segmento} por classe. Observam que agregar entre batimentos reduz o ruído dos métodos de gradiente. É o precedente mais próximo do TCC. & curto \\ \addlinespace
+Gumpfer et al.\ (2026), \textit{preprint} & Detectam os picos R (NeuroKit2, derivação I), recortam batimentos e avaliam as explicações com máscaras \textbf{fixas} de PR, QRS e ST definidas por cardiologistas. Testam a robustez deslocando as máscaras: a ordem se mantém até 10 pontos (num batimento de 500); com 20, a máscara engole o QRS. & completo \\ \addlinespace
+Turbé et al.\ (2023), \textit{Nat.\ Mach.\ Intell.} & Recortam cada batimento por uma janela fixa em torno do pico R (\textbf{0,35 s antes e 0,55 s depois}) para formar o batimento médio de entrada do modelo. & completo \\ \addlinespace
+Hicks et al.\ (2021), \textit{Sci.\ Rep.} & Retiram \textbf{ondas inteiras} (P, QRS ou T) do batimento mediano, por interpolação entre as bordas, e medem a piora da predição: perturbação por região fisiológica. & curto \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Trabalhos que agrupam pontos em trechos (sem relação com as ondas)}
+\begin{itemize}
+\item \textbf{Mercier et al.\ (2022)} (completo): apontam a falta de agrupamento de pontos como um problema dos métodos em séries temporais.
+\item \textbf{Arends et al.\ (2026)} (completo): o Shapley sampling usa 240 segmentos (30 por derivação).
+\item \textbf{Serramazza et al.\ (2024)} (curto): agrupar pontos consecutivos de cada canal em trechos melhora as métricas de perturbação.
+\item \textbf{Šimić et al.\ (2025)} (curto): avaliam a retirada de regiões de 2,5\% a 10\% do comprimento da série.
+\item \textbf{Cui et al.\ (2023)} (curto, EEG): perturbam janelas contíguas em vez de pontos sorteados, para introduzir menos ruído de alta frequência; é o único apoio, indireto, para a ideia de que retirar regiões atenua o deslocamento de distribuição.
+\end{itemize}
+
+\subsection{Como defender os milissegundos}
+\begin{enumerate}
+\item \textbf{Janelas fixas a partir do pico R são prática usada:} Wagner (300/500 ms) e Turbé (0,35/0,55 s) fazem o mesmo, e Gumpfer usa máscaras fixas no batimento.
+\item \textbf{Justificativa clínica:} a janela do QRS (180 ms) cobre o QRS normal (até cerca de 120 ms) e o alargado dos bloqueios de ramo (120 ms ou mais). O limite de $0{,}45 \cdot RR$ aproxima o fim da onda T (pela fórmula de Bazett, o QT ocupa cerca de 0,44 do RR com 60 bpm); em frequências altas, o fim da T pode cair no pré-QRS.
+\item \textbf{Teste de robustez, como o de Gumpfer:} a Consistency e a complexidade foram recalculadas com o QRS de 140, 180 e 220 ms e o fim do ST-T em 0,40, 0,45 e 0,50 do RR (9 combinações, mapas da versão 2). Na Consistency ($k = 2$), BRD ficou em 1.º e CAP e STE nas duas últimas posições em todas; na complexidade, BRD, AF e IAVB foram sempre as três mais concentradas e STD a mais espalhada. As métricas que exigem rodar o modelo não foram recalculadas. Dados em \url{results/modeloB_v2/regioes_robustez.json}; texto na seção de regiões de \url{texto-tcc/metodologia-resultados/main.pdf}.
+\item \textbf{Limitação e alternativa:} delinear o início e o fim de cada onda batimento a batimento (NeuroKit2, ou a segmentação de Wagner) seria mais fiel na teoria, mas menos confiável justamente nos ECGs patológicos; fica como trabalho futuro.
+\end{enumerate}
+
+\begin{infobox}[note]{Leitura complementar}
+Wagner et al.\ (2024) e Hicks et al.\ (2021) só têm fichamento curto (\texttt{curtos/wagner-2024-auditoria-ecg} e \texttt{curtos/hicks-2021-ecgradcam-descoberta}). Como Wagner é o precedente mais próximo das regiões, vale ler o curto antes de escrever a Metodologia; a citação sobre o ruído reduzido pela agregação está lá, na p.~14.
 \end{infobox}
 
 \section{Glossário}\label{sec:glossario}

@@ -89,7 +89,7 @@
     {\LARGE \textbf{Metodologia e análise dos resultados (versão inicial)}} \\[0.35em]
     {\large Avaliação das explicações SHAP em redes neurais profundas para classificação de arritmias cardíacas em ECG} \\[0.3em]
     \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \quad \textbf{Orientador:} Prof.\ Dr.\ Luis Augusto Martins Pereira \\[0.2em]
-    \textbf{Versão:} 03/11/2026 \\[0.2em]
+    \textbf{Versão:} 04/11/2026 \\[0.2em]
     \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
 \end{center}
 \vspace{-0.5em}
@@ -159,7 +159,32 @@ pré-QRS (onda P e PR) & de $R + 0{,}45 \cdot RR$ até 80 ms antes do R seguinte
 \end{center}
 A importância de uma região é a soma do mapa em todos os batimentos daquela derivação e segmento: cada mapa vira um vetor de \textbf{36 valores} (12 derivações × 3 segmentos). Batimentos incompletos e o preenchimento ficam de fora.
 
-\textbf{Justificativa.} Avaliar ponto a ponto, como fazem as versões do Quantus, trata cada uma das 180\,000 amostras como um atributo independente e inclui o preenchimento; nos testes iniciais, isso gerou artefatos (por exemplo, Faithfulness Correlation próxima de zero). A literatura de séries temporais aponta a falta de agrupamento de pontos como um problema (Mercier et al., 2022) e mostra que os métodos acertam mais o \textit{quando} do que o \textit{onde} (Ismail et al., 2020); Gumpfer et al.\ (2026) avaliam o ECG por segmentos clínicos (PR, QRS, ST) muito próximos dos usados aqui.
+\textbf{Por que regiões, e não pontos.} Avaliar ponto a ponto, como fazem as versões do Quantus, trata cada uma das 180\,000 amostras como um atributo independente e inclui o preenchimento; nos testes iniciais, isso gerou artefatos (por exemplo, Faithfulness Correlation próxima de zero). Somar a atribuição dentro de trechos também reduz o ruído ponto a ponto dos métodos de gradiente (Wagner et al., 2024), que no GradientSHAP é aumentado pelo sorteio de referências e de ruído. A literatura de séries temporais aponta a falta de agrupamento de pontos como um problema (Mercier et al., 2022) e mostra que agrupar pontos consecutivos melhora as métricas de perturbação (Serramazza et al., 2024; Šimić et al., 2025); Cui et al.\ (2023), em EEG, perturbam janelas contíguas em vez de pontos sorteados para introduzir menos ruído de alta frequência.
+
+\textbf{Precedentes em ECG.} O agrupamento por derivação e segmento do batimento a partir do pico R tem precedentes diretos:
+\begin{itemize}
+\item \textbf{Wagner et al.\ (2024)} alinham as atribuições de cada batimento numa janela fixa em torno do pico R (300 ms antes e 500 ms depois), ou as ponderam por uma segmentação em 24 segmentos, e as agregam em mapas \textbf{derivação × segmento} por classe. É o precedente mais próximo das 36 regiões.
+\item \textbf{Gumpfer et al.\ (2026)} detectam os picos R (NeuroKit2, derivação I), recortam batimentos e avaliam as explicações com máscaras \textbf{fixas} de PR, QRS e ST, definidas por cardiologistas; testam a robustez deslocando as máscaras (a ordem dos métodos se mantém com deslocamentos de até 10 pontos num batimento de 500).
+\item \textbf{Turbé et al.\ (2023)}, na mesma base, recortam cada batimento por uma janela fixa em torno do pico R (0,35 s antes e 0,55 s depois) para formar o batimento médio.
+\item \textbf{Hicks et al.\ (2021)} retiram \textbf{ondas inteiras} (P, QRS ou T) do batimento mediano, por interpolação, e medem a piora da predição: é uma perturbação por região fisiológica, como a usada aqui na Faithfulness Correlation e na Faithfulness Estimate.
+\end{itemize}
+O que é próprio do TCC é usar essas regiões como \textbf{unidade das métricas} (e não só da visualização ou da localização), no registro inteiro (todos os batimentos completos, sem batimento médio) e com as 12 derivações separadas.
+
+\textbf{Escolha dos limites.} A janela do QRS (180 ms, de 80 ms antes a 100 ms depois do pico R) cobre o QRS normal (até cerca de 120 ms) e o QRS alargado dos bloqueios de ramo (120 ms ou mais), que são duas das classes estudadas. O fim do ST-T em 0,45 do intervalo RR aproxima o fim da onda T: pela fórmula de Bazett, o QT ocupa cerca de 0,44 do RR com 60 bpm. Em frequências altas a fração do QT cresce, e o fim da onda T pode cair no pré-QRS. Os picos R são detectados com o NeuroKit2, como em Gumpfer et al.\ (2026).
+
+\textbf{Robustez dos limites.} Como em Gumpfer et al.\ (2026), as métricas que não exigem rodar o modelo de novo foram recalculadas com limites alternativos: janela do QRS de 140, 180 ou 220 ms (20 ms a menos ou a mais de cada lado) e fim do ST-T em 0,40, 0,45 ou 0,50 do RR, em 9 combinações (Tabela~\ref{tab:robreg}). As conclusões por classe se mantêm.
+\begin{table}[H]\centering\small
+\caption{Variação dos limites das regiões (9 combinações; base: QRS de 180 ms e ST-T até 0,45 do RR). Dados em \url{results/modeloB_v2/regioes_robustez.json}.}\label{tab:robreg}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{2.6cm}X}
+\toprule
+\textbf{Métrica} & \textbf{Valor global} & \textbf{Ordem das classes} \\
+\midrule
+Consistency ($k = 2$) & 0,414 a 0,469 (base 0,455) & BRD em 1.º e CAP e STE nas duas últimas posições nas 9 combinações; AF, IAVB e STD trocam de posição entre o 2.º e o 6.º lugar \\ \addlinespace
+Complexidade (n.º efetivo de regiões) & 23,7 a 24,5 (base 24,1) & BRD, AF e IAVB as três mais concentradas e STD a mais espalhada nas 9 combinações \\
+\bottomrule
+\end{tabularx}
+\end{table}
+As métricas de fidelidade, de robustez e o Random Logit exigem passar os ECGs perturbados pelo modelo de novo e não foram recalculadas com os limites alternativos.
 
 \section{O piso: a variação própria do GradientSHAP}\label{sec:piso}
 Como o GradientSHAP sorteia referências e ruído, dois mapas do mesmo ECG e da mesma classe, com sementes diferentes, não são iguais. O \textbf{piso} de um mapa é a distância $\ell_2$ entre esses dois mapas, cada um normalizado para norma 1 no vetor das 36 regiões. Ele vai de 0 (mapas iguais) a 2 (opostos). Toda métrica que compara dois mapas (sensibilidade, Random Logit, eMPRT) é lida em relação ao piso: só uma distância acima dele indica uma mudança real. A necessidade dessa régua aparece na literatura: o GradientShap tem a maior Sensitivity entre os métodos de gradiente em Mercier et al.\ (2022), e Fouladgar et al.\ (2022) mostram que distâncias sem normalização confundem a escala dos escores com a robustez. \textbf{Piso médio: 0,18} (de 0,13 em BRD e BRE a 0,25 em CAP).
@@ -269,11 +294,11 @@ A resposta à pergunta do trabalho é, portanto, \textbf{depende da propriedade 
 
 \section{Limitações}
 \begin{itemize}
-\item \textbf{Deslocamento de distribuição.} Retirar regiões cria ECGs diferentes dos vistos no treino; a queda da saída pode refletir essa estranheza (Ismail et al., 2020; Turbé et al., 2023; Suh et al., 2024). Foi mitigado pela retirada de regiões inteiras e por duas referências, mas não eliminado; o modelo não foi treinado com perturbações, como em Turbé et al.
+\item \textbf{Deslocamento de distribuição.} Retirar regiões cria ECGs diferentes dos vistos no treino; a queda da saída pode refletir essa estranheza (Ismail et al., 2020; Turbé et al., 2023; Suh et al., 2024; esses trabalhos perturbam pontos ou trechos curtos, e não regiões fisiológicas). Retirar regiões contíguas tende a criar menos descontinuidades que retirar pontos espalhados (Cui et al., 2023), e as duas referências deram resultados praticamente iguais, mas o problema não é eliminado; o modelo não foi treinado com perturbações, como em Turbé et al.
 \item \textbf{Um único modelo treinado.} Arends et al.\ (2026) mostram concordância apenas moderada entre mapas de modelos treinados com sementes diferentes; o piso do TCC mede a variação do método, não a do treino.
 \item \textbf{Poucos mapas em algumas classes.} BRE (20) e STE (14) têm posições menos estáveis.
 \item \textbf{Sem verdade de referência.} O CPSC2018 não anota as regiões diagnósticas; a plausibilidade clínica não é avaliada (Storås et al., 2025, e Suh et al., 2024, mostram que ela pode discordar da fidelidade).
-\item \textbf{Regiões fixas.} Os limites dos segmentos são aproximados (frações do intervalo RR) e dependem da detecção dos picos R na derivação II.
+\item \textbf{Regiões fixas.} Os limites dos segmentos são aproximados (janelas em ms e frações do intervalo RR) e dependem da detecção dos picos R na derivação II; em frequências altas, o fim da onda T pode cair no pré-QRS. A variação dos limites não mudou a ordem das classes na Consistency e na complexidade, mas não foi testada nas métricas que exigem o modelo. Uma alternativa é delinear o início e o fim de cada onda batimento a batimento (NeuroKit2, ou a segmentação de Wagner et al., 2024), mais fiel na teoria e menos confiável justamente nos ECGs patológicos.
 \end{itemize}
 
 \end{document}
