@@ -24,6 +24,7 @@ O texto inicial de Metodologia e Resultados está em `texto-tcc/metodologia-resu
 | `storas-2025-mapas-calor-ecg` | STORÅS, A. M.; MÆLAND, S.; ISAKSEN, J. L.; HICKS, S. A.; THAMBAWITA, V.; GRAFF, C.; HAMMER, H. L.; HALVORSEN, P.; RIEGLER, M. A.; KANTERS, J. K. *Evaluating gradient-based explanation methods for neural network ECG analysis using heatmaps* | íntegra do artigo (versão publicada, 10 páginas); os apêndices A.1 a A.4, publicados como material suplementar, não foram acessados | 8 |
 | `suh-2024-atribuicao-ecg` | SUH, J.; KIM, J.; KWON, S.; JUNG, E.; AHN, H.-J.; LEE, K.-Y.; CHOI, E.-K.; RHEE, W. *Visual interpretation of deep learning model in ECG classification: A comprehensive evaluation of feature attribution methods* | íntegra (versão publicada, 20 páginas, com os apêndices B a F; o material suplementar on-line não foi lido) | 10 |
 | `turbe-2023-avaliacao-series` | TURBÉ, H.; BJELOGRLIC, M.; LOVIS, C.; MENGALDO, G. *Evaluation of post-hoc interpretability methods in time-series classification* | íntegra da versão publicada (acesso aberto; PDF de 24 páginas: artigo, Métodos, Extended Data e Reporting Summary); as Supplementary Information (hiperparâmetros, métricas de classificação, resultados do FordA e a derivação teórica da Seção 4) não foram lidas | 9 |
+| `wagner-2024-auditoria-ecg` | WAGNER, P.; MEHARI, T.; HAVERKAMP, W.; STRODTHOFF, N. *Explaining deep learning for ECG analysis: Building blocks for auditing and knowledge discovery* | íntegra (arXiv v2, 25 páginas, com os apêndices; versão publicada não consultada) | 9 |
 
 ## Fichamentos curtos
 
@@ -54,7 +55,6 @@ O texto inicial de Metodologia e Resultados está em `texto-tcc/metodologia-resu
 | `storas-2023-mapas-calor-ecg` | STORÅS, A. M.; ANDERSEN, O. E.; LOCKHART, S.; THIELEMANN, R.; GNESIN, F.; THAMBAWITA, V.; HICKS, S. A.; KANTERS, J. K.; STRÜMKE, I.; HALVORSEN, P.; RIEGLER, M. A. *Usefulness of Heat Map Explanations for Deep-Learning-Based Electrocardiogram Analysis* | 3 |
 | `suh-2022-preprint-atribuicao-ecg` | SUH, J.; KIM, J.; JUNG, E.; RHEE, W. *Evaluating Feature Attribution Methods for Electrocardiogram* | 3 |
 | `tempel-2024-shap-reconhecimento-atividades` | TEMPEL, F.; IHLEN, E. A. F.; ADDE, L.; STRÜMKE, I. *Explaining Human Activity Recognition with SHAP: Validating Insights with Perturbation and Quantitative Measures* | 3 |
-| `wagner-2024-auditoria-ecg` | WAGNER, P.; MEHARI, T.; HAVERKAMP, W.; STRODTHOFF, N. *Explaining deep learning for ECG analysis: Building blocks for auditing and knowledge discovery* | 3 |
 | `zhang-2021-metricas-ppg` | ZHANG, O.; DING, C.; PEREIRA, T.; XIAO, R.; GADHOUMI, K.; MEISEL, K.; LEE, R. J.; CHEN, Y.; HU, X. *Explainability Metrics of Deep Convolutional Networks for Photoplethysmography Quality Assessment* | 3 |
 | `zhou-2022-atribuicao-verdade-referencia` | ZHOU, Y.; BOOTH, S.; RIBEIRO, M. T.; SHAH, J. *Do Feature Attribution Methods Correctly Attribute Features?* | 3 |
 

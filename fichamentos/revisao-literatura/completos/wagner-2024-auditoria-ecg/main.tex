@@ -1,0 +1,355 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+
+\newunicodechar{ϵ}{\ensuremath{\varepsilon}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: XAI para auditoria de modelos de ECG (Wagner et al.)}} \\[0.35em]
+    {\large WAGNER, P.; MEHARI, T.; HAVERKAMP, W.; STRODTHOFF, N. \textit{Explaining deep learning for ECG analysis: Building blocks for auditing and knowledge discovery}. Computers in Biology and Medicine, v.~176, 108525, 2024 (arXiv:2305.17043v2)} \\[0.3em]
+    \textbf{Tema:} testes de sanidade de métodos de atribuição em ECG e agregação das atribuições por batimento, derivação e segmento (XAI “glocal”) \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 07/11/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1016/j.compbiomed.2024.108525} \quad (\url{https://arxiv.org/abs/2305.17043}) \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv v2, 2/7/2024, 25 páginas, com os apêndices A.1--A.5); a versão publicada e o material suplementar com o código não foram consultados \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv (v2, 25 páginas). As citações estão no original em inglês, cada uma seguida de uma tradução livre; os números de referência bibliográfica no meio das frases foram omitidos e a omissão está indicada com “[...]”. A \textbf{Parte I} explica o trabalho; a \textbf{Parte II} é o fichamento; a \textbf{Parte III} relaciona o artigo ao TCC. Substitui o fichamento curto que existia em \texttt{curtos/}.
+
+\begin{infobox}[note]{Por que este artigo}
+É o precedente mais próximo da forma como o TCC resume os mapas: os autores recortam cada batimento numa \textbf{janela fixa em torno do pico R} (300~ms antes e 500~ms depois) e agregam as atribuições em mapas \textbf{derivação × segmento do batimento}, comparáveis entre exames e pacientes. Além disso, o teste de sanidade do artigo mostra, em ECG, o viés de amplitude dos métodos do tipo gradiente × entrada (Integrated Gradients, LRP): eles põem a maior relevância no pico R mesmo quando a tarefa é a onda P ou T. O GradientSHAP do TCC pertence a essa família, e o eMPRT do TCC encontrou o mesmo efeito.
+\end{infobox}
+
+\partbar{Parte I · Entendendo o trabalho}
+
+\section{O problema}
+Explicações de modelos de ECG costumam ser mostradas em exemplos isolados, escolhidos a dedo, e quase nunca se justifica por que um método de atribuição foi escolhido. Para \textbf{auditar} um modelo antes do uso clínico, ou para \textbf{descobrir conhecimento} com ele, é preciso saber se o método de atribuição é confiável e olhar o comportamento do modelo em grupos inteiros de pacientes. Os autores deixam explicitamente de lado a pergunta sobre a utilidade de um mapa isolado para o médico, que só estudos com usuários respondem.
+
+\section{A ideia central}
+O ECG tem estrutura periódica (batimentos que se repetem) e características bem definidas (ondas P, QRS e T, com amplitudes e durações medidas por programas clínicos). Isso permite quatro “blocos”:
+\begin{enumerate}
+\item \textbf{Testes de sanidade} com uma resposta conhecida: treinar modelos que preveem a amplitude de uma onda numa derivação e verificar se a atribuição cai nessa derivação e nessa onda.
+\item \textbf{XAI “glocal”}: alinhar as atribuições locais por batimento (recorte em torno do pico R) ou por segmento (segmentação do ECG) e agregá-las sobre todos os pacientes de uma classe, obtendo mapas por derivação × segmento.
+\item \textbf{XAI global com conceitos} (TCAV): testar se o modelo usa conceitos clínicos, como o QRS largo no bloqueio de ramo esquerdo.
+\item \textbf{Descoberta}: agrupar atribuições alinhadas para encontrar subgrupos dentro de uma classe.
+\end{enumerate}
+
+\section{Dados e modelos}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} \\
+\midrule
+Base & PTB-XL (21\,799 ECGs de 18\,869 pacientes), 23 rótulos do nível subdiagnóstico; protocolo de Strodthoff et al.\ (2020): 8 dobras de treino, 1 de validação e 1 de teste \\
+Entrada & 12 derivações a \textbf{100 Hz}, recortes aleatórios de 2,5~s (250 amostras) \\
+Tarefa & Multirrótulo, sigmoide por classe e entropia cruzada binária \\
+Modelos & LeNet rasa (3 convoluções 1D) e xresnet1d50 \\
+Desempenho & AUC macro de 0,9292 $\pm$ 0,0043 (XResNet) e 0,9245 $\pm$ 0,0030 (LeNet) nos 23 rótulos [p.~20] \\
+Classes analisadas & NORM, hipertrofia ventricular esquerda (LVH), bloqueio completo de ramo esquerdo (CLBBB), infarto prévio inferior (IMI) e anterior (AMI) \\
+Características & Amplitudes e durações do programa de Glasgow, do PTB-XL+ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Métodos de explicação}
+Quatro métodos, pelo Captum e pelo Zennit: \textbf{Grad-CAM}; \textbf{saliency} (gradiente da saída em relação à entrada, sem multiplicar pela entrada); \textbf{Integrated Gradients} (referência zero, um ECG sem atividade elétrica); \textbf{LRP-$\varepsilon$}, que, em redes só com ReLU, equivale a gradiente × entrada [p.~22]. Não há GradientSHAP nem outro método da família SHAP. Depois do teste de sanidade, só a saliency é usada.
+
+\section{Avaliação e adaptação ao ECG}
+\textbf{Teste de sanidade} (seção 2.3). Modelos com as mesmas arquiteturas, mas de regressão (12 saídas, uma por derivação), preveem a amplitude da onda P, do pico R ou da onda T. Duas medidas:
+\begin{itemize}
+\item \textbf{Especificidade espacial} $s_l$: norma temporal da atribuição na derivação-alvo dividida pela soma das normas nas 12 derivações (1 = toda a atribuição na derivação certa).
+\item \textbf{Especificidade temporal}: cada batimento é recortado de \textbf{300~ms antes a 500~ms depois do pico R} (80 amostras a 100 Hz); tira-se a norma entre derivações e a média entre batimentos. O critério é que o máximo do perfil caia no segmento da onda prevista.
+\end{itemize}
+
+\textbf{Delineação e picos R} (seção 2.4). Uma U-Net 2D própria segmenta o ECG em \textbf{24 segmentos} (pontos fiduciais do ECGDeli e os trechos entre eles), com saída probabilística (``segmentação suave''). AUC macro de 0,98 e acurácia de 0,75 nos 6~s centrais de cada registro [p.~20]. Os picos R saem dessa segmentação: máximo espacial de V1--V4, distância mínima de 30 amostras (300~ms) e probabilidade mínima de 0,25.
+
+\textbf{Duas formas de alinhar} (Fig.~2, p.~3):
+\begin{center}\small
+\begin{tabularx}{\linewidth}{p{3.2cm}X}
+\toprule
+\textbf{Nível} & \textbf{Como se faz} \\
+\midrule
+Batimento & Recorte fixo de 300~ms antes a 500~ms depois de cada pico R, no sinal e na atribuição; batimento mediano por exame e por grupo de pacientes \\ \addlinespace
+Segmento & Para cada derivação $i$ e segmento $m$, produto escalar da atribuição com a probabilidade do segmento ao longo do tempo, normalizada para somar 1: uma \textbf{média ponderada} da atribuição dentro do segmento, que não cresce com a duração dele \\
+\bottomrule
+\end{tabularx}
+\end{center}
+A agregação usa as \textbf{100 maiores predições} de cada classe; os 7 segmentos de maior relevância por classe são destacados na Fig.~4.
+
+\textbf{Conceitos} (TCAV): 10 vetores de conceito em 10 modelos treinados com sementes diferentes; só se interpreta um conceito com acurácia do classificador linear acima de 70\%, intervalo interquartil abaixo de 0,25 e intervalo que não contenha 0,5. \textbf{Descoberta}: PCA (75\% da variância) e agrupamento (k-means, mistura de gaussianas, hierárquico), com acurácia e índice de Rand ajustado.
+
+\section{Resultados principais}
+\begin{itemize}
+\item \textbf{Sanidade, eixo temporal:} IG, LRP e Grad-CAM põem a maior relevância no \textbf{pico R} mesmo quando a tarefa é a amplitude da onda P ou T; só a saliency tem o máximo no segmento certo nos seis experimentos (3 ondas × 2 modelos).
+\item \textbf{Sanidade, eixo espacial:} LRP e IG são os mais específicos nas precordiais; a saliency, nas derivações dos membros, com menor variância. As derivações dos membros são mais correlacionadas entre si (quatro das seis são combinações lineares das outras duas), o que reduz a especificidade de todos os métodos.
+\item \textbf{Glocal:} LVH concentra relevância nos picos R de V5, V1 e V6; CLBBB, no pico R de V1; IMI, nas ondas Q de aVL, II, aVF e III; AMI, em V1--V2, entre o início do QRS e o pico R. As duas arquiteturas dão mapas muito parecidos, inclusive na ordem dos segmentos mais relevantes.
+\item \textbf{Global:} os três conceitos clínicos (QRS largo, índice de Sokolow-Lyon, ondas Q patológicas) são usados de forma consistente pelos dois modelos nas classes correspondentes; idade e sexo também aparecem.
+\item \textbf{Descoberta:} separar AMI de IMI agrupando atribuições alinhadas dá acurácia de \textbf{90\%}, contra 75\% com os batimentos de entrada e 61\% com as ativações internas; dentro do ASMI, os grupos separam infartos transmurais de casos menos graves, estes com mais mulheres. \textit{Observação de leitura:} o texto troca a numeração dos grupos (na p.~12 o grupo 0 é o transmural; na legenda da Fig.~8 e na p.~13, o grupo 1); o que se mantém é que o grupo menos grave tem mais mulheres e probabilidade maior de NORM.
+\end{itemize}
+
+\section{Conclusões e limitações declaradas}
+\textbf{Conclusões:} testes de sanidade são necessários antes de usar um método de atribuição em ECG; a agregação por batimento e por segmento permite comparar o comportamento do modelo com as regras dos cardiologistas em grupos inteiros de pacientes; TCAV e agrupamento complementam a análise.
+
+\textbf{Limitações:} só o PTB-XL; um único método (saliency) nas análises seguintes; a agregação glocal só capta padrões iguais em todos os batimentos e não capta variações entre batimentos, como a variabilidade do RR; a análise com conceitos exige regras que possam ser formalizadas.
+
+\partbar{Parte II · Fichamento do artigo}
+
+\section{Mapa de leitura}
+Introdução e contribuições (p.~1--3); Materiais e Métodos (p.~3--6: dados, atribuições, testes de sanidade, glocal, descoberta, conceitos); Resultados (p.~6--14); Discussão, limitações e conclusão (p.~14--15); apêndices (p.~20--25: correlação entre derivações, desempenho, segmentação, definições dos métodos e dos conceitos). As citações seguem a ordem do texto.
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“We have established a set of sanity checks to identify saliency as the most sensible attribution method. We provide a dataset-wide analysis across entire patient subgroups, which goes beyond anecdotal evidence, to establish the first quantitative evidence for the alignment of model behavior with cardiologists’ decision rules.”\end{origquote}
+\begin{tradquote}“Estabelecemos um conjunto de testes de sanidade para identificar a saliency como o método de atribuição mais sensato. Fornecemos uma análise sobre todo o conjunto de dados, em subgrupos inteiros de pacientes, que vai além da evidência anedótica, para estabelecer a primeira evidência quantitativa do alinhamento entre o comportamento do modelo e as regras de decisão dos cardiologistas.”\end{tradquote}
+\explab{Explicação}
+As duas ideias do artigo que interessam ao TCC estão aqui: escolher o método com um teste, e não por hábito; e olhar grupos de exames, não exemplos. O TCC faz o segundo ao resumir as métricas por classe.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Contribuições, XAI glocal}
+\begin{origquote}“[...] we strongly argue for the automated analysis of attributions in a beat-aggregated form, in line with earlier proposals in the literature [...]. We exploit the periodic structure of the signal to provide attribution maps on the level of median beats or segments, see Fig. 2 for a graphical overview. These can be compared in a meaningful way across samples and patients.”\end{origquote}
+\begin{tradquote}“[...] defendemos fortemente a análise automatizada das atribuições de forma agregada por batimento, em linha com propostas anteriores da literatura [...]. Exploramos a estrutura periódica do sinal para fornecer mapas de atribuição no nível de batimentos medianos ou de segmentos (ver a Fig.~2). Esses mapas podem ser comparados de modo significativo entre exemplos e pacientes.”\end{tradquote}
+\explab{Explicação}
+É a justificativa central para o TCC trocar pontos por regiões: um ponto na posição 5\,000 de um ECG não corresponde ao mesmo trecho do batimento em outro ECG, mas “QRS de V1” corresponde. As 36 regiões do TCC tornam os mapas comparáveis entre exames, o que a Consistency e as médias por classe exigem. Os autores citam trabalhos anteriores com a mesma ideia (Jones et al., 2020; van de Leur et al., 2021; Bender et al., 2023).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Métodos, especificidade temporal}
+\begin{origquote}“For each sample- and lead-specific attribution $a^l$, we crop all B beats 300 ms before and 500 ms after each R-peak, yielding $\hat{a}^l \in \mathbb{R}^{B\times 80\times 12}$.”\end{origquote}
+\begin{tradquote}“Para cada atribuição específica do exemplo e da derivação, $a^l$, recortamos todos os B batimentos de 300~ms antes a 500~ms depois de cada pico R, obtendo $\hat{a}^l \in \mathbb{R}^{B\times 80\times 12}$.”\end{tradquote}
+\explab{Explicação}
+Janela fixa em milissegundos a partir do pico R, igual para todos os batimentos e exames, sem delinear as ondas. É o mesmo tipo de escolha do TCC (QRS de $R - 80$ a $R + 100$~ms). Os 80 pontos correspondem a 800~ms a 100 Hz.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Métodos, picos R}
+\begin{origquote}“We perform a robust R-peak detection based on the soft predictions for the R-peak class in the segmentation (minimum distance of 30 timestamps between two beats and minimum output probability of 0.25) based on the spatial maximum of V1-V4.”\end{origquote}
+\begin{tradquote}“Fazemos uma detecção robusta dos picos R a partir das predições suaves da classe ‘pico R’ na segmentação (distância mínima de 30 amostras entre dois batimentos e probabilidade mínima de 0,25), com base no máximo espacial de V1--V4.”\end{tradquote}
+\explab{Explicação}
+O artigo detecta o pico R combinando quatro derivações; o TCC usa só a derivação II (NeuroKit2). Uma detecção numa única derivação pode falhar quando essa derivação tem QRS pequeno ou bifásico. É uma diferença a declarar como limitação, não um erro: Gumpfer et al.\ (2026) também usam uma só derivação (I).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Métodos, atribuições alinhadas ao batimento}
+\begin{origquote}“We then extract median beats from the signal by extracting the signal 300 ms before until 500 ms after each identified R-peaks (similar to previous approaches [...]). We proceed similarly for the attribution maps to extract corresponding beat-centered attribution maps.”\end{origquote}
+\begin{tradquote}“Em seguida, extraímos batimentos medianos do sinal recortando de 300~ms antes até 500~ms depois de cada pico R identificado (como em abordagens anteriores [...]). Procedemos da mesma forma com os mapas de atribuição, para obter os mapas centrados no batimento correspondentes.”\end{tradquote}
+\explab{Explicação}
+A frase a citar na Metodologia do TCC para defender as janelas fixas: o recorte em torno do pico R, aplicado igualmente ao sinal e ao mapa, é a prática do artigo e de trabalhos anteriores.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Métodos, atribuições alinhadas ao segmento}
+\begin{origquote}“We opt for soft segmentations (output probabilities), because they provide robustness in case of small segments (i.e. points at peaks in the signal), as opposed to hard segmentations, where the argmax sometimes fails to recover these small segments.”\end{origquote}
+\begin{tradquote}“Optamos por segmentações suaves (probabilidades de saída) porque elas dão robustez no caso de segmentos pequenos (isto é, pontos nos picos do sinal), ao contrário das segmentações rígidas, em que o argmax às vezes não recupera esses segmentos pequenos.”\end{tradquote}
+\explab{Explicação}
+Mesmo com uma rede treinada para delinear o ECG, os autores evitam limites rígidos entre segmentos. Isso ajuda a responder à banca: limites exatos de cada onda são difíceis de obter, e o TCC usa poucas regiões largas (três por batimento) justamente para depender menos da posição exata dos limites.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Métodos, normalização por segmento}
+\begin{origquote}“In other words, to compute the entry of the i-th channel and the m-th segment of the resulting aggregated map, we calculate the dot product of the attributions of the i-th channel with the segmentation outputs (normalized by their sum, so that they sum up to 1) corresponding to the m-th segment.”\end{origquote}
+\begin{tradquote}“Em outras palavras, para calcular a entrada do $i$-ésimo canal e do $m$-ésimo segmento do mapa agregado, calculamos o produto escalar das atribuições do $i$-ésimo canal com as saídas da segmentação (normalizadas pela sua soma, de modo a somarem 1) correspondentes ao $m$-ésimo segmento.”\end{tradquote}
+\explab{Explicação}
+O artigo usa a \textbf{média} da atribuição em cada segmento; o TCC usa a \textbf{soma}. Com a soma, uma região mais longa pode acumular mais atribuição só por ter mais pontos (no TCC, o pré-QRS costuma ser a mais longa). A soma é a escolha natural para as métricas de fidelidade, porque a retirada de uma região remove todos os seus pontos. Ver a Parte III.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} Resultados, fidelidade}
+\begin{origquote}“A central requirement for attribution methods to be used for auditing or knowledge discovery is that the attribution method is supposed to be faithful, i.e., it should accurately reflect the model behavior. However, it is non-trivial to assess the accuracy of the model’s attributions since the features it considers important are not visible to us.”\end{origquote}
+\begin{tradquote}“Um requisito central para usar métodos de atribuição em auditoria ou descoberta de conhecimento é que o método seja fiel, isto é, que reflita com precisão o comportamento do modelo. No entanto, não é trivial avaliar a precisão das atribuições, já que as características que o modelo considera importantes não são visíveis para nós.”\end{tradquote}
+\explab{Explicação}
+Os autores reconhecem a fidelidade como requisito, mas a medem só indiretamente (teste de sanidade com resposta conhecida). O TCC mede fidelidade diretamente, por perturbação (Faithfulness Correlation e Estimate), o que complementa o artigo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Resultados, especificidade temporal}
+\begin{origquote}“In terms of temporal specificity, IG and LRP attribute the largest fraction of relevance to the R-peak even if the R-peak is not directly relevant for the given task (e.g., for predicting the P-wave or T-wave amplitude). Interestingly, a similar effect is observed for GradCAM. It is not completely implausible that the model could use the R-peak for localization within each beat and therefore could also attribute relevance to the R-peak.”\end{origquote}
+\begin{tradquote}“Quanto à especificidade temporal, IG e LRP atribuem a maior fração da relevância ao pico R mesmo quando ele não é diretamente relevante para a tarefa (por exemplo, prever a amplitude da onda P ou T). Curiosamente, efeito semelhante é observado no Grad-CAM. Não é totalmente implausível que o modelo use o pico R para se localizar dentro de cada batimento e, por isso, também atribua relevância a ele.”\end{tradquote}
+\explab{Explicação}
+Evidência direta, em ECG, do viés de amplitude: IG e LRP-$\varepsilon$ (equivalente a gradiente × entrada) concentram a relevância no QRS. O GradientSHAP do TCC multiplica o gradiente por (ECG $-$ referência) e pertence a essa família; no eMPRT, o mapa do modelo de pesos sorteados teve as 2 regiões principais no QRS em 88\% dos casos. A última frase é uma ressalva honesta dos autores: relevância no pico R não é necessariamente erro, porque o modelo pode usar o pico R como referência de posição.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 8} Resultados, XAI glocal}
+\begin{origquote}“It is worth stressing, that while local attributions can potentially aid human decision-making, they are not directly applicable for auditing, which focuses on model behavior across entire patient groups. We propose to compute aggregated beat-aligned attributions across entire subgroups with common pathologies to infer global model insights and refer to this approach as glocal XAI.”\end{origquote}
+\begin{tradquote}“Vale ressaltar que, embora as atribuições locais possam ajudar a decisão humana, elas não se aplicam diretamente à auditoria, que se ocupa do comportamento do modelo em grupos inteiros de pacientes. Propomos calcular atribuições agregadas e alinhadas ao batimento em subgrupos inteiros com a mesma doença, para obter conclusões globais sobre o modelo, e chamamos essa abordagem de XAI glocal.”\end{tradquote}
+\explab{Explicação}
+Apoia a organização do TCC por classe: a pergunta do trabalho é sobre o comportamento do par modelo + GradientSHAP em cada classe, não sobre exames isolados.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 11} Resultados, limites dos mapas agregados}
+\begin{origquote}“However, it remains unclear whether, for example, low or high voltage amplitudes or the particular morphology at the location are decisive for the attribution of a signal, let alone how cardiologists’ decision rules can be related to the model behavior.”\end{origquote}
+\begin{tradquote}“No entanto, continua incerto se, por exemplo, amplitudes de voltagem baixas ou altas, ou a morfologia específica naquele local, são decisivas para a atribuição de um sinal, quanto mais como as regras de decisão dos cardiologistas podem ser relacionadas ao comportamento do modelo.”\end{tradquote}
+\explab{Explicação}
+Um mapa por região diz \textit{onde} está a relevância, não \textit{o quê} naquele trecho a produz. Vale também para as 36 regiões do TCC: saber que “QRS de V1” é importante para BRD não mostra se o modelo usa a duração, a amplitude ou a forma do QRS.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 14} Discussão, testes de sanidade}
+\begin{origquote}“Surprisingly, three out of the four considered attribution methods do not show a sensible degree of temporal or spatial specificity and show a strong bias toward attributing relevance to the QRS-complex, which typically contains the highest signal amplitudes.”\end{origquote}
+\begin{tradquote}“Surpreendentemente, três dos quatro métodos de atribuição considerados não mostram grau razoável de especificidade temporal ou espacial e têm forte viés de atribuir relevância ao complexo QRS, que costuma conter as maiores amplitudes do sinal.”\end{tradquote}
+\explab{Explicação}
+Dá nome ao risco que o TCC precisa controlar: um mapa que destaca o QRS pode refletir a amplitude, e não a decisão. Por isso o TCC compara as distâncias com o piso e com um modelo de pesos sorteados, em vez de ler a concentração no QRS como sinal de qualidade.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 14} Discussão, ruído do gradiente}
+\begin{origquote}“Gradient noise, a major drawback of saliency methods, can be very effectively reduced by aggregating attributions across beats and samples.”\end{origquote}
+\begin{tradquote}“O ruído do gradiente, grande desvantagem dos métodos de saliency, pode ser reduzido de forma muito eficaz agregando as atribuições entre batimentos e exemplos.”\end{tradquote}
+\explab{Explicação}
+Argumento a favor de somar o mapa dentro das regiões: a variação ponto a ponto, que no GradientSHAP é aumentada pelo sorteio de referências e de ruído (o piso), é amortecida quando se somam muitos pontos e batimentos. É o apoio direto à frase do TCC de que avaliar ponto a ponto gerava artefatos.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 14} Discussão, XAI glocal}
+\begin{origquote}“Our analysis provides strong arguments in favor of aligned attribution maps, in line with arguments and experimental evidence put forward in the literature [...], which can be defined on beat level or even on the level of individual ECG segments composing the beat, that can be aggregated across entire patient subgroups.”\end{origquote}
+\begin{tradquote}“Nossa análise fornece argumentos fortes a favor de mapas de atribuição alinhados, em linha com argumentos e evidências experimentais da literatura [...], que podem ser definidos no nível do batimento ou mesmo no nível dos segmentos do ECG que compõem o batimento, e que podem ser agregados em subgrupos inteiros de pacientes.”\end{tradquote}
+\explab{Explicação}
+A segunda citação para a Metodologia: os autores defendem explicitamente mapas no nível dos \textbf{segmentos do batimento}, que é o nível das regiões pré-QRS, QRS e ST-T do TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} Limitações, padrões entre batimentos}
+\begin{origquote}“Furthermore, it is important to stress that the proposed glocal XAI approach is only able to identify consistent patterns that equally impact all beats, which is also the idea of basing ECG feature extraction on median beats. In particular, this approach will not be able to reveal temporal variations of features across several beats such as RR variability or spectral characteristics, even if the model can potentially leverage them internally.”\end{origquote}
+\begin{tradquote}“Além disso, é importante ressaltar que a abordagem glocal proposta só identifica padrões consistentes que afetam igualmente todos os batimentos, que é também a ideia de basear a extração de características do ECG em batimentos medianos. Em particular, ela não consegue revelar variações das características ao longo de vários batimentos, como a variabilidade do RR ou características espectrais, mesmo que o modelo possa usá-las internamente.”\end{tradquote}
+\explab{Explicação}
+Ressalva que vale para o TCC: somar a atribuição de todos os batimentos numa região apaga o que muda de um batimento para outro. Classes de ritmo e de batimentos isolados (AF, CAP, CVP) dependem justamente disso. É uma hipótese a discutir para a posição baixa de AF e CAP na fidelidade, não algo testado no TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 15} Limitações, um único método}
+\begin{origquote}“While we identified saliency as the most reliable attribution method through a defined sanity check, comparing it against integrated gradients, LRP, and Grad-CAM, we acknowledge the limitations inherent in relying on a single attribution method for the proposed experiments.”\end{origquote}
+\begin{tradquote}“Embora tenhamos identificado a saliency como o método de atribuição mais confiável por meio de um teste de sanidade definido, comparando-a com integrated gradients, LRP e Grad-CAM, reconhecemos as limitações de depender de um único método nos experimentos propostos.”\end{tradquote}
+\explab{Explicação}
+O TCC também usa um só método (GradientSHAP). A ressalva vale igualmente: as conclusões por classe são sobre o par modelo + GradientSHAP, não sobre “a explicação” em geral.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 22} Apêndice, LRP}
+\begin{origquote}“We use the ϵ-rule for all layers, which is formally equivalent to taking the product of input and input gradient (Gradient * Input) for models with only ReLU activations [...] as those considered in this work”\end{origquote}
+\begin{tradquote}“Usamos a regra $\varepsilon$ em todas as camadas, o que equivale formalmente a tomar o produto da entrada pelo gradiente da entrada (gradiente × entrada) em modelos só com ativações ReLU [...], como os considerados neste trabalho”\end{tradquote}
+\explab{Explicação}
+Liga o resultado do artigo ao GradientSHAP: o método que falhou no eixo temporal é, nesses modelos, um gradiente × entrada. O GradientSHAP é uma média de gradiente × (entrada $-$ referência). O artigo não testa o GradientSHAP, mas o mecanismo do viés é o mesmo.
+\end{citacard}
+
+\partbar{Parte III · Relação com o TCC}
+
+\section{O que se aproveita}
+\begin{itemize}
+\item \textbf{Precedente para as regiões.} Recorte fixo em milissegundos a partir do pico R (300/500~ms) e mapas derivação × segmento comparáveis entre exames. É o apoio mais direto à decisão do TCC de resumir cada mapa em 36 regiões, ao lado das máscaras fixas de Gumpfer et al.\ (2026).
+\item \textbf{Redução do ruído pela agregação.} Somar dentro das regiões amortece a variação ponto a ponto dos métodos de gradiente, o que dá sentido a medir o piso nas 36 regiões.
+\item \textbf{Viés de amplitude em ECG.} IG e LRP (gradiente × entrada) põem a relevância no pico R mesmo em tarefas de onda P ou T. É evidência independente, com outra medida, do que o eMPRT do TCC encontrou (mapa do modelo aleatório no QRS) e do que Gumpfer et al.\ (2026) mostram para o GradientSHAP.
+\item \textbf{Análise por grupo.} Auditoria é sobre grupos de pacientes, não exemplos: apoia o resumo por classe.
+\item \textbf{Limite das regiões para ritmo.} Agregar entre batimentos não capta variações entre eles. Hipótese para a discussão de AF, CAP e CVP.
+\end{itemize}
+
+\section{Diferenças em relação ao desenho do TCC}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{p{2.8cm}XX}
+\toprule
+\textbf{Elemento} & \textbf{No artigo} & \textbf{No TCC} \\
+\midrule
+Base e entrada & PTB-XL, 100 Hz, recortes de 2,5~s & CPSC2018, 500 Hz, até 30~s \\
+Modelos & LeNet e xresnet1d50, 23 rótulos & ResNet34-1D, 9 classes \\
+Métodos & Grad-CAM, saliency, IG, LRP; depois só saliency & Só GradientSHAP \\
+Picos R & Da segmentação própria, máximo de V1--V4 & NeuroKit2 na derivação II \\
+Unidade & Batimento de 800~ms (300/500~ms) ou 24 segmentos por segmentação suave & 3 regiões por batimento (janelas fixas no pico R e frações do RR) × 12 derivações \\
+Resumo da região & Média ponderada da atribuição no segmento & Soma da atribuição em todos os batimentos completos \\
+Uso das regiões & Visualização, comparação com regras clínicas, agrupamento & Unidade das sete métricas (retirada, distâncias, discretização) \\
+Exemplos & 100 maiores predições por classe & 622 mapas de predições corretas do teste \\
+Avaliação & Sanidade com resposta conhecida (regressão); concordância qualitativa & Fidelidade, robustez, complexidade, consistência, especificidade de classe, randomização \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Ressalvas para a discussão do TCC}
+\begin{itemize}
+\item O artigo agrega por regiões para \textbf{ver} e \textbf{comparar} o comportamento do modelo, não como unidade de métricas de perturbação. Usar as regiões como unidade das métricas é próprio do TCC; o artigo sustenta a agregação, não as métricas.
+\item \textbf{Soma × média.} O artigo usa a média por segmento; o TCC, a soma. Regiões longas (pré-QRS) podem acumular mais atribuição só pela duração, o que afeta sobretudo a complexidade e a Consistency (que olham as regiões de maior importância). Mesmo assim, no modelo treinado, só 42\% dos mapas têm as 2 regiões principais no QRS e a ordem varia com a classe, de modo que a soma não determina sozinha o resultado. Vale mencionar se a banca perguntar.
+\item O teste de sanidade usa modelos de \textbf{regressão} de amplitudes, não classificadores de arritmia, e não avalia o GradientSHAP; a ligação com o TCC é pelo mecanismo (gradiente × entrada), não por um resultado direto.
+\item A saliency passa no teste do artigo, mas isso não torna o GradientSHAP inadequado para o TCC: os critérios são diferentes, e o TCC mede o efeito da amplitude explicitamente (eMPRT, piso).
+\item As páginas citadas são do arXiv v2; na versão publicada podem mudar.
+\end{itemize}
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item “A agregação das atribuições por derivação e por segmento do batimento segue Wagner et al.\ (2024), que recortam cada batimento numa janela fixa em torno do pico R (300~ms antes e 500~ms depois) e agregam os mapas em segmentos do ECG, tornando-os comparáveis entre exames e pacientes.”
+\item “Wagner et al.\ (2024) observam que agregar as atribuições entre batimentos reduz de forma eficaz o ruído dos métodos de gradiente.”
+\item “Em testes de sanidade com modelos que preveem amplitudes das ondas do ECG, Wagner et al.\ (2024) mostraram que Integrated Gradients, LRP e Grad-CAM concentram a relevância no complexo QRS mesmo quando a tarefa envolve a onda P ou T, efeito associado às maiores amplitudes do sinal.”
+\end{itemize}
+
+\end{document}
