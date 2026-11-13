@@ -1,0 +1,146 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: SmoothGrad}} \\[0.35em]
+    {\large SMILKOV, D.; THORAT, N.; KIM, B.; VIÉGAS, F.; WATTENBERG, M. \textit{SmoothGrad: removing noise by adding noise}. arXiv:1706.03825, 2017 (ICML Workshop on Visualization for Deep Learning)} \\[0.3em]
+    \textbf{Tema:} média de gradientes sobre cópias ruidosas da entrada, a origem do ruído gaussiano do GradientSHAP \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 07/11/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/1706.03825} \\[0.2em]
+    \textbf{Leitura:} íntegra (arXiv, 10 páginas, com o apêndice de figuras) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Problema:} mapas de gradiente são visualmente ruidosos.
+\item \textbf{Hipótese:} o ruído vem de variações locais, sem significado, das derivadas da rede, que em redes ReLU não são suaves.
+\item \textbf{Método:} somar ruído gaussiano $\mathcal{N}(0, \sigma^2)$ à entrada $n$ vezes e tirar a média dos gradientes.
+\item \textbf{Hiperparâmetros:} o nível de ruído é medido como $\sigma/(x_{max} - x_{min})$; de 10\% a 20\% dá bons mapas em imagens, mas o nível ideal depende da entrada.
+\item \textbf{Limite:} a avaliação é só qualitativa (visual), em imagens.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Os autores atribuem o ruído dos mapas de gradiente a flutuações das derivadas em escalas pequenas [p.~2] e propõem suavizá-las pela média dos gradientes em cópias da entrada com ruído gaussiano [p.~3]. Avaliam visualmente o efeito do nível de ruído e do número de amostras [p.~4] e combinam o método com a multiplicação pela entrada e com o treino com ruído [p.~4--5].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 2} A causa do ruído}
+\begin{origquote}“[...] the derivative of the function $S_c$ may fluctuate sharply at small scales. In other words, the apparent noise one sees in a sensitivity map may be due to essentially meaningless local variations in partial derivatives.”\end{origquote}
+\begin{tradquote}“[...] a derivada da função $S_c$ pode oscilar bruscamente em escalas pequenas. Em outras palavras, o ruído aparente num mapa de sensibilidade pode vir de variações locais, essencialmente sem significado, das derivadas parciais.”\end{tradquote}
+\explab{Explicação}
+É a justificativa do ruído somado ao ECG em cada sorteio do GradientSHAP (passo 2 da seção 1.3.2 do texto do TCC).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Nível de ruído}
+\begin{origquote}“We observe that applying 10\%-20\% noise (middle columns) seems to balance the sharpness of sensitivity map and maintain the structure of the original image. We also observe that while this range of noise gives generally good results for Inception, the ideal noise level depends on the input.”\end{origquote}
+\begin{tradquote}“Observamos que aplicar de 10\% a 20\% de ruído (colunas do meio) parece equilibrar a nitidez do mapa e a preservação da estrutura da imagem original. Observamos também que, embora essa faixa dê em geral bons resultados na Inception, o nível ideal depende da entrada.”\end{tradquote}
+\explab{Explicação}
+O nível é $\sigma/(x_{max} - x_{min})$ [p.~4, legenda da Fig.~3]. No TCC, $\sigma = 0{,}09$ e a amplitude mediana de uma derivação em \textit{z-score} (máximo menos mínimo, no trecho real dos ECGs de teste) é 12,9, o que dá cerca de \textbf{0,7\%}, bem abaixo da faixa do artigo. O ruído do TCC suaviza pouco o mapa; a maior parte da suavização vem da média sobre as 36 referências e os valores de $\alpha$. O valor 0,09 veio do exemplo de uso do GradientSHAP na documentação do Captum, e não deste artigo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Conclusão}
+\begin{origquote}“First, averaging maps made from many small perturbations of a given image seems to have a significant smoothing effect.”\end{origquote}
+\begin{tradquote}“Primeiro, a média de mapas feitos a partir de muitas pequenas perturbações de uma imagem parece ter um efeito de suavização significativo.”\end{tradquote}
+\explab{Explicação}
+O mesmo princípio aparece em dois pontos do TCC: a média de 200 sorteios no GradientSHAP e a soma dos pontos dentro de cada região, que reduz a variação entre sementes (piso de 0,53 ponto a ponto contra 0,18 por regiões).
+\end{citacard}
+
+\section{Relação com o TCC}
+Explica a função do ruído gaussiano do GradientSHAP e mostra que o nível de ruído é um hiperparâmetro que depende da entrada. O TCC não ajustou esse nível, que é pequeno frente à amplitude do ECG; isso deve ser declarado como uma escolha não otimizada. O artigo não faz avaliação quantitativa nem trata de séries temporais.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``O ruído gaussiano do GradientSHAP segue a ideia do SmoothGrad (Smilkov et al., 2017): a média dos gradientes sobre pequenas perturbações da entrada atenua oscilações locais das derivadas sem significado.''
+\end{itemize}
+
+\end{document}

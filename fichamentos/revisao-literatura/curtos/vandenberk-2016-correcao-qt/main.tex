@@ -1,0 +1,145 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: fórmulas de correção do QT (Bazett e outras)}} \\[0.35em]
+    {\large VANDENBERK, B.; VANDAEL, E.; ROBYNS, T.; VANDENBERGHE, J.; GARWEG, C.; FOULON, V.; ECTOR, J.; WILLEMS, R. \textit{Which QT Correction Formulae to Use for QT Monitoring?}. Journal of the American Heart Association, v.~5, n.~6, e003264, 2016} \\[0.3em]
+    \textbf{Tema:} relação entre QT e frequência cardíaca; fórmula de Bazett e suas limitações \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 07/11/2026 \\[0.2em]
+    \textbf{Link:} \url{https://doi.org/10.1161/JAHA.116.003264} \\[0.2em]
+    \textbf{Leitura:} íntegra (texto completo do PMC4937268, sem paginação; citações indicadas pela seção) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} O texto do PMC não tem paginação; \texttt{[seção]} indica a seção do artigo. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação. O artigo original de Bazett (1920) não tem versão aberta e não foi consultado; a fórmula é citada a partir deste trabalho.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} comparar cinco fórmulas de correção do QT pela frequência cardíaca (Bazett, Fridericia, Framingham, Hodges e Rautaharju).
+\item \textbf{Dados:} 6\,609 pacientes adultos de um hospital universitário, em ritmo sinusal, com QRS normal e frequência abaixo de 90 bpm.
+\item \textbf{Fórmulas:} Bazett, $QT_c = QT/RR^{1/2}$; Fridericia, $QT_c = QT/RR^{1/3}$ (RR em segundos).
+\item \textbf{Achado:} Fridericia e Framingham corrigem melhor; Bazett, o padrão clínico, corrige demais em frequências altas e de menos em frequências baixas.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Mede o QT em ECGs de rotina, aplica as cinco fórmulas e avalia qual delas torna o $QT_c$ menos dependente da frequência cardíaca e qual prevê melhor a mortalidade [Métodos]. Exclui ECGs com frequência acima de 90 bpm justamente para limitar a sobrecorreção da fórmula de Bazett na taquicardia [Métodos].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{Introdução} Bazett, o padrão clínico}
+\begin{origquote}“The current clinical standard is the most widely used Bazett formula, but with this formula, there is a known overcorrection at high heart rates and undercorrection at lower heart rates.”\end{origquote}
+\begin{tradquote}“O padrão clínico atual é a fórmula de Bazett, a mais usada, mas ela tem uma sobrecorreção conhecida em frequências cardíacas altas e uma subcorreção em frequências baixas.”\end{tradquote}
+\explab{Explicação}
+No TCC, a fórmula é usada ao contrário: dado um $QT_c$ típico, estima-se que fração do RR o QT ocupa (Tabela 5 do texto). Como Bazett sobrecorrige nas frequências altas, o QT real nessas frequências tende a ser \textbf{mais longo} que o estimado por Bazett, e a fração do RR ainda maior. Com Fridericia e $QT_c = 0{,}44$ s, a fração é de 0,44 a 60 bpm, 0,52 a 77 bpm e 0,62 a 100 bpm (contra 0,44, 0,50 e 0,57 com Bazett). Isso reforça a limitação de que, em frequências altas, o fim da onda T pode cair no pré-QRS.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Métodos} Exclusão das frequências altas}
+\begin{origquote}“The limitation on heart rate was introduced to minimize overcorrection when correcting the QT interval for RR in case of tachycardia and thereby minimizing outliers influencing further statistics.”\end{origquote}
+\begin{tradquote}“O limite de frequência cardíaca foi introduzido para reduzir a sobrecorreção do QT pelo RR na taquicardia e, com isso, reduzir valores extremos que afetariam as estatísticas.”\end{tradquote}
+\explab{Explicação}
+Mostra que a relação entre QT e RR é menos confiável justamente na faixa (acima de 100 bpm) em que estão 17\% dos ECGs explicados no TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{Conclusão} Recomendação}
+\begin{origquote}“The current use of Bazett's QT correction formula in clinical standards should be questioned.”\end{origquote}
+\begin{tradquote}“O uso atual da fórmula de correção do QT de Bazett nos padrões clínicos deve ser questionado.”\end{tradquote}
+\explab{Explicação}
+Se a banca perguntar por que Bazett: é a fórmula mais conhecida e serve como ordem de grandeza; o texto do TCC deve mostrar também o valor com Fridericia, que este estudo considera mais adequado.
+\end{citacard}
+
+\section{Relação com o TCC}
+Dá a fórmula usada para justificar o fim do ST-T em 0,45 do RR e mostra o seu limite em frequências altas. O estudo é em ritmo sinusal e com QRS normal; não cobre AF nem bloqueios de ramo, duas classes do TCC.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Pela fórmula de Bazett, $QT_c = QT/\sqrt{RR}$, o QT ocupa cerca de 0,44 do RR a 60 bpm com $QT_c$ de 0,44 s; essa fórmula, porém, sobrecorrige o QT em frequências altas (Vandenberk et al., 2016), e com a de Fridericia a fração é um pouco maior.''
+\end{itemize}
+
+\end{document}

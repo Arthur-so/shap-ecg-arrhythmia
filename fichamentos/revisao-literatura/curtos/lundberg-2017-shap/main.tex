@@ -1,0 +1,147 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: SHAP, uma abordagem unificada}} \\[0.35em]
+    {\large LUNDBERG, S. M.; LEE, S.-I. \textit{A Unified Approach to Interpreting Model Predictions}. In: Advances in Neural Information Processing Systems 30 (NeurIPS), 2017} \\[0.3em]
+    \textbf{Tema:} definição dos valores SHAP e das propriedades que fundamentam o GradientSHAP \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 07/11/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/1705.07874} \\[0.2em]
+    \textbf{Leitura:} íntegra da versão arXiv v2 (10 páginas); material suplementar não consultado \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} unificar métodos de explicação (LIME, DeepLIFT, LRP, valores de Shapley) numa única classe, a dos métodos aditivos de atribuição.
+\item \textbf{Ideia central:} uma explicação é um modelo linear simples $g(z') = \phi_0 + \sum_i \phi_i z'_i$; entre esses, só os valores de Shapley satisfazem ao mesmo tempo três propriedades desejáveis (exatidão local, ausência e consistência).
+\item \textbf{Contribuição prática:} os valores SHAP e aproximações eficientes (Kernel SHAP, Deep SHAP).
+\item \textbf{Para o TCC:} fundamenta a leitura do mapa como uma divisão, entre os pontos do ECG, da diferença entre a saída do modelo e a saída de referência.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Os autores mostram que vários métodos de explicação têm a mesma forma: atribuem a cada atributo um valor $\phi_i$ cuja soma, mais um termo constante $\phi_0$, reproduz a saída do modelo [p.~2--3]. Provam que só uma escolha dos $\phi_i$ atende às três propriedades da seção 3 (Teorema 1), os valores de Shapley da teoria dos jogos cooperativos [p.~4], e chamam de valores SHAP os valores de Shapley de uma esperança condicional da função do modelo [p.~4--5]. O termo constante $\phi_0$ é a saída esperada do modelo quando nenhum atributo é conhecido [p.~5].
+
+O GradientSHAP usado no TCC (implementação do Captum) não é descrito neste artigo; ele vem da biblioteca SHAP dos mesmos autores, como aproximação dos valores SHAP por gradientes esperados. O artigo fundamenta a interpretação dos valores, e não o algoritmo específico.
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 4} Propriedade 1: exatidão local}
+\begin{origquote}“When approximating the original model $f$ for a specific input $x$, local accuracy requires the explanation model to at least match the output of $f$ for the simplified input $x'$ (which corresponds to the original input $x$).”\end{origquote}
+\begin{tradquote}“Ao aproximar o modelo original $f$ num exemplo $x$, a exatidão local exige que o modelo de explicação ao menos reproduza a saída de $f$ para a entrada simplificada $x'$ (que corresponde à entrada original $x$).”\end{tradquote}
+\explab{Explicação}
+É a propriedade $f(x) = \phi_0 + \sum_i \phi_i$: a soma das atribuições explica a diferença entre a saída e o termo constante. No TCC, é o que justifica dizer que o mapa ``distribui, entre os pontos, quanto o ECG se afasta das referências'' e que somar o mapa numa região dá a contribuição daquela região.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Figura 1: o valor de base}
+\begin{origquote}“[SHAP values] explain how to get from the base value $E[f(z)]$ that would be predicted if we did not know any features to the current output $f(x)$.”\end{origquote}
+\begin{tradquote}“[Os valores SHAP] explicam como ir do valor de base $E[f(z)]$, que seria previsto se nenhum atributo fosse conhecido, até a saída atual $f(x)$.”\end{tradquote}
+\explab{Explicação}
+No GradientSHAP, ``não conhecer'' um atributo é substituí-lo pelos valores das referências; o valor de base é, assim, a saída média para os 36 ECGs de referência. Por isso a escolha da referência muda o que o mapa explica (seção 1.3.3 do texto do TCC).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Unicidade}
+\begin{origquote}“Under Properties 1-3, for a given simplified input mapping $h_x$, Theorem 1 shows that there is only one possible additive feature attribution method.”\end{origquote}
+\begin{tradquote}“Com as propriedades 1 a 3, para um dado mapeamento de entradas simplificadas $h_x$, o Teorema 1 mostra que só existe um método aditivo de atribuição possível.”\end{tradquote}
+\explab{Explicação}
+É o argumento teórico para preferir métodos da família SHAP. Na prática, o GradientSHAP é uma aproximação estocástica, e as propriedades valem só em média; daí a necessidade de medir o piso (seção 1.5 do texto do TCC).
+\end{citacard}
+
+\section{Relação com o TCC}
+Dá a base conceitual do método de explicação (capítulo de Fundamentação) e a interpretação aditiva do mapa usada nas regiões e nas métricas de fidelidade, que comparam a soma das atribuições com a queda da saída. Não trata de séries temporais, de ECG nem de avaliação quantitativa das explicações.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Pela propriedade de exatidão local dos valores SHAP (Lundberg e Lee, 2017), a soma das atribuições reproduz a diferença entre a saída do modelo e o valor de base, que no GradientSHAP é a saída média para as referências.''
+\end{itemize}
+
+\end{document}

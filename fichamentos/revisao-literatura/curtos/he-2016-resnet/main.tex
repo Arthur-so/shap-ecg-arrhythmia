@@ -1,0 +1,145 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: redes residuais (ResNet)}} \\[0.35em]
+    {\large HE, K.; ZHANG, X.; REN, S.; SUN, J. \textit{Deep Residual Learning for Image Recognition}. In: IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016, p.~770--778} \\[0.3em]
+    \textbf{Tema:} aprendizado residual e conexões de atalho, base da ResNet34-1D do TCC \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 07/11/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/1512.03385} \\[0.2em]
+    \textbf{Leitura:} seções 1 a 4.1 da versão arXiv (12 páginas); experimentos em CIFAR-10 e detecção lidos pelas tabelas \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Problema:} redes mais profundas ficam mais difíceis de treinar; acima de certa profundidade, o erro de \textbf{treino} aumenta (problema da degradação), o que não é sobreajuste.
+\item \textbf{Ideia central:} em vez de cada grupo de camadas aprender a função desejada $H(x)$, aprende o resíduo $F(x) = H(x) - x$, e a entrada é somada à saída por uma conexão de atalho.
+\item \textbf{Arquiteturas:} ResNets de 18, 34, 50, 101 e 152 camadas; a de 34 usa blocos de duas convoluções em quatro estágios com 3, 4, 6 e 3 blocos.
+\item \textbf{Resultado:} com atalhos, a rede de 34 camadas treina melhor que a de 18, ao contrário da rede sem atalhos; 1.º lugar no ILSVRC 2015.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Os autores observam que empilhar camadas numa rede convencional piora o erro de treino a partir de certa profundidade [p.~1]. Propõem reformular cada bloco para aprender um resíduo em relação à sua entrada, somada à saída por uma conexão de atalho que não acrescenta parâmetros [p.~2]. Quando as dimensões mudam entre estágios, o atalho é uma projeção (convolução $1 \times 1$) [p.~4]. A arquitetura de 34 camadas dobra o número de filtros sempre que o tamanho do mapa de características cai à metade [p.~3--4].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 1} Resumo}
+\begin{origquote}“We explicitly reformulate the layers as learning residual functions with reference to the layer inputs, instead of learning unreferenced functions. We provide comprehensive empirical evidence showing that these residual networks are easier to optimize, and can gain accuracy from considerably increased depth.”\end{origquote}
+\begin{tradquote}“Reformulamos explicitamente as camadas para que aprendam funções residuais em relação às suas entradas, em vez de funções sem referência. Mostramos, com evidência empírica ampla, que essas redes residuais são mais fáceis de otimizar e ganham acurácia com profundidades bem maiores.”\end{tradquote}
+\explab{Explicação}
+É a justificativa para a ``conexão de atalho'' de cada bloco da ResNet34-1D do TCC (Figura 3 do texto).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 2} Conexões de atalho}
+\begin{origquote}“In our case, the shortcut connections simply perform identity mapping, and their outputs are added to the outputs of the stacked layers (Fig. 2). Identity shortcut connections add neither extra parameter nor computational complexity.”\end{origquote}
+\begin{tradquote}“No nosso caso, as conexões de atalho apenas copiam a entrada, e as suas saídas são somadas às saídas das camadas empilhadas (Fig. 2). Atalhos de identidade não acrescentam parâmetros nem custo computacional.”\end{tradquote}
+\explab{Explicação}
+Corresponde ao ``$+$'' do bloco residual na Figura 3 do texto do TCC.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Mudança de dimensão}
+\begin{origquote}“When the dimensions increase (dotted line shortcuts in Fig. 3), we consider two options: (A) The shortcut still performs identity mapping, with extra zero entries padded for increasing dimensions. [...] (B) The projection shortcut in Eqn.(2) is used to match dimensions (done by 1×1 convolutions).”\end{origquote}
+\begin{tradquote}“Quando as dimensões aumentam (atalhos tracejados na Fig. 3), consideramos duas opções: (A) o atalho continua copiando a entrada, completada com zeros nas dimensões novas; [...] (B) usa-se o atalho de projeção da Eq. (2) para ajustar as dimensões (por convoluções $1 \times 1$).”\end{tradquote}
+\explab{Explicação}
+A ResNet34-1D do TCC (e de Zhang et al., 2021) usa a opção B no início dos estágios 2, 3 e 4, onde o comprimento cai à metade e o número de canais dobra.
+\end{citacard}
+
+\section{Relação com o TCC}
+É a origem da arquitetura. A versão do TCC troca as convoluções 2D de $3 \times 3$ por convoluções 1D de \textit{kernel} 7, tem 12 canais de entrada (as derivações), acrescenta \textit{dropout} dentro dos blocos e resume a saída por média e máximo concatenados, como em Zhang et al.\ (2021).
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``A ResNet34-1D adapta ao ECG as redes residuais de He et al.\ (2016), em que cada bloco aprende um resíduo em relação à sua entrada, somada à saída por uma conexão de atalho.''
+\end{itemize}
+
+\end{document}

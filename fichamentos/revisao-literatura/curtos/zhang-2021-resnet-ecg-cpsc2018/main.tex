@@ -1,0 +1,178 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: ResNet34-1D para o CPSC2018 (modelo de referência)}} \\[0.35em]
+    {\large ZHANG, D.; YUAN, X.; ZHANG, P. \textit{Interpretable deep learning for automatic diagnosis of 12-lead electrocardiogram}. iScience, v.~24, n.~4, 102373, 2021} \\[0.3em]
+    \textbf{Tema:} arquitetura, pré-processamento e protocolo de treino do classificador usado como referência no TCC \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 07/11/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2010.10328} \quad \textbf{Código:} \url{https://github.com/onlyzdd/ecg-diagnosis} \\[0.2em]
+    \textbf{Leitura:} íntegra da versão arXiv (8 páginas); versão publicada na iScience não consultada; código consultado (\texttt{resnet.py}, \texttt{main.py}, \texttt{dataset.py}) \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Objetivo:} diagnosticar automaticamente nove classes do ECG de 12 derivações com uma rede profunda e explicar as predições com SHAP.
+\item \textbf{Dados:} CPSC2018 (6\,877 ECGs, 6 a 60 s, 500 Hz, multirrótulo), validação cruzada de 10 dobras (8 de treino, 1 de validação e 1 de teste em cada rodada).
+\item \textbf{Modelo:} ResNet de 34 camadas unidimensional, com \textit{pooling} adaptativo de média e de máximo concatenados e saída sigmoide.
+\item \textbf{Resultado:} F1 médio de 0,813 nas 10 dobras; melhores classes AF e BRD (F1 acima de 0,9); pior, STE (0,535).
+\item \textbf{Explicação:} SHAP com o \textit{gradient explainer} (gradientes esperados, a mesma ideia do GradientSHAP), no nível do paciente e da população.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+A rede recebe o ECG bruto de 12 derivações com 15\,000 amostras e devolve um vetor de 9 saídas [p.~3]. Os registros com mais de 30 s são cortados, \textbf{mantendo os últimos 30 s}, e os mais curtos são completados com zeros [p.~4]. O treino usa Adam, entropia cruzada, taxa de aprendizado $10^{-4}$, lote de 32, \textbf{no máximo 30 épocas}, \textit{kernel} de 15 e \textit{dropout} de 0,2 [p.~4--5], com aumento de dados por escala e deslocamento [p.~4]. O limiar de cada classe é escolhido para maximizar o F1 na validação e aplicado ao teste [p.~4]. A explicação no nível da população é a \textbf{soma} dos valores SHAP de cada derivação em todos os instantes e pacientes, normalizada entre as derivações [p.~4].
+
+\section{O que o código mostra (diferenças em relação ao texto)}
+\begin{itemize}
+\item \textbf{Convoluções:} a primeira convolução tem \textit{kernel} 15 e passo 2; as dos blocos residuais têm \textit{kernel} 7 (o texto do artigo fala só em 15).
+\item \textbf{Épocas:} o padrão do \texttt{main.py} é 40 (o artigo diz 30); não há parada antecipada, e o modelo é salvo quando o F1 médio da validação melhora.
+\item \textbf{Perda:} \texttt{BCEWithLogitsLoss} sem pesos, ou seja, a BCE simples.
+\item \textbf{Aumento de dados:} escala de cada derivação por $\mathcal{N}(1;\,0{,}1)$ e deslocamento entre $-0{,}02$ e $0{,}02$ (em mV), cada um aplicado quando \texttt{randn() > 0,5}, o que ocorre em cerca de 31\% das vezes.
+\item \textbf{Comprimento:} mantém as últimas 15\,000 amostras e põe os zeros no \textbf{início} dos registros curtos.
+\item \textbf{Normalização:} não há; o sinal entra nas unidades do arquivo.
+\end{itemize}
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 3} Arquitetura}
+\begin{origquote}“As shown in Fig. 2, the network consists of 34 layers. 4 stacked residual blocks are used to extract deep features. Within each residual block, there are two 1D convolutional (Conv1d) layers, two batch normalization (BatchNorm1d) layers, 1 dropout (Dropout) layer, and two rectified linear unit (ReLU) activation layers.”\end{origquote}
+\begin{tradquote}“Como mostra a Fig. 2, a rede tem 34 camadas. Quatro estágios de blocos residuais empilhados extraem as características profundas. Cada bloco residual tem duas camadas convolucionais 1D, duas de normalização em lote, uma de \textit{dropout} e duas de ativação ReLU.”\end{tradquote}
+\explab{Explicação}
+É a descrição seguida na Figura 3 do texto do TCC. O resumo final por média e máximo e a saída sigmoide também vêm daqui.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Pré-processamento}
+\begin{origquote}“For ECGs with a duration of more than 30 s, they will be cropped and the last 30 s ECG data are kept. Otherwise, they will be padded to 30 s with zeros.”\end{origquote}
+\begin{tradquote}“Os ECGs com mais de 30 s são cortados, mantendo-se os últimos 30 s. Os demais são completados com zeros até 30 s.”\end{tradquote}
+\explab{Explicação}
+O TCC usa o mesmo comprimento (15\,000 amostras), mas mantém os \textbf{primeiros} 30 s e põe os zeros no fim, e acrescenta a normalização \textit{z-score} por derivação, que não existe no artigo nem no código. As duas diferenças devem ser declaradas.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Limiar por classe}
+\begin{origquote}“The optimal threshold of each class is selected to achieve the best F1 score on the validation dataset. Then the selected thresholds are applied to the test dataset to produce results.”\end{origquote}
+\begin{tradquote}“O limiar ótimo de cada classe é escolhido para obter o melhor F1 na validação. Os limiares escolhidos são então aplicados ao teste.”\end{tradquote}
+\explab{Explicação}
+É o procedimento do TCC (seção 1.2.2), com a mesma separação entre a escolha (validação) e a avaliação (teste).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4--5} Hiperparâmetros}
+\begin{origquote}“[...] the learning rate is 0.0001; the batch size is 32; the maximum number of epochs is 30; the kernel size of 1D CNNs is 15; the dropout rate of dropout layers is 0.2.”\end{origquote}
+\begin{tradquote}“[...] a taxa de aprendizado é 0,0001; o lote tem 32 exemplos; o número máximo de épocas é 30; o \textit{kernel} das CNNs 1D é 15; a taxa de \textit{dropout} é 0,2.”\end{tradquote}
+\explab{Explicação}
+O TCC segue a taxa de aprendizado, o lote e o \textit{dropout}. O número de épocas difere: até 60 no TCC, com parada antecipada (melhor época: 36), contra 30 no artigo e 40 no código.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Desempenho por classe}
+\begin{origquote}“Among all cardiac arrhythmias, the deep model performed best on AF and RBBB classification with an F1 score of over 0.9. However, we also observed the F1 score of STE is low as 0.535 which may be due to the significant physician disagreement in diagnosing STE from ECGs [29].”\end{origquote}
+\begin{tradquote}“Entre todas as arritmias, o modelo foi melhor na AF e no BRD, com F1 acima de 0,9. O F1 da STE, porém, foi baixo, 0,535, o que pode se dever à grande discordância entre médicos no diagnóstico da STE pelo ECG.”\end{tradquote}
+\explab{Explicação}
+O modelo do TCC repete esse padrão (AF e BRD acima de 0,92; STE em último, 0,596), o que permite comparar o F1 por classe com a referência (Tabela II do artigo: SNR 0,805; AF 0,919; IAVB 0,864; BRE 0,866; BRD 0,926; CAP 0,735; CVP 0,851; STD 0,814; STE 0,535).
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 4} Explicação no nível da população}
+\begin{origquote}“[...] the contribution $c_{i,k}$ of lead $k$ for diagnostic class $i$ is defined as the sum of shap values [...]”\end{origquote}
+\begin{tradquote}“[...] a contribuição $c_{i,k}$ da derivação $k$ para a classe $i$ é definida como a soma dos valores SHAP [...]”\end{tradquote}
+\explab{Explicação}
+Precedente, no mesmo modelo e na mesma base, para resumir o mapa SHAP pela \textbf{soma} ao longo do tempo (aqui, por derivação; no TCC, por derivação e segmento do batimento).
+\end{citacard}
+
+\section{Relação com o TCC}
+É a referência do classificador: arquitetura, perda, otimizador, lote, \textit{dropout}, aumento de dados e limiar por classe vêm deste trabalho e do seu código. As diferenças do TCC são o número de épocas com parada antecipada, a normalização \textit{z-score}, a parte do registro mantida (os primeiros 30 s, e não os últimos) e a divisão única 70/20/10 no lugar das 10 dobras. O F1-macro do TCC (0,819 no teste) é próximo do relatado (0,813, média de 10 dobras), mas as duas avaliações não são idênticas: uma divisão contra a média de dez.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``O classificador segue a ResNet34 unidimensional de Zhang et al.\ (2021), que obtiveram F1 médio de 0,813 no CPSC2018, com o limiar de cada classe escolhido na validação para maximizar o F1.''
+\item ``Zhang et al.\ (2021) resumem os valores SHAP de cada derivação pela soma ao longo do tempo; este trabalho usa a mesma operação dentro de cada segmento do batimento.''
+\end{itemize}
+
+\end{document}

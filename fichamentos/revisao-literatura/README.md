@@ -58,4 +58,22 @@ O texto inicial de Metodologia e Resultados está em `texto-tcc/metodologia-resu
 | `zhang-2021-metricas-ppg` | ZHANG, O.; DING, C.; PEREIRA, T.; XIAO, R.; GADHOUMI, K.; MEISEL, K.; LEE, R. J.; CHEN, Y.; HU, X. *Explainability Metrics of Deep Convolutional Networks for Photoplethysmography Quality Assessment* | 3 |
 | `zhou-2022-atribuicao-verdade-referencia` | ZHOU, Y.; BOOTH, S.; RIBEIRO, M. T.; SHAH, J. *Do Feature Attribution Methods Correctly Attribute Features?* | 3 |
 
+## Fichamentos curtos das referências de apoio da Metodologia
+
+Feitos em 07/11/2026 para as citações do texto de Metodologia e Resultados que não tinham fichamento.
+
+| Pasta | Referência | Páginas |
+|---|---|---|
+| `adebayo-2018-testes-sanidade` | ADEBAYO, J.; GILMER, J.; MUELLY, M.; GOODFELLOW, I.; HARDT, M.; KIM, B. *Sanity Checks for Saliency Maps* | 2 |
+| `fouladgar-2022-sensibilidade-series` | FOULADGAR, N.; ALIREZAIE, M.; FRÄMLING, K. *Metrics and Evaluations of Time Series Explanations: An Application in Affect Computing* | 2 |
+| `he-2016-resnet` | HE, K.; ZHANG, X.; REN, S.; SUN, J. *Deep Residual Learning for Image Recognition* | 2 |
+| `hedstrom-2023-metaquantus` | HEDSTRÖM, A.; BOMMER, P.; WICKSTRØM, K. K.; SAMEK, W.; LAPUSCHKIN, S.; HÖHNE, M. M.-C. *The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus* | 2 |
+| `lipton-2014-limiar-f1` | LIPTON, Z. C.; ELKAN, C.; NARYANASWAMY, B. *Optimal Thresholding of Classifiers to Maximize F1 Measure* | 2 |
+| `lundberg-2017-shap` | LUNDBERG, S. M.; LEE, S.-I. *A Unified Approach to Interpreting Model Predictions* | 2 |
+| `smilkov-2017-smoothgrad` | SMILKOV, D.; THORAT, N.; KIM, B.; VIÉGAS, F.; WATTENBERG, M. *SmoothGrad: removing noise by adding noise* | 2 |
+| `vandenberk-2016-correcao-qt` | VANDENBERK, B. et al. *Which QT Correction Formulae to Use for QT Monitoring?* (fonte da fórmula de Bazett; o original de 1920 não foi consultado) | 2 |
+| `zhang-2021-resnet-ecg-cpsc2018` | ZHANG, D.; YUAN, X.; ZHANG, P. *Interpretable deep learning for automatic diagnosis of 12-lead electrocardiogram* (artigo e código) | 3 |
+
+Pendente, por falta do texto completo: SURAWICZ, B. et al. (2009), recomendações AHA/ACCF/HRS sobre distúrbios de condução intraventricular.
+
 Planejados mas não feitos (interrompidos pelo limite de uso; dispensados): fichamentos completos de Fouladgar 2022, Zhang 2021, Saporta 2022, Löffler 2025 e MetaQuantus 2023, e 18 fichamentos curtos. Os fichamentos das métricas do TCC (Bhatt, Alvarez-Melis, Yeh, Dasgupta, Sixt, Hedström) estão nas pastas próprias em `fichamentos/`.

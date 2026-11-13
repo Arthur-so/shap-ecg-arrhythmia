@@ -80,7 +80,7 @@
 \hrule
 \vspace{0.6em}
 
-{\noindent\small\textbf{Sobre este documento.} Rascunho dos capítulos de Materiais e Métodos e de Resultados e Discussão, reorganizado segundo as observações do aluno e o formato de TCC do curso (figuras e tabelas com título acima e fonte abaixo; resultados discutidos junto com a literatura). Os números vêm de \url{results/modeloB_v2/} e de \url{results/ablacao_bce/}; as figuras feitas com dados são geradas por \url{figs/gerar_figuras.py}. Citações marcadas com $^{\dagger}$ não têm fichamento no repositório e devem ser conferidas antes da versão final.\par}
+{\noindent\small\textbf{Sobre este documento.} Rascunho dos capítulos de Materiais e Métodos e de Resultados e Discussão, reorganizado segundo as observações do aluno e o formato de TCC do curso (figuras e tabelas com título acima e fonte abaixo; resultados discutidos junto com a literatura). Os números vêm de \url{results/modeloB_v2/} e de \url{results/ablacao_bce/}; as figuras feitas com dados são geradas por \url{figs/gerar_figuras.py}. A citação marcada com $^{\dagger}$ (Surawicz et al., 2009) ainda não tem fichamento, porque o texto completo não pôde ser obtido; as demais têm fichamento em \url{fichamentos/}.\par}
 
 % =====================================================================
 \section{Materiais e Métodos}\label{sec:metodos}
@@ -152,7 +152,7 @@ STE & Elevação do segmento ST & 154 & 44 & 22 & 220 \\
 \end{table}
 
 \subsubsection{Pré-processamento}
-O pré-processamento segue o protocolo de Zhang et al.\ (2021), cujo modelo é a referência de arquitetura deste trabalho, e está resumido na Figura~\ref{fig:preproc}. Como a rede exige entradas de tamanho fixo, cada registro é truncado ou completado com zeros até 15\,000 amostras (30 s a 500 Hz). Em seguida, cada derivação é normalizada por \textit{z-score} (subtrai-se a média e divide-se pelo desvio padrão da derivação), o que coloca todas as derivações na mesma escala; por isso, as amplitudes no restante do texto estão em unidades de desvio padrão, e não em milivolts. A normalização é calculada sobre o sinal já com 30 s, de modo que o trecho preenchido se torna uma constante em cada derivação. Por fim, os registros são divididos em treino, validação e teste (70\%, 20\% e 10\%) de forma estratificada por classe e com semente fixa, para que cada classe tenha proporção semelhante nas três partes (Tabela~\ref{tab:classes}).
+O pré-processamento está resumido na Figura~\ref{fig:preproc}. Como a rede exige entradas de tamanho fixo, cada registro é truncado ou completado com zeros até 15\,000 amostras (30 s a 500 Hz), o mesmo comprimento de Zhang et al.\ (2021), cujo modelo é a referência de arquitetura deste trabalho. Há uma diferença: Zhang et al.\ mantêm os últimos 30 s dos registros longos e põem os zeros no início dos curtos; aqui, mantêm-se os primeiros 30 s e os zeros vão no fim. Em seguida, cada derivação é normalizada por \textit{z-score} (subtrai-se a média e divide-se pelo desvio padrão da derivação), o que coloca todas as derivações na mesma escala. Essa etapa é própria deste trabalho: Zhang et al.\ (2021) usam o sinal sem normalização. Por isso, as amplitudes no restante do texto estão em unidades de desvio padrão, e não em milivolts. A normalização é calculada sobre o sinal já com 30 s, de modo que o trecho preenchido se torna uma constante em cada derivação. Por fim, os registros são divididos em treino, validação e teste (70\%, 20\% e 10\%) de forma estratificada por classe e com semente fixa, para que cada classe tenha proporção semelhante nas três partes (Tabela~\ref{tab:classes}).
 
 Como a duração mediana dos registros é de 12 s, a maior parte dos ECGs tem preenchimento: num registro de 12 s, 18 dos 30 s não são sinal. Por isso, o comprimento real de cada registro é guardado junto com o sinal e usado para excluir o preenchimento de todas as análises por região (seção~\ref{sec:regioes}).
 
@@ -177,7 +177,7 @@ Como a duração mediana dos registros é de 12 s, a maior parte dos ECGs tem pr
 \subsection{Modelo de classificação}\label{sec:modelo}
 
 \subsubsection{Arquitetura}
-O classificador é uma ResNet34 unidimensional, a mesma arquitetura de Zhang et al.\ (2021) para o CPSC2018, adaptada das redes residuais de He et al.\ (2016)$^{\dagger}$ para sinais. A Figura~\ref{fig:resnet} mostra o caminho de um ECG pela rede.
+O classificador é uma ResNet34 unidimensional, a mesma arquitetura de Zhang et al.\ (2021) para o CPSC2018, adaptada das redes residuais de He et al.\ (2016) para sinais. A Figura~\ref{fig:resnet} mostra o caminho de um ECG pela rede.
 
 \begin{itemize}
 \item \textbf{Entrada.} Um ECG pré-processado, de dimensão 12 × 15\,000: as 12 derivações entram como 12 canais, da mesma forma que as cores de uma imagem.
@@ -229,7 +229,7 @@ A rede tem cerca de 16,6 milhões de parâmetros. As explicações (seção~\ref
 \end{figure}
 
 \subsubsection{Treino}\label{sec:treino}
-A Tabela~\ref{tab:treino} reúne a configuração do treino. Os hiperparâmetros (perda, otimizador, taxa de aprendizado, tamanho do lote, número máximo de épocas, aumento de dados e escolha do limiar por classe) seguem Zhang et al.\ (2021) e o código publicado pelos autores; a parada antecipada foi acrescentada neste trabalho.
+A Tabela~\ref{tab:treino} reúne a configuração do treino. A perda, o otimizador, a taxa de aprendizado, o tamanho do lote, o \textit{dropout}, o aumento de dados e a escolha do limiar por classe seguem Zhang et al.\ (2021) e o código publicado pelos autores. O número de épocas difere: o artigo usa no máximo 30 e o código, 40, sempre até o fim, guardando o modelo de melhor F1 na validação; aqui, o treino vai até 60 épocas, com parada antecipada.
 
 \begin{table}[H]\centering\small
 \caption{Configuração do treino do classificador.}\label{tab:treino}
@@ -240,12 +240,13 @@ A Tabela~\ref{tab:treino} reúne a configuração do treino. Os hiperparâmetros
 Função de perda & Entropia cruzada binária (BCE) simples, aplicada a cada uma das 9 saídas \\
 Otimizador & Adam, taxa de aprendizado $10^{-4}$ \\
 Tamanho do lote & 32 ECGs \\
-Épocas & até 60; parada antecipada com paciência de 10 épocas, monitorando o F1-macro da validação \\
-Aumento de dados (só no treino) & escala de cada derivação por um fator $\sim\mathcal{N}(1;\,0{,}1)$ e deslocamento da linha de base $\sim\mathcal{U}(-0{,}1;\,0{,}1)$, cada um aplicado com probabilidade de cerca de 0,3, só no trecho real do sinal \\
+Épocas & até 60; parada antecipada com paciência de 10 épocas, monitorando o F1-macro da validação (Zhang et al.: no máximo 30 no artigo e 40 no código, sem parada antecipada) \\
+Aumento de dados (só no treino) & escala de cada derivação por um fator $\sim\mathcal{N}(1;\,0{,}1)$ e deslocamento da linha de base $\sim\mathcal{U}(-0{,}1;\,0{,}1)$, cada um aplicado com probabilidade de cerca de 0,3, só no trecho real do sinal (em Zhang et al., o deslocamento é de $\pm$0,02 mV no sinal sem normalização) \\
 Regularização & \textit{dropout} de 0,2 nos blocos residuais \\
+Entrada & 12 × 15\,000, normalizada por \textit{z-score} (a normalização é própria deste trabalho) \\
 Limiar de decisão & um por classe, escolhido na validação para maximizar o F1 \\
 Semente & 42 (divisão, inicialização e sorteios) \\
-Ambiente & Kaggle, GPU NVIDIA T4, cerca de 105 s por época \\
+Ambiente & Kaggle, GPU NVIDIA T4 (cerca de 105 s por época num treino com a mesma arquitetura) \\
 \midrule
 Resultado & melhor época: 36; treino interrompido na época 46; F1-macro de 0,849 na validação \\
 \bottomrule
@@ -253,7 +254,7 @@ Resultado & melhor época: 36; treino interrompido na época 46; F1-macro de 0,8
 \fonte{Elaborado pelo autor.}
 \end{table}
 
-\paragraph{Épocas e parada antecipada.} Ao fim de cada época, o modelo é avaliado na validação pelo F1-macro (a média do F1 das nove classes), e o melhor modelo até então é guardado. Se o F1-macro não melhora por 10 épocas seguidas, o treino é interrompido. O melhor F1-macro foi obtido na época 36 e o treino parou na época 46; o modelo usado em todo o restante do trabalho é o da época 36. A Figura~\ref{fig:treino} mostra a evolução do treino. A perda no treino continua caindo até o fim, enquanto o F1 da validação se estabiliza a partir da época 20, por volta de 0,83 a 0,85: o ganho que ainda havia no treino já não se traduzia em melhora na validação, o que justifica a parada. A perda na validação não foi registrada; a validação foi acompanhada pelo F1, que é a medida usada para escolher o modelo.
+\paragraph{Épocas e parada antecipada.} Ao fim de cada época, o modelo é avaliado na validação pelo F1-macro (a média do F1 das nove classes), e o melhor modelo até então é guardado. Se o F1-macro não melhora por 10 épocas seguidas, o treino é interrompido. O melhor F1-macro foi obtido na época 36 e o treino parou na época 46; o modelo usado em todo o restante do trabalho é o da época 36. A Figura~\ref{fig:treino} mostra a evolução do treino. A perda no treino continua caindo até o fim, enquanto o F1 da validação se estabiliza a partir da época 20, por volta de 0,83 a 0,85: o ganho que ainda havia no treino já não se traduzia em melhora na validação, o que justifica a parada.
 
 \begin{figure}[H]\centering
 \caption{Evolução do treino do modelo: (a) perda no treino (escala logarítmica); (b) F1-macro na validação, com os limiares por classe e com o limiar fixo de 0,5. As linhas pontilhadas marcam a melhor época (36) e a parada (46).}\label{fig:treino}
@@ -268,7 +269,7 @@ Resultado & melhor época: 36; treino interrompido na época 46; F1-macro de 0,8
 \item escolhe-se, para cada classe, o limiar de maior F1 (Figura~\ref{fig:limiar});
 \item o F1-macro da validação com esses limiares é o critério da parada antecipada; os nove limiares da melhor época (36) são guardados com o modelo e aplicados, sem mudança, ao conjunto de teste.
 \end{enumerate}
-Como o teste não participa da escolha, o F1 do teste não é inflado pelo ajuste. Escolher o limiar que maximiza o F1 é um procedimento conhecido para classificadores que devolvem probabilidades (Lipton, Elkan e Naryanaswamy, 2014)$^{\dagger}$. Os limiares obtidos foram: SNR 0,89; AF 0,58; IAVB 0,99; BRE 0,85; BRD 0,36; CAP 0,55; CVP 0,84; STD 0,34; STE 0,41. A Figura~\ref{fig:limiar} mostra que, para várias classes, o F1 varia pouco numa faixa ampla de limiares (por exemplo, AF entre 0,1 e 0,9), de modo que o valor exato do limiar pesa pouco; o limiar de IAVB, no extremo da grade, é o caso em que a curva sobe até o fim.
+Como o teste não participa da escolha, o F1 do teste não é inflado pelo ajuste. Escolher o limiar que maximiza o F1 é um procedimento conhecido para classificadores que devolvem probabilidades (Lipton, Elkan e Naryanaswamy, 2014). Os limiares obtidos foram: SNR 0,89; AF 0,58; IAVB 0,99; BRE 0,85; BRD 0,36; CAP 0,55; CVP 0,84; STD 0,34; STE 0,41. A Figura~\ref{fig:limiar} mostra que o F1 varia pouco numa faixa ampla de limiares (por exemplo, AF entre 0,1 e 0,9), de modo que o valor exato do limiar pesa pouco. O limiar de IAVB é alto (0,99) porque o modelo dá probabilidade acima de 0,5 a 63 ECGs da validação que não têm IAVB; subir o limiar elimina a maior parte desses falsos positivos (18 restam com 0,99) e perde poucos casos verdadeiros (de 134 para 124 dos 144). Entre 0,95 e 0,995, o F1 de IAVB fica praticamente estável (0,86 a 0,87). Lipton, Elkan e Naryanaswamy (2014) mostram que, num classificador com probabilidades bem calibradas, o limiar ótimo seria a metade do F1 ótimo (cerca de 0,43 aqui); um limiar de 0,99 indica que, nessa classe, as probabilidades do modelo são altas demais para ECGs sem IAVB, o que o ajuste do limiar corrige.
 
 \begin{figure}[H]\centering
 \caption{F1 na validação em função do limiar de decisão, para três classes. O ponto marca o limiar escolhido; a linha tracejada, o limiar padrão de 0,5.}\label{fig:limiar}
@@ -276,7 +277,7 @@ Como o teste não participa da escolha, o F1 do teste não é inflado pelo ajust
 \fonte{Elaborado pelo autor.}
 \end{figure}
 
-\paragraph{Escolha da função de perda.} Como as classes têm frequências muito diferentes (BRD tem 1\,304 registros no treino e STE, 154), foi testada também uma BCE ponderada, que dá aos casos positivos de cada classe um peso igual à razão entre negativos e positivos dessa classe, o que compensa as classes raras. Os dois modelos foram treinados com a mesma configuração, mudando só a perda. Com os limiares por classe, o F1-macro no teste foi de 0,819 com a BCE simples e de 0,816 com a ponderada. A diferença (0,003) é menor do que a variação observada entre dois treinos com a mesma configuração e sementes diferentes (cerca de 0,01), de modo que as duas perdas são equivalentes nesse critério. Adotou-se a BCE simples por dois motivos. O primeiro é a fidelidade à referência: é a perda usada no código de Zhang et al.\ (2021). O segundo é que ela depende menos do ajuste de limiar: com o limiar fixo de 0,5 para todas as classes, o F1-macro no teste foi de 0,806 com a BCE simples e de 0,785 com a ponderada. Ou seja, o ajuste por classe acrescentou 0,013 ao modelo com BCE simples e 0,031 ao modelo com BCE ponderada; a ponderação desloca as probabilidades das classes raras para cima, e o limiar 0,5 deixa de ser um ponto de corte natural.
+\paragraph{Escolha da função de perda.} Como as classes têm frequências muito diferentes (BRD tem 1\,304 registros no treino e STE, 154), foi testada também uma BCE ponderada, que dá aos casos positivos de cada classe um peso igual à razão entre negativos e positivos dessa classe, o que compensa as classes raras. Os dois modelos foram treinados com a mesma configuração, mudando só a perda. Com os limiares por classe, o F1-macro no teste foi de 0,819 com a BCE simples e de 0,816 com a ponderada. A diferença (0,003) é menor do que a variação observada entre dois treinos anteriores com BCE ponderada (0,816 com até 60 épocas e 0,803 com 40 épocas, cerca de 0,01), de modo que as duas perdas são equivalentes nesse critério. Adotou-se a BCE simples por dois motivos. O primeiro é a fidelidade à referência: é a perda usada no código de Zhang et al.\ (2021). O segundo é que ela depende menos do ajuste de limiar: com o limiar fixo de 0,5 para todas as classes, o F1-macro no teste foi de 0,806 com a BCE simples e de 0,785 com a ponderada. Ou seja, o ajuste por classe acrescentou 0,013 ao modelo com BCE simples e 0,031 ao modelo com BCE ponderada: com a ponderação, que aumenta o peso dos casos positivos, o limiar 0,5 fica mais longe do ponto de corte de melhor F1.
 
 % ---------------------------------------------------------------------
 \subsection{Explicações GradientSHAP}\label{sec:gshap}
@@ -307,7 +308,7 @@ O produto tem uma leitura intuitiva: um ponto recebe atribuição alta quando a 
 \subsubsection{Configuração}
 \paragraph{Referência.} As referências são 36 ECGs do treino com um único rótulo, 4 de cada classe, sorteados com semente fixa e usados em todos os mapas. Usar uma \textbf{distribuição} de ECGs reais, em vez de um sinal nulo, segue Turbé et al.\ (2023), que usam 50 ECGs do teste na mesma base: uma linha reta em zero não é um ECG plausível, e o mapa passaria a explicar ``a diferença entre o ECG e uma linha reta''. O balanceamento (4 por classe) evita que a referência represente sobretudo as classes mais comuns, como BRD; com uma referência dominada por uma classe, os ECGs dessa classe ficariam parecidos com a referência e receberiam atribuições artificialmente menores.
 
-\paragraph{Ruído gaussiano.} O ruído do passo 2 suaviza o mapa: como o gradiente de uma rede ReLU muda de forma abrupta entre pontos vizinhos, a média sobre pequenas variações do ECG reduz oscilações que não refletem o sinal, a mesma ideia do SmoothGrad (Smilkov et al., 2017)$^{\dagger}$. O desvio de 0,09 está em unidades de \textit{z-score}, ou seja, 9\% do desvio padrão de cada derivação, pequeno frente às ondas do ECG (Figura~\ref{fig:gshap}c). O valor foi mantido fixo em todo o trabalho.
+\paragraph{Ruído gaussiano.} O ruído do passo 2 faz parte do GradientSHAP e suaviza o mapa: como o gradiente de uma rede ReLU muda de forma abrupta entre pontos vizinhos, a média sobre pequenas variações do ECG reduz oscilações que não refletem o sinal, a mesma ideia do SmoothGrad (Smilkov et al., 2017). O desvio usado, 0,09, é o valor do exemplo de uso do GradientSHAP na documentação da biblioteca Captum; não foi ajustado para o ECG e foi mantido fixo em todo o trabalho. Em unidades de \textit{z-score}, corresponde a 9\% do desvio padrão de cada derivação e a cerca de 0,7\% da amplitude típica de uma derivação (12,9, a mediana entre o máximo e o mínimo nos ECGs de teste), bem abaixo dos 10\% a 20\% da amplitude que Smilkov et al.\ (2017) observam funcionar em imagens. O ruído suaviza, portanto, pouco o mapa (Figura~\ref{fig:gshap}c); a maior parte da suavização vem da média sobre as referências e os pontos do caminho.
 
 \paragraph{Número de sorteios.} Como referência, ruído e $\alpha$ são sorteados, dois mapas do mesmo ECG com sementes diferentes não são iguais. Essa variação é medida pelo \textbf{piso} (seção~\ref{sec:piso}). Com 50 sorteios, o piso médio era de 0,36; com 200, caiu para 0,18 (metade, como esperado para uma média: o erro cai com a raiz do número de sorteios). Optou-se por 200 sorteios, calculados como a média de 4 blocos de 50 (o que cabe na memória da GPU), com uma semente própria para cada mapa. Arends et al.\ (2026) adotam o mesmo cuidado, fixando o número de sorteios para que dois mapas do mesmo ECG tenham correlação de pelo menos 0,98.
 
@@ -357,17 +358,19 @@ pré-QRS & de $R + 0{,}45 \cdot RR$ a 80 ms antes do R seguinte & onda P e inter
 
 \paragraph{Limites do QRS.} A janela do QRS tem 180 ms. O QRS normal dura até cerca de 110 a 120 ms, e o dos bloqueios de ramo completos, duas das classes estudadas, tem 120 ms ou mais (Surawicz et al., 2009)$^{\dagger}$. A janela é assimétrica (80 ms antes e 100 ms depois do pico R) porque, nos bloqueios de ramo, o atraso da condução alonga sobretudo a parte final do QRS, depois do pico R (por exemplo, a onda S larga nas derivações laterais e o R' em V1 no BRD). O limite de 80 ms antes do pico R também é usado como fim do pré-QRS do batimento anterior, de modo que os segmentos não se sobrepõem.
 
-\paragraph{Fim do ST-T.} O fim da onda T não é fixo: o intervalo QT encurta quando a frequência cardíaca aumenta. Por isso, o fim do ST-T é definido como uma fração do intervalo RR de cada batimento, e não em milissegundos. A fração 0,45 vem da fórmula de Bazett (1920)$^{\dagger}$, $QT_c = QT/\sqrt{RR}$, que dá $QT/RR = QT_c/\sqrt{RR}$. A Tabela~\ref{tab:bazett} mostra essa fração para dois valores típicos de $QT_c$ (0,40 e 0,44 s). Com 60 bpm, o QT ocupa de 0,40 a 0,44 do RR; na frequência mediana dos ECGs explicados (77 bpm), de 0,45 a 0,50. A fração 0,45 fica dentro da faixa entre 60 e 77 bpm, que inclui a maioria dos ECGs. Nas frequências altas, a fração cresce, e o final da onda T pode cair no início do pré-QRS: nos ECGs explicados, 17\% têm frequência acima de 100 bpm e 7\%, acima de 120 bpm. Esse efeito é avaliado pelo teste de robustez (seção~\ref{sec:robustez-metodo}), que inclui as frações 0,40 e 0,50, e é discutido nas limitações. Uma vantagem de usar a fração do RR é que ela se adapta a cada batimento: numa contração prematura (CAP ou CVP), o RR curto encurta também os segmentos daquele batimento.
+\paragraph{Fim do ST-T.} O fim da onda T não é fixo: o intervalo QT encurta quando a frequência cardíaca aumenta. Por isso, o fim do ST-T é definido como uma fração do intervalo RR de cada batimento, e não em milissegundos. A fração 0,45 vem da fórmula de Bazett, $QT_c = QT/\sqrt{RR}$, a correção do QT mais usada na clínica (Vandenberk et al., 2016), que dá $QT/RR = QT_c/\sqrt{RR}$. A Tabela~\ref{tab:bazett} mostra essa fração para dois valores típicos de $QT_c$ (0,40 e 0,44 s). Com 60 bpm, o QT ocupa de 0,40 a 0,44 do RR; na frequência mediana dos ECGs explicados (77 bpm), de 0,45 a 0,50. A fração 0,45 fica dentro da faixa entre 60 e 77 bpm, que inclui a maioria dos ECGs. Nas frequências altas, a fração cresce, e o final da onda T pode cair no início do pré-QRS. A fórmula de Bazett sobrecorrige o QT em frequências altas (Vandenberk et al., 2016); com a de Fridericia ($QT_c = QT/\sqrt[3]{RR}$), que esse estudo considera mais adequada, as frações são um pouco maiores (Tabela~\ref{tab:bazett}), o que torna o efeito ainda mais provável: nos ECGs explicados, 17\% têm frequência acima de 100 bpm e 7\%, acima de 120 bpm. Esse efeito é avaliado pelo teste de robustez (seção~\ref{sec:robustez-metodo}), que inclui as frações 0,40 e 0,50, e é discutido nas limitações. Uma vantagem de usar a fração do RR é que ela se adapta a cada batimento: numa contração prematura (CAP ou CVP), o RR curto encurta também os segmentos daquele batimento.
 
 \begin{table}[H]\centering\small
-\caption{Fração do intervalo RR ocupada pelo QT, pela fórmula de Bazett, para dois valores de QT corrigido.}\label{tab:bazett}
+\caption{Fração do intervalo RR ocupada pelo QT, pelas fórmulas de Bazett e de Fridericia, para dois valores de QT corrigido.}\label{tab:bazett}
 \begin{tabular}{lccccc}
 \toprule
 \textbf{Frequência (bpm)} & 50 & 60 & 77 (mediana) & 100 & 120 \\
 \textbf{RR (ms)} & 1\,200 & 1\,000 & 780 & 600 & 500 \\
 \midrule
-$QT/RR$ com $QT_c = 0{,}40$ s & 0,37 & 0,40 & 0,45 & 0,52 & 0,57 \\
-$QT/RR$ com $QT_c = 0{,}44$ s & 0,40 & 0,44 & 0,50 & 0,57 & 0,62 \\
+Bazett, $QT_c = 0{,}40$ s & 0,37 & 0,40 & 0,45 & 0,52 & 0,57 \\
+Bazett, $QT_c = 0{,}44$ s & 0,40 & 0,44 & 0,50 & 0,57 & 0,62 \\
+Fridericia, $QT_c = 0{,}40$ s & 0,35 & 0,40 & 0,47 & 0,56 & 0,63 \\
+Fridericia, $QT_c = 0{,}44$ s & 0,39 & 0,44 & 0,52 & 0,62 & 0,70 \\
 \midrule
 ECGs explicados nessa faixa & \multicolumn{2}{c}{8\% abaixo de 60} & \multicolumn{1}{c}{metade abaixo de 77} & \multicolumn{2}{c}{17\% acima de 100} \\
 \bottomrule
@@ -389,7 +392,7 @@ em que $s(b)$ são os instantes do segmento $s$ no batimento $b$. Cada mapa vira
 \fonte{Elaborado pelo autor.}
 \end{figure}
 
-Wagner et al.\ (2024), o precedente mais próximo desse resumo, também organizam as atribuições por derivação e segmento, mas usam a \textbf{média} da atribuição em cada segmento. A soma foi preferida aqui porque é coerente com as métricas de retirada: ao retirar uma região, retiram-se todos os seus pontos, e a soma das atribuições é a quantidade que essas métricas comparam com a queda da saída (seção~\ref{sec:metricas}). Com a soma, uma região mais longa pode acumular mais importância só pela duração; o pré-QRS, que é o segmento mais longo (Tabela~\ref{tab:segmentos}), seria o favorecido. Não é o que se observa: no modelo treinado, as duas regiões mais importantes são de QRS, o segmento mais curto, em 42\% dos mapas, e essa fração varia muito entre as classes (seção~\ref{sec:res-emprt}).
+Wagner et al.\ (2024), o precedente mais próximo desse resumo, também organizam as atribuições por derivação e segmento, mas usam a \textbf{média} da atribuição em cada segmento. A soma foi preferida aqui por dois motivos. O primeiro é que Zhang et al.\ (2021), no mesmo modelo e na mesma base, também resumem os valores SHAP pela soma: a contribuição de cada derivação é a soma do mapa em todos os instantes. O segundo é que a soma é coerente com as métricas de retirada: ao retirar uma região, retiram-se todos os seus pontos, e a soma das atribuições é a quantidade que essas métricas comparam com a queda da saída (seção~\ref{sec:metricas}). Com a soma, uma região mais longa pode acumular mais importância só pela duração; o pré-QRS, que é o segmento mais longo (Tabela~\ref{tab:segmentos}), seria o favorecido. Não é o que se observa: no modelo treinado, as duas regiões mais importantes são de QRS, o segmento mais curto, em 42\% dos mapas, e essa fração varia muito entre as classes (seção~\ref{sec:res-emprt}).
 
 O que é próprio deste trabalho é usar essas regiões como \textbf{unidade das métricas}, e não só para visualizar as explicações, calculando-as no registro inteiro (todos os batimentos completos, sem batimento médio) e com as 12 derivações separadas. Gumpfer et al.\ (2026) usam máscaras fixas de PR, QRS e ST, definidas por cardiologistas, para medir se as explicações coincidem com as regiões clínicas; Hicks et al.\ (2021) retiram ondas inteiras (P, QRS ou T) do batimento mediano e medem a piora da predição, uma perturbação por região fisiológica semelhante à usada aqui.
 
@@ -408,7 +411,7 @@ Como o GradientSHAP é estocástico, repetir o cálculo com outra semente dá um
 
 \paragraph{Cálculo.} Para cada mapa, gera-se um segundo mapa do mesmo ECG e da mesma classe, com outra semente. Os dois são resumidos nas 36 regiões e normalizados para norma 1 (o vetor é dividido pelo seu comprimento), para que a comparação dependa só do formato do mapa, e não da sua escala. O piso é a distância euclidiana ($\ell_2$) entre os dois vetores. Ele vai de 0 (mapas iguais) a 2 (mapas opostos, com todos os sinais trocados).
 
-\paragraph{Uso.} Três comparações do trabalho são feitas com a \textbf{mesma semente} do mapa original, de modo que os sorteios são idênticos e só muda o que se quer testar: o ECG (\MS\ e \AS), a classe explicada (\RL) ou o modelo (\EM). A distância obtida é lida em relação ao piso do próprio mapa: só uma distância acima do piso indica uma mudança maior do que a do próprio método. A necessidade dessa régua aparece na literatura: o GradientSHAP teve a maior sensibilidade entre os métodos de gradiente nos seis conjuntos de séries temporais de Mercier et al.\ (2022), e Fouladgar et al.\ (2022) mostram que distâncias calculadas sem normalização confundem a escala dos mapas com a sua robustez.
+\paragraph{Uso.} Três comparações do trabalho são feitas com a \textbf{mesma semente} do mapa original, de modo que os sorteios são idênticos e só muda o que se quer testar: o ECG (\MS\ e \AS), a classe explicada (\RL) ou o modelo (\EM). A distância obtida é lida em relação ao piso do próprio mapa: só uma distância acima do piso indica uma mudança maior do que a do próprio método. A necessidade dessa régua aparece na literatura: o GradientSHAP teve a maior sensibilidade entre os métodos de gradiente nos seis conjuntos de séries temporais de Mercier et al.\ (2022), e Fouladgar et al.\ (2022) observam, em séries temporais, que métodos cujos escores têm escala menor aparecem como menos sensíveis, possivelmente só por causa da escala, o que motiva normalizar os mapas antes de compará-los.
 
 \paragraph{Valores.} O piso médio é de \textbf{0,18}, de 0,13 (BRD e BRE) a 0,25 (CAP).
 
@@ -451,7 +454,7 @@ Não há uma única definição de ``boa explicação''. As métricas da literat
  & \CS\ (Dasgupta et al., 2022) & ECGs com a mesma explicação recebem a mesma predição? & maior \\ \addlinespace
 Complexidade & \CX\ (Bhatt et al., 2020) & A importância está concentrada em poucas regiões? & menor \\ \addlinespace
 \multirow{2}{*}{Randomização} & \RL\ (Sixt et al., 2020) & O mapa é específico da classe explicada? & maior \\
- & \EM\ (Hedström et al., 2023) & O mapa depende do que o modelo aprendeu? & maior \\
+ & \EM\ (Hedström et al., 2023a) & O mapa depende do que o modelo aprendeu? & maior \\
 \bottomrule
 \end{tabularx}
 \fonte{Elaborado pelo autor.}
@@ -486,7 +489,7 @@ As duas métricas de fidelidade ``retiram'' regiões do ECG e medem quanto o log
 \paragraph{Definição original e implementação.} A \CX\ (Bhatt et al., 2020, Definição 4) é a entropia das frações de importância, $H = -\sum_i P_i \ln P_i$, com $P_i = |A_i| / \sum_j |A_j|$. Uma explicação concentrada em poucos atributos é mais fácil de interpretar e tem entropia baixa. Aqui, os atributos são as 36 regiões. Para facilitar a leitura, a entropia é convertida no \textbf{número efetivo de regiões}, $e^{H}$: o número de regiões que, com a mesma importância cada uma, dariam a mesma entropia. Ele vai de 1 (tudo numa região) a 36 (importância igual em todas). O índice de Gini das importâncias (a \textit{Sparseness} do Quantus) foi calculado como verificação. No Quantus, a métrica usa os 180\,000 pontos, inclusive o preenchimento, e passa a depender da duração do exame.
 
 \subsubsection{Randomização: \RL\ e \EM}
-\paragraph{Definição original.} O \RL\ (Sixt et al., 2020, seção 3) compara o mapa da classe explicada com o mapa de outra classe no mesmo exemplo: se forem quase iguais, a explicação não é específica da classe. O \EM\ (Hedström et al., 2023, Definição 3) compara o mapa do modelo treinado ($e$) com o mapa de um modelo com todos os pesos sorteados de novo ($\hat{e}$), pelo aumento relativo da complexidade, $q = (\xi(\hat{e}) - \xi(e))/\xi(e)$, em que $\xi$ é a entropia do mapa: se o mapa descreve o que o modelo aprendeu, o modelo aleatório deve dar um mapa mais espalhado, e $q > 0$.
+\paragraph{Definição original.} O \RL\ (Sixt et al., 2020, seção 3) compara o mapa da classe explicada com o mapa de outra classe no mesmo exemplo: se forem quase iguais, a explicação não é específica da classe. O \EM\ (Hedström et al., 2023a, Definição 3) compara o mapa do modelo treinado ($e$) com o mapa de um modelo com todos os pesos sorteados de novo ($\hat{e}$), pelo aumento relativo da complexidade, $q = (\xi(\hat{e}) - \xi(e))/\xi(e)$, em que $\xi$ é a entropia do mapa: se o mapa descreve o que o modelo aprendeu, o modelo aleatório deve dar um mapa mais espalhado, e $q > 0$.
 
 \paragraph{Implementação do \RL.} No mesmo ECG, geram-se os mapas das 8 outras classes, com a mesma semente, e calcula-se a distância $\ell_2$ normalizada nas 36 regiões entre cada um e o mapa da classe explicada. O resultado principal usa as classes \textbf{ausentes} do ECG; as presentes, em ECGs com mais de um diagnóstico, são registradas à parte, porque podem usar legitimamente a mesma evidência. A distância é comparada com o piso. O Quantus sorteia a outra classe sem distinguir presentes de ausentes, gera o novo mapa com outros sorteios (misturando a variação do método com a da classe) e mede a semelhança pelo SSIM, uma medida feita para imagens, sobre os 180\,000 pontos.
 
@@ -525,10 +528,10 @@ O treino do modelo, a geração dos mapas e as métricas que precisam do modelo 
 Este capítulo apresenta, primeiro, o desempenho do classificador, que é a referência das comparações (seção~\ref{sec:res-f1}). Em seguida, apresenta os resultados de cada métrica e os discute à luz da literatura (seções~\ref{sec:res-visao} a~\ref{sec:res-emprt}), verifica a robustez dos resultados à definição das regiões (seção~\ref{sec:res-robustez}) e, por fim, reúne o que as métricas dizem sobre a relação com o F1 (seção~\ref{sec:sintese}) e as limitações do trabalho (seção~\ref{sec:limitacoes}).
 
 \subsection{Desempenho do classificador}\label{sec:res-f1}
-O modelo obteve F1-macro de \textbf{0,819} no teste, próximo do relatado por Zhang et al.\ (2021) na mesma base e com a mesma arquitetura (0,813, média de 10 dobras). A Tabela~\ref{tab:f1} traz o F1 por classe, ordenado do maior para o menor, e o número de mapas explicados de cada classe. A ordem admite uma leitura clínica: as classes de maior F1 têm sinais claros e extensos no traçado, como a irregularidade do ritmo na AF, o QRS alargado no BRD e o PR longo no IAVB; as de menor F1 dependem de alterações pequenas ou de um único batimento, como a onda P precoce na CAP e o desvio do segmento ST na STE, que é também a classe com menos exemplos (154 no treino e 22 no teste). Essa ordem é a referência das comparações deste capítulo.
+O modelo obteve F1-macro de \textbf{0,819} no teste, próximo do relatado por Zhang et al.\ (2021) na mesma base e com a mesma arquitetura (0,813, média de 10 dobras). A Tabela~\ref{tab:f1} traz o F1 por classe, ordenado do maior para o menor, e o número de mapas explicados de cada classe. A ordem admite uma leitura clínica: as classes de maior F1 têm sinais claros e extensos no traçado, como a irregularidade do ritmo na AF, o QRS alargado no BRD e o PR longo no IAVB; as de menor F1 dependem de alterações pequenas ou de um único batimento, como a onda P precoce na CAP e o desvio do segmento ST na STE, que é também a classe com menos exemplos (154 no treino e 22 no teste). O F1 por classe também é próximo do de Zhang et al.\ (2021): a maior diferença é de 0,06 (STE, 0,596 contra 0,535), e as classes melhores (AF e BRD, acima de 0,9) e a pior (STE) coincidem. Zhang et al.\ atribuem o F1 baixo de STE à grande discordância entre médicos no diagnóstico dessa classe. Como a avaliação aqui usa uma única divisão, e a de Zhang et al., a média de 10 dobras, os números não são diretamente equivalentes. Essa ordem é a referência das comparações deste capítulo.
 
 \begin{table}[H]\centering\small
-\caption{F1 por classe no teste, com os limiares por classe e com o limiar fixo de 0,5, e número de mapas explicados (predições corretas). Classes ordenadas pelo F1.}\label{tab:f1}
+\caption{F1 por classe no teste, com os limiares por classe e com o limiar fixo de 0,5, F1 relatado por Zhang et al.\ (2021) e número de mapas explicados (predições corretas). Classes ordenadas pelo F1 deste trabalho.}\label{tab:f1}
 \setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{lrrrrrrrrr|r}
 \toprule
@@ -536,10 +539,11 @@ O modelo obteve F1-macro de \textbf{0,819} no teste, próximo do relatado por Zh
 \midrule
 F1 (limiares por classe) & 0,931 & 0,927 & 0,884 & 0,870 & 0,837 & 0,796 & 0,778 & 0,750 & 0,596 & 0,819 \\
 F1 (limiar 0,5) & 0,931 & 0,921 & 0,811 & 0,857 & 0,814 & 0,772 & 0,778 & 0,750 & 0,622 & 0,806 \\
+F1, Zhang et al.\ (2021)\textsuperscript{a} & 0,919 & 0,926 & 0,864 & 0,866 & 0,851 & 0,805 & 0,814 & 0,735 & 0,535 & 0,813 \\
 Mapas explicados & 108 & 172 & 61 & 20 & 59 & 78 & 65 & 45 & 14 & 622 \\
 \bottomrule
 \end{tabular}
-\fonte{Dados do presente estudo.}
+\fonte{Dados do presente estudo; \textsuperscript{a}Zhang et al.\ (2021), Tabela II, média de 10 dobras.}
 \end{table}
 
 \subsection{Visão geral das métricas por classe}\label{sec:res-visao}
@@ -602,7 +606,7 @@ A \MS\ global é de 0,045 e a \AS, de 0,036, ambas cerca de quatro vezes \textbf
 \subsection{Complexidade}\label{sec:res-complexidade}
 Os mapas usam, em média, o equivalente a \textbf{24 das 36 regiões}: a importância é espalhada, e não concentrada em poucas regiões. BRD, AF e IAVB têm os mapas mais concentrados (22 a 23 regiões); STD, SNR e BRE, os mais espalhados (26 a 27). Reduzir o erro de estimativa, de 50 para 200 sorteios, quase não mudou a complexidade (de 24,2 para 24,1): o espalhamento vem do modelo, e não do ruído do método. Também não é uma escolha de unidade: a Figura~\ref{fig:agregacao} mostra um mapa de BRD com uma região claramente dominante (QRS de V1) e, ainda assim, valores não nulos em quase todas as outras.
 
-\paragraph{Frente ao F1.} As três classes mais concentradas coincidem com as três de maior F1, mas BRE, 4.ª no F1, está entre as mais espalhadas, e CAP e STE, as duas piores no F1, estão no meio. A relação é, portanto, parcial. A complexidade é também a categoria de métricas menos confiável na meta-avaliação de Hedström et al.\ (2023)$^{\dagger}$ (MetaQuantus), o que recomenda não apoiar conclusões só nela.
+\paragraph{Frente ao F1.} As três classes mais concentradas coincidem com as três de maior F1, mas BRE, 4.ª no F1, está entre as mais espalhadas, e CAP e STE, as duas piores no F1, estão no meio. A relação é, portanto, parcial. A complexidade é também a categoria de métricas menos confiável na meta-avaliação de Hedström et al.\ (2023b), o MetaQuantus, o que recomenda não apoiar conclusões só nela.
 
 \subsection{\CS}\label{sec:res-consistency}
 A \CS\ global é de 0,455, acima do valor esperado ao acaso em todas as classes (Tabela~\ref{tab:res}). É a métrica cuja ordenação das classes \textbf{mais se aproxima da ordenação pelo F1}: as três classes de maior F1 (AF, BRD e IAVB) são as três de maior \CS, e as duas de menor F1 (CAP e STE) são as duas de menor \CS. Com 1 e 3 regiões na discretização, a ordem muda no meio, mas as pontas se mantêm: BRD em 1.º e CAP e STE nas duas últimas posições.
@@ -615,7 +619,7 @@ No mesmo ECG, o mapa da classe explicada fica, em média, a \textbf{1,60} do map
 \paragraph{Relação com a literatura.} Sixt et al.\ (2020) propõem o teste por mostrarem que alguns métodos de explicação produzem quase o mesmo mapa para qualquer classe; não é o caso aqui. O resultado também concorda com Sujatha Ravindran e Contreras-Vidal (2023), em que métodos da família gradiente × entrada foram sensíveis à classe e ao modelo em EEG simulado. O fato de as classes de menor F1 terem as explicações menos específicas é coerente com um modelo que separa pior essas classes das demais: se a evidência que o modelo usa para STE é parecida com a que usa para outras classes, os mapas também ficam parecidos.
 
 \subsection{Dependência do modelo (\EM)}\label{sec:res-emprt}
-Com os pesos sorteados de novo, o mapa \textbf{não} fica mais espalhado: o número efetivo de regiões passa de 24,1 para 22,9, e o aumento relativo da entropia é $q = -0{,}015$, com só 37\% dos mapas com $q > 0$. Com a entropia de histograma do artigo, na verificação com 174 mapas, $q = -0{,}31$. Pelo critério de Hedström et al.\ (2023), o GradientSHAP não passa no teste.
+Com os pesos sorteados de novo, o mapa \textbf{não} fica mais espalhado: o número efetivo de regiões passa de 24,1 para 22,9, e o aumento relativo da entropia é $q = -0{,}015$, com só 37\% dos mapas com $q > 0$. Com a entropia de histograma do artigo, na verificação com 174 mapas, $q = -0{,}31$. Pelo critério de Hedström et al.\ (2023a), o GradientSHAP não passa no teste.
 
 Os complementos mostram, porém, que o mapa depende do modelo. A distância entre o mapa do modelo treinado e o do modelo aleatório é \textbf{8,7 vezes o piso} com o sinal das atribuições e 5,8 vezes só com as magnitudes, em todos os 622 mapas, e a região principal coincide em só 5\% dos casos. O critério falha por outro motivo: sem o que o modelo aprendeu, o fator (ECG $-$ referência) da Equação~\ref{eq:gshap} concentra o mapa nos picos do QRS, e um mapa concentrado tem entropia baixa. No modelo aleatório, 88\% dos mapas têm as 2 regiões principais no QRS; no treinado, 42\%. No modelo treinado, essa fração depende da classe (95\% em BRE e 71\% em BRD, contra 2\% em IAVB e 6\% em STD); no aleatório, não.
 

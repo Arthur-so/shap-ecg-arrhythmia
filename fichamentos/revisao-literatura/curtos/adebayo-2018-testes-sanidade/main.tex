@@ -1,0 +1,145 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: testes de sanidade para mapas de saliência}} \\[0.35em]
+    {\large ADEBAYO, J.; GILMER, J.; MUELLY, M.; GOODFELLOW, I.; HARDT, M.; KIM, B. \textit{Sanity Checks for Saliency Maps}. In: Advances in Neural Information Processing Systems 31 (NeurIPS), 2018} \\[0.3em]
+    \textbf{Tema:} testes de randomização do modelo e dos rótulos; por que métodos do tipo gradiente × entrada reproduzem a entrada \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 07/11/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/1810.03292} \\[0.2em]
+    \textbf{Leitura:} texto principal da versão arXiv (seções 1 a 6, p.~1--9); apêndices lidos pelas figuras \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação.
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Problema:} um mapa pode parecer convincente sem depender do modelo nem dos dados.
+\item \textbf{Testes propostos:} randomizar os pesos do modelo (em cascata, da saída para a entrada, ou camada a camada) e randomizar os rótulos do treino; um método que depende do modelo deve produzir mapas diferentes.
+\item \textbf{Achado:} \textit{Guided Backprop} e variantes quase não mudam e se parecem com um detector de bordas; gradiente $\times$ entrada e gradientes integrados mudam o \textbf{sinal} das atribuições, mas mantêm a estrutura visual da entrada.
+\item \textbf{Lição:} a inspeção visual é um mau guia para julgar se a explicação depende do modelo.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Propõe dois testes de randomização, um dos pesos do modelo e outro dos rótulos, e compara os mapas antes e depois por correlação de postos (com e sem valor absoluto), SSIM e histograma de gradientes [p.~3--5]. Avalia gradiente, SmoothGrad, gradientes integrados, gradiente $\times$ entrada, \textit{Guided Backprop} e Grad-CAM em ImageNet, MNIST e Fashion MNIST [p.~4--7].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 2} Inspeção visual}
+\begin{origquote}“The edge detector does not depend on model or training data, and yet produces results that bear visual similarity with saliency maps. This goes to show that visual inspection is a poor guide in judging whether an explanation is sensitive to the underlying model and data.”\end{origquote}
+\begin{tradquote}“O detector de bordas não depende do modelo nem dos dados de treino e, ainda assim, produz resultados visualmente parecidos com mapas de saliência. Isso mostra que a inspeção visual é um mau guia para julgar se uma explicação é sensível ao modelo e aos dados.”\end{tradquote}
+\explab{Explicação}
+Motiva os testes de randomização do TCC (eMPRT e Random Logit), em vez de julgar os mapas só pela aparência.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 5} Gradiente × entrada sob randomização}
+\begin{origquote}“On visual inspection, we find that gradient $\odot$ input and integrated gradients show visual similarity to the original mask. [...] However, re-initialization disrupts the sign of the map, so that the spearman rank correlation without absolute values goes to zero (Figure 4-Bottom) almost as soon as the top layers are randomized.”\end{origquote}
+\begin{tradquote}“À inspeção visual, gradiente $\odot$ entrada e gradientes integrados se parecem com o mapa original. [...] A reinicialização, porém, altera o sinal do mapa, de modo que a correlação de Spearman sem valor absoluto cai a zero (Figura 4, embaixo) quase assim que as camadas de cima são randomizadas.”\end{tradquote}
+\explab{Explicação}
+É o comportamento observado no eMPRT do TCC: com o modelo aleatório, o mapa continua concentrado onde a entrada é grande (os QRS), e a distância ao mapa treinado é maior com o sinal (8,7 vezes o piso) do que só com as magnitudes (5,8 vezes). Por isso o critério de entropia do eMPRT falha, embora o mapa dependa do modelo.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 7} A estrutura da entrada permanece}
+\begin{origquote}“For gradient $\odot$ input and integrated gradients, we also observe visual changes in the masks obtained, particularly, in the sign of the attributions. Despite this, the input structure is still clearly prevalent in the masks.”\end{origquote}
+\begin{tradquote}“Em gradiente $\odot$ entrada e gradientes integrados, também se observam mudanças visuais nos mapas, sobretudo no sinal das atribuições. Apesar disso, a estrutura da entrada continua claramente presente nos mapas.”\end{tradquote}
+\explab{Explicação}
+O GradientSHAP multiplica o gradiente por (entrada $-$ referência), da mesma família; no ECG, a ``estrutura da entrada'' são os picos de grande amplitude, o que liga este achado ao viés de amplitude descrito por Gumpfer et al.\ (2026) e Wagner et al.\ (2024).
+\end{citacard}
+
+\section{Relação com o TCC}
+É a origem dos testes de randomização do modelo, dos quais o eMPRT (Hedström et al., 2023) é uma versão eficiente. Explica por que, para métodos do tipo entrada $\times$ gradiente, a mudança de sinal e a mudança de magnitude devem ser lidas separadamente, como o TCC faz nos complementos do eMPRT. O GradientSHAP não foi avaliado no artigo.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Em métodos do tipo gradiente $\times$ entrada, randomizar os pesos altera o sinal das atribuições, mas a estrutura da entrada continua presente no mapa (Adebayo et al., 2018); por isso, a distância ao mapa do modelo aleatório foi calculada com e sem o sinal.''
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,145 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{array}
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{newunicodechar}
+\usepackage[most]{tcolorbox}
+\usepackage{etoolbox}
+
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, citecolor=blue!70!black, urlcolor=blue!70!black}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.2ex plus 0.5ex minus .2ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.4ex minus .2ex}{0.4ex}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.15em,topsep=0.3em}
+
+% --- símbolos ---
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{‑}{-}
+\newunicodechar{✔}{\ensuremath{\checkmark}}
+\newunicodechar{✘}{\ensuremath{\times}}
+
+% --- cores e caixas ---
+\definecolor{cC}{HTML}{7A4FA3}
+\definecolor{cS}{HTML}{2F7D74}
+\definecolor{cAcc}{HTML}{2F5D8A}
+\newcommand{\metrictag}[2]{{\setlength{\fboxsep}{1.5pt}%
+  \ifstrequal{#1}{c}{\colorbox{cC}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \ifstrequal{#1}{s}{\colorbox{cS}{\textcolor{white}{\scriptsize\textbf{#2}}}}{%
+  \colorbox{black!60}{\textcolor{white}{\scriptsize\textbf{#2}}}}}}}
+\newcommand{\pagechip}[1]{{\setlength{\fboxsep}{1.5pt}\colorbox{cAcc}{\textcolor{white}{\scriptsize\texttt{#1}}}}}
+\newcommand{\readtag}[1]{\texttt{\small #1}}
+\newcommand{\partbar}[1]{\par\vspace{1.2em}\noindent\colorbox{black!80}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\sffamily\MakeUppercase{#1}}}\par\vspace{0.4em}}
+\newtcolorbox{citacard}[1]{breakable, enhanced, colback=white, colframe=black!25, boxrule=0.5pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, title={\small #1}, coltitle=black, colbacktitle=black!6, fonttitle=\normalfont}
+\newenvironment{origquote}{\par\itshape\small}{\par}
+\newenvironment{tradquote}{\par\small\textsc{Tradução:}\ }{\par}
+\newcommand{\explab}[1]{\par\smallskip{\small\color{cAcc}\textbf{\MakeUppercase{#1}}}\par}
+\colorlet{notebg}{blue!4}\colorlet{notefg}{cAcc}
+\colorlet{okbg}{green!5}\colorlet{okfg}{green!45!black}
+\colorlet{warnbg}{orange!8}\colorlet{warnfg}{orange!80!black}
+\newtcolorbox{infobox}[2][note]{breakable, enhanced, boxrule=0pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  colback=#1bg, borderline west={3pt}{0pt}{#1fg}, frame hidden,
+  before upper={\ifstrempty{#2}{}{\textbf{#2}\par}}}
+\colorlet{pairc}{cC}\colorlet{pairs}{cS}
+\newenvironment{paircol}[2]{\begin{tcolorbox}[width=0.485\linewidth, nobeforeafter, box align=top, boxrule=0.5pt,
+  colframe=black!25, colback=white, borderline north={3pt}{0pt}{pair#1}, left=5pt, right=5pt,
+  before upper={{\color{pair#1}\small\textbf{\MakeUppercase{#2}}}\par}]}{\end{tcolorbox}}
+
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⊙}{\ensuremath{\odot}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Fichamento: MetaQuantus (meta-avaliação das métricas)}} \\[0.35em]
+    {\large HEDSTRÖM, A.; BOMMER, P.; WICKSTRØM, K. K.; SAMEK, W.; LAPUSCHKIN, S.; HÖHNE, M. M.-C. \textit{The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus}. Transactions on Machine Learning Research, 06/2023} \\[0.3em]
+    \textbf{Tema:} como avaliar as próprias métricas de qualidade de explicações; confiabilidade por categoria \\[0.2em]
+    \textbf{Aluno:} Arthur Santos de Oliveira (RA: 156297) \\[0.2em]
+    \textbf{Atualizado em:} 07/11/2026 \\[0.2em]
+    \textbf{Link:} \url{https://arxiv.org/abs/2302.07265} \\[0.2em]
+    \textbf{Leitura:} seções 1 a 6 (p.~1--14) da versão publicada no arXiv (35 páginas); apêndices consultados só na parte de complexidade \\[0.2em]
+    \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+\end{center}
+\vspace{-0.5em}
+\hrule
+\vspace{0.8em}
+
+\textbf{Como ler.} \texttt{[p. N]} indica a página do PDF do arXiv. As citações estão no original em inglês, cada uma seguida de uma tradução livre e de uma explicação. No TCC, este artigo é ``Hedström et al.\ (2023b)'', para distingui-lo do eMPRT (``Hedström et al., 2023a'').
+
+\begin{infobox}[note]{Resumo}
+\begin{itemize}
+\item \textbf{Problema:} as métricas de qualidade de explicações discordam entre si, e não há verdade de referência para escolher entre elas.
+\item \textbf{Proposta:} avaliar cada métrica por dois modos de falha: resiliência a perturbações pequenas, que não mudam a predição, e reatividade a perturbações grandes, que mudam; os dois se combinam num escore de meta-consistência (MC).
+\item \textbf{Achado:} a confiabilidade varia por categoria; a de \textbf{complexidade} (Sparseness, Complexity) teve os menores escores MC nos conjuntos testados.
+\item \textbf{Recomendação:} não confiar numa única categoria de métricas.
+\end{itemize}
+\end{infobox}
+
+\section{O que o trabalho faz}
+Define o escore MC de uma métrica a partir de como ela reage a perturbações do modelo e da entrada [p.~5--8] e aplica o arcabouço a métricas de várias categorias da biblioteca Quantus (fidelidade, robustez, localização, complexidade, randomização) em ImageNet, MNIST, fMNIST e cMNIST [p.~10--13].
+
+\section{Citações}
+
+\begin{citacard}{\pagechip{p. 8--9} O escore de meta-consistência}
+\begin{origquote}“To conclude the framework, we want to characterise the performance of a quality estimator with a single Meta-Consistency (MC) score. To capture both the estimator’s resilience to noise (NR) and its reactivity to adversary (AR), we average over the two criteria for both failure modes [...]”\end{origquote}
+\begin{tradquote}“Para concluir o arcabouço, queremos caracterizar o desempenho de uma métrica de qualidade por um único escore de Meta-Consistência (MC), que capture tanto a resiliência da métrica ao ruído (NR) quanto a sua reatividade a perturbações adversas (AR), tiramos a média dos dois critérios para os dois modos de falha [...]”\end{tradquote}
+\explab{Explicação}
+Uma métrica confiável deve mudar pouco quando nada importante muda e mudar quando algo importante muda.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 12} A categoria de complexidade}
+\begin{origquote}“As seen in Figure 6, the complexity category has the lowest overall MC scores across the tested datasets, which includes estimators such as Sparseness (Chalasani et al., 2020) and Complexity (Bhatt et al., 2020) that evaluate explanations by calculating their Gini coefficient and Shannon entropy, respectively.”\end{origquote}
+\begin{tradquote}“Como mostra a Figura 6, a categoria de complexidade tem os menores escores MC nos conjuntos testados; ela inclui métricas como Sparseness (Chalasani et al., 2020) e Complexity (Bhatt et al., 2020), que avaliam as explicações pelo coeficiente de Gini e pela entropia de Shannon, respectivamente.”\end{tradquote}
+\explab{Explicação}
+Apoia a cautela do TCC com a Complexity (seção 2.5 do texto): ela entra como uma das sete métricas, mas não sustenta conclusões sozinha.
+\end{citacard}
+
+\begin{citacard}{\pagechip{p. 13} Não usar uma única categoria}
+\begin{origquote}“Relying on only one category to estimate explanation quality is therefore not recommended. This is especially true since an explanation function may trade one category of explanation quality over another (Bhatt et al., 2020) [...]”\end{origquote}
+\begin{tradquote}“Não se recomenda, portanto, estimar a qualidade das explicações por uma única categoria. Isso vale especialmente porque um método de explicação pode trocar uma categoria de qualidade por outra (Bhatt et al., 2020) [...]”\end{tradquote}
+\explab{Explicação}
+Justifica o desenho do TCC com sete métricas de quatro categorias, lidas em conjunto.
+\end{citacard}
+
+\section{Relação com o TCC}
+Dá apoio à escolha de várias categorias de métricas e à leitura cautelosa da complexidade. Os experimentos são em imagens, e o GradientSHAP não está entre os métodos avaliados; os escores não se transferem diretamente ao ECG.
+
+\section{Como citar no TCC}
+\begin{itemize}
+\item ``Na meta-avaliação de Hedström et al.\ (2023b), a categoria de complexidade foi a menos confiável, e os autores recomendam não estimar a qualidade das explicações por uma única categoria.''
+\end{itemize}
+
+\end{document}
