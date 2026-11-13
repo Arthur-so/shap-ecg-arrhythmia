@@ -72,7 +72,7 @@ Feitos em 07/11/2026 para as citações do texto de Metodologia e Resultados que
 | `lundberg-2017-shap` | LUNDBERG, S. M.; LEE, S.-I. *A Unified Approach to Interpreting Model Predictions* | 2 |
 | `smilkov-2017-smoothgrad` | SMILKOV, D.; THORAT, N.; KIM, B.; VIÉGAS, F.; WATTENBERG, M. *SmoothGrad: removing noise by adding noise* | 2 |
 | `vandenberk-2016-correcao-qt` | VANDENBERK, B. et al. *Which QT Correction Formulae to Use for QT Monitoring?* (fonte da fórmula de Bazett; o original de 1920 não foi consultado) | 2 |
-| `zhang-2021-resnet-ecg-cpsc2018` | ZHANG, D.; YUAN, X.; ZHANG, P. *Interpretable deep learning for automatic diagnosis of 12-lead electrocardiogram* (artigo e código) | 3 |
+| `zhang-2021-resnet-ecg-cpsc2018` | ZHANG, D.; YANG, S.; YUAN, X.; ZHANG, P. *Interpretable deep learning for automatic diagnosis of 12-lead electrocardiogram* (artigo e código) | 3 |
 
 Pendente, por falta do texto completo: SURAWICZ, B. et al. (2009), recomendações AHA/ACCF/HRS sobre distúrbios de condução intraventricular.
 

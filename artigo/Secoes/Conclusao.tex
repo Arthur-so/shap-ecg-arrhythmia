@@ -1,0 +1,5 @@
+\section{Conclusão}\label{sec:conclusao}
+
+A qualidade das explicações GradientSHAP de redes neurais convolucionais para classificação de arritmias em ECG de 12 derivações acompanha o desempenho do modelo por classe apenas nas propriedades que dependem da decisão do modelo entre as classes. Explicações de classes reconhecidas com F1 mais alto são mais consistentes e mais específicas da classe, enquanto a fidelidade e a robustez refletem a amplitude e o tipo da evidência de cada classe, favorecendo as classes definidas pela forma do QRS e desfavorecendo as de ritmo e de segmento ST, independentemente do F1.
+
+O objetivo de verificar se a qualidade das explicações acompanha o desempenho foi, assim, alcançado com uma resposta que depende da propriedade medida. Um F1 alto numa classe não garante explicações mais fiéis, e diferenças de fidelidade entre classes não indicam, por si, diferenças de confiabilidade. A avaliação das explicações em ECG precisa, por isso, ser feita por classe, com métricas de mais de uma categoria, calculadas sobre regiões fisiológicas do batimento e lidas em relação à variação do próprio método de explicação.

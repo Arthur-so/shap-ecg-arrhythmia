@@ -1,0 +1,14 @@
+\begin{tikzpicture}[node distance=5mm and 7mm]
+\node[dado] (d) {CPSC2018\\6\,877 ECGs\\12 derivações};
+\node[proc, right=of d] (p) {Pré-processamento\\(Seção~\ref{sec:dados})};
+\node[proc, right=of p] (m) {Treino da\\ResNet34-1D\\(Seção~\ref{sec:modelo})};
+\node[saida, right=of m] (f) {F1 por classe\\no teste};
+\node[proc, below=8mm of m] (g) {GradientSHAP\\622 mapas\\(Seção~\ref{sec:gshap})};
+\node[proc, left=of g] (r) {36 regiões\\do batimento\\(Seção~\ref{sec:regioes})};
+\node[proc, left=of r] (mt) {7 métricas + piso\\(Seções~\ref{sec:piso}\\e~\ref{sec:metricas})};
+\node[saida, right=of g] (c) {Comparação\\descritiva\\(Seção~\ref{sec:analise})};
+\draw[seta] (d) -- (p); \draw[seta] (p) -- (m); \draw[seta] (m) -- (f);
+\draw[seta] (m) -- (g); \draw[seta] (g) -- (r); \draw[seta] (r) -- (mt);
+\draw[seta] (f) -- (c);
+\draw[seta] (mt.south) -- ++(0,-4mm) -| (c.south);
+\end{tikzpicture}

@@ -1,0 +1,80 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{newunicodechar}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc}
+\usepackage[hidelinks]{hyperref}
+
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+
+% nomes das métricas: nomes próprios, em itálico, como nos artigos de origem
+\newcommand{\FC}{\textit{Faithfulness Correlation}}
+\newcommand{\FE}{\textit{Faithfulness Estimate}}
+\newcommand{\MS}{\textit{Max-Sensitivity}}
+\newcommand{\AS}{\textit{Avg-Sensitivity}}
+\newcommand{\CX}{\textit{Complexity}}
+\newcommand{\CS}{\textit{Consistency}}
+\newcommand{\RL}{\textit{Random Logit}}
+\newcommand{\EM}{eMPRT}
+
+\input{figs/estilos}
+\renewcommand{\IEEEkeywordsname}{Palavras-chave}
+
+\begin{document}
+
+\title{Avaliação das Explicações SHAP em Redes Neurais Profundas para Classificação de Arritmias Cardíacas em ECG}
+
+\author{
+\IEEEauthorblockN{Arthur Santos de Oliveira}
+\IEEEauthorblockA{
+\textit{Instituto de Ciência e Tecnologia}\\
+\textit{Universidade Federal de São Paulo}\\
+São José dos Campos, Brasil\\
+oliveira.arthur@unifesp.br}
+\and
+\IEEEauthorblockN{Luis Augusto Martins Pereira}
+\IEEEauthorblockA{
+\textit{Instituto de Ciência e Tecnologia}\\
+\textit{Universidade Federal de São Paulo}\\
+São José dos Campos, Brasil\\
+luis.pereira@unifesp.br}
+}
+
+\maketitle
+
+\begin{abstract}
+Redes neurais profundas classificam arritmias no eletrocardiograma (ECG) com bom desempenho, mas o desempenho varia entre as classes diagnósticas, e não se sabe se a qualidade das explicações acompanha essa variação. Este estudo investigou se a qualidade das explicações GradientSHAP de uma ResNet34 unidimensional acompanha o F1 por classe. O modelo foi treinado na base CPSC2018 (nove classes, ECG de 12 derivações) e obteve F1-macro de 0,819 no teste. Foram gerados 622 mapas de atribuição para as predições corretas, e cada mapa foi resumido em 36 regiões fisiológicas (12 derivações × pré-QRS, QRS e ST-T) ancoradas nos picos R. Sete métricas quantitativas foram reimplementadas sobre essas regiões e lidas em relação à variação própria do método entre sementes aleatórias. As métricas que envolvem a decisão do modelo entre classes (\CS\ e \RL) acompanharam o F1 nas pontas: as classes de maior F1 tiveram explicações mais consistentes e mais específicas. As de fidelidade e de robustez não acompanharam o F1 e seguiram o tipo de evidência da classe, com as classes reconhecidas pela forma do QRS no alto e as de ritmo e de segmento ST embaixo. A relação entre qualidade da explicação e desempenho depende, portanto, da propriedade medida, e diferenças de fidelidade entre classes não devem ser lidas como diferenças de confiabilidade sem considerar a amplitude e a duração da evidência de cada classe.
+\end{abstract}
+
+\begin{IEEEkeywords}
+eletrocardiograma, arritmias, inteligência artificial explicável, SHAP, avaliação de explicações
+\end{IEEEkeywords}
+
+\input{Secoes/Introducao}
+\input{Secoes/Metodologia}
+\input{Secoes/Resultados}
+\input{Secoes/Discussao}
+\input{Secoes/Conclusao}
+
+\bibliographystyle{IEEEtran}
+\bibliography{referencias}
+
+\end{document}

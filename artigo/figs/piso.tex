@@ -1,0 +1,16 @@
+\begin{tikzpicture}[node distance=4mm and 5mm, every node/.style={font=\scriptsize}]
+\node[dado] (x) {ECG $x$,\\classe $c$};
+\node[proc, right=10mm of x, yshift=6mm] (g1) {GradientSHAP\\semente $s_1$};
+\node[proc, right=10mm of x, yshift=-6mm] (g2) {GradientSHAP\\semente $s_2$};
+\node[proc, right=of g1] (v1) {36 regiões,\\norma 1};
+\node[proc, right=of g2] (v2) {36 regiões,\\norma 1};
+\node[saida, right=12mm of v1, yshift=-6mm] (p) {\textbf{piso}\\$\lVert \hat{a}_1 - \hat{a}_2 \rVert_2$\\(média 0,18)};
+\draw[seta] (x.east) -- (g1.west); \draw[seta] (x.east) -- (g2.west);
+\draw[seta] (g1)--(v1); \draw[seta] (g2)--(v2);
+\draw[seta] (v1.east) -- (p.west); \draw[seta] (v2.east) -- (p.west);
+\node[caixa, below=8mm of g2, xshift=-14mm, align=center] (c1) {\textbf{\textit{Max/Avg-Sensitivity}}\\ECG perturbado $x + \delta$,\\mesma classe e semente};
+\node[caixa, right=of c1, align=center] (c2) {\textbf{\textit{Random Logit}}\\mesmo ECG, outra classe $c'$,\\mesma semente};
+\node[caixa, right=of c2, align=center] (c3) {\textbf{eMPRT}\\mesmo ECG, modelo com\\pesos sorteados, mesma semente};
+\node[saida, below=6mm of c2, align=center] (l) {distância $d$ ao mapa original (36 regiões, norma 1), lida em relação ao piso do mapa:\\$d$ próximo do piso: a mudança não supera a variação do método;\quad $d$ muito acima do piso: mudança real};
+\draw[seta] (c1.south) -- (c1.south |- l.north); \draw[seta] (c2) -- (l); \draw[seta] (c3.south) -- (c3.south |- l.north);
+\end{tikzpicture}

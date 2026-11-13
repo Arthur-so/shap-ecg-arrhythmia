@@ -1,0 +1,36 @@
+\begin{tikzpicture}[node distance=3mm and 3.2mm, every node/.style={font=\scriptsize}]
+\node[dado, minimum height=11mm] (in) {ECG\\12 × 15\,000};
+\node[proc, right=of in, minimum height=11mm] (st) {Conv 15, /2\\BN, ReLU\\MaxPool /2};
+\node[proc, right=of st, minimum height=11mm, fill=orange!15] (s1) {Estágio 1\\3 blocos};
+\node[proc, right=of s1, minimum height=11mm, fill=orange!22] (s2) {Estágio 2\\4 blocos, /2};
+\node[proc, right=of s2, minimum height=11mm, fill=orange!30] (s3) {Estágio 3\\6 blocos, /2};
+\node[proc, right=of s3, minimum height=11mm, fill=orange!38] (s4) {Estágio 4\\3 blocos, /2};
+\foreach \n/\t in {in/{12 × 15\,000}, st/{64 × 3\,750}, s1/{64 × 3\,750}, s2/{128 × 1\,875}, s3/{256 × 938}, s4/{512 × 469}}
+  \node[nota, below=0.5mm of \n] {\t};
+\node[proc, below=11mm of s4, minimum height=11mm] (pool) {Média e máximo\\no tempo};
+\node[proc, below=11mm of s3, minimum height=11mm] (fc) {Linear\\1\,024 → 9};
+\node[proc, below=11mm of s2, minimum height=11mm] (sig) {Sigmoide\\por classe};
+\node[proc, below=11mm of s1, minimum height=11mm] (lim) {$p_c \ge t_c$\,?};
+\node[saida, below=11mm of st, minimum height=11mm] (out) {Classes\\preditas};
+\node[nota, below=0.5mm of pool] {1\,024};
+\node[nota, below=0.5mm of fc] {9 logits\\$z_c$};
+\node[nota, below=0.5mm of sig] {9 probabilidades\\$p_c$};
+\node[nota, below=0.5mm of lim] {limiar $t_c$\\por classe};
+\draw[seta] (in)--(st); \draw[seta] (st)--(s1); \draw[seta] (s1)--(s2); \draw[seta] (s2)--(s3); \draw[seta] (s3)--(s4);
+\draw[seta] (s4)--(pool); \draw[seta] (pool)--(fc); \draw[seta] (fc)--(sig); \draw[seta] (sig)--(lim); \draw[seta] (lim)--(out);
+% bloco residual
+\begin{scope}[shift={(1.2,-4.75)}, node distance=2.6mm]
+\node[font=\scriptsize\bfseries, anchor=east] (tit) at (-0.85,0) {Bloco residual:};
+\node[caixa, font=\scriptsize] (x) {entrada};
+\node[caixa, right=of x, font=\scriptsize] (c1) {Conv 7};
+\node[caixa, right=of c1, font=\scriptsize] (b1) {BN, ReLU};
+\node[caixa, right=of b1, font=\scriptsize] (dp) {\textit{Dropout} 0,2};
+\node[caixa, right=of dp, font=\scriptsize] (c2) {Conv 7};
+\node[caixa, right=of c2, font=\scriptsize] (b2) {BN};
+\node[circle, draw, right=of b2, inner sep=1pt, font=\scriptsize] (sum) {$+$};
+\node[caixa, right=of sum, font=\scriptsize] (rl) {ReLU};
+\draw[seta] (x)--(c1); \draw[seta] (c1)--(b1); \draw[seta] (b1)--(dp); \draw[seta] (dp)--(c2); \draw[seta] (c2)--(b2); \draw[seta] (b2)--(sum); \draw[seta] (sum)--(rl);
+\draw[seta] (x.south) -- ++(0,-4mm) -| (sum.south);
+\node[nota, below=4.5mm of dp] {atalho: a entrada é somada à saída (com Conv 1 × 1, /2, quando o comprimento muda)};
+\end{scope}
+\end{tikzpicture}
