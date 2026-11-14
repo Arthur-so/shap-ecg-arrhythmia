@@ -4,6 +4,8 @@ import re
 
 from dados import CORRECOES, FONTES, REFS
 
+REFS = sorted(REFS)
+
 
 def esc(t: str) -> str:
     t = t.replace("\\", "\\textbackslash{}")
@@ -38,7 +40,7 @@ partes = [open("preambulo.tex").read(), r"""\usepackage[brazil]{babel}
     {\LARGE \textbf{Verificação das citações do artigo}} \\[0.35em]
     {\large Avaliação das Explicações SHAP em Redes Neurais Profundas para Classificação de Arritmias Cardíacas em ECG} \\[0.3em]
     \textbf{Autor:} Arthur Santos de Oliveira (RA: 156297) \quad \textbf{Orientador:} Prof.\ Dr.\ Luis Augusto Martins Pereira \\[0.2em]
-    \textbf{Data:} 13/11/2026 \quad \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+    \textbf{Data:} 14/11/2026 \quad \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
 \end{center}
 \vspace{-0.5em}
 \hrule

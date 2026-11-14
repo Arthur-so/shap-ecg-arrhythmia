@@ -47,10 +47,42 @@ N.~Kokhlikyan, V.~Miglani, M.~Martin, E.~Wang, B.~Alsallakh, J.~Reynolds,
   ``Captum: A unified and generic model interpretability library for
   {PyTorch},'' arXiv:2009.07896, 2020.
 
+\bibitem{mercier2022}
+D.~Mercier, J.~Bhatt, A.~Dengel, and S.~Ahmed, ``Time to focus: A comprehensive
+  benchmark using time series attribution methods,'' in \emph{Proceedings of
+  the 14th International Conference on Agents and Artificial Intelligence
+  (ICAART)}, 2022, pp. 562--573.
+
+\bibitem{hicks2021}
+S.~A. Hicks, J.~L. Isaksen, V.~Thambawita, J.~Ghouse, G.~Ahlberg, A.~Linneberg,
+  N.~Grarup, I.~Str{\"u}mke, C.~Ellervik, M.~S. Olesen, T.~Hansen, C.~Graff,
+  N.-H. Holstein-Rathlou, P.~Halvorsen, M.~M. Maleckar, M.~A. Riegler, and
+  J.~K. Kanters, ``Explaining deep neural networks for knowledge discovery in
+  electrocardiogram analysis,'' \emph{Scientific Reports}, vol.~11, p. 10949,
+  2021.
+
+\bibitem{storas2025}
+A.~M. Stor{\aa}s, S.~M{\ae}land, J.~L. Isaksen, S.~A. Hicks, V.~Thambawita,
+  C.~Graff, H.~L. Hammer, P.~Halvorsen, M.~A. Riegler, and J.~K. Kanters,
+  ``Evaluating gradient-based explanation methods for neural network {ECG}
+  analysis using heatmaps,'' \emph{Journal of the American Medical Informatics
+  Association}, vol.~32, no.~1, pp. 79--88, 2025.
+
 \bibitem{adebayo2018}
 J.~Adebayo, J.~Gilmer, M.~Muelly, I.~Goodfellow, M.~Hardt, and B.~Kim, ``Sanity
   checks for saliency maps,'' in \emph{Advances in Neural Information
   Processing Systems 31 (NeurIPS)}, 2018.
+
+\bibitem{wagner2024}
+P.~Wagner, T.~Mehari, W.~Haverkamp, and N.~Strodthoff, ``Explaining deep
+  learning for {ECG} analysis: Building blocks for auditing and knowledge
+  discovery,'' \emph{Computers in Biology and Medicine}, vol. 176, p. 108525,
+  2024.
+
+\bibitem{ismail2020}
+A.~A. Ismail, M.~Gunady, H.~Corrada~Bravo, and S.~Feizi, ``Benchmarking deep
+  learning interpretability in time series predictions,'' in \emph{Advances in
+  Neural Information Processing Systems 33 (NeurIPS)}, 2020, pp. 6441--6452.
 
 \bibitem{hedstrom2023quantus}
 A.~Hedstr{\"o}m, L.~Weber, D.~Bareeva, D.~Krakowczyk, F.~Motzkus, W.~Samek,
@@ -98,11 +130,6 @@ J.~H{\"o}llig, S.~Thoma, and F.~Grimm, ``{XTSC-Bench}: Quantitative
   benchmarking for explainers on time series classification,'' in \emph{22nd
   International Conference on Machine Learning and Applications (ICMLA)}, 2023,
   pp. 1126--1131.
-
-\bibitem{ismail2020}
-A.~A. Ismail, M.~Gunady, H.~Corrada~Bravo, and S.~Feizi, ``Benchmarking deep
-  learning interpretability in time series predictions,'' in \emph{Advances in
-  Neural Information Processing Systems 33 (NeurIPS)}, 2020, pp. 6441--6452.
 
 \bibitem{arends2026}
 B.~K.~O. Arends, W.~A.~C. van Amsterdam, P.~van~der Harst, M.~van Smeden,
@@ -162,25 +189,11 @@ I.~{\v{S}}imi{\'c}, E.~Veas, and V.~Sabol, ``A comprehensive analysis of
   neural time series classifiers,'' \emph{Scientific Reports}, vol.~15, p.
   26607, 2025.
 
-\bibitem{wagner2024}
-P.~Wagner, T.~Mehari, W.~Haverkamp, and N.~Strodthoff, ``Explaining deep
-  learning for {ECG} analysis: Building blocks for auditing and knowledge
-  discovery,'' \emph{Computers in Biology and Medicine}, vol. 176, p. 108525,
-  2024.
-
 \bibitem{makowski2021}
 D.~Makowski, T.~Pham, Z.~J. Lau, J.~C. Brammer, F.~Lespinasse, H.~Pham,
   C.~Sch{\"o}lzel, and S.~H.~A. Chen, ``{NeuroKit2}: A {Python} toolbox for
   neurophysiological signal processing,'' \emph{Behavior Research Methods},
   vol.~53, no.~4, pp. 1689--1696, 2021.
-
-\bibitem{hicks2021}
-S.~A. Hicks, J.~L. Isaksen, V.~Thambawita, J.~Ghouse, G.~Ahlberg, A.~Linneberg,
-  N.~Grarup, I.~Str{\"u}mke, C.~Ellervik, M.~S. Olesen, T.~Hansen, C.~Graff,
-  N.-H. Holstein-Rathlou, P.~Halvorsen, M.~M. Maleckar, M.~A. Riegler, and
-  J.~K. Kanters, ``Explaining deep neural networks for knowledge discovery in
-  electrocardiogram analysis,'' \emph{Scientific Reports}, vol.~11, p. 10949,
-  2021.
 
 \bibitem{vandenberk2016}
 B.~Vandenberk, E.~Vandael, T.~Robyns, J.~Vandenberghe, C.~Garweg, V.~Foulon,
@@ -216,22 +229,9 @@ A.~Hedstr{\"o}m, L.~Weber, S.~Lapuschkin, and M.~H{\"o}hne, ``Sanity checks
   in \emph{XAI in Action: Past, Present, and Future Applications, Workshop at
   NeurIPS}, 2023.
 
-\bibitem{mercier2022}
-D.~Mercier, J.~Bhatt, A.~Dengel, and S.~Ahmed, ``Time to focus: A comprehensive
-  benchmark using time series attribution methods,'' in \emph{Proceedings of
-  the 14th International Conference on Agents and Artificial Intelligence
-  (ICAART)}, 2022, pp. 562--573.
-
 \bibitem{ravindran2023}
 A.~Sujatha~Ravindran and J.~Contreras-Vidal, ``An empirical comparison of deep
   learning explainability approaches for {EEG} using simulated ground truth,''
   \emph{Scientific Reports}, vol.~13, p. 17709, 2023.
-
-\bibitem{storas2025}
-A.~M. Stor{\aa}s, S.~M{\ae}land, J.~L. Isaksen, S.~A. Hicks, V.~Thambawita,
-  C.~Graff, H.~L. Hammer, P.~Halvorsen, M.~A. Riegler, and J.~K. Kanters,
-  ``Evaluating gradient-based explanation methods for neural network {ECG}
-  analysis using heatmaps,'' \emph{Journal of the American Medical Informatics
-  Association}, vol.~32, no.~1, pp. 79--88, 2025.
 
 \end{thebibliography}
