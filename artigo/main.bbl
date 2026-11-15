@@ -107,12 +107,6 @@ L.~Sixt, M.~Granz, and T.~Landgraf, ``When explanations lie: Why many modified
   {BP} attributions fail,'' in \emph{Proceedings of the 37th International
   Conference on Machine Learning (ICML)}, ser. PMLR, vol. 119, 2020.
 
-\bibitem{suh2024}
-J.~Suh, J.~Kim, S.~Kwon, E.~Jung, H.-J. Ahn, K.-Y. Lee, E.-K. Choi, and
-  W.~Rhee, ``Visual interpretation of deep learning model in {ECG}
-  classification: A comprehensive evaluation of feature attribution methods,''
-  \emph{Computers in Biology and Medicine}, vol. 182, p. 109088, 2024.
-
 \bibitem{baer2025a}
 G.~Baer, I.~Grau, C.~Zhang, and P.~Van~Gorp, ``Class-dependent perturbation
   effects in evaluating time series attributions,'' in \emph{3rd World
@@ -228,6 +222,12 @@ A.~Hedstr{\"o}m, L.~Weber, S.~Lapuschkin, and M.~H{\"o}hne, ``Sanity checks
   revisited: An exploration to repair the model parameter randomisation test,''
   in \emph{XAI in Action: Past, Present, and Future Applications, Workshop at
   NeurIPS}, 2023.
+
+\bibitem{suh2024}
+J.~Suh, J.~Kim, S.~Kwon, E.~Jung, H.-J. Ahn, K.-Y. Lee, E.-K. Choi, and
+  W.~Rhee, ``Visual interpretation of deep learning model in {ECG}
+  classification: A comprehensive evaluation of feature attribution methods,''
+  \emph{Computers in Biology and Medicine}, vol. 182, p. 109088, 2024.
 
 \bibitem{ravindran2023}
 A.~Sujatha~Ravindran and J.~Contreras-Vidal, ``An empirical comparison of deep

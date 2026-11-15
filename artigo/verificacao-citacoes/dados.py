@@ -24,7 +24,7 @@ REFS = [
    "deep learning models are usually considered to be black boxes. Due to the multi-layer nonlinear structure, the decisions made by deep learning models are not traceable by humans. However, understanding the model's behavior when making predictions is as crucial as the accuracy of predictions in many applications, especially in clinical practice.", "p. 14-15"),
   ("Introdução, 2.º parágrafo", "ResNet unidimensional de 34 camadas obteve F1 médio de 0,813 no CPSC2018, com nove classes.",
    "the network consists of 34 layers. [...] the average F1 score was 0.813 with an average precision of 0.821 and an average recall of 0.812.", "p. 13 e p. 4"),
-  ("Introdução, 8.º parágrafo", "F1 acima de 0,9 em AF e BRD e de 0,535 em STE, atribuído à discordância entre médicos.",
+  ("Introdução, 7.º parágrafo", "F1 acima de 0,9 em AF e BRD e de 0,535 em STE, atribuído à discordância entre médicos.",
    "the deep model performed best on AF and RBBB classification with an F1 score of over 0.9. However, we also observed the F1 score of STE is low as 0.535 which may be due to the significant physician disagreement in diagnosing STE from ECGs", "p. 4"),
   ("Introdução, 4.º parágrafo", "Zhang et al. calcularam os valores SHAP com um explicador baseado em gradientes e apresentaram as explicações em visualizações, por paciente e por derivação.",
    "we applied the SHAP method to the trained deep learning model to interpret the model's behavior at both patient level and population level by utilizing a gradient explainer. || As shown in Figure 4, we demonstrated the model interpretability at both the patient level and population level through visualizations.", "p. 15 e p. 7"),
@@ -53,7 +53,7 @@ REFS = [
   ("Introdução, 4.º parágrafo", "Calcular os valores SHAP exatamente é difícil; há aproximações como o Kernel SHAP (modelo linear local) e o Deep SHAP (estrutura das redes profundas).",
    "The exact computation of SHAP values is challenging. However, by combining insights from current additive feature attribution methods, we can approximate them. || Kernel SHAP (Linear LIME + Shapley values) Linear LIME uses a linear explanation model to locally approximate f || Deep SHAP (DeepLIFT + Shapley values) While Kernel SHAP can be used on any model, including deep models, it is natural to ask whether there is a way to leverage extra knowledge about the compositional nature of deep networks to improve computational performance.", "p. 5 e p. 7"),
   ("Metodologia II-C", "O GradientSHAP aproxima os valores SHAP.",
-   "These are the Shapley values of a conditional expectation function of the original model", "p. 4 (definição dos valores SHAP; a aproximação por gradientes vem de [16])"),
+   "These are the Shapley values of a conditional expectation function of the original model", "p. 4 (definição dos valores SHAP; a aproximação por gradientes vem de [36])"),
  ]),
  (9, "adebayo2018", "Adebayo et al. (2018), NeurIPS", "local (MPRT.pdf, arXiv v3)", [
   ("Introdução, 5.º parágrafo (detector de bordas) e 6.º (randomização)", "Inspeção visual é guia fraco; métricas de randomização verificam se a explicação depende do modelo.",
@@ -72,21 +72,19 @@ REFS = [
    "when we set particular features xs to a baseline value x̄s, the change in predictor's output should be proportional to the sum of attribution scores", "p. 2 (seção 3.2)"),
   ("Introdução, 6.º parágrafo", "Complexidade: a importância concentrada em poucos atributos.",
    "The simplest explanation would be concentrated on one feature. We define complexity as the entropy of P_g.", "p. 2"),
-  ("Introdução, 7.º parágrafo e Tabela II (métricas)", "Faithfulness Correlation: correlação entre soma das atribuições de um subconjunto e a queda da saída.",
+  ("Tabela II (métricas)", "Faithfulness Correlation: correlação entre soma das atribuições de um subconjunto e a queda da saída.",
    "Definition 3 (Faithfulness). Given a predictor f, an explanation function g, a point x, and a subset size |S|, we define the faithfulness of g to f at x as [...] (correlação, entre subconjuntos S, da soma das atribuições de S com a queda da saída ao trocar S pela referência)", "p. 2"),
   ("Tabela II (métricas)", "Avg-Sensitivity.",
    "We follow the convention of the former and define max sensitivity and average sensitivity in the neighborhood of a point of interest x. [...] Definition 1 (Max Sensitivity) [...] Definition 2 (Average Sensitivity)", "p. 2"),
   ("Tabela II (métricas)", "Complexity como entropia das frações de importância.",
    "If every feature had equal attribution, the explanation would be complex (even if it is faithful). The simplest explanation would be concentrated on one feature. We define complexity as the entropy of P_g.", "p. 2"),
  ]),
- (16, "suh2024", "Suh et al. (2024), Comput. Biol. Med. 182:109088", "local (computers-in-biology-and-medicine.pdf)", [
-  ("Introdução, 7.º parágrafo", "Faithfulness Correlation usada para comparar onze métodos em quatro bases de ECG.",
-   "we evaluated a total of eleven widely-used feature attribution methods in our experiments || we conducted automatic evaluations using four datasets: MITDB, SVDB, INCARTDB, and ICENTIA11K. || three perturbation-based metrics - Region Perturbation with MoRF [...], Region Perturbation with LeRF [...], and Faithfulness Correlation", "p. 2, p. 6 e p. 4"),
+ (36, "suh2024", "Suh et al. (2024), Comput. Biol. Med. 182:109088", "local (computers-in-biology-and-medicine.pdf)", [
   ("Discussão IV-A", "Faithfulness Correlation do DeepSHAP entre 0,41 e 0,63, a maior entre os onze métodos.",
    "Tabela 4 e Tabelas F.1-F.3: DeepSHAP 0.409 (1) no ICENTIA11K, 0.591 (1) no MITDB, 0.634 (1) no SVDB, 0.532 (1) no INCARTDB; entre parênteses, a posição.", "p. 8 e p. 17-18"),
  ]),
- (20, "arends2026", "Arends et al. (2026), Eur. Heart J. Digit. Health 7(3):ztag038", "epmc (PMC12980500)", [
-  ("Introdução, 8.º parágrafo", "Estudo com nove classes e modelos com AUPRC média acima de 0,85 em oito delas.",
+ (19, "arends2026", "Arends et al. (2026), Eur. Heart J. Digit. Health 7(3):ztag038", "epmc (PMC12980500)", [
+  ("Introdução, 7.º parágrafo", "Estudo com nove classes e modelos com AUPRC média acima de 0,85 em oito delas.",
    "All models achieved a high discriminatory performance with a mean AUPRC above 0.85 for eight out of nine classes, with the exception of sinus bradycardia which had a mean AUPRC of 0.64.", "Resultados"),
   ("Discussão IV-C", "Perda rápida de correlação quando os pesos são randomizados.",
    "Randomizing model weights led to rapid loss of correlation, although some methods did not converge to zero.", "Resumo"),
@@ -98,14 +96,14 @@ REFS = [
    "Because ECG amplitudes differ markedly between waveform components, most notably the dominant R-peak, these methods may over-attribute large-amplitude regions even when the diagnostically critical information lies in low-amplitude regions such as the PR interval or the ST segment", "p. 2"),
   ("Introdução, 1.º parágrafo", "Diagnósticos na forma do QRS (bloqueios de ramo) ou em segmentos de baixa amplitude (isquemia, segmento ST).",
    "two categories of ECG diagnostic criteria, low-amplitude intervals / segments near the isoelectric line (atrioventricular block, myocardial ischemia) and high-amplitude QRS morphology patterns (right and left bundle branch block). || For ischemia, LRP-ε assigns only 4.6% of relevance to the ST segment", "p. 3 e p. 1"),
-  ("Introdução, 5.º e 7.º parágrafos", "Explicações desses métodos seguem a amplitude, e não a relevância clínica, e deixam de cobrir regiões de baixa amplitude importantes.",
+  ("Introdução, 5.º parágrafo", "Explicações desses métodos seguem a amplitude, e não a relevância clínica, e deixam de cobrir regiões de baixa amplitude importantes.",
    "Their explanations often follow signal amplitude rather than clinical relevance, with mean Spearman correlations up to 0.69, leading them to overlook diagnostically decisive low-amplitude regions.", "p. 1"),
-  ("Introdução, 7.º parágrafo e Discussão IV-A", "Explicações confrontadas com regiões das diretrizes; métodos que multiplicam pela entrada ou subtraem referência deslocam a relevância para a alta amplitude.",
+  ("Discussão IV-A", "Explicações confrontadas com regiões das diretrizes; métodos que multiplicam pela entrada ou subtraem referência deslocam a relevância para a alta amplitude.",
    "Methods commonly applied in ECG analysis [...], among them Integrated Gradients, DeepSHAP, GradSHAP, and LRP-ε, tie relevance to input magnitude through input multiplication or baseline subtraction and shift attribution toward high-amplitude waveform components", "p. 9"),
   ("Discussão IV-A", "Esses métodos, entre eles o GradientSHAP, reforçaram a alta amplitude e falharam no ST da isquemia.",
    "Integrated Gradients, DeepSHAP, GradSHAP, and LRP-z/ε similarly reinforce high-amplitude regions through baselinedependent contrast shifts. The coverage divergence, where these methods fail on ischemia despite reasonable mean values, is the more diagnostic evidence", "p. 7"),
  ]),
- (17, "baer2025a", "Baer et al. (2025a), xAI 2025, CCIS 2579", "arxiv (2502.17022)", [
+ (16, "baer2025a", "Baer et al. (2025a), xAI 2025, CCIS 2579", "arxiv (2502.17022)", [
   ("Introdução, 7.º parágrafo", "A eficácia das métricas de perturbação varia muito entre as classes.",
    "we reveal previously overlooked class-dependent effects in these metrics: they show varying effectiveness across classes, achieving strong results for some while remaining less sensitive to others.", "p. 1"),
   ("Metodologia II-F", "O valor usado para retirar um trecho pode afetar as classes de modo diferente.",
@@ -113,29 +111,29 @@ REFS = [
   ("Discussão IV-A", "Recomendação de análise estratificada por classe.",
    "First, supplementing aggregate metrics with more detailed class-stratified analysis can help identify when dominant classes disproportionately influence results.", "Conclusão"),
  ]),
- (18, "baer2025b", "Baer et al. (2025b), preprint arXiv:2506.11790", "arxiv", [
+ (17, "baer2025b", "Baer et al. (2025b), preprint arXiv:2506.11790", "arxiv", [
   ("Introdução, 7.º parágrafo, e Discussão IV-A", "Variações de amplitude ou duração entre classes bastam para efeitos dependentes da classe; perturbação e verdade conhecida discordam.",
    "class-dependent effects emerge with both evaluation approaches, even in simple scenarios with temporally localized features, triggered by basic variations in feature amplitude or temporal extent between classes. Most critically, we find that perturbation-based and ground truth metrics frequently yield contradictory assessments of attribution quality across classes", "p. 1"),
  ]),
- (19, "hollig2023", "Höllig, Thoma e Grimm (2023), ICMLA", "arxiv (2310.14957)", [
-  ("Introdução, 8.º parágrafo", "O XTSC-Bench só avalia classificadores com acurácia acima de 90%.",
+ (18, "hollig2023", "Höllig, Thoma e Grimm (2023), ICMLA", "arxiv (2310.14957)", [
+  ("Introdução, 7.º parágrafo", "O XTSC-Bench só avalia classificadores com acurácia acima de 90%.",
    "we evaluate the explainers' capabilities on complexity, reliability, robustness, and faithfulness for all classifiers with an accuracy of over 90%", "p. 4"),
   ("Metodologia II-F", "O valor de substituição pode carregar informação em séries temporais.",
    "replacing features with standard techniques (class means or zeros) might be relevant information in time series.", "p. 2"),
  ]),
- (21, "liu2018", "Liu et al. (2018), J. Med. Imaging Health Inform. 8(7):1368-1373", "web (via [22])", [
+ (20, "liu2018", "Liu et al. (2018), J. Med. Imaging Health Inform. 8(7):1368-1373", "web (via [21])", [
   ("Metodologia II-A", "Origem da base CPSC2018.",
-   "Texto original não acessível. A referência completa e a origem da base foram conferidas em Perez Alday et al. [22]: \"The first source is the China Physiological Signal Challenge 2018 (CPSC2018)\" (Liu et al., 2018). Os números (6 877 registros, 500 Hz) foram conferidos nos próprios dados do TCC.", "--"),
+   "Texto original não acessível. A referência completa e a origem da base foram conferidas em Perez Alday et al. [21]: \"The first source is the China Physiological Signal Challenge 2018 (CPSC2018)\" (Liu et al., 2018). Os números (6 877 registros, 500 Hz) foram conferidos nos próprios dados do TCC.", "--"),
  ]),
- (22, "perezalday2020", "Perez Alday et al. (2020), Physiol. Meas. 41(12):124003", "web (PMC8015789)", [
+ (21, "perezalday2020", "Perez Alday et al. (2020), Physiol. Meas. 41(12):124003", "web (PMC8015789)", [
   ("Metodologia II-A", "Distribuição do desafio PhysioNet/CinC 2020; 6 877 registros de treino do CPSC; 500 Hz.",
    "Tabela 2 do artigo: CPSC Training, 6 877 registros, 500 Hz (conferido na página do PMC por ferramenta de leitura web, 12/11/2026).", "Tabela 2"),
  ]),
- (23, "he2016", "He et al. (2016), CVPR", "arxiv (1512.03385)", [
+ (22, "he2016", "He et al. (2016), CVPR", "arxiv (1512.03385)", [
   ("Metodologia II-B", "Cada bloco aprende um resíduo em relação à entrada, somada por um atalho.",
    "We explicitly reformulate the layers as learning residual functions with reference to the layer inputs, instead of learning unreferenced functions. || the shortcut connections simply perform identity mapping, and their outputs are added to the outputs of the stacked layers", "p. 1 e p. 2"),
  ]),
- (24, "lipton2014", "Lipton, Elkan e Naryanaswamy (2014), ECML PKDD", "arxiv (1402.1892)", [
+ (23, "lipton2014", "Lipton, Elkan e Naryanaswamy (2014), ECML PKDD", "arxiv (1402.1892)", [
   ("Metodologia II-B", "O limiar que maximiza o F1 em geral não é 0,5 e depende da classe.",
    "For any classifier that produces a real-valued output, we derive the relationship between the best achievable F1 score and the decision-making threshold that achieves this optimum. As a special case, if the classifier outputs are well-calibrated conditional probabilities, then the optimal threshold is half the optimal F1 score.", "p. 1"),
  ]),
@@ -145,7 +143,7 @@ REFS = [
   ("Metodologia II-C (sem citação)", "O desvio 0,09 é o do exemplo de uso do Captum.",
    "README do repositório pytorch/captum: gs.attribute(input, stdevs=0.09, n_samples=4, baselines=baseline_dist, target=0, return_convergence_delta=True) (consultado em 07/11/2026).", "README"),
  ]),
- (25, "sundararajan2017", "Sundararajan, Taly e Yan (2017), ICML", "arxiv (1703.01365)", [
+ (24, "sundararajan2017", "Sundararajan, Taly e Yan (2017), ICML", "arxiv (1703.01365)", [
   ("Metodologia II-C", "Gradientes calculados ao longo do caminho entre referência e entrada.",
    "We consider the straightline path [...] from the baseline x' to the input x, and compute the gradients at all points along the path. Integrated gradients are obtained by cumulating these gradients.", "p. 3"),
  ]),
@@ -159,19 +157,19 @@ REFS = [
   ("Discussão IV-A", "A relevância funciona mais como ordem do que como contribuição proporcional.",
    "The attributed relevance instead acts more as a ranking of the most important time steps among themselves.", "p. 6"),
  ]),
- (26, "smilkov2017", "Smilkov et al. (2017), SmoothGrad", "arxiv (1706.03825)", [
+ (25, "smilkov2017", "Smilkov et al. (2017), SmoothGrad", "arxiv (1706.03825)", [
   ("Metodologia II-C", "O ruído suaviza oscilações locais do gradiente.",
    "the derivative of the function Sc may fluctuate sharply at small scales. In other words, the apparent noise one sees in a sensitivity map may be due to essentially meaningless local variations in partial derivatives.", "p. 2"),
  ]),
- (27, "cui2023", "Cui et al. (2023), Front. Comput. Neurosci. 17:1232925", "epmc (PMC10470463)", [
+ (26, "cui2023", "Cui et al. (2023), Front. Comput. Neurosci. 17:1232925", "epmc (PMC10470463)", [
   ("Metodologia II-D e Discussão IV-E (Limitações)", "Perturbar trechos contíguos introduz menos ruído de alta frequência.",
    "we perturbed the input sample locally in small patches with fixed length n instead of n random points from different parts of the sample. In this way, we can evaluate the local accuracy of the contribution map while introducing less high-frequency noise to EEG signals.", "seção 4.2.1 (p. 5 do PDF publicado)"),
  ]),
- (28, "serramazza2024", "Serramazza, Le Nguyen e Ifrim (2024), arXiv:2406.12507", "arxiv", [
+ (27, "serramazza2024", "Serramazza, Le Nguyen e Ifrim (2024), arXiv:2406.12507", "arxiv", [
   ("Metodologia II-D", "Agrupar pontos consecutivos melhorou as métricas de perturbação.",
    "We also improved the AUC scores of attribution methods, while reducing running time, by using chunking, i.e., grouping consecutive features in each channel.", "p. 16"),
  ]),
- (29, "simic2025", "Šimić, Veas e Sabol (2025), Sci. Rep. 15:26607", "epmc (PMC12284047)", [
+ (28, "simic2025", "Šimić, Veas e Sabol (2025), Sci. Rep. 15:26607", "epmc (PMC12284047)", [
   ("Metodologia II-D", "Perturbações mínimas mudam bruscamente a predição por deslocamento de distribuição; recomendação de regiões de tamanho fixo.",
    "This resulted in abrupt changes in a classifiers predicted class probability from 1 to 0 after minimal perturbations, regardless of the features' actual relevance, due to shifts in the data distribution. || a fixed region size has to be selected, which according to the results of our previous paper should neither be too large, nor too small (e.g., 2-5% of input length).", "Introdução; Metodologia"),
  ]),
@@ -185,7 +183,7 @@ REFS = [
   ("Introdução, 5.º parágrafo, e Discussão IV-C", "O viés coloca a relevância no pico R mesmo em tarefas sobre as ondas P e T.",
    "IG and LRP attribute the largest fraction of relevance to the R-peak even if the R-peak is not directly relevant for the given task (e.g., for predicting the P-wave or T-wave amplitude).", "p. 8"),
  ]),
- (30, "makowski2021", "Makowski et al. (2021), Behav. Res. Methods 53(4):1689-1696", "meta", [
+ (29, "makowski2021", "Makowski et al. (2021), Behav. Res. Methods 53(4):1689-1696", "meta", [
   ("Metodologia II-D", "Picos R detectados com o NeuroKit2.",
    "Citação de software (biblioteca usada no código, versão 0.2.13). Metadados conferidos no Europe PMC (DOI 10.3758/s13428-020-01516-y).", "--"),
  ]),
@@ -195,15 +193,15 @@ REFS = [
   ("Metodologia II-D", "Bloqueios de ramo definidos por QRS de 120 ms ou mais.",
    "we tested the prediction errors on subgroups with bundle branch blocks (QRS >= 120 ms) or first-degree AV block (PR > 220 ms).", "Resultados"),
  ]),
- (31, "vandenberk2016", "Vandenberk et al. (2016), J. Am. Heart Assoc. 5(6):e003264", "epmc (PMC4937268)", [
+ (30, "vandenberk2016", "Vandenberk et al. (2016), J. Am. Heart Assoc. 5(6):e003264", "epmc (PMC4937268)", [
   ("Metodologia II-D", "Bazett é a correção mais usada e sobrecorrige em frequências altas.",
    "The current clinical standard is the most widely used Bazett formula, but with this formula, there is a known overcorrection at high heart rates and undercorrection at lower heart rates.", "Introdução"),
  ]),
- (32, "fouladgar2022", "Fouladgar, Alirezaie e Främling (2022), IEEE Access 10", "local", [
+ (31, "fouladgar2022", "Fouladgar, Alirezaie e Främling (2022), IEEE Access 10", "local", [
   ("Metodologia II-E", "Sem normalização, escores de escala menor podem parecer menos sensíveis só pela escala.",
    "IG and LIME provide a lower sensitivity scale than SG in all the metrics and settings, potentially due to the lower scale of important scores generated by IG and LIME", "p. 1 (p. 23995 da revista)"),
  ]),
- (34, "alvarezmelis2018", "Alvarez-Melis e Jaakkola (2018), NeurIPS", "local (faithest.pdf, arXiv v2)", [
+ (33, "alvarezmelis2018", "Alvarez-Melis e Jaakkola (2018), NeurIPS", "local (faithest.pdf, arXiv v2)", [
   ("Tabela II (métricas)", "Faithfulness Estimate: retirar cada atributo e correlacionar com a queda.",
    "a common approach to measuring the faithfulness of relevance scores with respect to the model they are explaining relies on a proxy notion of importance: observing the effect of removing features on the model's prediction.", "p. 6 (seção 5.3)"),
  ]),
@@ -213,7 +211,7 @@ REFS = [
   ("Tabela II (métricas)", "Max-Sensitivity: maior mudança da explicação numa vizinhança.",
    "we consider a closely related measure, we term max-sensitivity, that measures the maximum change in the explanation with a small perturbation of the input x.", "p. 5 (Definição 3.1)"),
  ]),
- (35, "dasgupta2022", "Dasgupta, Frost e Moshkovitz (2022), ICML", "arxiv (2202.00734v1)", [
+ (34, "dasgupta2022", "Dasgupta, Frost e Moshkovitz (2022), ICML", "arxiv (2202.00734v1)", [
   ("Tabela II (métricas) e Discussão IV-B", "Consistency: instâncias com a mesma explicação devem ter a mesma predição; usa as predições do modelo.",
    "consider the set of instances that are assigned this explanation [...] If π is a good explanation, then we would hope that these instances all have the same predicted label", "p. 4-5 (Definição 1)"),
  ]),
@@ -221,7 +219,7 @@ REFS = [
   ("Introdução, 6.º parágrafo, Tabela II (métricas) e Discussão IV-B", "Random Logit: comparar mapas da classe verdadeira e de outra classe; motivado por mapas insensíveis à classe.",
    "Random Logit: We display the difference of saliency maps explaining the ground-truth and a random logit [...]. As the logit value is responsible for the predicted class, the saliency maps should change. || Our findings show that many modified BP methods are prone to class-insensitive explanations", "p. 5 e p. 2"),
  ]),
- (36, "hedstrom2023emprt", "Hedström et al. (2023), XAI in Action @ NeurIPS (eMPRT)", "local (EfficientSmoothMPRT.pdf)", [
+ (35, "hedstrom2023emprt", "Hedström et al. (2023), XAI in Action @ NeurIPS (eMPRT)", "local (EfficientSmoothMPRT.pdf)", [
   ("Tabela II (métricas)", "eMPRT: aumento relativo da complexidade entre o modelo original e o totalmente randomizado.",
    "This test effectively removes the layer-by-layer pairwise comparison between e and ê and instead compute the relative rise in explanation complexity using only two model states, i.e., the original- and fully randomised model.", "p. 4-5 (Definição 3)"),
  ]),
@@ -235,7 +233,7 @@ REFS = [
   ("Discussão IV-B", "Em EEG simulado, Input × Gradient foi preciso e específico da classe e do modelo.",
    "DeepLift, Input × Gradient, and LRP was found to be both accurate as well as robust in all three cases (spatial, temporal, and spectral).", "Discussão (robustez = não ser insensível à randomização de rótulos e pesos)"),
  ]),
- (33, "hedstrom2023metaquantus", "Hedström et al. (2023), TMLR (MetaQuantus)", "arxiv (2302.07265)", [
+ (32, "hedstrom2023metaquantus", "Hedström et al. (2023), TMLR (MetaQuantus)", "arxiv (2302.07265)", [
   ("Metodologia II-F", "Não se recomenda estimar a qualidade das explicações por uma única categoria.",
    "Relying on only one category to estimate explanation quality is therefore not recommended.", "p. 13"),
   ("Discussão IV-C", "A complexidade foi a categoria menos confiável; não se recomenda usar uma única categoria.",
@@ -244,7 +242,7 @@ REFS = [
  (11, "ismail2020", "Ismail et al. (2020), NeurIPS", "arxiv (2010.13924)", [
   ("Introdução, 5.º parágrafo", "Em séries temporais com vários canais, não se pode contar com a percepção humana como ao sobrepor mapas a imagens.",
    "In multivariate time series data, these challenges are even more profound since we cannot rely on human perception as one would when visualizing interpretations by overlaying saliency maps over images or when highlighting relevant words in a sentence.", "p. 1"),
-  ("Introdução, 8.º parágrafo", "A comparação de Ismail et al. relata resultados de modelos com acurácia acima de 95%.",
+  ("Introdução, 7.º parágrafo", "A comparação de Ismail et al. relata resultados de modelos com acurácia acima de 95%.",
    "The results reported in the following section are for models that produce accuracy above 95% in the classification task.", "p. 5"),
   ("Discussão IV-E (Limitações)", "Retirar atributos muda a distribuição dos dados de teste.",
    "eliminating features changes the test data distribution violating the assumption that both training and testing data are independent and identically distributed (i.i.d.).", "p. 4"),
@@ -258,21 +256,22 @@ REFS = [
 ]
 
 CORRECOES = [
- ("Suh et al. [16]", "O texto dizia que a Faithfulness Correlation foi calculada em cinco bases e ponto a ponto.", "São quatro bases na avaliação automática (a quinta, PTB-XL, só na avaliação humana), e o artigo não deixa claro se o sorteio é ponto a ponto. Corrigido para quatro bases, sem afirmar ponto a ponto."),
- ("Arends et al. [20]", "O texto dizia que o comportamento das explicações foi descrito como semelhante entre classes de AUPRC alta e baixa.", "O artigo não diz isso. Mantido só o fato verificável (AUPRC média acima de 0,85 em oito das nove classes) e retirada a frase da Análise que atribuía ao artigo um tratamento descritivo por classe."),
- ("Arends et al. [20]", "O texto dizia correlação próxima de zero após a randomização.", "O artigo diz perda rápida de correlação, mas nem todos os métodos chegam a zero. Corrigido."),
+ ("Suh et al. [36]", "O texto dizia que a Faithfulness Correlation foi calculada em cinco bases e ponto a ponto.", "São quatro bases na avaliação automática (a quinta, PTB-XL, só na avaliação humana), e o artigo não deixa claro se o sorteio é ponto a ponto. Corrigido para quatro bases, sem afirmar ponto a ponto."),
+ ("Arends et al. [19]", "O texto dizia que o comportamento das explicações foi descrito como semelhante entre classes de AUPRC alta e baixa.", "O artigo não diz isso. Mantido só o fato verificável (AUPRC média acima de 0,85 em oito das nove classes) e retirada a frase da Análise que atribuía ao artigo um tratamento descritivo por classe."),
+ ("Arends et al. [19]", "O texto dizia correlação próxima de zero após a randomização.", "O artigo diz perda rápida de correlação, mas nem todos os métodos chegam a zero. Corrigido."),
  ("Gumpfer et al. [2]", "O texto dizia que o GradientSHAP cobriu bem o QRS nos bloqueios de ramo e ficou abaixo do acaso no ST (valor de -5,5% do fichamento).", "O valor está numa tabela que não foi possível conferir no texto extraído. Substituído pela frase verificável da p. 7 (falham na isquemia)."),
- ("Baer et al. [18]", "O texto dizia que a métrica chega a ordenar as classes ao contrário da verdade.", "O artigo diz que as métricas de perturbação e as baseadas na verdade conhecida frequentemente dão avaliações contraditórias. Corrigido para essa formulação."),
- ("Baer et al. [17]", "O texto dizia que os autores recomendam não ler a diferença entre classes como diferença de qualidade.", "A recomendação literal é complementar as médias agregadas com análise estratificada por classe. Corrigido."),
+ ("Baer et al. [17]", "O texto dizia que a métrica chega a ordenar as classes ao contrário da verdade.", "O artigo diz que as métricas de perturbação e as baseadas na verdade conhecida frequentemente dão avaliações contraditórias. Corrigido para essa formulação."),
+ ("Baer et al. [16]", "O texto dizia que os autores recomendam não ler a diferença entre classes como diferença de qualidade.", "A recomendação literal é complementar as médias agregadas com análise estratificada por classe. Corrigido."),
  ("Mercier et al. [6]", "O texto dizia que o GradientSHAP teve a maior sensibilidade entre os métodos de gradiente em seis conjuntos.", "Formulação do fichamento a partir de tabelas; substituída pelas frases literais do artigo (p. 6 e p. 11)."),
- ("Šimić et al. [29]", "O texto atribuía ao artigo que agrupar pontos melhora as métricas.", "O artigo trata de perturbações e do tamanho das regiões; a afirmação de melhora ficou só com Serramazza et al. [28]."),
- ("Fouladgar et al. [32]", "O texto dizia que a normalização evita o efeito de escala.", "O artigo só aponta o efeito de escala como causa provável; o texto agora diz isso, sem atribuir ao artigo a recomendação de normalizar."),
+ ("Šimić et al. [28]", "O texto atribuía ao artigo que agrupar pontos melhora as métricas.", "O artigo trata de perturbações e do tamanho das regiões; a afirmação de melhora ficou só com Serramazza et al. [27]."),
+ ("Fouladgar et al. [31]", "O texto dizia que a normalização evita o efeito de escala.", "O artigo só aponta o efeito de escala como causa provável; o texto agora diz isso, sem atribuir ao artigo a recomendação de normalizar."),
  ("Surawicz et al. (2009)", "Citada no texto de Metodologia e Resultados para a duração do QRS.", "Texto completo inacessível. Substituída por Hicks et al. [7], que definem bloqueio de ramo por QRS de 120 ms ou mais."),
- ("Bazett (1920)", "Citada como fonte da fórmula.", "Original inacessível. A fórmula e a sua limitação são citadas por Vandenberk et al. [31]."),
+ ("Bazett (1920)", "Citada como fonte da fórmula.", "Original inacessível. A fórmula e a sua limitação são citadas por Vandenberk et al. [30]."),
  ("Zhang et al. [1]", "O fichamento listava três autores (versão arXiv).", "A versão publicada na iScience tem quatro autores (Zhang, Yang, Yuan e Zhang); a referência usa a versão publicada."),
  ("Introdução (revisão v0.0.2)", "A frase dizia que, em redes profundas, a distribuição dos valores SHAP é aproximada a partir dos gradientes.", "Nem toda aproximação do SHAP usa gradientes: Lundberg e Lee [4] descrevem o Kernel SHAP e o Deep SHAP. O texto agora cita essas aproximações e apresenta o GradientSHAP como uma delas, baseada em gradientes, cujos valores são estimativas [6]."),
  ("Zhang et al. [1]", "Na versão anterior da Introdução, a frase sobre o uso do SHAP por Zhang et al. não dizia como ele foi calculado.", "O original diz que os valores SHAP foram calculados por um explicador baseado em gradientes (p. 15) e apresentados em visualizações (p. 7); o texto agora diz isso."),
- ("Cui et al. [27]", "Nas limitações, o texto dizia que retirar regiões contíguas cria menos descontinuidades.", "O artigo fala em introduzir menos ruído de alta frequência; o texto passou a usar essa formulação."),
- ("Arends et al. [20]", "Na primeira versão da Introdução, o estudo era descrito pelos experimentos de concordância, randomização e perturbação.", "Na reescrita da Introdução, ficou só o dado usado no argumento (AUPRC média acima de 0,85 em oito classes); a concordância entre sementes continua citada nas limitações."),
+ ("Cui et al. [26]", "Nas limitações, o texto dizia que retirar regiões contíguas cria menos descontinuidades.", "O artigo fala em introduzir menos ruído de alta frequência; o texto passou a usar essa formulação."),
+ ("Arends et al. [19]", "Na primeira versão da Introdução, o estudo era descrito pelos experimentos de concordância, randomização e perturbação.", "Na reescrita da Introdução, ficou só o dado usado no argumento (AUPRC média acima de 0,85 em oito classes); a concordância entre sementes continua citada nas limitações."),
  ("Introdução do TCC1", "Dados epidemiológicos (GBD 2025, World Heart Federation 2023) e a revisão de Manimaran et al. (2025).", "Textos não acessíveis para conferência; não foram usados no artigo."),
+ ("Introdução (revisão v0.0.3)", "O parágrafo que abria com a avaliação em ECG e séries temporais citava Suh et al. (comparação de onze métodos), Gumpfer et al. e Baer et al.", "Suh et al. só descrevia o desenho do estudo, e o resultado de Gumpfer et al. já aparece no 5.º parágrafo; o parágrafo foi removido e só as frases de Baer et al. [16, 17] foram mantidas, no início do 7.º parágrafo. Suh et al. [36] continua citada na Discussão."),
 ]
