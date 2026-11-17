@@ -4,7 +4,7 @@
 \node[proc, right=10mm of x, yshift=-6mm] (g2) {GradientSHAP\\semente $s_2$};
 \node[proc, right=of g1] (v1) {36 regiões,\\norma 1};
 \node[proc, right=of g2] (v2) {36 regiões,\\norma 1};
-\node[saida, right=12mm of v1, yshift=-6mm] (p) {\textbf{piso}\\$\lVert \hat{a}_1 - \hat{a}_2 \rVert_2$\\(média 0,18)};
+\node[saida, right=12mm of v1, yshift=-6mm] (p) {\textbf{piso}\\distância euclidiana\\entre os dois mapas\\(média 0,18)};
 \draw[seta] (x.east) -- (g1.west); \draw[seta] (x.east) -- (g2.west);
 \draw[seta] (g1)--(v1); \draw[seta] (g2)--(v2);
 \draw[seta] (v1.east) -- (p.west); \draw[seta] (v2.east) -- (p.west);

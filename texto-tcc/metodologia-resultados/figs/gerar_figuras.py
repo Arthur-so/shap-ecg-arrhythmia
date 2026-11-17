@@ -184,7 +184,6 @@ def fig_regioes() -> None:
     sombrear(a, mask, t0, t1)
     a.plot(np.arange(t0, t1) / FS, x[d, t0:t1], color=SINAL, lw=0.8)
     rr = r[(r >= t0) & (r < t1)]
-    a.plot(rr / FS, x[d, rr], "v", color="black", ms=4)
     a.set_xlim(t0 / FS, t1 / FS)
     a.set_xlabel("tempo (s)")
     a.set_ylabel("derivação II (z-score)")

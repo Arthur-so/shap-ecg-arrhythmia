@@ -13,8 +13,9 @@
 \usepackage{array}
 \usepackage{tabularx}
 \usepackage{newunicodechar}
+\usepackage{placeins}
 \usepackage{tikz}
-\usetikzlibrary{positioning,arrows.meta,calc}
+\usetikzlibrary{positioning,arrows.meta,calc,fit}
 \usepackage[hidelinks]{hyperref}
 
 \newunicodechar{−}{\ensuremath{-}}
@@ -70,6 +71,7 @@ eletrocardiograma, arritmias, inteligência artificial explicável, SHAP, avalia
 
 \input{Secoes/Introducao}
 \input{Secoes/Metodologia}
+\FloatBarrier
 \input{Secoes/Resultados}
 \input{Secoes/Discussao}
 \input{Secoes/Conclusao}

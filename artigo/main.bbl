@@ -132,12 +132,6 @@ B.~K.~O. Arends, W.~A.~C. van Amsterdam, P.~van~der Harst, M.~van Smeden,
   classification,'' \emph{European Heart Journal -- Digital Health}, vol.~7,
   no.~3, p. ztag038, 2026.
 
-\bibitem{liu2018}
-F.~Liu \emph{et~al.}, ``An open access database for evaluating the algorithms
-  of electrocardiogram rhythm and morphology abnormality detection,''
-  \emph{Journal of Medical Imaging and Health Informatics}, vol.~8, no.~7, pp.
-  1368--1373, 2018.
-
 \bibitem{perezalday2020}
 E.~A. Perez~Alday, A.~Gu, A.~J. Shah, C.~Robichaux, A.-K.~I. Wong, C.~Liu,
   F.~Liu, A.~B. Rad, A.~Elola, S.~Seyedi, Q.~Li, A.~Sharma, G.~D. Clifford, and
@@ -172,16 +166,16 @@ J.~Cui, L.~Yuan, Z.~Wang, R.~Li, and T.~Jiang, ``Towards best practice of
   interfaces,'' \emph{Frontiers in Computational Neuroscience}, vol.~17, p.
   1232925, 2023.
 
-\bibitem{serramazza2024}
-D.~I. Serramazza, T.~Le~Nguyen, and G.~Ifrim, ``Improving the evaluation and
-  actionability of explanation methods for multivariate time series
-  classification,'' arXiv:2406.12507, 2024.
-
 \bibitem{simic2025}
 I.~{\v{S}}imi{\'c}, E.~Veas, and V.~Sabol, ``A comprehensive analysis of
   perturbation methods in explainable {AI} feature attribution validation for
   neural time series classifiers,'' \emph{Scientific Reports}, vol.~15, p.
   26607, 2025.
+
+\bibitem{serramazza2024}
+D.~I. Serramazza, T.~Le~Nguyen, and G.~Ifrim, ``Improving the evaluation and
+  actionability of explanation methods for multivariate time series
+  classification,'' arXiv:2406.12507, 2024.
 
 \bibitem{makowski2021}
 D.~Makowski, T.~Pham, Z.~J. Lau, J.~C. Brammer, F.~Lespinasse, H.~Pham,

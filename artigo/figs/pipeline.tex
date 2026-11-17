@@ -1,14 +1,20 @@
-\begin{tikzpicture}[node distance=5mm and 7mm]
-\node[dado] (d) {CPSC2018\\6\,877 ECGs\\12 derivações};
-\node[proc, right=of d] (p) {Pré-processamento\\(Seção~\ref{sec:dados})};
-\node[proc, right=of p] (m) {Treino da\\ResNet34-1D\\(Seção~\ref{sec:modelo})};
-\node[saida, right=of m] (f) {F1 por classe\\no teste};
-\node[proc, below=8mm of m] (g) {GradientSHAP\\622 mapas\\(Seção~\ref{sec:gshap})};
-\node[proc, left=of g] (r) {36 regiões\\do batimento\\(Seção~\ref{sec:regioes})};
-\node[proc, left=of r] (mt) {7 métricas + piso\\(Seções~\ref{sec:piso}\\e~\ref{sec:metricas})};
-\node[saida, right=of g] (c) {Comparação\\descritiva\\(Seção~\ref{sec:analise})};
+\begin{tikzpicture}[node distance=5mm and 9mm, every node/.style={minimum height=11mm, minimum width=29mm}]
+% linha de cima: desempenho do modelo
+\node[dado] (d) {1. Base de dados\\CPSC2018, 6\,877 ECGs\\(Seção~\ref{sec:dados})};
+\node[proc, right=of d] (p) {2. Pré-processamento\\z-score, divisão\\(Seção~\ref{sec:dados})};
+\node[proc, right=of p] (m) {3. Treino da\\ResNet34-1D\\(Seção~\ref{sec:modelo})};
+\node[saida, right=of m] (f) {F1 por classe\\no teste\\(Seção~\ref{sec:modelo})};
+% linha de baixo: cada caixa abaixo da sua coluna
+\node[proc, below=16mm of d] (g) {4. GradientSHAP\\622 mapas\\(Seção~\ref{sec:gshap})};
+\node[proc, below=16mm of p] (r) {5. 36 regiões\\do batimento\\(Seção~\ref{sec:regioes})};
+\node[proc, below=16mm of m] (mt) {6. Sete métricas\\e o piso\\(Seções~\ref{sec:piso}, \ref{sec:metricas})};
+\node[saida, below=16mm of f] (c) {7. Comparação\\com o F1\\(Seção~\ref{sec:analise})};
 \draw[seta] (d) -- (p); \draw[seta] (p) -- (m); \draw[seta] (m) -- (f);
-\draw[seta] (m) -- (g); \draw[seta] (g) -- (r); \draw[seta] (r) -- (mt);
+\draw[seta] (g) -- (r); \draw[seta] (r) -- (mt); \draw[seta] (mt) -- (c);
+% a etapa 3 alimenta a etapa 4: caminho ortogonal no espaço entre as linhas
+\coordinate (meio) at ($(m.south)!0.5!(mt.north)$);
+\draw[seta] (m.south) -- (meio) -| (g.north);
 \draw[seta] (f) -- (c);
-\draw[seta] (mt.south) -- ++(0,-4mm) -| (c.south);
+\node[draw=black!40, dashed, rounded corners=3pt, inner sep=2.5mm, fit=(d)(p)(m)(f), label={[nota, anchor=south west, xshift=-1mm]north west:Desempenho do modelo}] {};
+\node[draw=black!40, dashed, rounded corners=3pt, inner sep=2.5mm, fit=(g)(r)(mt), label={[nota, anchor=north west, xshift=-1mm]south west:Qualidade das explicações}] {};
 \end{tikzpicture}

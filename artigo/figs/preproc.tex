@@ -1,0 +1,9 @@
+\begin{tikzpicture}[node distance=4.5mm, every node/.style={text width=6.6cm}]
+\node[dado] (a) {Registro de 12 derivações a 500~Hz, com 6 a 60~s\\(6\,877 registros)};
+\node[proc, below=of a] (b) {\textbf{Rótulos:} códigos SNOMED CT do cabeçalho\\$\rightarrow$ 9 classes, com mais de um rótulo por ECG quando há mais de um diagnóstico};
+\node[proc, below=of b] (c) {\textbf{Tamanho fixo:} registros acima de 30~s mantêm os primeiros 30~s; os mais curtos são completados com zeros até 15\,000 amostras. O comprimento real é guardado};
+\node[proc, below=of c] (d) {\textbf{Escala:} \textit{z-score} em cada derivação (média 0, desvio padrão 1)};
+\node[proc, below=of d] (e) {\textbf{Divisão} estratificada por classe, com semente fixa: treino 70\%, validação 20\%, teste 10\%};
+\node[saida, below=of e] (f) {Treino: 4\,812 \quad Validação: 1\,378 \quad Teste: 687};
+\foreach \u/\v in {a/b,b/c,c/d,d/e,e/f} \draw[seta] (\u) -- (\v);
+\end{tikzpicture}
