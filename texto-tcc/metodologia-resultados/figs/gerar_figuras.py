@@ -134,6 +134,7 @@ def fig_limiar() -> None:
     ax.axvline(0.5, color="#9E9E9E", lw=0.8, ls="--")
     ax.set_xlabel("limiar de decisão")
     ax.set_ylabel("F1 na validação")
+    ax.set_title("(c) F1 em função do limiar")
     ax.set_ylim(0, 1.05)
     ax.legend(frameon=False, loc="lower center", ncol=3)
     salvar(fig, "limiar.pdf")

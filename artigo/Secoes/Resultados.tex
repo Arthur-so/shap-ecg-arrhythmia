@@ -1,18 +1,15 @@
 \section{Resultados}\label{sec:resultados}
 
+Os resultados correspondem às duas medidas que a pergunta do estudo compara: o desempenho do classificador em cada classe e a qualidade das explicações das suas predições, medida pelas sete métricas, seguida da verificação de que a ordem das classes não depende dos limites escolhidos para as regiões.
+
 \subsection{Treino e desempenho do classificador}
-O F1-macro na validação estabilizou-se a partir da época 20, enquanto a perda no treino continuou caindo (Fig.~\ref{fig:treino}); o melhor modelo foi o da época 36, e o treino parou na época 46. Com a entropia cruzada ponderada, o F1-macro no teste foi de 0,816, contra 0,819 sem ponderação, uma diferença menor que a variação de cerca de 0,01 entre dois treinos anteriores com a mesma perda ponderada; a versão sem ponderação, que segue a referência, foi mantida. Os limiares escolhidos na validação foram: SNR 0,89; AF 0,58; IAVB 0,99; BRE 0,85; BRD 0,36; CAP 0,55; CVP 0,84; STD 0,34; STE 0,41. O F1 variou pouco numa faixa ampla de limiares em torno do escolhido (Fig.~\ref{fig:limiar}).
+O F1-macro na validação estabilizou-se a partir da época 20, enquanto a perda no treino continuou caindo (Fig.~\ref{fig:treino}); o melhor modelo foi o da época 36, e o treino parou na época 46. Com a entropia cruzada ponderada, o F1-macro no teste foi de 0,816, contra 0,819 sem ponderação, uma diferença menor que a variação de cerca de 0,01 entre dois treinos anteriores com a mesma perda ponderada; a versão sem ponderação, que segue a referência, foi mantida. Os limiares escolhidos na validação foram: SNR 0,89; AF 0,58; IAVB 0,99; BRE 0,85; BRD 0,36; CAP 0,55; CVP 0,84; STD 0,34; STE 0,41. O F1 variou pouco numa faixa ampla de limiares em torno do escolhido (Fig.~\ref{fig:limiar}c).
 
 \begin{figure*}[!t]\centering
-\includegraphics[width=0.66\textwidth]{figs/treino.pdf}
-\caption{O F1 na validação estabiliza-se por volta da época 20, embora a perda no treino continue caindo, o que justificou a parada antecipada. (a) Perda no treino (escala logarítmica). (b) F1-macro na validação, com os limiares por classe e com o limiar fixo de 0,5. As linhas pontilhadas marcam a melhor época (36) e a parada (46).}\label{fig:treino}
+\includegraphics[width=0.62\textwidth]{figs/treino.pdf}\hfill
+\includegraphics[width=0.36\textwidth]{figs/limiar.pdf}
+\caption{O F1 na validação estabiliza-se por volta da época 20, embora a perda no treino continue caindo, o que justificou a parada antecipada; e o limiar de maior F1 é diferente em cada classe. (a) Perda no treino (escala logarítmica). (b) F1-macro na validação, com os limiares por classe e com o limiar fixo de 0,5; as linhas pontilhadas marcam a melhor época (36) e a parada (46). (c) F1 na validação em função do limiar, para três classes; o ponto marca o limiar escolhido e a linha tracejada, o limiar de 0,5.}\label{fig:treino}\label{fig:limiar}
 \end{figure*}
-
-\begin{figure}[!t]\centering
-\includegraphics[width=\columnwidth]{figs/limiar.pdf}
-\caption{O limiar de maior F1 é diferente em cada classe e, em várias delas, o F1 muda pouco numa faixa ampla de limiares. F1 na validação em função do limiar, para três classes; o ponto marca o limiar escolhido e a linha tracejada, o limiar de 0,5.}\label{fig:limiar}
-\end{figure}
-
 O modelo obteve F1-macro de 0,819 no teste, próximo do relatado por Zhang et al.\ na mesma base (0,813, média de 10 dobras)~\cite{zhang2021}. O F1 por classe também foi próximo do da referência (Tabela~\ref{tab:f1}): AF e BRD ficaram acima de 0,92, e STE foi a pior classe nos dois casos. Essa ordem das classes pelo F1 é a referência das comparações seguintes.
 
 \begin{table*}[!t]\centering
@@ -56,7 +53,7 @@ Global & 0,819 & 0,600 & 0,611 & 0,045 & 0,18 & 24,1 & 0,455 & 1,595 \\
 \end{tabular}
 \end{table*}
 
-\begin{table}[!t]\centering
+\begin{table}[!htb]\centering
 \caption{Nenhuma métrica reproduz a ordem do F1; a \CS\ e o \RL\ coincidem com ele nas pontas. Ordem das classes em cada métrica, da melhor (1.ª) para a pior (9.ª).}\label{tab:ordens}
 \setlength{\tabcolsep}{2.2pt}
 \footnotesize
@@ -87,7 +84,7 @@ N.º efet. & BRD & AF & IAVB & CVP & CAP & STE & SNR & BRE & STD \\
 \subsection{Robustez à definição das regiões}
 Nas 9 combinações de limites, a \CS\ global variou de 0,414 a 0,469 e o número efetivo de regiões, de 23,7 a 24,5 (Tabela~\ref{tab:robreg}). As pontas da ordem das classes se mantiveram em todas as combinações: na \CS, BRD foi a primeira e CAP e STE ocuparam as duas últimas posições; na \CX, BRD, AF e IAVB foram as três mais concentradas e STD, a mais espalhada. As métricas que exigem passar ECGs modificados pelo modelo não foram recalculadas com os limites alternativos.
 
-\begin{table}[!t]\centering
+\begin{table}[!htb]\centering
 \caption{Os valores globais variam pouco com os limites das regiões. \CS\ e número efetivo de regiões (\CX) nas 9 combinações de limites; em negrito, a definição usada.}\label{tab:robreg}
 \begin{tabular}{ccccc}
 \toprule
@@ -104,3 +101,5 @@ Nas 9 combinações de limites, a \CS\ global variou de 0,414 a 0,469 e o númer
 \bottomrule
 \end{tabular}
 \end{table}
+
+Em relação à pergunta do estudo, nenhuma métrica reproduziu a ordem das classes pelo F1. A \CS\ e o \RL\ coincidiram com ela nas classes de melhor e de pior desempenho, enquanto as métricas de fidelidade e de robustez ordenaram as classes de outro modo, com BRD e BRE no alto; nas métricas em que a definição das regiões foi variada, essas pontas não dependeram dos limites escolhidos.
