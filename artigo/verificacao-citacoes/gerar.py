@@ -2,7 +2,7 @@
 preâmbulo do template de relatório da Unifesp (preambulo.tex)."""
 import re
 
-from dados import CORRECOES, FONTES, REFS
+from dados import CORRECOES, FONTES, PENDENCIAS, REFS
 
 REFS = sorted(REFS)
 
@@ -14,6 +14,7 @@ def esc(t: str) -> str:
         t = t.replace(a, b)
     t = t.replace("\\textbackslash\\{\\}", "\\textbackslash{}")
     t = t.replace(" || ", " \\textbar\\textbar{} ")
+    t = t.replace("x\u0304", "\\ensuremath{\\bar{x}}")
     return t
 
 
@@ -32,6 +33,9 @@ partes = [open("preambulo.tex").read(), r"""\usepackage[brazil]{babel}
 \newunicodechar{−}{\ensuremath{-}}
 \newunicodechar{ê}{\^e}
 \newunicodechar{′}{\ensuremath{'}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{≤}{\ensuremath{\leq}}
 \renewcommand{\arraystretch}{1.15}
 
 \begin{document}
@@ -40,7 +44,7 @@ partes = [open("preambulo.tex").read(), r"""\usepackage[brazil]{babel}
     {\LARGE \textbf{Verificação das citações do artigo}} \\[0.35em]
     {\large Avaliação das Explicações SHAP em Redes Neurais Profundas para Classificação de Arritmias Cardíacas em ECG} \\[0.3em]
     \textbf{Autor:} Arthur Santos de Oliveira (RA: 156297) \quad \textbf{Orientador:} Prof.\ Dr.\ Luis Augusto Martins Pereira \\[0.2em]
-    \textbf{Data:} 14/11/2026 \quad \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
+    \textbf{Data:} 16/11/2026 \quad \textbf{Repositório:} \url{https://github.com/Arthur-so/shap-ecg-arrhythmia}
 \end{center}
 \vspace{-0.5em}
 \hrule
@@ -80,6 +84,19 @@ for n, key, short, src, occ in REFS:
         if not re.match(r"^(Tabela|Conferido|O artigo|README|Citação|Texto|Referência)", quote):
             q = "\\textit{``" + q + "''}"
         partes.append(f"{esc(loc)} & {esc(claim)} & {q} & {esc(pg)} \\\\\n\\addlinespace\n")
+    partes.append("\\bottomrule\n\\end{longtable}\n")
+
+if PENDENCIAS:
+    partes.append(r"""
+    \section{Pendências no texto atual}
+    Pontos em que o texto do artigo diz mais do que a fonte citada sustenta. Não foram corrigidos no artigo; cada linha traz uma sugestão.
+    \begin{longtable}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{7.2cm}}
+    \toprule
+    \textbf{Onde} & \textbf{O que o texto afirma} & \textbf{O que a fonte sustenta e sugestão} \\
+    \midrule
+    """)
+    for r, antes, depois in PENDENCIAS:
+        partes.append(f"{esc(r)} & {esc(antes)} & {esc(depois)} \\\\\n\\addlinespace\n")
     partes.append("\\bottomrule\n\\end{longtable}\n")
 
 partes.append(r"""

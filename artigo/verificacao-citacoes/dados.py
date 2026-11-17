@@ -64,8 +64,6 @@ REFS = [
  (12, "hedstrom2023quantus", "Hedström et al. (2023), JMLR (Quantus)", "arxiv (2202.06861v3)", [
   ("Introdução, 6.º parágrafo", "Métricas quantitativas organizadas em categorias que medem propriedades diferentes.",
    "for six different evaluation categories [...] Faithfulness Robustness Localisation Complexity Axiomatic Randomisation", "p. 2 (Tabela 1)"),
-  ("Metodologia II-F", "O projeto inicial previa métricas de fidelidade e robustez calculadas pela biblioteca Quantus.",
-   "Referência à biblioteca. O projeto inicial é o TCC1 (~/Documentos/tcc/entregas/tcc1.pdf, seção 2.5); o motivo do descarte das versões ponto a ponto é resultado do próprio TCC.", "--"),
  ]),
  (13, "bhatt2020", "Bhatt, Weller e Moura (2020), IJCAI", "local (faithcorr.pdf)", [
   ("Introdução, 6.º parágrafo", "Fidelidade: os atributos importantes devem ser os que mais alteram a saída quando retirados.",
@@ -74,6 +72,8 @@ REFS = [
    "The simplest explanation would be concentrated on one feature. We define complexity as the entropy of P_g.", "p. 2"),
   ("Tabela II (métricas)", "Faithfulness Correlation: correlação entre soma das atribuições de um subconjunto e a queda da saída.",
    "Definition 3 (Faithfulness). Given a predictor f, an explanation function g, a point x, and a subset size |S|, we define the faithfulness of g to f at x as [...] (correlação, entre subconjuntos S, da soma das atribuições de S com a queda da saída ao trocar S pela referência)", "p. 2"),
+  ("Metodologia II-F", "Perturbações que tiram a classe da predição descartadas, como em Bhatt et al.",
+   "Let Nr = {z ∈ Dx | ρ(x, z) ≤ r, f (x) = f (z)} be a neighborhood of datapoints within a radius r of x.", "p. 2 (a vizinhança só inclui pontos com a mesma predição)"),
   ("Tabela II (métricas)", "Avg-Sensitivity.",
    "We follow the convention of the former and define max sensitivity and average sensitivity in the neighborhood of a point of interest x. [...] Definition 1 (Max Sensitivity) [...] Definition 2 (Average Sensitivity)", "p. 2"),
   ("Tabela II (métricas)", "Complexity como entropia das frações de importância.",
@@ -100,6 +100,8 @@ REFS = [
    "Their explanations often follow signal amplitude rather than clinical relevance, with mean Spearman correlations up to 0.69, leading them to overlook diagnostically decisive low-amplitude regions.", "p. 1"),
   ("Discussão IV-A", "Explicações confrontadas com regiões das diretrizes; métodos que multiplicam pela entrada ou subtraem referência deslocam a relevância para a alta amplitude.",
    "Methods commonly applied in ECG analysis [...], among them Integrated Gradients, DeepSHAP, GradSHAP, and LRP-ε, tie relevance to input magnitude through input multiplication or baseline subtraction and shift attribution toward high-amplitude waveform components", "p. 9"),
+  ("Metodologia II-D (2.º motivo)", "Os diagnósticos se apoiam em segmentos do batimento, como o QRS nos bloqueios de ramo e o segmento ST na isquemia.",
+   "two categories of ECG diagnostic criteria, low-amplitude intervals / segments near the isoelectric line (atrioventricular block, myocardial ischemia) and high-amplitude QRS morphology patterns (right and left bundle branch block). || For ischemia, LRP-ε assigns only 4.6% of relevance to the ST segment", "p. 3 e p. 1"),
   ("Discussão IV-A", "Esses métodos, entre eles o GradientSHAP, reforçaram a alta amplitude e falharam no ST da isquemia.",
    "Integrated Gradients, DeepSHAP, GradSHAP, and LRP-z/ε similarly reinforce high-amplitude regions through baselinedependent contrast shifts. The coverage divergence, where these methods fail on ischemia despite reasonable mean values, is the more diagnostic evidence", "p. 7"),
  ]),
@@ -158,7 +160,7 @@ REFS = [
    "the derivative of the function Sc may fluctuate sharply at small scales. In other words, the apparent noise one sees in a sensitivity map may be due to essentially meaningless local variations in partial derivatives.", "p. 2"),
  ]),
  (25, "cui2023", "Cui et al. (2023), Front. Comput. Neurosci. 17:1232925", "epmc (PMC10470463)", [
-  ("Metodologia II-D e Discussão IV-E (Limitações)", "Perturbar trechos contíguos introduz menos ruído de alta frequência.",
+  ("Metodologia II-D (1.º motivo) e Discussão IV-E (Limitações)", "Alterar pontos isolados injeta ruído de alta frequência no sinal; perturbar trechos contíguos introduz menos desse ruído.",
    "we perturbed the input sample locally in small patches with fixed length n instead of n random points from different parts of the sample. In this way, we can evaluate the local accuracy of the contribution map while introducing less high-frequency noise to EEG signals.", "seção 4.2.1 (p. 5 do PDF publicado)"),
  ]),
  (27, "serramazza2024", "Serramazza, Le Nguyen e Ifrim (2024), arXiv:2406.12507", "arxiv", [
@@ -166,8 +168,10 @@ REFS = [
    "We also improved the AUC scores of attribution methods, while reducing running time, by using chunking, i.e., grouping consecutive features in each channel.", "p. 16"),
  ]),
  (26, "simic2025", "Šimić, Veas e Sabol (2025), Sci. Rep. 15:26607", "epmc (PMC12284047)", [
-  ("Metodologia II-D", "Perturbações mínimas mudam bruscamente a predição por deslocamento de distribuição; recomendação de regiões de tamanho fixo.",
-   "This resulted in abrupt changes in a classifiers predicted class probability from 1 to 0 after minimal perturbations, regardless of the features' actual relevance, due to shifts in the data distribution. || a fixed region size has to be selected, which according to the results of our previous paper should neither be too large, nor too small (e.g., 2-5% of input length).", "Introdução; Metodologia"),
+  ("Metodologia II-D (1.º motivo)", "Perturbações inadequadas podem afastar o sinal da distribuição de treino, e a saída muda por esse deslocamento, e não pela importância dos pontos alterados.",
+   "Moreover, our motivation stems from initial experiments where we observed the potentially devastating consequences of selecting an unsuitable PM. This resulted in abrupt changes in a classifiers predicted class probability from 1 to 0 after minimal perturbations, regardless of the features' actual relevance, due to shifts in the data distribution.", "Introdução"),
+  ("Metodologia II-D (2.º motivo)", "Tamanho fixo de região recomendado por Šimić et al.",
+   "a fixed region size has to be selected, which according to the results of our previous paper should neither be too large, nor too small (e.g., 2-5% of input length).", "Metodologia"),
  ]),
  (10, "wagner2024", "Wagner et al. (2024), Comput. Biol. Med. 176:108525", "arxiv (2305.17043v2)", [
   ("Metodologia II-D", "A agregação entre batimentos reduz o ruído dos métodos de gradiente.",
@@ -204,10 +208,14 @@ REFS = [
  (14, "yeh2019", "Yeh et al. (2019), NeurIPS", "local (Avg-Max-Sensitivity.pdf, arXiv v4)", [
   ("Introdução, 6.º parágrafo", "Robustez: a explicação deve mudar pouco quando a entrada muda pouco.",
    "the sensitivity of an explanation, which measures the degree to which the explanation is affected by insignificant perturbations from the test point.", "p. 2"),
+  ("Metodologia II-F", "O raio de 0,1 é o usado por Yeh et al.",
+   "the value of the maximum perturbation r is set to 0.1 for all datasets. To allow fair comparisons among different explanation methods, we normalize the explanation to have unit norm before calculating the sensitivity", "p. 16 (Apêndice B.1)"),
   ("Tabela II (métricas)", "Max-Sensitivity: maior mudança da explicação numa vizinhança.",
    "we consider a closely related measure, we term max-sensitivity, that measures the maximum change in the explanation with a small perturbation of the input x.", "p. 5 (Definição 3.1)"),
  ]),
  (33, "dasgupta2022", "Dasgupta, Frost e Moshkovitz (2022), ICML", "arxiv (2202.00734v1)", [
+  ("Metodologia II-F", "A explicação precisa ser resumida em poucos valores possíveis para que explicações iguais apareçam.",
+   "This bias arises from the inability to correctly assess faithfulness for explanations π that appear 0 or 1 times in the data. One way to make this term small, say < , is to have n comparable to the size of range(e). In this way, we see that the ease of evaluating the faithfulness of explanations depends on the level of compression they achieve.", "p. 11"),
   ("Tabela II (métricas) e Discussão IV-B", "Consistency: instâncias com a mesma explicação devem ter a mesma predição; usa as predições do modelo.",
    "consider the set of instances that are assigned this explanation [...] If π is a good explanation, then we would hope that these instances all have the same predicted label", "p. 4-5 (Definição 1)"),
  ]),
@@ -216,7 +224,7 @@ REFS = [
    "Random Logit: We display the difference of saliency maps explaining the ground-truth and a random logit [...]. As the logit value is responsible for the predicted class, the saliency maps should change. || Our findings show that many modified BP methods are prone to class-insensitive explanations", "p. 5 e p. 2"),
  ]),
  (34, "hedstrom2023emprt", "Hedström et al. (2023), XAI in Action @ NeurIPS (eMPRT)", "local (EfficientSmoothMPRT.pdf)", [
-  ("Tabela II (métricas)", "eMPRT: aumento relativo da complexidade entre o modelo original e o totalmente randomizado.",
+  ("Tabela II (métricas) e Metodologia II-F", "eMPRT: aumento relativo da complexidade entre o modelo original e o totalmente randomizado.",
    "This test effectively removes the layer-by-layer pairwise comparison between e and ê and instead compute the relative rise in explanation complexity using only two model states, i.e., the original- and fully randomised model.", "p. 4-5 (Definição 3)"),
  ]),
  (6, "mercier2022", "Mercier et al. (2022), ICAART", "arxiv (2202.03759)", [
@@ -270,5 +278,9 @@ CORRECOES = [
  ("Arends et al. [19]", "Na primeira versão da Introdução, o estudo era descrito pelos experimentos de concordância, randomização e perturbação.", "Na reescrita da Introdução, ficou só o dado usado no argumento (AUPRC média acima de 0,85 em oito classes); a concordância entre sementes continua citada nas limitações."),
  ("Introdução do TCC1", "Dados epidemiológicos (GBD 2025, World Heart Federation 2023) e a revisão de Manimaran et al. (2025).", "Textos não acessíveis para conferência; não foram usados no artigo."),
  ("Introdução (revisão v0.0.3)", "O parágrafo que abria com a avaliação em ECG e séries temporais citava Suh et al. (comparação de onze métodos), Gumpfer et al. e Baer et al.", "Suh et al. só descrevia o desenho do estudo, e o resultado de Gumpfer et al. já aparece no 5.º parágrafo; o parágrafo foi removido e só as frases de Baer et al. [16, 17] foram mantidas, no início do 7.º parágrafo. Suh et al. [35] continua citada na Discussão."),
- ('Metodologia (revisão v0.0.4)', 'O artigo citava Liu et al. (2018) como fonte da divisão da base e de uma delineação automática das ondas.', 'Os segmentos passaram a ser definidos por janelas em torno do pico R, e a delineação por onda foi descartada (detecção de ondas P em fibrilação atrial e QRS alargado não reconhecido); Liu et al. deixou de ser citada e foi removida da lista, que passou a ter 36 referências, renumeradas pela ordem de aparição.'),
+ ("Zhang et al. [1] (verificação de 16/11/2026)", "Depois da retirada de Liu et al., a duração de 6 a 60 s ficou citada só com Perez Alday et al. [20], que dão apenas a duração média.", "Zhang et al. [1] voltou a ser citada na frase (p. 13: varying durations between 6 s and 60 s)."),
+ ("Šimić et al. [26] (verificação de 16/11/2026)", "A Metodologia atribuía ao artigo que alterar pontos isolados afasta o sinal da distribuição e muda bruscamente a saída.", "O artigo atribui as mudanças bruscas a um método de perturbação inadequado. O texto passou a dizer que perturbações inadequadas podem afastar o sinal da distribuição."),
+ ('Liu et al. (2018) (revisão v0.0.4)', 'O artigo citava Liu et al. (2018) como origem da base CPSC2018, sem que o texto original tivesse sido acessado (a referência era conferida só por meio de Perez Alday et al.).', 'Liu et al. deixou de ser citada; a base passou a ser citada pela distribuição do desafio PhysioNet/CinC 2020 [20]. A lista passou a ter 36 referências, renumeradas pela ordem de aparição.'),
 ]
+
+PENDENCIAS = []
