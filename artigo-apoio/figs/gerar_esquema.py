@@ -4,7 +4,7 @@ Usa um ECG sintético (NeuroKit2), sem dados da base, para mostrar como os três
 segmentos são definidos a partir dos picos R: o intervalo RR, a janela do QRS e
 o fim do ST-T como fração do RR (com a correção de Bazett).
 
-Uso (na pasta artigo/figs):
+Uso (de qualquer pasta; grava em artigo/figs):
     python3 gerar_esquema.py
 """
 from pathlib import Path
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import neurokit2 as nk
 import numpy as np
 
-OUT = Path(__file__).resolve().parent
+OUT = Path(__file__).resolve().parents[2] / "artigo" / "figs"
 FS = 500
 HR = 75
 COR = {"pré-QRS": "#4C78A8", "QRS": "#E45756", "ST-T": "#54A24B"}
